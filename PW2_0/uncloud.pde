@@ -1,8 +1,8 @@
 ArrayList<Uncloud_listItem> uncloudList=new ArrayList<Uncloud_listItem>();
 class Uncloud_listItem {
-  public static final int LOCAL;
-  public static final int UPDATE_NEEDED;
-  public static final int UPDATED;
+  public final int LOCAL=0;
+  public final int UPDATE_NEEDED=1;
+  public final int UPDATED=2;
   String title;
   String date;
   String id;

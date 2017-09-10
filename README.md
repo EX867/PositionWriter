@@ -16,8 +16,8 @@
 * just execute setup.exe and set install folder, and run.
 
 ---------
-##How to use
-[PW1.4](https://github.com/EX867/PositionWriter/wiki/How-to-use-(v1))
+## How to use
+[PW1.4](https://github.com/EX867/PositionWriter/wiki/How-to-use-(v1))<br>
 [PW2.0 (ÇÑ±Û)](https://github.com/EX867/PositionWriter/wiki/How-to-use-(v2)-korean)
 
 --------

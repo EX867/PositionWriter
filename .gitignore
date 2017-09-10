@@ -6,3 +6,8 @@ _library/libraries/bin
 _library/libraries/build/*.jar
 _library/libraries/build/doc
 release/*.exe
+PW1_4/application.windows32
+PW1_4/application.windows64
+PW2_0/application.windows32
+PW2_0/application.windows64
+release/PositionWriter

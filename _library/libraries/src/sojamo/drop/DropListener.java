@@ -55,7 +55,7 @@ public abstract class DropListener {
   }
 
   protected final void updateLocation(float theX, float theY) {
-
+    update(theX,theY);//needed!
     if(isInside(theX, theY)) {
       if(isInsideTarget== false) {
         isInsideTarget = true;
@@ -68,6 +68,7 @@ public abstract class DropListener {
       }
     }
   }
+  public void update(float x,float y){}
 
   public void dropEnter() {}
 

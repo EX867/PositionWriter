@@ -351,7 +351,7 @@ class Analyzer {
     int chain=3;
     boolean landscape=true;
     boolean squareButton=true;
-    int updated=0;
+    boolean updated=false;
     @Override
       String toString() {
       String ret="";
@@ -362,7 +362,7 @@ class Analyzer {
       ret+="chain="+chain+"\n";
       ret+="squareButton="+str(squareButton)+"\n";
       ret+="landscape="+str(landscape)+"\n";
-      ret+="updated"=str(updated);
+      ret+="updated"+str(updated);
       return ret;
     }
     String uncloud_toString() {

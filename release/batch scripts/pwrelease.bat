@@ -5,8 +5,7 @@ rem === pwrelease ===
 cd "C:\Program Files (x86)\Resource Hacker"
 ResourceHacker.exe -script %PROJECTPATH%\release\iconChanger\IconChanger%1_32.txt
 ResourceHacker.exe -script %PROJECTPATH%\release\iconChanger\IconChanger%1_64.txt
-cd %PROJECTPATH%
-cd PW%1\application.windows64
+cd %PROJECTPATH%\PW%1\application.windows64
 del PW%1.exe
 ren PW%1_res.exe PW%1.exe
 cd data
@@ -14,8 +13,7 @@ del Settings.xml
 del Colors.xml
 del Shortcuts.xml
 del Path.xml
-cd %PROJECTPATH%
-cd PW%1\application.windows32
+cd %PROJECTPATH%\PW%1\application.windows32
 del PW%1.exe
 ren PW%1_res.exe PW%1.exe
 cd data
@@ -23,7 +21,7 @@ del Settings.xml
 del Colors.xml
 del Shortcuts.xml
 del Path.xml
-cd %PROJECTPATH%
+cd %PROJECTPATH%\release
 mkdir PositionWriter
 cd PositionWriter
 mkdir PositionWriter_32

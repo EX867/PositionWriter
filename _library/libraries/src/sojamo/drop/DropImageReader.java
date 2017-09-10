@@ -106,12 +106,12 @@ public class DropImageReader implements Runnable {
 	}
 
 	public void run() {
-		if (_myDropEvent.drop.component instanceof PApplet) {
-			for (int i = 0; i < _myPath.length; i++) {
-				PImage myImage = ((PApplet) _myDropEvent.drop.component).loadImage(_myPath[i]);
-				updatePImage(myImage);
-			}
-		}
+		//if (_myDropEvent.drop.component instanceof PApplet) {//processing 3.0
+    	//for (int i = 0; i < _myPath.length; i++) {
+			//	PImage myImage = ((PApplet) _myDropEvent.drop.component).loadImage(_myPath[i]);
+			//	updatePImage(myImage);
+      //}
+    //}
 		stop();
 		return;
 	}
@@ -131,7 +131,7 @@ public class DropImageReader implements Runnable {
 
 	/**
 	 * This method returns true if the specified image has transparent pixels
-	 * 
+	 *
 	 * @param image
 	 *            Image
 	 * @return boolean
@@ -158,7 +158,7 @@ public class DropImageReader implements Runnable {
 
 	/**
 	 * scale a bufferedImage.
-	 * 
+	 *
 	 * @invisible
 	 * @param theImage
 	 *            BufferedImage
@@ -178,7 +178,7 @@ public class DropImageReader implements Runnable {
 
 	/**
 	 * convert an image of type java.awt.Image to a BufferedIamge.
-	 * 
+	 *
 	 * @invisible
 	 * @param image
 	 *            Image
