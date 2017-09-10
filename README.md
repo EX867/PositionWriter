@@ -3,6 +3,7 @@
 
 [recursive link](https://github.com/EX867/PositionWriter)
 
+---------
 ## Made with processing
 [I like processing very much.](https://processing.org) <br>
 [Processing is awesome!!](https://github.com/processing)
@@ -15,10 +16,14 @@
 * install [Java8](https://java.com/ko/download/)
 * just execute setup.exe and set install folder, and run.
 
+### How to install Java8 in Windows XP
+* [read these](https://www.google.co.kr/search?q=how+to+install+java8+in+windows+xp&oq=how+to+install+java8+in+windows+xp)
+* [영포자를 위한 한글 링크](https://okky.kr/article/252401)
+
 ---------
 ## How to use
 [PW1.4](https://github.com/EX867/PositionWriter/wiki/How-to-use-(v1))<br>
-[PW2.0 (�ѱ�)](https://github.com/EX867/PositionWriter/wiki/How-to-use-(v2)-korean)
+[PW2.0 (한글)](https://github.com/EX867/PositionWriter/wiki/How-to-use-(v2)-korean)
 
 --------
 ## You find a bug but you are not github user!
@@ -44,6 +49,6 @@ but if you want to build setup.exe, it is conplicated. see Dependencies.
 ### Using
 #### PW2_0
 * [Jave (ffmpeg wrapper)](http://www.sauronsoftware.it/projects/jave/) : included in code folder.
-* [sDrop](http://www.sojamo.de/libraries/drop/) : drag-and-drop support, library mod included in library filder. 
+* [sDrop](http://www.sojamo.de/libraries/drop/) : drag-and-drop support, library mod included in library filder.
 * [RubberBand tine stretcher JNI](https://github.com/JorenSix/RubberBandJNI)
 * [TarsosDSP](https://github.com/JorenSix/TarsosDSP)
