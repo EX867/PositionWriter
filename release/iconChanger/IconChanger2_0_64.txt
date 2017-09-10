@@ -1,0 +1,7 @@
+[FILENAMES]
+Exe=C:\Users\user\Documents\[Projects]\PositionWriter\PW2_0\application.windows64\PW2_0.exe
+SaveAs=C:\Users\user\Documents\[Projects]\PositionWriter\PW2_0\application.windows64\PW2_0_res.exe
+Log=CONSOLE
+[COMMANDS]
+//one or more of the following commands ...
+-addoverwrite       C:\Users\user\Documents\[Projects]\PositionWriter\_image\icon2_0.ico, ICONGROUP,MAINICON,0

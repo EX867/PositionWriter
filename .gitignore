@@ -1,0 +1,8 @@
+KeySoundPlayer/Builds/VisualStudio2015/x64/Debug
+KeySoundPlayer/Builds/VisualStudio2015/x64/Release
+KeySoundPlayer/Builds/VisualStudio2015/.vs
+KeySoundPlayer/Builds/VisualStudio2015/KeySoundPlayer.VC.db
+_library/libraries/bin
+_library/libraries/build/*.jar
+_library/libraries/build/doc
+release/*.exe

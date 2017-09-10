@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+  <internal id="1" ctrl="true" shift="false" alt="false" key="1" keycode="0" frame="0" textEditor="true">SelectAll</internal>
+  <internal id="2" ctrl="true" shift="false" alt="false" key="3" keycode="0" frame="0" textEditor="true">Copy</internal>
+  <internal id="3" ctrl="true" shift="false" alt="false" key="24" keycode="0" frame="0" textEditor="true">Cut</internal>
+  <internal id="4" ctrl="true" shift="false" alt="false" key="22" keycode="0" frame="0" textEditor="true">Paste</internal>
+  <internal id="5" ctrl="true" shift="false" alt="false" key="26" keycode="0" frame="0" textEditor="neutral">Undo</internal>
+  <internal id="6" ctrl="true" shift="false" alt="false" key="25" keycode="0" frame="0" textEditor="neutral">Redo</internal>
+  <internal id="7" ctrl="true" shift="false" alt="false" key="17" keycode="0" frame="1" textEditor="true">RegisterQ</internal>
+  <internal id="8" ctrl="true" shift="false" alt="false" key="5" keycode="0" frame="1" textEditor="true">RegisterE</internal>
+  <internal id="9" ctrl="true" shift="false" alt="false" key="19" keycode="0" frame="1" textEditor="neutral" description="Save keyLED">Save</internal>
+  <internal id="10" ctrl="true" shift="true" alt="false" key="19" keycode="0" frame="1" textEditor="neutral" description="Export keyLED">Export</internal>
+  <internal id="11" ctrl="true" shift="false" alt="false" key="19" keycode="0" frame="2" textEditor="neutral" description="Save keySound">Save</internal>
+  <internal id="12" ctrl="true" shift="true" alt="false" key="19" keycode="0" frame="2" textEditor="neutral" description="Export keySound">Export</internal>
+  <internal id="13" ctrl="false" shift="true" alt="false" key="60" keycode="0" frame="1" textEditor="false">TransportL</internal>
+  <internal id="14" ctrl="false" shift="true" alt="false" key="62" keycode="0" frame="1" textEditor="false">TransportR</internal>
+  <internal id="15" ctrl="false" shift="false" alt="false" key="9" keycode="0" frame="1" textEditor="false">TransportR</internal>
+  <internal id="16" ctrl="false" shift="false" alt="false" key="32" keycode="0" frame="1" textEditor="false">Play</internal>
+  <internal id="17" ctrl="true" shift="false" alt="false" key="32" keycode="0" frame="1" textEditor="neutral" description="Play (Global)">Play</internal>
+  <internal id="18" ctrl="false" shift="false" alt="false" key="114" keycode="0" frame="1" textEditor="false">Rewind</internal>
+  <internal id="19" ctrl="false" shift="false" alt="false" key="112" keycode="0" frame="1" textEditor="false">Stop</internal>
+  <internal id="20" ctrl="false" shift="false" alt="false" key="108" keycode="0" frame="1" textEditor="false">Loop</internal>
+  <internal id="21" ctrl="true" shift="false" alt="false" key="12" keycode="0" frame="1" textEditor="neutral" description="Loop (Global)">Loop</internal>
+  <internal id="22" ctrl="true" shift="false" alt="false" key="6" keycode="0" frame="1" textEditor="neutral">OpenFind</internal>
+  <internal id="23" ctrl="true" shift="false" alt="false" key="20" keycode="0" frame="1" textEditor="neutral">ResetFocus</internal>
+  <internal id="24" ctrl="false" shift="false" alt="false" key="113" keycode="0" frame="1" textEditor="false">PrintQ</internal>
+  <internal id="25" ctrl="false" shift="false" alt="false" key="101" keycode="0" frame="1" textEditor="false">PrintE</internal>
+  <internal id="26" ctrl="true" shift="false" alt="false" key="49" keycode="0" frame="1" textEditor="neutral">StartFromCursor</internal>
+  <internal id="27" ctrl="true" shift="false" alt="false" key="50" keycode="0" frame="1" textEditor="neutral">AutoStop</internal>
+  <internal id="28" ctrl="false" shift="false" alt="false" key="119" keycode="0" frame="1" textEditor="false">AutoInputUp</internal>
+  <internal id="29" ctrl="false" shift="false" alt="false" key="115" keycode="0" frame="1" textEditor="false">AutoInputDown</internal>
+  <internal id="30" ctrl="false" shift="false" alt="false" key="100" keycode="0" frame="1" textEditor="false">AutoInputRight</internal>
+  <internal id="31" ctrl="false" shift="false" alt="false" key="97" keycode="0" frame="1" textEditor="false">AutoInputLeft</internal>
+  <internal id="32" ctrl="true" shift="false" alt="false" key="3" keycode="0" frame="2" textEditor="false">KeySoundClear</internal>
+  <external id="33" ctrl="false" shift="false" alt="false" key="111" keycode="0" textEditor="false" mode="ManualInput" text="\non">On</external>
+  <external id="34" ctrl="false" shift="false" alt="false" key="102" keycode="0" textEditor="false" mode="ManualInput" text="\noff">Off</external>
+  <external id="35" ctrl="false" shift="false" alt="false" key="100" keycode="0" textEditor="false" mode="ManualInput" text="\ndelay">Delay</external>
+  <external id="36" ctrl="false" shift="false" alt="false" key="97" keycode="0" textEditor="false" mode="ManualInput" text=" auto">Auto</external>
+  <external id="37" ctrl="false" shift="false" alt="false" key="99" keycode="0" textEditor="false" mode="CyxMode" text="\nchain">Chain</external>
+  <external id="38" ctrl="false" shift="false" alt="false" key="98" keycode="0" textEditor="false" mode="ManualInput" text="\nbpm">Bpm</external>
+</Data>
