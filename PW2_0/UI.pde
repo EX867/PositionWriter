@@ -204,6 +204,8 @@ void UI_load() {
       UI[id]=new Visualizer(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"));
     } else if (Type==TYPE_LOGGER) {
       UI[id]=new Logger(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getInt("textsize"));
+    } else if (Type==TYPE_INFOVIEWER) {
+      UI[id]=new InfoViewer(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getInt("textsize"));
     } else {
       UI[id]=new UIelement(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"));
     }

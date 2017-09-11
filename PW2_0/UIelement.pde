@@ -3179,3 +3179,34 @@ class Logger extends UIelement {
     if (UI[getUIid("LOG_EXIT")].disabled==false)UI[getUIid("LOG_EXIT")].render();
   }
 }
+
+class InfoViewer extends UIelement {
+  int textSize;
+  Analyzer.UnipackInfo info;
+  public Logger( int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, int textSize_) {
+    super (ID_, Type_, name_, description_, x_, y_, w_, h_);
+    textSize=textSize_;
+  }
+  @Override
+    boolean react() {
+    if (super.react()==false)return false;//LOG_LOG
+    //do nothing
+    if (pressed)render();
+    return false;
+  }
+  @Override
+    void render() {
+    stroke(UIcolors[I_FOREGROUND]);
+    fill(UIcolors[I_BACKGROUND]);
+    rect(position.x, position.y, size.x, size.y);
+    noStroke();
+    textFont(fontRegular);
+    textSize(textSize);
+    textLeading(textSize*4/3);
+    textAlign(LEFT, UP);
+    fill(UIcolors[I_FOREGROUND]);
+    text(info.uncloud_toString(), position.x-size.x+15, position.y-size.y+15);
+    textFont(fontBold);
+    textAlign(CENTER, CENTER);
+  }
+}

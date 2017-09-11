@@ -63,6 +63,7 @@ void generateColors() {
   text+="  <element id=\"12\" a=\""+alpha(UIcolors[I_GENERALTEXT])+"\" r=\""+red(UIcolors[I_GENERALTEXT])+"\" g=\""+green(UIcolors[I_GENERALTEXT])+"\" b=\""+blue(UIcolors[I_GENERALTEXT])+"\">I_GENERALTEXT</element>\n";
   text+="  <element id=\"13\" a=\""+alpha(UIcolors[I_KEYWORDTEXT])+"\" r=\""+red(UIcolors[I_KEYWORDTEXT])+"\" g=\""+green(UIcolors[I_KEYWORDTEXT])+"\" b=\""+blue(UIcolors[I_KEYWORDTEXT])+"\">I_KEYWORDTEXT</element>\n";
   text+="  <element id=\"14\" a=\""+alpha(UIcolors[I_COMMENTTEXT])+"\" r=\""+red(UIcolors[I_COMMENTTEXT])+"\" g=\""+green(UIcolors[I_COMMENTTEXT])+"\" b=\""+blue(UIcolors[I_COMMENTTEXT])+"\">I_COMMENTTEXT</element>\n";
+  text+="  <element id=\"15\" a=\""+alpha(UIcolors[I_UNITORTEXT])+"\" r=\""+red(UIcolors[I_UNITORTEXT])+"\" g=\""+green(UIcolors[I_UNITORTEXT])+"\" b=\""+blue(UIcolors[I_UNITORTEXT])+"\">I_UNITORTEXT</element>\n";
   text+="</Data>";
   try {
     writeFile("data/Colors.xml", text);

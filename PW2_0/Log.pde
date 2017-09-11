@@ -102,6 +102,11 @@ void removeErrorsWithCode(int code1, int code2) {//default 1
 }
 
 //
+void displayLogError(String content){
+  Logger logger=(Logger)UI[getUIidRev("ERROR_LOG")];
+  logger.logs.add(content);
+  registerPrepare(getFrameid("F_ERROR"));
+}
 void displayLogError(Exception e) {
   if (e.toString().contains("ignore")) {
     printLog("displayLogError()", "error ignored ("+e.toString()+")");

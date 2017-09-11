@@ -211,7 +211,7 @@
     <element id="169" type="TYPE_BUTTON" x="870" y="90" w="25" h="25" description="update unipack to new state." image="UN_UPDATE.png">UN_UPDATE</element>
     <element id="170" type="TYPE_BUTTON" x="870" y="150" w="25" h="25" description="delete unipack in uncloud server" image="UN_DELETE.png">UN_DELETE</element>
     <element id="171" type="TYPE_BUTTON" x="870" y="210" w="25" h="25" description="download unipack from uncloud server" image="UN_DOWNLOAD.png">UN_DOWNLOAD</element>
-    <element id="172" type="TYPE_LOGGER" x="560" y="400" w="200" h="300" description="" textsize="25">UN_UNIPACKINFO</element>
+    <element id="172" type="TYPE_INFOVIEWER" x="580" y="400" w="200" h="300" description="" textsize="25">UN_UNIPACKINFO</element>
     <!--dialog-->
     <element id="173" type="TYPE_BUTTON" x="865" y="-35" w="25" h="25" description="exit frame." image="I_EXIT.png">DIALOG_EXIT</element>
     <element id="174" type="TYPE_BUTTON" x="865" y="-35" w="25" h="25" description="exit frame." image="I_EXIT.png">DIALOG_CONTENT</element>

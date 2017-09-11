@@ -180,6 +180,7 @@ void setup_main() {
   popMatrix();
   statusR.text=startText;
   statusR.render();
+  uncloud_setup();
 }
 long drawStart=0;
 long drawEnd=0;

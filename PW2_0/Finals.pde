@@ -24,6 +24,7 @@ static final int I_TEXTBOXSELECTION=11;
 static final int I_GENERALTEXT=12;
 static final int I_KEYWORDTEXT=13;
 static final int I_COMMENTTEXT=14;
+static final int I_UNITORTEXT=15;
 
 // ========== Others ==========//
 static final int AN_PRESS=0;
@@ -48,6 +49,7 @@ static final int TYPE_VELOCITYBUTTON=10;
 static final int TYPE_WAVEDITOR=12;
 static final int TYPE_VISUALIZER=13;
 static final int TYPE_LOGGER=15;
+static final int TYPE_INFOVIEWER=16;
 //total 15
 //...class
 //add
@@ -82,6 +84,8 @@ int getTypeId (String in) {
     return TYPE_VISUALIZER;
   } else if (in.equals("TYPE_LOGGER")) {
     return TYPE_LOGGER;
+  } else if (in.equals("TYPE_INFOVIEWER")) {
+    return TYPE_INFOVIEWER;
   }
   return DEFAULT;
 }
