@@ -53,6 +53,12 @@ class Button extends UIelement {
     }
     return false;
   }
+  void resetFocusBeforeFrame() {
+    skip=true;
+    focus=DEFAULT;
+    resetFocus();
+    skip=false;
+  }
   @Override
     void render() {
     if (disabled)return;
@@ -202,23 +208,14 @@ class Button extends UIelement {
       //} else if (name.equals("I_RELOADINSTART")) {
       //nothing
     } else if (name.equals("I_OPENMC")) {//External
-      skip=true;
-      focus=DEFAULT;
-      resetFocus();
-      skip=false;
+      resetFocusBeforeFrame();
       Frames[getFrameid("F_MCCONVERT")].prepare(currentFrame);
     } else if (name.equals("I_OPENMP3")) {//External
-      skip=true;
-      focus=DEFAULT;
-      resetFocus();
-      skip=false;
+      resetFocusBeforeFrame();
       UI[getUIid("MP3_TIME")].disabled=false;
       Frames[getFrameid("F_MP3CONVERT")].prepare(currentFrame);
     } else if (name.equals("I_CHANGETITLE")) {
-      skip=true;
-      focus=DEFAULT;
-      resetFocus();
-      skip=false;
+      resetFocusBeforeFrame();
       ((TextBox)UI[getUIidRev("TITLEEDIT_TEXT")]).text=title_filename;
       Frames[getFrameid("F_TITLEEDIT")].prepare(currentFrame);
     } else if (name.equals("TITLEEDIT_EXIT")) {
@@ -227,10 +224,7 @@ class Button extends UIelement {
       title_edited="*";
       surface.setTitle(title_filename+title_edited+title_suffix);
     } else if (name.equals("I_PROJECTS")) {
-      skip=true;
-      focus=DEFAULT;
-      resetFocus();
-      skip=false;
+      resetFocusBeforeFrame();
       uncloud_prepare();
       Frames[getFrameid("F_UNCLOUD")].prepare(currentFrame);
     } else if (name.equals("I_RELOAD")) {
@@ -654,6 +648,46 @@ class Button extends UIelement {
       link ("https://EX867.github.io/PositionWriter/asdf");
       //}else if(name.equals("MP3_LOOP")){
       //do nothing
+    } else if (name.equals("UN_LOGIN")) {
+      resetFocusBeforeFrame();
+      Frames[getFrameid("F_LOGIN")].prepare(currentFrame);
+    } else if (name.equals("UN_PRIVATE")) {
+      //do nothing=
+    } else if (name.equals("UN_EXIT")) {
+      Frames[currentFrame].returnBack();
+    } else if (name.equals("UN_UPLOAD")) {
+      resetFocusBeforeFrame();
+      tempCode=DIALOG_UPLOAD;
+      Frames[getFrameid("F_LOGIN")].prepare(currentFrame);
+    } else if (name.equals("UN_UPDATE")) {
+      resetFocusBeforeFrame();
+      tempCode=DIALOG_UPDATE;
+      Frames[getFrameid("F_LOGIN")].prepare(currentFrame);
+    } else if (name.equals("UN_DELETE")) {
+      resetFocusBeforeFrame();
+      tempCode=DIALOG_DELETE;
+      Frames[getFrameid("F_LOGIN")].prepare(currentFrame);
+    } else if (name.equals("UN_DOWNLOAD")) {
+      resetFocusBeforeFrame();
+      tempCode=DIALOG_DOWNLOAD;
+      Frames[getFrameid("F_LOGIN")].prepare(currentFrame);
+    } else if (name.equals("DIALOG_EXIT")) {
+      tempCode=0;//no happens
+      Frames[currentFrame].returnBack();
+    } else if (name.equals("DIALOG_OK")) {
+      if (tempCode==DIALOG_UPLOAD) {
+        uncloud_upload(((ScrollList)UI[getUIidRev("UN_LIST")]).selected);
+      } else if (tempCode==DIALOG_UPDATE) {
+        uncloud_update(((ScrollList)UI[getUIidRev("UN_LIST")]).selected);
+      } else if (tempCode==DIALOG_DELETE) {
+        uncloud_delete(((ScrollList)UI[getUIidRev("UN_LIST")]).selected);
+      } else if (tempCode==DIALOG_DOWNLOAD) {
+        uncloud_download(((ScrollList)UI[getUIidRev("UN_LIST")]).selected);
+      }
+      tempCode=0;
+      Frames[currentFrame].returnBack();
+    } else if (name.equals("LOGIN_OK")) {
+      if (uncloud_login())Frames[currentFrame].returnBack();
     }
   }
 }
@@ -1589,6 +1623,8 @@ class ScrollList extends UIelement {
         UI[getUIidRev("KS_LOOP")].disabled=false;
         UI[getUIidRev("KS_LOOP")].registerRender=true;
       }
+    } else if (name.equals("UN_LIST")) {
+      uncloud_select(selected);
     }
   }
   void addItem(String item) {
@@ -2125,8 +2161,10 @@ class TextEditor extends UIelement {//only render and add text. this class not d
       b=0;
       String count="";
       while (b<tokens.length) {
-        if (Mode!=CYXMODE&&((ignoreMc&&tokens[b].equals("mc"))||tokens[b].equals("on")||tokens[b].equals("o")||tokens[b].equals("off")||tokens[b].equals("f")||tokens[b].equals("delay")||tokens[b].equals("d")||tokens[b].equals("auto")||tokens[b].equals("a")||tokens[b].equals("bpm")||tokens[b].equals("b"))) {
+        if (Mode!=CYXMODE&&(tokens[b].equals("on")||tokens[b].equals("o")||tokens[b].equals("off")||tokens[b].equals("f")||tokens[b].equals("delay")||tokens[b].equals("d")||tokens[b].equals("auto")||tokens[b].equals("a")||tokens[b].equals("bpm")||tokens[b].equals("b"))) {
           fill(UIcolors[I_KEYWORDTEXT]);
+        } else if (Mode!=CYXMODE&&ignoreMc&&(tokens[b].equals("mc")||tokens[b].equals("chain")||tokens[b].equals("c")||tokens[b].equals("mapping")||tokens[b].equals("m")||tokens[b].equals("rnd"))) {
+          fill(UIcolors[I_UNITORTEXT]);
         } else if (Mode==CYXMODE&&((ignoreMc&&tokens[b].equals("mc"))||tokens[b].equals("on")||tokens[b].equals("o")||tokens[b].equals("off")||tokens[b].equals("f")||tokens[b].equals("delay")||tokens[b].equals("d")||tokens[b].equals("chain")||tokens[b].equals("c"))) {
           fill(UIcolors[I_KEYWORDTEXT]);
         } else {
@@ -3183,7 +3221,7 @@ class Logger extends UIelement {
 class InfoViewer extends UIelement {
   int textSize;
   Analyzer.UnipackInfo info;
-  public Logger( int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, int textSize_) {
+  public InfoViewer( int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, int textSize_) {
     super (ID_, Type_, name_, description_, x_, y_, w_, h_);
     textSize=textSize_;
   }
@@ -3205,7 +3243,7 @@ class InfoViewer extends UIelement {
     textLeading(textSize*4/3);
     textAlign(LEFT, UP);
     fill(UIcolors[I_FOREGROUND]);
-    text(info.uncloud_toString(), position.x-size.x+15, position.y-size.y+15);
+    if (info!=null)text(info.uncloud_toString(), position.x-size.x+15, position.y-size.y+15);
     textFont(fontBold);
     textAlign(CENTER, CENTER);
   }

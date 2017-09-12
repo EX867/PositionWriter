@@ -52,4 +52,3 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 * [Jave (ffmpeg wrapper)](http://www.sauronsoftware.it/projects/jave/) : included in code folder.
 * [sDrop](http://www.sojamo.de/libraries/drop/) : drag-and-drop support, library mod included in library filder.
 * [RubberBand tine stretcher JNI](https://github.com/JorenSix/RubberBandJNI)
-* [TarsosDSP](https://github.com/JorenSix/TarsosDSP)

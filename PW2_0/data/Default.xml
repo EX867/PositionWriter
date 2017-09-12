@@ -17,7 +17,7 @@
     <element id="14" x="710" y="460" w="550" h="50">F_TITLEEDIT</element>
     <element id="15" x="710" y="460" w="250" h="250">F_KEYEDIT</element>
     <element id="16" x="710" y="460" w="450" h="370">F_UNCLOUD</element>
-    <element id="17" x="710" y="460" w="250" h="370">F_LOGIN</element>
+    <element id="17" x="710" y="460" w="450" h="90">F_LOGIN</element>
   </Frames>
   <UIelements>
     <!--Re-arranged-->
@@ -211,16 +211,16 @@
     <element id="169" type="TYPE_BUTTON" x="870" y="90" w="25" h="25" description="update unipack to new state." image="UN_UPDATE.png">UN_UPDATE</element>
     <element id="170" type="TYPE_BUTTON" x="870" y="150" w="25" h="25" description="delete unipack in uncloud server" image="UN_DELETE.png">UN_DELETE</element>
     <element id="171" type="TYPE_BUTTON" x="870" y="210" w="25" h="25" description="download unipack from uncloud server" image="UN_DOWNLOAD.png">UN_DOWNLOAD</element>
-    <element id="172" type="TYPE_INFOVIEWER" x="580" y="400" w="200" h="300" description="" textsize="25">UN_UNIPACKINFO</element>
+    <element id="172" type="TYPE_INFOVIEWER" x="620" y="400" w="210" h="300" description="" textsize="25">UN_UNIPACKINFO</element>
     <!--dialog-->
     <element id="173" type="TYPE_BUTTON" x="865" y="-35" w="25" h="25" description="exit frame." image="I_EXIT.png">DIALOG_EXIT</element>
-    <element id="174" type="TYPE_BUTTON" x="865" y="-35" w="25" h="25" description="exit frame." image="I_EXIT.png">DIALOG_CONTENT</element>
+    <element id="174" type="TYPE_LABEL" x="865" y="-35" w="25" h="25" description="" text="--" textsize="15">DIALOG_CONTENT</element>
     <element id="175" type="TYPE_BUTTON" x="865" y="-35" w="25" h="25" description="exit frame." image="I_EXIT.png">DIALOG_OK</element>
     <element id="176" type="TYPE_BUTTON" x="865" y="-35" w="25" h="25" description="exit frame." image="I_EXIT.png">DIALOG_CANCEL</element>
     <!---->
-    <element id="177" type="TYPE_TEXTBOX" x="200" y="50" w="180" h="35" description="" title="id" text="" hint="id." numberonly="false" textsize="20">LOGIN_ID</element>
-    <element id="178" type="TYPE_TEXTBOX" x="200" y="130" w="180" h="35" description="" title="password" text="" hint="pasword" numberonly="false" textsize="20">LOGIN_PASSWORD</element>
-    <element id="179" type="TYPE_BUTTON" x="442" y="130" w="45" h="35" description="convert!" image="I_CONVERT.png">LOGIN_OK</element>
+    <element id="177" type="TYPE_TEXTBOX" x="400" y="50" w="380" h="35" description="" title="id" text="" hint="id." numberonly="false" textsize="20">LOGIN_ID</element>
+    <element id="178" type="TYPE_TEXTBOX" x="400" y="130" w="380" h="35" description="" title="password" text="" hint="pasword" numberonly="false" textsize="20">LOGIN_PASSWORD</element>
+    <element id="179" type="TYPE_BUTTON" x="842" y="130" w="45" h="35" description="login!!" image="I_CONVERT.png">LOGIN_OK</element>
     <!--179 elements-->
   </UIelements>
   <FrameData>
@@ -229,7 +229,7 @@
     <F_SETTINGS>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|<!--TAB_WAVEDIT-->|STATUS_BAR_L|STATUS_BAR_R|T_SHORTCUTS|T_UICOLORS|I_AUTOSAVE|I_AUTOSAVETIME|I_RESOLUTION|I_TEXTSIZE|I_AUTOSTOP|I_STARTFROM|I_DEFAULTINPUT|I_OLDINPUT|I_CYXMODE|<!--I_LANGUAGE-->|I_RELOADINSTART|I_IGNOREMC|I_OPENMC|I_OPENMP3|I_DESCRIPTIONTIME|I_SHORTCUTS|I_UICOLORS|I_PROJECTS|I_RELOAD|<!--I_ZIP-->I_MIDI|I_CAFELINK|I_INFO|I_EXIT|I_PROJECTNAME|I_TITLE|I_PRODUCERNAME|I_BUTTONX|I_BUTTONY|I_CHAIN|I_LANDSCAPE|I_SQUAREBUTTONS|I_PATH|</F_SETTINGS>
     <F_WAVEDIT>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|TAB_WAVEDIT|STATUS_BAR_L|STATUS_BAR_R|I_PLAY|I_STOP|I_LOOP|I_PROGRESSBAR|I_TIME2|I_WAVEDITOR|I_VISUALIZER|T_FILEVIEW|T_CUTPOINT|T_TRACKLIST|I_FILEVIEW3|I_CUTPOINT|I_NORMALIZE|I_REVERSE|T_SIGNALCHAIN|T_AUTOMATION|I_SIGNALCHAIN|I_EFFECTORS|I_AUTOMATION|</F_WAVEDIT>
     <F_EXPORT>TAB_KEYLED|</F_EXPORT>
-    <F_DIALOG>DIALOG_EXIT|</F_DIALOG>
+    <F_DIALOG>DIALOG_EXIT|DIALOG_CONTENT|DIALOG_OK|DIALOG_CANCEL|</F_DIALOG>
     <F_PICKCOLOR>PC_HTMLSEL|PC_HTMLR|PC_HTMLG|PC_HTMLB|PC_HTMLH|PC_HTMLS|PC_HTMLV|PC_RECENT1|PC_RECENT2|PC_RECENT3|PC_RECENT4|PC_RECENT5|PC_RECENT6|PC_RECENT7|PC_RECENT8|PC_RECENT9|PC_RECENTA|PC_EXIT</F_PICKCOLOR>
     <F_ERROR>ERROR_LOG|ERROR_EXIT</F_ERROR>
     <F_INFO>INFO_DESCRIPTION|INFO_EXIT|INFO_GITHUBLINK|INFO_PROCESSINGLINK|INFO_DEVELOPERLINK|INFO_JEONJEHONGLINK|INFO_ASDFLINK|</F_INFO>

@@ -1,4 +1,4 @@
-Frame[] Frames; //<>//
+Frame[] Frames; //<>// //<>//
 String[] Framenames;
 int Description_current;
 boolean Description_enabled=false;
@@ -8,6 +8,7 @@ color[] UIcolors;
 String[] UIcolornames;
 Shortcut[] Shortcuts;
 int tempColor;//used when changing color
+int tempCode=0;//used in dialog behavior
 //data
 //runtime
 int currentFrame=0;
@@ -388,6 +389,7 @@ void loadCustomSettings() {
   Data=XmlData.getChild("I_IGNOREMC");
   if (Data!=null) {
     ((Button)UI[getUIid("I_IGNOREMC")]).value=toBoolean(Data.getString("value"));
+    ignoreMc=toBoolean(Data.getString("value"));
   }
   Data=XmlData.getChild("keyLED");
   if (Data!=null) {

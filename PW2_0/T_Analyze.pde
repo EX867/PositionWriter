@@ -342,7 +342,10 @@ class Analyzer {
   }
   //keysound
   //autoPlay
-  class UnipackInfo {
+  UnipackInfo getEmptyUnipackInfo() {
+    return new UnipackInfo();
+  }
+  public class UnipackInfo {
     boolean valid=true;
     String title="";
     String producerName="";
@@ -352,6 +355,8 @@ class Analyzer {
     boolean landscape=true;
     boolean squareButton=true;
     boolean updated=false;
+    public UnipackInfo() {
+    }
     @Override
       String toString() {
       String ret="";

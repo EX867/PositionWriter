@@ -15,7 +15,7 @@ void detectProcessing() {
 }
 float Width=1420;
 float Height=920;
-String startText="PositionWriter 2.0 beta 3 (170910 build)";
+String startText="PositionWriter 2.0 beta 4 (17---- build)";
 String title_suffix=" | Position Writer 2.0";
 String title_filename="";
 String title_keyledfilename="";

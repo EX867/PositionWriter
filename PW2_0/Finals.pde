@@ -148,3 +148,7 @@ int getFunctionId(String name) {
   else if (name.equals("KeySoundClear"))return S_KEYSOUNDCLEAR;
   else return DEFAULT;
 }
+static final int DIALOG_UPLOAD=1;
+static final int DIALOG_UPDATE=2;
+static final int DIALOG_DELETE=3;
+static final int DIALOG_DOWNLOAD=4;
