@@ -39,7 +39,7 @@ void checkVersion() {
   JSONObject version=new JSONObject();
   version=parseJSONObject(VERSION);
   try {
-    String[] lines=loadStrings("https://ex867.github.io/PositionWriter/versioninfo");
+    String[] lines=loadStrings("https://ex867.github.io/PositionWriter/versionInfo");
     JSONObject beta=parseJSONObject(lines[2].replace("<p>", "").replace("</p>", ""));//fixed 3rd line
     JSONObject production=parseJSONObject(lines[3].replace("<p>", "").replace("</p>", ""));//fixed 4th line
     if (version.getString("type").equals("beta")) {//if production>=current->production, beta>=current->beta
@@ -59,7 +59,7 @@ void checkVersion() {
         } else if (beta.getInt("minor")==version.getInt("minor")&&beta.getInt("patch")>version.getInt("patch")) {
           Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
           return;
-        } else if (beta.getInt("minor")==version.getInt("minor")&&beta.getInt("patch")==version.getInt("patch")&&beta.getInt("build")==version.getInt("build")) {
+        } else if (beta.getInt("minor")==version.getInt("minor")&&beta.getInt("patch")==version.getInt("patch")&&beta.getInt("build")>version.getInt("build")) {
           Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
           return;
         }

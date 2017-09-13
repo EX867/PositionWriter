@@ -686,8 +686,11 @@ class Button extends UIelement {
       }
       tempCode=0;
       Frames[currentFrame].returnBack();
-    } else if (name.equals("LOGIN_OK")) {
-      if (uncloud_login())Frames[currentFrame].returnBack();
+    } else if (name.equals("UPDATE_UPDATE")) {
+      link("https://github.com/EX867/PositionWriter/releases");
+      Frames[currentFrame].returnBack();
+    } else if (name.equals("UPDATE_EXIT")) {
+      Frames[currentFrame].returnBack();
     }
   }
 }

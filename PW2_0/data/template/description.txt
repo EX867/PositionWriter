@@ -1,0 +1,17 @@
+일반버튼=btn
+누른버튼=btn_
+버튼덮어씌우기=phantom,phantom_
+일반체인=chain
+현재체인=chain_
+자동재생체인=chain__
+자동재생다음=next
+자동재생다음 누르기=next_
+자동재생이전=prev
+자동재생이전 누르기=prev_
+자동재생=play
+자동재생 누르기=play_
+자동재생 일시정지=pause
+자동재생 일시정지 누르기=pause_
+배경=playbg
+아이콘=theme_ic
+앱아이콘=appicon.png
