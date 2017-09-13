@@ -3057,11 +3057,11 @@ class PadButton extends UIelement {
     while (a<CurrentNoteOn.size()) {
       if (CurrentNoteOn.get(a).equals(x, y)) {
         CurrentNoteOn.remove(a);
-        if (KS.get(ksChain)[x][y].multiSound>0&&KS.get(ksChain)[x][y].ksSoundLoop.get(KS.get(ksChain)[x][y].multiSound-1)==0) {
+        if (KS.get(ksChain)[x][y].multiSound>0&&KS.get(ksChain)[x][y].ksSoundLoop.size()>0&&KS.get(ksChain)[x][y].ksSoundLoop.get(KS.get(ksChain)[x][y].multiSound-1)==0) {
           KS.get(ksChain)[x][y].stopSound();
           KS.get(ksChain)[x][y].autorun_soundFlag=true;
         }
-        if (KS.get(ksChain)[x][y].multiLed>0&&KS.get(ksChain)[x][y].ksLedLoop.get(KS.get(ksChain)[x][y].multiLed-1)==0) {
+        if (KS.get(ksChain)[x][y].multiLed>0&&KS.get(ksChain)[x][y].ksLedLoop.size()>0&&KS.get(ksChain)[x][y].ksLedLoop.get(KS.get(ksChain)[x][y].multiLed-1)==0) {
           int c=0;
           while (c<ledstack.size()) {//pointer
             if (ledstack.get(c).bX==x&&ledstack.get(c).bY==y) {
@@ -3229,7 +3229,7 @@ class InfoViewer extends UIelement {
     boolean react() {
     if (super.react()==false)return false;//LOG_LOG
     //do nothing
-    if (pressed)render();
+    if (pressed&&mouseState==AN_PRESS)render();
     return false;
   }
   @Override

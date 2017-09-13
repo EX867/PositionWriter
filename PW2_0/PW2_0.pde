@@ -15,7 +15,8 @@ void detectProcessing() {
 }
 float Width=1420;
 float Height=920;
-String startText="PositionWriter 2.0 beta 4 (17---- build)";
+String VERSION="{\"type\"=\"beta\",\"major\"=2,\"minor\"=0,\"patch\"=0,\"build\"=4,\"build_date\"=\"17----\"}";//type=beta or production
+String startText="PositionWriter <major>.<minor> <type> [<build>] (<build_date> build)";//template for startText. see buildVersion() to get actual string.
 String title_suffix=" | Position Writer 2.0";
 String title_filename="";
 String title_keyledfilename="";
@@ -61,6 +62,9 @@ boolean jeonjehong=false;
  2.+ : note on highlight 
  ... : get developer path in code.
  2.+ : calculator support hexcode.(and some functions for color)
+ 2.+ : infoviewer design upgrade.
+ uncloud : wait uncloud update!!
+ uncloud : customize list : display date and upload state inside list.
  // ==== ERROR ==== //
  // ==== WARNING ==== //
  hardcoded 8(textEditor)
@@ -73,6 +77,7 @@ void settings() {
 //https://github.com/processing/processing/wiki/Export-Info-and-Tips
 boolean Debug=false;
 void setup() {
+  buildVersion();
   if (Debug) {
     try {
       setup_main();
@@ -176,6 +181,7 @@ void setup_main() {
   }
   //
   surface.setTitle(title_filename+title_edited+title_suffix);
+  checkVersion();
   popMatrix();
   popMatrix();
   statusR.text=startText;

@@ -40,6 +40,7 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 #### PW2_0
 * before running this inside processing, you must change `DEVELOPER_PATH` in PW2_0.pde.
 * [Beads](http://beadsproject.net) : you can install this inside processing.
+* Gradle build tool
 
 #### pwrelease.bat
 * before using this, you must change path information. read **release/readme.md**

@@ -18,6 +18,7 @@
     <element id="15" x="710" y="460" w="250" h="250">F_KEYEDIT</element>
     <element id="16" x="710" y="460" w="450" h="370">F_UNCLOUD</element>
     <element id="17" x="710" y="460" w="450" h="90">F_LOGIN</element>
+    <element id="18" x="710" y="460" w="200" h="200">F_UPDATE</element>
   </Frames>
   <UIelements>
     <!--Re-arranged-->
@@ -221,7 +222,10 @@
     <element id="177" type="TYPE_TEXTBOX" x="400" y="50" w="380" h="35" description="" title="id" text="" hint="id." numberonly="false" textsize="20">LOGIN_ID</element>
     <element id="178" type="TYPE_TEXTBOX" x="400" y="130" w="380" h="35" description="" title="password" text="" hint="pasword" numberonly="false" textsize="20">LOGIN_PASSWORD</element>
     <element id="179" type="TYPE_BUTTON" x="842" y="130" w="45" h="35" description="login!!" image="I_CONVERT.png">LOGIN_OK</element>
-    <!--179 elements-->
+    <!---->
+    <element id="180" type="TYPE_BUTTON" x="200" y="200" w="180" h="180" description="new version released. click to open download page." text="get new&#10;version" textsize="30">UPDATE_UPDATE</element>
+    <element id="181" type="TYPE_BUTTON" x="365" y="-35" w="25" h="25" description="cancel" image="I_EXIT.png">UPDATE_EXIT</element>
+    <!--181 elements-->
   </UIelements>
   <FrameData>
     <F_KEYLED>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|<!--TAB_WAVEDIT-->|STATUS_BAR_L|STATUS_BAR_R|I_CHANGETITLE|T_VELOCITY|T_HTML|T_TEXT|KEYLED_PAD|I_PLAYSTOP|I_INFRAME|I_LOOP|I_FRAMESLIDER|I_FRAMESLIDERLOOP|I_TIME1|I_LEDREFRESH|I_NUMBER1|I_NUMBER2|I_HTMLSEL|I_VELNUM|I_TEXTFIELD|I_OPENFIND|I_HTMLR|I_HTMLG|I_HTMLB|I_HTMLH|I_HTMLS|I_HTMLV|I_RECENT1|I_RECENT2|I_RECENT3|I_RECENT4|I_RECENT5|I_RECENT6|I_RECENT7|I_RECENT8|I_RECENT9|I_RECENTA|I_FINDTEXTBOX|I_REPLACETEXTBOX|I_NEXTFIND|I_PREVIOUSFIND|I_CALCULATE|I_REPLACEALL</F_KEYLED>
@@ -240,5 +244,6 @@
     <F_KEYEDIT>KEYEDIT_EXIT|KEYEDIT_INPUT</F_KEYEDIT>
     <F_UNCLOUD>UN_PRIVATE|UN_LIST|UN_USERINFO|UN_LOGIN|MC_EXIT|UN_UPLOAD|UN_UPDATE|UN_DELETE|UN_DOWNLOAD|UN_UNIPACKINFO|</F_UNCLOUD>
     <F_LOGIN>LOGIN_ID|LOGIN_PASSWORD|LOGIN_OK|MC_EXIT</F_LOGIN>
+    <F_UPDATE>UPDATE_UPDATE|UPDATE_EXIT|</F_UPDATE>
   </FrameData>
 </Data>

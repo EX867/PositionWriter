@@ -5,16 +5,80 @@ import java.text.SimpleDateFormat;
 import sojamo.drop.*;
 import java.lang.reflect.Field;
 import javax.swing.filechooser.FileSystemView;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DefaultLogger;
 SDrop drop;
 File[] fileList;
 String getDocuments() {//https://stackoverflow.com/questions/9677692/getting-my-documents-path-in-java
   return FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 }
 String getAppData() {//https://stackoverflow.com/questions/1198911/how-to-get-local-application-data-folder-in-java
-  return System.getenv("LOCALAPPDATA");
+  //https://gamedev.stackexchange.com/questions/23040/is-there-a-cross-platform-special-directory-i-can-use-for-game-save-files
+  if (platform==WINDOWS) {
+    return System.getenv("LOCALAPPDATA");
+  } else if (platform==LINUX) {
+    return System.getProperty("user.home")+"/.local/share/PositionWriter";
+  } else {
+    return System.getProperty("user.home")+"/PositionWriter";//do not support!!
+  }
 }
 String getUsername() {
   return System.getProperty("user.name");
+}
+void buildVersion() {
+  JSONObject version=new JSONObject();
+  version=parseJSONObject(VERSION);
+  startText="PositionWriter "+version.getInt("major")+"."+version.getInt("minor")+" "+version.getString("type");
+  if (version.getString("type").equals("beta")) {
+    startText=startText+" "+version.getInt("build");
+  }
+  startText=startText+" ("+version.getString("build_date")+" build)";
+}
+void checkVersion() {
+  JSONObject version=new JSONObject();
+  version=parseJSONObject(VERSION);
+  try {
+    String[] lines=loadStrings("https://ex867.github.io/PositionWriter/versioninfo");
+    JSONObject beta=parseJSONObject(lines[2].replace("<p>", "").replace("</p>", ""));//fixed 3rd line
+    JSONObject production=parseJSONObject(lines[3].replace("<p>", "").replace("</p>", ""));//fixed 4th line
+    if (version.getString("type").equals("beta")) {//if production>=current->production, beta>=current->beta
+      if (production.getInt("major")==version.getInt("major")) {//only compare if major is same.
+        if (production.getInt("minor")>version.getInt("minor")) {
+          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          return;
+        } else if (production.getInt("minor")==version.getInt("minor")&&production.getInt("patch")>version.getInt("patch")) {
+          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          return;
+        }
+      }
+      if (beta.getInt("major")==version.getInt("major")) {//only compare if major is same.
+        if (beta.getInt("minor")>version.getInt("minor")) {
+          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          return;
+        } else if (beta.getInt("minor")==version.getInt("minor")&&beta.getInt("patch")>version.getInt("patch")) {
+          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          return;
+        } else if (beta.getInt("minor")==version.getInt("minor")&&beta.getInt("patch")==version.getInt("patch")&&beta.getInt("build")==version.getInt("build")) {
+          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          return;
+        }
+      }
+    } else if (version.getString("type").equals("prodection")) {//if production>=current->production
+      if (production.getInt("major")==version.getInt("major")) {//only compare if major is same.
+        if (production.getInt("minor")>version.getInt("minor")) {
+          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          return;
+        } else if (production.getInt("minor")==version.getInt("minor")&&production.getInt("patch")>version.getInt("patch")) {
+          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          return;
+        }
+      }
+    }
+  }
+  catch(Exception e) {
+    //there is problem with internet, so ignore.
+  }
 }
 void External_setup() {
   //load path data
@@ -245,11 +309,11 @@ String getExtensionElse(String filename) {
 }
 String getFormat(String path) {
   try {
-    Path source = Paths.get(path);
+    java.nio.file.Path source = java.nio.file.Paths.get(path);
     if (source==null) {
       return "error!";
     }
-    String ret= Files.probeContentType(source);
+    String ret= java.nio.file.Files.probeContentType(source);
     if (ret==null)return "unknown";
     if (ret.equals("null"))return "unknown";
     else return ret;
@@ -345,12 +409,12 @@ String writeFile(String path, String text) {
 String newFile() {
   long time = System.currentTimeMillis(); 
   SimpleDateFormat dayTime = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
-  return joinPath(GlobalPath, joinPath(LedSavePath, dayTime.format(new Date(time))+".txt"));
+  return joinPath(GlobalPath, joinPath(LedSavePath, dayTime.format(new java.util.Date(time))+".txt"));
 }
 String newFolder() {
   long time = System.currentTimeMillis(); 
   SimpleDateFormat dayTime = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
-  return joinPath(GlobalPath, joinPath(KeySoundSavePath, dayTime.format(new Date(time))));
+  return joinPath(GlobalPath, joinPath(KeySoundSavePath, dayTime.format(new java.util.Date(time))));
 }
 /* autosave vars */
 long autosave_start=0;
@@ -368,7 +432,7 @@ void autoSaveWrite() {
   if (title_edited.equals("*")==false)return;
   String filename=getNotDuplicatedFilename(joinPath(GlobalPath, AutoSavePath), getFileName(title_filename));
   writeFile(filename, Lines.toString());
-  printLog("autoSaveWrite()", "autoSaved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(System.currentTimeMillis()))+" : "+filename);
+  printLog("autoSaveWrite()", "autoSaved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new java.util.Date(System.currentTimeMillis()))+" : "+filename);
   setStatusR("Autosaved : "+filename);
   //status=autosaved;
 }
@@ -395,7 +459,7 @@ void saveWorkingFile() {
     analyzer.writeKS(filename, false);
     loadedOnce_keySound=true;
   }
-  printLog("saveWrite()", "saved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(System.currentTimeMillis()))+" : "+filename);
+  printLog("saveWrite()", "saved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new java.util.Date(System.currentTimeMillis()))+" : "+filename);
   setStatusR("Saved : "+filename);
   title_edited="";
   surface.setTitle(title_filename+title_edited+title_suffix);
@@ -413,7 +477,35 @@ void saveWorkingFile_unipad() {
     }
     analyzer.writeKS(getNotDuplicatedFilename(filename), true);
   }
-  printLog("saveWrite_unipad()", "saved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(System.currentTimeMillis()))+" : "+filename);
+  printLog("saveWrite_unipad()", "saved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new java.util.Date(System.currentTimeMillis()))+" : "+filename);
   setStatusR("Exported : "+filename);
   surface.setTitle(title_filename+title_edited+title_suffix);
+}
+//=======================================================================================================
+public static void generateApkThroughAnt(String buildPath) {
+  //https://stackoverflow.com/questions/19512088/how-to-generate-apk-file-programmatically-through-java-code
+  File antBuildFile = new File(buildPath);
+  Project p = new Project();
+  p.setUserProperty("ant.file", antBuildFile.getAbsolutePath());
+  DefaultLogger consoleLogger = new DefaultLogger();
+  consoleLogger.setErrorPrintStream(System.err);
+  consoleLogger.setOutputPrintStream(System.out);
+  consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
+  p.addBuildListener(consoleLogger);
+  BuildException ex = null;
+  try {
+    p.fireBuildStarted();
+    p.init();
+    ProjectHelper helper = ProjectHelper.getProjectHelper();
+    p.addReference("ant.projectHelper", helper);
+    helper.parse(p, antBuildFile);
+    p.executeTarget("clean");
+    p.executeTarget("release");
+  } 
+  catch (BuildException e) {
+    ex = e;
+  } 
+  finally {
+    p.fireBuildFinished(ex);
+  }
 }
