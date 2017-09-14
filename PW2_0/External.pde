@@ -5,9 +5,6 @@ import java.text.SimpleDateFormat;
 import sojamo.drop.*;
 import java.lang.reflect.Field;
 import javax.swing.filechooser.FileSystemView;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DefaultLogger;
 SDrop drop;
 File[] fileList;
 String getDocuments() {//https://stackoverflow.com/questions/9677692/getting-my-documents-path-in-java
@@ -482,30 +479,3 @@ void saveWorkingFile_unipad() {
   surface.setTitle(title_filename+title_edited+title_suffix);
 }
 //=======================================================================================================
-public static void generateApkThroughAnt(String buildPath) {
-  //https://stackoverflow.com/questions/19512088/how-to-generate-apk-file-programmatically-through-java-code
-  File antBuildFile = new File(buildPath);
-  Project p = new Project();
-  p.setUserProperty("ant.file", antBuildFile.getAbsolutePath());
-  DefaultLogger consoleLogger = new DefaultLogger();
-  consoleLogger.setErrorPrintStream(System.err);
-  consoleLogger.setOutputPrintStream(System.out);
-  consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
-  p.addBuildListener(consoleLogger);
-  BuildException ex = null;
-  try {
-    p.fireBuildStarted();
-    p.init();
-    ProjectHelper helper = ProjectHelper.getProjectHelper();
-    p.addReference("ant.projectHelper", helper);
-    helper.parse(p, antBuildFile);
-    p.executeTarget("clean");
-    p.executeTarget("release");
-  } 
-  catch (BuildException e) {
-    ex = e;
-  } 
-  finally {
-    p.fireBuildFinished(ex);
-  }
-}

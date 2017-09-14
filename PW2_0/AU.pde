@@ -5,11 +5,11 @@ import it.sauronsoftware.jave.*;
 Visualizer visualizer;
 //
 MidiDevice.Info[] MidiDevices;
-ArrayList<Receiver> MidiReceivers=new ArrayList<Receiver>();//store successful recievers in list.
+ArrayList<javax.sound.midi.Receiver> MidiReceivers=new ArrayList<javax.sound.midi.Receiver>();//store successful recievers in list.
 int MidiStart=35;//LPD8 custom value
 int MidiInterval=8;
 int MidiScale=1;
-public class MidiInputReceiver implements Receiver {//https://stackoverflow.com/questions/6937760/java-getting-input-from-midi-keyboard
+public class MidiInputReceiver implements javax.sound.midi.Receiver {//https://stackoverflow.com/questions/6937760/java-getting-input-from-midi-keyboard
   public String name;
   public MidiInputReceiver(String name) {
     this.name = name;
@@ -57,7 +57,7 @@ void reloadMidiDevices() {
       //does the device have any transmitters? - if it does, add it to the device list
       print(MidiDevices[i]+" ");
       List<Transmitter> transmitters = device.getTransmitters();//get all transmitters
-      ArrayList<Receiver> receivers=new ArrayList<Receiver>();
+      ArrayList<javax.sound.midi.Receiver> receivers=new ArrayList<javax.sound.midi.Receiver>();
       for (int j = 0; j<transmitters.size(); j++) {//and for each transmitter
         receivers.add(new MidiInputReceiver(device.getDeviceInfo().toString()));
         transmitters.get(j).setReceiver(receivers.get(receivers.size()-1));
