@@ -186,6 +186,7 @@ void setup_main() {
   popMatrix();
   statusR.text=startText;
   statusR.render();
+  loadDefaultImages();
   uncloud_setup();
 }
 long drawStart=0;
@@ -252,7 +253,7 @@ void testSetup() {
 
 void editable_keyTyped() {
   if (key=='a'&&shortcutExcept()) {
-    println(currentLedFrame);
+    build_windows("com.kimjisub.launchpad.theme.test", "test", "pw2.0", "test test", "test theme", color(0), color(50), color(0));
   }
   int a=1;
   while (a<Shortcuts.length) {

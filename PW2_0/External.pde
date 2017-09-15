@@ -329,6 +329,7 @@ boolean EX_fileCopy(String source, String target) {//http://www.yunsobi.com/blog
   FileChannel fcout = null;
   boolean ret=true;
   try {
+    new File(target).getParentFile().mkdirs();
     inputStream = new FileInputStream(sourceFile);
     outputStream = new FileOutputStream(target);
     fcin = inputStream.getChannel();
