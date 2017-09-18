@@ -52,4 +52,6 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 #### PW2_0
 * [Jave (ffmpeg wrapper)](http://www.sauronsoftware.it/projects/jave/) : included in code folder.
 * [sDrop](http://www.sojamo.de/libraries/drop/) : drag-and-drop support, library mod included in library filder.
+* Android dx Dexer (from [APDE](https://github.com/Calsign/APDE) repos), sdklib (from android sdk)
+* ZipSigner
 * [RubberBand tine stretcher JNI](https://github.com/JorenSix/RubberBandJNI)

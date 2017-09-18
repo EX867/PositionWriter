@@ -479,4 +479,15 @@ void saveWorkingFile_unipad() {
   setStatusR("Exported : "+filename);
   surface.setTitle(title_filename+title_edited+title_suffix);
 }
+void deleteFile(String file) throws IOException {
+  deleteFile(new File(file));
+}
+void deleteFile(File f) throws IOException {//https://stackoverflow.com/questions/779519/delete-directories-recursively-in-java
+  if (f.isDirectory()) {
+    for (File c : f.listFiles())
+      deleteFile(c);
+  }
+  if (!f.delete())
+    throw new FileNotFoundException("Failed to delete file: " + f);
+}
 //=======================================================================================================

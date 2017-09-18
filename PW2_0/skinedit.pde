@@ -1,5 +1,6 @@
 //https://github.com/Calsign/APDE/blob/master/APDE/src/main/java/com/calsignlabs/apde/build/Build.java
 //https://spin.atomicobject.com/2011/08/22/building-android-application-bundles-apks-by-hand/
+import kellinwood.security.zipsigner.ZipSigner;
 import com.android.sdklib.build.ApkBuilder;
 import org.eclipse.jdt.internal.compiler.batch.Main;
 import java.io.FilenameFilter;
@@ -43,7 +44,8 @@ void loadDefaultImages() {
   skin_coverMiddle=loadImage("template/skin/phantom_.png");
 }
 
-void build_windows(String packageName, String appName, String author, String description, String themeName, color actionBar, color upperActionBar, color text) {
+void build_windows(String packageName, String appName, String author, String description, String themeName, color text) {
+  color actionBar=color(0);
   try {
     String datapath="";
     if (DEVELOPER_BUILD) {
@@ -52,10 +54,12 @@ void build_windows(String packageName, String appName, String author, String des
       datapath=new File("data").getAbsolutePath();
     }
     String buildPath=joinPath(GlobalPath, "Temp/"+appName);
-    //create files for build.
+    surface.setTitle(title_filename+title_edited+title_suffix+" - deleting old files...");
+    if (new File(buildPath).exists())deleteFile(buildPath);
+    surface.setTitle(title_filename+title_edited+title_suffix+" - creating files for build...");
     //packageName=com.kimjisub.launchpad.theme.customPackageName;
     surface.setTitle(title_filename+title_edited+title_suffix+" - creating build files...");
-    String drawable=joinPath(buildPath, "src/main/res/drawable/");
+    String drawable=joinPath(buildPath, "res/drawable/");
     skin_appIcon.save(drawable+"appicon.png");
     skin_themeIcon.save(drawable+"theme_ic.png");
     skin_btn.save(drawable+"btn.png");
@@ -74,42 +78,45 @@ void build_windows(String packageName, String appName, String author, String des
     skin_background.save(drawable+"playbg.png");
     skin_cover.save(drawable+"phantom.png");
     skin_coverMiddle.save(drawable+"phantom_.png");
-    writeFile(joinPath(buildPath, "src/main/java/"+packageName.replace(".", "/")+"/MainActivity.xml"), build_generateMainActivity(packageName));
-    EX_fileCopy(joinPath(datapath, "template/skin/xml_next.xml"), joinPath(buildPath, "src/main/res/drawable/xml_next.xml"));
-    EX_fileCopy(joinPath(datapath, "template/skin/xml_prev.xml"), joinPath(buildPath, "src/main/res/drawable/xml_prev.xml"));
-    EX_fileCopy(joinPath(datapath, "template/skin/xml_pause.xml"), joinPath(buildPath, "src/main/res/drawable/xml_pause.xml"));
-    EX_fileCopy(joinPath(datapath, "template/skin/xml_play.xml"), joinPath(buildPath, "src/main/res/drawable/xml_play.xml"));
-    EX_fileCopy(joinPath(datapath, "template/skin/activity_main.xml"), joinPath(buildPath, "src/main/res/layout/activity_main.xml"));
-    writeFile(joinPath(buildPath, "src/main/res/values/colors.xml"), build_generateColors(actionBar, upperActionBar, text));
-    writeFile(joinPath(buildPath, "src/main/res/values/styles.xml"), build_generateStyles());
-    writeFile(joinPath(buildPath, "src/main/res/values/strings.xml"), build_generateStrings(appName, author, description, themeName));
-    writeFile(joinPath(buildPath, "src/main/AndroidManifest.xml"), build_generateManifest(packageName));
+    writeFile(joinPath(buildPath, "src/java/"+packageName.replace(".", "/")+"/MainActivity.java"), build_generateMainActivity(packageName));
+    EX_fileCopy(joinPath(datapath, "template/skin/xml_next.xml"), joinPath(buildPath, "res/drawable/xml_next.xml"));
+    EX_fileCopy(joinPath(datapath, "template/skin/xml_prev.xml"), joinPath(buildPath, "res/drawable/xml_prev.xml"));
+    EX_fileCopy(joinPath(datapath, "template/skin/xml_pause.xml"), joinPath(buildPath, "res/drawable/xml_pause.xml"));
+    EX_fileCopy(joinPath(datapath, "template/skin/xml_play.xml"), joinPath(buildPath, "res/drawable/xml_play.xml"));
+    EX_fileCopy(joinPath(datapath, "template/skin/activity_main.xml"), joinPath(buildPath, "res/layout/activity_main.xml"));
+    writeFile(joinPath(buildPath, "res/values/colors.xml"), build_generateColors(actionBar, text));
+    writeFile(joinPath(buildPath, "res/values/styles.xml"), build_generateStyles());
+    writeFile(joinPath(buildPath, "res/values/strings.xml"), build_generateStrings(appName, author, description, themeName));
+    writeFile(joinPath(buildPath, "AndroidManifest.xml"), build_generateManifest(packageName));
+    new File(joinPath(buildPath, "gen/com/kimjisub/launchpad/theme/test/R.java")).getParentFile().mkdirs();
+    new File(joinPath(buildPath, "gen/com/kimjisub/launchpad/theme/test/R.java")).createNewFile();
     //Run AAPT
     surface.setTitle(title_filename+title_edited+title_suffix+" - running aapt...");
     List<String> cmd = new ArrayList<String>();
     cmd.add(joinPath(datapath, "builder")+"/aapt.exe");
     cmd.add("package");
-    cmd.add("-v");
+    //cmd.add("-v");
     cmd.add("-f");
     cmd.add("-m");
     cmd.add("-S");
-    cmd.add("\""+joinPath(buildPath, "src/main/res")+"\"");
+    cmd.add("\""+joinPath(buildPath, "res")+"\"");
     cmd.add("-J");
     cmd.add(joinPath(buildPath, "gen"));
     cmd.add("-M");
-    cmd.add("\""+joinPath(buildPath, "src/main/AndroidManifest.xml")+"\"");
+    cmd.add("\""+joinPath(buildPath, "AndroidManifest.xml")+"\"");
     cmd.add("-I");
-    cmd.add("\""+joinPath(GlobalPath, "Assets/android.jar")+"\"");
-    /*cmd.add("-j");
-     cmd.add("\""+joinPath(datapath, "builder/libs/android-support-v7-appcompat.jar")+"\"");//android-support-v7-appcompat.jar*/
+    cmd.add("\""+joinPath(GlobalPath, "External/android.jar")+"\"");
+    /*cmd.add("-S");
+     cmd.add("\""+joinPath(datapath, "builder/libs/android-support-v7-appcompat.jar")+"\"");*/
     cmd.add("-F");
     cmd.add("\""+joinPath(buildPath, "bin/"+appName+".apk.res")+"\"");
+    cmd.add("--generate-dependencies");
     ProcessBuilder builder = new ProcessBuilder(cmd);
     builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
     builder.redirectError(ProcessBuilder.Redirect.INHERIT);
     Process aaptProcess = builder.start();
     int code = aaptProcess.waitFor();
-    if (code != 0) {
+    if (code != 0||new File(joinPath(buildPath, "bin/"+appName+".apk.res")).exists()==false) {
       surface.setTitle(title_filename+title_edited+title_suffix);
       System.err.println("AAPT exited with error code " + code);
       return;
@@ -120,14 +127,14 @@ void build_windows(String packageName, String appName, String author, String des
     String[] ecjArgs = {
       "-warn:-unusedImport", // Disable warning for unused imports
       "-extdirs", joinPath(datapath, "builder"), // The location of the external libraries
-      "-bootclasspath", joinPath(datapath, "builder/android.jar"), // The location of android.jar
-      "-classpath", joinPath(buildPath, "bin") // The location of the source folder
-      + ":" + joinPath(buildPath, "gen"), // The location of the generated folder
+      "-bootclasspath", joinPath(GlobalPath, "External/android.jar"), // The location of android.jar
+      "-classpath", joinPath(buildPath, "src"), // The location of the source folder
+      "-classpath", joinPath(buildPath, "gen"), // The location of the generated folder
       "-1.6", 
       "-target", "1.6", // Target Java level
       "-proc:none", // Disable annotation processors...
       "-d", joinPath(buildPath, "bin/classes"), // The location of the output folder
-      joinPath(joinPath(buildPath, "src"), joinPath("main/java", packageName.replace(".", "/")+"/MainActivity.java")) // The location of the main activity
+      joinPath(joinPath(buildPath, "src"), joinPath("java", packageName.replace(".", "/")+"/MainActivity.java")) // The location of the main activity
     };
     if (main.compile(ecjArgs)) {
       println("compile success!");
@@ -153,21 +160,17 @@ void build_windows(String packageName, String appName, String author, String des
     }
     //Run DX Merger
     surface.setTitle(title_filename+title_edited+title_suffix+" - merging dex files...");
-    if (new File(joinPath(datapath, "builder/android.jar")).isFile()==false) {//dex if no dex file.
-      dexJar(joinPath(datapath, "builder/android.jar"), joinPath(datapath, "builder/android.dex"));
-    }
-    if (new File(joinPath(datapath, "builder/libs/android-support-v7-appcompat.jar")).isFile()==false) {
-      dexJar(joinPath(datapath, "builder/libs/android-support-v7-appcompat.jar"), joinPath(datapath, "builder/libs/android-support-v7-appcompat.dex"));
-    }
-    String[] args = new String[4];
+    //if (new File(joinPath(datapath, "builder/libs/android-support-v7-appcompat.dex")).isFile()==false) {
+    //  dexJar(joinPath(datapath, "builder/libs/android-support-v7-appcompat.jar"), joinPath(datapath, "builder/libs/android-support-v7-appcompat.dex"));
+    //}
+    String[] args = new String[2];
     args[0] = joinPath(buildPath, "bin/classes.dex"); //The location of the output DEX class file
     args[1] = joinPath(buildPath, "bin/main-classes.dex"); //The location of the sketch's dexed classes
     //Apparently, this tool accepts as many dex files as we want to throw at it...
-    args[2]=joinPath(datapath, "builder/android.dex");
-    args[3]=joinPath(datapath, "builder/libs/android-support-v7-appcompat.dex");
+    //args[2]=joinPath(datapath, "builder/libs/android-support-v7-appcompat.dex");
     com.androidjarjar.dx.merge.DexMerger.main(args);
     //Run APKBuilder
-    surface.setTitle(title_filename+title_edited+title_suffix+" - building aspk...");
+    surface.setTitle(title_filename+title_edited+title_suffix+" - building apk...");
     //Create the builder with the basic files
     ApkBuilder apkbuilder = new ApkBuilder(new File(joinPath(buildPath, "bin/" + appName + ".apk.unsigned")), //The location of the output APK file (unsigned)
       new File(joinPath(buildPath, "bin/" + appName + ".apk.res")), //The location of the .apk.res file
@@ -178,6 +181,13 @@ void build_windows(String packageName, String appName, String author, String des
     apkbuilder.addSourceFolder(new File(joinPath(buildPath, "src"))); //The location of the source folder
     //Seal the APK
     apkbuilder.sealApk();
+    surface.setTitle(title_filename+title_edited+title_suffix+" - signing apk with default keystore...");
+    String inFilename =joinPath(buildPath, "bin/" + appName + ".apk.unsigned");
+    String outFilename = joinPath(buildPath, "bin/" + appName + ".apk");
+    ZipSigner signer = new ZipSigner();
+    signer.setKeymode("testkey");
+    signer.signZip(inFilename, outFilename);
+    surface.setTitle(title_filename+title_edited+title_suffix);
   }
   catch(Exception e) {
     surface.setTitle(title_filename+title_edited+title_suffix);
@@ -196,7 +206,7 @@ public static void dexJar(String inputPath, String outputPath) {
     int resultCode = com.androidjarjar.dx.command.dexer.Main.run(dexArgs);
 
     if (resultCode != 0) {
-      System.err.println("DX Dexer failed, error code: " + resultCode);
+      System.err.println("DX Dexer failed, error code : " + resultCode);
     }
   } 
   catch (Exception e) {
@@ -215,20 +225,16 @@ String build_generateStrings(String appName, String author, String description, 
 }
 String build_generateStyles() {
   String ret="<resources>"+
-    "  <style name=\"AppTheme\" parent=\"Theme.AppCompat.Light.DarkActionBar\">"+
-    "    <item name=\"colorPrimary\">@color/colorPrimary</item>"+
-    "    <item name=\"colorPrimaryDark\">@color/colorPrimaryDark</item>"+
-    "    <item name=\"colorAccent\">@color/colorAccent</item>"+
+    "  <style name=\"AppTheme\" parent=\"android:style/Theme.Holo.Light.DarkActionBar\">"+//Theme.AppCompat.Light.DarkActionBar\">"+
+    //"    <item name=\"@android:actionBarColor\">@color/colorPrimary</item>"+//colorPrimary
     "  </style>"+
     "</resources>";
   return ret;
 }
-String build_generateColors(color actionBar, color upperActionBar, color text) {
+String build_generateColors(color actionBar, color text) {
   String ret="<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
     "<resources>"+
     "  <color name=\"colorPrimary\">#"+hex(actionBar).toUpperCase()+"</color>"+//default FF3F51B5
-    "  <color name=\"colorPrimaryDark\">#"+hex(upperActionBar).toUpperCase()+"</color>"+//default FF303F9F
-    "  <color name=\"colorAccent\">#FFFF4081</color>"+
     "  <color name=\"text1\">#"+hex(text).toUpperCase()+"</color>"+//default FFFFFFFF
     "</resources>";
   return ret;
@@ -255,9 +261,10 @@ String build_generateManifest(String packageName) {
 }
 String build_generateMainActivity(String packageName) {
   String ret="package "+packageName+";"+
-    "import android.support.v7.app.AppCompatActivity;"+
+    //"import android.support.v7.app.AppCompatActivity;"+
+    "import android.app.Activity;"+
     "import android.os.Bundle;"+
-    "public class MainActivity extends AppCompatActivity {"+
+    "public class MainActivity extends Activity {"+//AppCompatActivity {"+
     "    @Override"+
     "    protected void onCreate(Bundle savedInstanceState) {"+
     "        super.onCreate(savedInstanceState);"+

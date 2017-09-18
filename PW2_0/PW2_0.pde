@@ -253,7 +253,7 @@ void testSetup() {
 
 void editable_keyTyped() {
   if (key=='a'&&shortcutExcept()) {
-    build_windows("com.kimjisub.launchpad.theme.test", "test", "pw2.0", "test test", "test theme", color(0), color(50), color(0));
+    build_windows("com.kimjisub.launchpad.theme.test", "test", "pw2.0", "test test", "test theme", color(255));
   }
   int a=1;
   while (a<Shortcuts.length) {
