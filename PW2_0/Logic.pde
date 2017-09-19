@@ -7,6 +7,8 @@ String AutoSavePath="";//GlobalPath+(Autosaved)
 String LedSavePath="";//GlobalPath+(Led_saved)
 String KeySoundSavePath="";//GlobalPath+(KeySound_saved)
 String ProjectsPath="";//GlobalPath+(Projects)
+String TempPath="";//GlobalPath+(Temp)
+String ExternalPath="";//GlobalPath+(External)
 //
 int ButtonX=8;
 int ButtonY=8;
@@ -37,9 +39,6 @@ int ksY=0;
 String userMacro1="";
 String userMacro2="";
 //option
-static final int AUTOINPUT=1;
-static final int MANUALINPUT=2;
-static final int CYXMODE=3;
 boolean autoSave=true;
 boolean ignoreMc=false;
 int Mode=AUTOINPUT;

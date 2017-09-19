@@ -32,7 +32,7 @@ report that bug and what you did to <u>karnosex867@gmail.com</u>
 
 ---------
 ## Build
-You can execute this same like other Processing files with set dependencies, open in procsessing, and hit `Ctrl+R` !<br>
+You can execute this same like other Processing files with set dependencies, open in processing, and hit `Ctrl+R` !<br>
 but if you want to build setup.exe, it is complicated. see [Dependencies](https://github.com/EX867/PositionWriter#Dependencies).
 
 ---------
@@ -40,7 +40,6 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 #### PW2_0
 * before running this inside processing, you must change `DEVELOPER_PATH` in PW2_0.pde.
 * [Beads](http://beadsproject.net) : you can install this inside processing.
-* Gradle build tool
 
 #### pwrelease.bat
 * before using this, you must change path information. read **release/readme.md**
@@ -51,7 +50,9 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 ## Libraries using
 #### PW2_0
 * [Jave (ffmpeg wrapper)](http://www.sauronsoftware.it/projects/jave/) : included in code folder.
-* [sDrop](http://www.sojamo.de/libraries/drop/) : drag-and-drop support, library mod included in library filder.
-* Android dx Dexer (from [APDE](https://github.com/Calsign/APDE) repos), sdklib (from android sdk)
-* ZipSigner
+* [sDrop](http://www.sojamo.de/libraries/drop/) : drag-and-drop support, library mod included in library folder.
+* Android dx Dexer, Eclipse compiler (from [APDE](https://github.com/Calsign/APDE) repo)
+* sdklib (from android sdk)
+* [ZipSigner](https://github.com/simtel12/zip-signer)
+* Base64 Encoder from [BouncyCastleProvider](https://www.bouncycastle.org)
 * [RubberBand tine stretcher JNI](https://github.com/JorenSix/RubberBandJNI)

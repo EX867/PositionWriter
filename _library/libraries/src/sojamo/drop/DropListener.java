@@ -56,18 +56,21 @@ public abstract class DropListener {
 
   protected final void updateLocation(float theX, float theY) {
     update(theX,theY);//needed!
-    if(isInside(theX, theY)) {
-      if(isInsideTarget== false) {
-        isInsideTarget = true;
-        dropEnter();
-      }
-    } else {
-      if(isInsideTarget==true) {
-        isInsideTarget = false;
-        dropLeave();
+    if(isSpecificTargetLocation){
+      if(isInside(theX, theY)) {
+        if(isInsideTarget== false) {
+          isInsideTarget = true;
+          dropEnter();
+        }
+      } else {
+        if(isInsideTarget==true) {
+          isInsideTarget = false;
+          dropLeave();
+        }
       }
     }
   }
+  public void dragExit(){}
   public void update(float x,float y){}
 
   public void dropEnter() {}

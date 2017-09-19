@@ -23,6 +23,13 @@ String getAppData() {//https://stackoverflow.com/questions/1198911/how-to-get-lo
 String getUsername() {
   return System.getProperty("user.name");
 }
+String getDataPath() {
+  if (DEVELOPER_BUILD) {
+    return new File(joinPath(DEVELOPER_PATH, "data")).getAbsolutePath();
+  } else {
+    return new File("data").getAbsolutePath();
+  }
+}
 void buildVersion() {
   JSONObject version=new JSONObject();
   version=parseJSONObject(VERSION);
@@ -85,7 +92,7 @@ void External_setup() {
   WavEditPath=joinPath(GlobalPath, "wavedit");
   //
   XML XmlData;
-  /*if (new File("Path.xml").exists())*/  XmlData=loadXML("Path.xml");//WARNING!! if Path.xml not exists, program will not work correctly.
+  XmlData=loadXML("Path.xml");//WARNING!! if Path.xml not exists, program will not work correctly.
   XML Data=null;
   if (XmlData!=null)Data=XmlData.getChild("GlobalPath");//
   if (Data==null)GlobalPath=joinPath(getDocuments(), "PositionWriter");
@@ -94,19 +101,21 @@ void External_setup() {
   if (XmlData!=null)Data=XmlData.getChild("autosaved");//
   if (Data==null)AutoSavePath="Autosaved";
   else AutoSavePath=Data.getContent().replace("?", username);
-  printLog("AutoSavePath", AutoSavePath);
   if (XmlData!=null)Data=XmlData.getChild("led_saved");//
   if (Data==null)LedSavePath="Led_saved";
   else LedSavePath=Data.getContent().replace("?", username);
-  printLog("LedSavePath", LedSavePath);
   if (XmlData!=null)Data=XmlData.getChild("keySound_saved");//
   if (Data==null)KeySoundSavePath="KeySound_saved";
   else KeySoundSavePath=Data.getContent().replace("?", username);
-  printLog("KeySoundSavePath", KeySoundSavePath);
   if (XmlData!=null)Data=XmlData.getChild("projects");//
   if (Data==null)ProjectsPath="Projects";
   else ProjectsPath=Data.getContent().replace("?", username);
-  printLog("ProjectsPath", ProjectsPath);
+  if (XmlData!=null)Data=XmlData.getChild("temp");//
+  if (Data==null)TempPath="Temp";
+  else TempPath=Data.getContent().replace("?", username);
+  if (XmlData!=null)Data=XmlData.getChild("external");//
+  if (Data==null)ExternalPath="External";
+  else ExternalPath=Data.getContent().replace("?", username);
   //...https://stackoverflow.com/questions/1555658/is-it-possible-in-java-to-access-private-fields-via-reflection
   try {
     Field f= surface.getClass().getDeclaredField("canvas");
@@ -114,7 +123,31 @@ void External_setup() {
     drop=new SDrop((java.awt.Canvas)f.get(surface));
     drop.addDropListener(new DropListener() {
       @Override
+        public void dragExit() {
+        Overlay=null;
+      }
+      @Override
+        public void update(float x, float y) {
+        x=x/scale;
+        y=y/scale;
+        if (currentFrame==1) {
+          setOverlay(0, 0, Width, Height);
+        } else if (currentFrame==2) {
+          int tempx=keySoundPad.getButtonXByX((int)x);
+          int tempy=keySoundPad.getButtonYByY((int)y);
+          if (tempx!=-1&&tempy!=-1) {
+            setOverlay(keySoundPad.getButtonBounds(tempx, tempy));
+          } else {
+            setOverlay(0, 0, Width, Height);
+          }
+        } else if (currentFrame==19) {//skinedit
+        }
+      }
+      @Override
         public void dropEvent(DropEvent de) {
+        Overlay=null;
+        float x=de.x()/scale;
+        float y=de.y()/scale;
         try {
           String filename=de.file().getAbsolutePath().replace("\\", "/");
           if (filename==null)return;
@@ -128,18 +161,30 @@ void External_setup() {
           } else if (currentFrame==2) {
             File file=new File(filename);
             if (file.isFile()) {
+              int ksx=ksX;
+              int ksy=ksY;
+              int tempx=keySoundPad.getButtonXByX((int)x);
+              int tempy=keySoundPad.getButtonYByY((int)y);
+              if (tempx!=-1&&tempy!=-1) {
+                ksx=tempx;
+                ksy=tempy;
+              }
               if (isSoundFile(file)) {
                 int id=getUIid("I_SOUNDVIEW");
-                KS.get(ksChain)[ksX][ksY].loadSound(file.getAbsolutePath().replace("\\", "/"));
-                ((ScrollList)UI[id]).setItems(KS.get(ksChain)[ksX][ksY].ksSound.toArray(new String[0]));
+                KS.get(ksChain)[ksx][ksy].loadSound(file.getAbsolutePath().replace("\\", "/"));
                 skipRendering=true;
-                ((Button)UI[getUIid("T_SOUNDVIEW")]).onRelease();
+                if (ksx==ksX&&ksy==ksY) {
+                  ((ScrollList)UI[id]).setItems(KS.get(ksChain)[ksx][ksy].ksSound.toArray(new String[0]));
+                  ((Button)UI[getUIid("T_SOUNDVIEW")]).onRelease();
+                }
               } else {
                 int id=getUIid("I_LEDVIEW");
-                KS.get(ksChain)[ksX][ksY].loadLed(file.getAbsolutePath().replace("\\", "/"));
-                ((ScrollList)UI[id]).setItems(KS.get(ksChain)[ksX][ksY].ksLedFile.toArray(new String[0]));
+                KS.get(ksChain)[ksx][ksy].loadLed(file.getAbsolutePath().replace("\\", "/"));
                 skipRendering=true;
-                ((Button)UI[getUIid("T_LEDVIEW")]).onRelease();
+                if (ksx==ksX&&ksy==ksY) {
+                  ((ScrollList)UI[id]).setItems(KS.get(ksChain)[ksx][ksy].ksLedFile.toArray(new String[0]));
+                  ((Button)UI[getUIid("T_LEDVIEW")]).onRelease();
+                }
               }
               title_edited="*";
               surface.setTitle(title_filename+title_edited+title_suffix);

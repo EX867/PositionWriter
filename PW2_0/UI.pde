@@ -54,9 +54,6 @@ void createMissingFiles() {
   if (new File(joinPath(datapath, "Path.xml")).exists()==false) {
     EX_fileCopy(joinPath(datapath, "Path_default.xml"), joinPath(datapath, "Path.xml"));
   }
-  if (new File(joinPath(datapath, "Settings.xml")).exists()==false) {
-    EX_fileCopy(joinPath(datapath, "Settings_default.xml"), joinPath(datapath, "Settings.xml"));
-  }
   if (new File(joinPath(datapath, "Colors.xml")).exists()==false) {
     EX_fileCopy(joinPath(datapath, "Colors_default.xml"), joinPath(datapath, "Colors.xml"));
   }
@@ -67,15 +64,22 @@ void createMissingFiles() {
 void UI_load() {
   // ========= get XML data ========== //
   //load other external data
-  XML XmlData=loadXML("Colors.xml");
+  XML XmlData=loadXML("Colors_default.xml");
+  XML CustomXmlData=loadXML("Colors.xml");
   XML[] Datas=XmlData.getChildren("element");
+  XML[] CustomDatas=CustomXmlData.getChildren("element");
   UIcolors=new color[Datas.length];
   UIcolornames=new String[Datas.length];
   int a=0;
   while (a<Datas.length) {
     int id=Datas[a].getInt("id");
-    UIcolors[id]=color(int(Datas[a].getFloat("r")), int(Datas[a].getFloat("g")), int(Datas[a].getFloat("b")), int(Datas[a].getFloat("a")));
-    UIcolornames[id]=Datas[a].getContent();
+    if (a<CustomDatas.length) {
+      UIcolors[id]=color(int(CustomDatas[a].getFloat("r")), int(CustomDatas[a].getFloat("g")), int(CustomDatas[a].getFloat("b")), int(CustomDatas[a].getFloat("a")));
+      UIcolornames[id]=CustomDatas[a].getContent();
+    } else {
+      UIcolors[id]=color(int(Datas[a].getFloat("r")), int(Datas[a].getFloat("g")), int(Datas[a].getFloat("b")), int(Datas[a].getFloat("a")));
+      UIcolornames[id]=Datas[a].getContent();
+    }
     a=a+1;
   }
   // ========= get XML data ========== //
@@ -85,21 +89,27 @@ void UI_load() {
   if (MidiInterval<0)MidiInterval=max(1, abs(MidiInterval));
   MidiScale=XmlData.getChild("Scale").getInt("value", MidiScale);
   // ========= get XML data ========== //
-  XmlData=loadXML("Shortcuts.xml");
+  XmlData=loadXML("Shortcuts_default.xml");
+  CustomXmlData=loadXML("Shortcuts.xml");
   XML[] internals=XmlData.getChildren("internal");
-  XML[] externals=XmlData.getChildren("external");
-  Shortcuts=new Shortcut[internals.length+externals.length+1];
+  XML[] Custom_internals=XmlData.getChildren("internal");
+  XML[] Custom_externals=XmlData.getChildren("external");
+  Shortcuts=new Shortcut[internals.length+Custom_externals.length+1];
   a=0;
   Datas=internals;
   //Shortcut(int ID_,String name_, int FunctionId_, boolean ctrl_, boolean alt_, boolean shift_, int key_, int keyCode_, String textEditor_, int frame_,String text_) {
   while (a<internals.length) {
     int id=Datas[a].getInt("id");
-    Shortcuts[id]=new Shortcut(id, Datas[a].getContent(), getFunctionId(Datas[a].getContent()), toBoolean(Datas[a].getString("ctrl")), toBoolean(Datas[a].getString("alt")), toBoolean(Datas[a].getString("shift")), Datas[a].getInt("key"), Datas[a].getInt("keycode"), Datas[a].getString("textEditor"), Datas[a].getInt("frame"), "", "", Datas[a].getString("description", ""));
+    if (a<Custom_internals.length) {
+      Shortcuts[id]=new Shortcut(id, Custom_internals[a].getContent(), getFunctionId(Custom_internals[a].getContent()), toBoolean(Custom_internals[a].getString("ctrl")), toBoolean(Custom_internals[a].getString("alt")), toBoolean(Custom_internals[a].getString("shift")), Custom_internals[a].getInt("key"), Custom_internals[a].getInt("keycode"), Custom_internals[a].getString("textEditor"), Custom_internals[a].getInt("frame"), "", "", Custom_internals[a].getString("description", ""));
+    } else {
+      Shortcuts[id]=new Shortcut(id, Datas[a].getContent(), getFunctionId(Datas[a].getContent()), toBoolean(Datas[a].getString("ctrl")), toBoolean(Datas[a].getString("alt")), toBoolean(Datas[a].getString("shift")), Datas[a].getInt("key"), Datas[a].getInt("keycode"), Datas[a].getString("textEditor"), Datas[a].getInt("frame"), "", "", Datas[a].getString("description", ""));
+    }
     a=a+1;
   }
   a=0;
-  Datas=externals;
-  while (a<externals.length) {
+  Datas=Custom_externals;
+  while (a<Custom_externals.length) {
     int id=Datas[a].getInt("id");//#return
     Shortcuts[id]=new Shortcut(id, Datas[a].getContent(), S_EXTERNAL, toBoolean(Datas[a].getString("ctrl")), toBoolean(Datas[a].getString("alt")), toBoolean(Datas[a].getString("shift")), Datas[a].getInt("key"), Datas[a].getInt("keycode"), Datas[a].getString("textEditor"), 1, Datas[a].getString("mode"), Datas[a].getString("text"), Datas[a].getString("description", ""));
     a=a+1;
@@ -303,8 +313,8 @@ void UI_setup() {
   //
   ((TextBox)UI[getUIidRev("MP3_OUTPUT")]).text=joinPath(GlobalPath, "editor");
   try {
-    ((ScrollList)UI[getUIid("MP3_CODEC")]).setItems((String[])new Encoder().getAudioEncoders());
-    ((ScrollList)UI[getUIid("MP3_FORMAT")]).setItems((String[])new Encoder().getSupportedEncodingFormats());
+    ((ScrollList)UI[getUIid("MP3_CODEC")]).setItems((String[])new it.sauronsoftware.jave.Encoder().getAudioEncoders());
+    ((ScrollList)UI[getUIid("MP3_FORMAT")]).setItems((String[])new it.sauronsoftware.jave.Encoder().getSupportedEncodingFormats());
   }
   catch(Exception e) {
   }
@@ -314,6 +324,8 @@ void UI_setup() {
   Frames[currentFrame].prepare();
 }
 void loadCustomSettings() {
+  String datapath=getDataPath();
+  if (new File(joinPath(datapath, "Settings.xml")).exists()==false)return;
   XML XmlData=loadXML("Settings.xml");
   XML Data;
   Data=XmlData.getChild("I_AUTOSAVE");
@@ -359,9 +371,12 @@ void loadCustomSettings() {
     ((Button)UI[getUIid("I_AUTOSTOP")]).value=toBoolean(Data.getString("value"));
     autoStop=toBoolean(Data.getString("value"));
   }
-  Data=XmlData.getChild("I_DEFAULTINPUT");
+  Data=XmlData.getChild("I_CYXMODE");
   if (Data!=null) {
-    ((Button)UI[getUIid("I_DEFAULTINPUT")]).value=toBoolean(Data.getString("value"));//default
+    ((Button)UI[getUIid("I_CYXMODE")]).value=toBoolean(Data.getString("value"));
+    if (toBoolean(Data.getString("value"))==true) {
+      Mode=CYXMODE;
+    }
   }
   Data=XmlData.getChild("I_OLDINPUT");
   if (Data!=null) {
@@ -370,11 +385,11 @@ void loadCustomSettings() {
       Mode=MANUALINPUT;
     }
   }
-  Data=XmlData.getChild("I_CYXMODE");
+  Data=XmlData.getChild("I_DEFAULTINPUT");
   if (Data!=null) {
-    ((Button)UI[getUIid("I_CYXMODE")]).value=toBoolean(Data.getString("value"));
+    ((Button)UI[getUIid("I_DEFAULTINPUT")]).value=toBoolean(Data.getString("value"));//default
     if (toBoolean(Data.getString("value"))==true) {
-      Mode=CYXMODE;
+      Mode=AUTOINPUT;
     }
   }
   Data=XmlData.getChild("I_LANGUAGE");
@@ -412,13 +427,46 @@ void registerPrepare(int id) {
   prepareId=id;
   prepareRegistered=true;
 }
+class Rect {
+  PVector position, size;
+  public Rect(PVector position_, PVector size_) {
+    position=position_;
+    size=size_;
+  }
+  public Rect(float x, float y, float w, float h) {
+    position=new PVector(x, y);
+    size=new PVector(w, h);
+  }
+  void render() {
+    fill(UIcolors[I_OVERLAY]);
+    rect(position.x, position.y, size.x, size.y);
+  }
+}
+Rect Overlay=null;//for now,this is controlled by droplistener!! fix it...(or make ui library and port this code to that...)
+void setOverlay(float x, float y, float w, float h) {//one frame overlay
+  Overlay=new Rect(x, y, w, h);
+}
+void setOverlay(Rect rect) {//one frame overlay
+  Overlay=rect;
+}
+void drawOverlays() {
+  if (Overlay!=null) {
+    registerRender();
+    Overlay.render();
+  }
+}
 void UI_update() {
   Frames[currentFrame].update();
   skipRendering=false;
   if (Description_enabled)UI[Description_current].description.render();
-  if (statusLchanged)statusL.render();
-  if (statusRchanged)statusR.render();
-  setStatusL("");
+  if (focused) {
+    if (statusLchanged)statusL.render();
+    if (statusRchanged)statusR.render();
+    setStatusL("");
+  }
+  if (pfocused==false&&focused) {
+    registerRender();
+  }
   if (prepareRegistered) {
     int focusbefore=focus;
     UI[focusbefore].skip=true;
@@ -432,6 +480,9 @@ void UI_update() {
     Frames[currentFrame].render();
     renderRegistered=false;
   }
+  //draw overlays
+  drawOverlays();
+  if (mousePressed||(pfocused==false&&focused))Overlay=null;
 }
 void getMouseState() {
   MouseX=mouseX/scale-Frames[currentFrame].position.x+Frames[currentFrame].size.x;

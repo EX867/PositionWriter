@@ -619,7 +619,8 @@ class Button extends UIelement {
       setShortcutData();
       Frames[currentFrame].returnBack();
     } else if (name.equals("PC_EXIT")) {
-      UIcolors[tempColor]=((ColorPicker)UI[getUIidRev("PC_HTMLSEL")]).selectedRGB;
+      color c=((ColorPicker)UI[getUIidRev("PC_HTMLSEL")]).selectedRGB;
+      UIcolors[tempColor]=color(red(c), green(c), blue(c), alpha(UIcolors[tempColor]));
       Frames[currentFrame].returnBack();
     } else if (name.equals("MC_MC10")) {
       if (text.equals("mc->10")) text="10->mc";
@@ -2719,14 +2720,18 @@ class PadButton extends UIelement {
   @Override
     boolean react() {
     if (super.react()==false)return false;
+    if (focused==false)return false;
     float padX=position.x-(size.x-size.y);
     float interval=2*min(size.y/ButtonX, size.y/ButtonY);
     if (isMouseOn(padX, position.y, size.y, size.y)) {
       int X=floor((MouseX-padX+(ButtonX*interval/2))/interval);
       int Y=floor((MouseY-position.y+(ButtonY*interval/2))/interval);
       if (name.equals("KEYLED_PAD")) {
-        if (((jeonjehong==false&&mouseState==AN_RELEASE)||(jeonjehong&&mouseState==AN_PRESS))&&pressed) {
+        if (jeonjehong&&mouseState==AN_PRESS) {
           printLed(X, Y);
+        } else if ((jeonjehong==false&&mouseState==AN_RELEASE)&&pressed) {
+          if (mouseButton==LEFT)printLed(X, Y);
+          else if (Mode==RIGHTOFFMODE)printLed(X, Y, false, 1);
         }
       }
       if (name.equals("KEYSOUND_PAD")) {
@@ -2835,7 +2840,7 @@ class PadButton extends UIelement {
     noStroke();
     if (name.equals("KEYLED_PAD")) {
       int a=0;
-      if (Mode==AUTOINPUT||Mode==MANUALINPUT) {
+      if (Mode==AUTOINPUT||Mode==MANUALINPUT||Mode==RIGHTOFFMODE) {
         if (currentLedFrame>=LED.size())return;//#remove
         while (a<ButtonX) {
           int b=0;
@@ -2930,10 +2935,29 @@ class PadButton extends UIelement {
       }
     }
   }
-  void printLed(int X, int Y) {
-    printLed(X, Y, false);
+  Rect getButtonBounds(int x, int y) {
+    float padX=position.x-(size.x-size.y);
+    float interval=2*min(size.y/ButtonX, size.y/ButtonY);
+    return new Rect(padX-ButtonX*interval/2+x*interval+interval/2, position.y-ButtonY*interval/2+y*interval+interval/2, interval/2, interval/2);
   }
-  synchronized void printLed(int X, int Y, boolean async) {
+  int getButtonXByX(int x) {
+    float padX=position.x-(size.x-size.y);
+    float interval=2*min(size.y/ButtonX, size.y/ButtonY);
+    int X=floor((x-padX+(ButtonX*interval/2))/interval);
+    if (0<=X&&X<ButtonX)return X;
+    return -1;
+  }
+  int getButtonYByY(int y) {
+    float padX=position.x-(size.x-size.y);
+    float interval=2*min(size.y/ButtonX, size.y/ButtonY);
+    int Y=floor((y-position.y+(ButtonY*interval/2))/interval);
+    if (0<=Y&&Y<ButtonY) return Y;
+    return -1;
+  }
+  void printLed(int X, int Y) {
+    printLed(X, Y, false, 0);
+  }
+  synchronized void printLed(int X, int Y, boolean async, int option) {//option only used in specific mode
     if (Mode==AUTOINPUT) {
       int line=Lines.lines();
       int frame=LED.size()-1;
@@ -2998,6 +3022,13 @@ class PadButton extends UIelement {
       }
     } else if (Mode==MANUALINPUT) {
       writeDisplay(" "+str(Y+1)+" "+str(X+1), true);
+    } else if (Mode==RIGHTOFFMODE) {
+      if (option==0) {
+        if (selectedColorType==DS_VEL)writeDisplayLine("on "+str(Y+1)+" "+str(X+1)+" auto "+((VelocityButton)UI[velnumId]).selectedVelocity, true);
+        else writeDisplayLine("on "+str(Y+1)+" "+str(X+1)+" "+hex(((Button)UI[((ColorPicker)UI[htmlselId]).selectedHtml]).colorInfo, 6), true);
+      } else if (option==1) {
+        writeDisplayLine("off "+str(Y+1)+" "+str(X+1), true);
+      }
     } else if (Mode==CYXMODE) {
       int line=Lines.lines();
       if (InFrameInput) {

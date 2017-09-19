@@ -9,7 +9,6 @@ cd %PROJECTPATH%\PW%1\application.windows64
 del PW%1.exe
 ren PW%1_res.exe PW%1.exe
 cd data
-del Settings.xml
 del Colors.xml
 del Shortcuts.xml
 del Path.xml
@@ -17,7 +16,6 @@ cd %PROJECTPATH%\PW%1\application.windows32
 del PW%1.exe
 ren PW%1_res.exe PW%1.exe
 cd data
-del Settings.xml
 del Colors.xml
 del Shortcuts.xml
 del Path.xml

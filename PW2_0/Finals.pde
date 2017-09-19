@@ -4,6 +4,11 @@ static final color OFFCOLOR=0;
 static final float DEFAULT_BPM=120;
 static final int DEFAULT=0;
 
+static final int AUTOINPUT=1;
+static final int MANUALINPUT=2;
+static final int RIGHTOFFMODE=4;
+static final int CYXMODE=3;
+
 static final int I_SAVE=1;
 static final int I_UNDO=2;
 static final int I_REDO=3;
@@ -25,6 +30,7 @@ static final int I_GENERALTEXT=12;
 static final int I_KEYWORDTEXT=13;
 static final int I_COMMENTTEXT=14;
 static final int I_UNITORTEXT=15;
+static final int I_OVERLAY=16;
 
 // ========== Others ==========//
 static final int AN_PRESS=0;

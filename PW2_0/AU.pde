@@ -26,7 +26,7 @@ public class MidiInputReceiver implements javax.sound.midi.Receiver {//https://s
       if (info.getCommand()==ShortMessage.NOTE_ON) {
         println("midi on : "+info.getChannel()+"/ "+info.getData1()+" "+info.getData2());
         if (currentFrame==1) {
-          keyLedPad.printLed(byteToPosX(info.getData1()), byteToPosY(info.getData1()), true);
+          keyLedPad.printLed(byteToPosX(info.getData1()), byteToPosY(info.getData1()), true, 0);
         } else if (currentFrame==2) {
           keySoundPad.triggerButton(byteToPosX(info.getData1()), byteToPosY(info.getData1()), true);
         }
@@ -104,7 +104,7 @@ public class FFmpegConverter {
         printLog("convert()", "input file not exists");
         return false;
       }
-      MultimediaInfo info=new Encoder().getInfo(file);
+      MultimediaInfo info=new it.sauronsoftware.jave.Encoder().getInfo(file);
       //printLog("convert()", "input format is : "+info.getFormat());
       return true;
     }
@@ -115,14 +115,14 @@ public class FFmpegConverter {
   boolean checkEncodable(String outputFormat, String outputCodec) {
     try {
       int a=0;
-      String[] encodings=new Encoder().getSupportedEncodingFormats();
+      String[] encodings=new  it.sauronsoftware.jave.Encoder().getSupportedEncodingFormats();
       while (a<encodings.length) {
         if (outputFormat.equals(encodings[a]))break;
         a=a+1;
       }
       if (a==encodings.length)return false;
       a=0;
-      String[] codecs=new Encoder().getAudioEncoders();
+      String[] codecs=new it.sauronsoftware.jave.Encoder().getAudioEncoders();
       while (a<codecs.length) {
         if (outputCodec.equals(codecs[a]))break;
         a=a+1;
@@ -148,7 +148,7 @@ public class FFmpegConverter {
     EncodingAttributes attrs = new EncodingAttributes();
     attrs.setFormat(outputFormat);
     attrs.setAudioAttributes(audio);
-    new Encoder().encode(source, target, attrs, new ModEncodingListener(input, id));
+    new it.sauronsoftware.jave.Encoder().encode(source, target, attrs, new ModEncodingListener(input, id));
   }
   class ModEncodingListener implements EncoderProgressListener {
     String filename;

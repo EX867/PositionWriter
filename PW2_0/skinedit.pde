@@ -47,13 +47,8 @@ void loadDefaultImages() {
 void build_windows(String packageName, String appName, String author, String description, String themeName, color text) {
   color actionBar=color(0);
   try {
-    String datapath="";
-    if (DEVELOPER_BUILD) {
-      datapath=new File(joinPath(DEVELOPER_PATH, "data")).getAbsolutePath();
-    } else {
-      datapath=new File("data").getAbsolutePath();
-    }
-    String buildPath=joinPath(GlobalPath, "Temp/"+appName);
+    String datapath=getDataPath();
+    String buildPath=joinPath(joinPath(GlobalPath, TempPath), appName);
     surface.setTitle(title_filename+title_edited+title_suffix+" - deleting old files...");
     if (new File(buildPath).exists())deleteFile(buildPath);
     surface.setTitle(title_filename+title_edited+title_suffix+" - creating files for build...");
@@ -90,6 +85,7 @@ void build_windows(String packageName, String appName, String author, String des
     writeFile(joinPath(buildPath, "AndroidManifest.xml"), build_generateManifest(packageName));
     new File(joinPath(buildPath, "gen/com/kimjisub/launchpad/theme/test/R.java")).getParentFile().mkdirs();
     new File(joinPath(buildPath, "gen/com/kimjisub/launchpad/theme/test/R.java")).createNewFile();
+    new File(joinPath(buildPath, "bin")).mkdirs();
     //Run AAPT
     surface.setTitle(title_filename+title_edited+title_suffix+" - running aapt...");
     List<String> cmd = new ArrayList<String>();
@@ -105,7 +101,7 @@ void build_windows(String packageName, String appName, String author, String des
     cmd.add("-M");
     cmd.add("\""+joinPath(buildPath, "AndroidManifest.xml")+"\"");
     cmd.add("-I");
-    cmd.add("\""+joinPath(GlobalPath, "External/android.jar")+"\"");
+    cmd.add("\""+joinPath(joinPath(GlobalPath, ExternalPath), "android.jar")+"\"");
     /*cmd.add("-S");
      cmd.add("\""+joinPath(datapath, "builder/libs/android-support-v7-appcompat.jar")+"\"");*/
     cmd.add("-F");
@@ -116,10 +112,12 @@ void build_windows(String packageName, String appName, String author, String des
     builder.redirectError(ProcessBuilder.Redirect.INHERIT);
     Process aaptProcess = builder.start();
     int code = aaptProcess.waitFor();
-    if (code != 0||new File(joinPath(buildPath, "bin/"+appName+".apk.res")).exists()==false) {
-      surface.setTitle(title_filename+title_edited+title_suffix);
+    if (code != 0) {
       System.err.println("AAPT exited with error code " + code);
-      return;
+      throw new Exception("AAPT exited with error code "+code);
+    }
+    if (new File(joinPath(buildPath, "bin/"+appName+".apk.res")).exists()==false) {
+      throw new Exception(appName+".apk.res file is not created");
     }
     //Run ECJ
     surface.setTitle(title_filename+title_edited+title_suffix+" - compiling...");
@@ -127,7 +125,7 @@ void build_windows(String packageName, String appName, String author, String des
     String[] ecjArgs = {
       "-warn:-unusedImport", // Disable warning for unused imports
       "-extdirs", joinPath(datapath, "builder"), // The location of the external libraries
-      "-bootclasspath", joinPath(GlobalPath, "External/android.jar"), // The location of android.jar
+      "-bootclasspath", joinPath(joinPath(GlobalPath, ExternalPath), "android.jar"), // The location of android.jar
       "-classpath", joinPath(buildPath, "src"), // The location of the source folder
       "-classpath", joinPath(buildPath, "gen"), // The location of the generated folder
       "-1.6", 
@@ -157,6 +155,7 @@ void build_windows(String packageName, String appName, String author, String des
     int resultCode = com.androidjarjar.dx.command.dexer.Main.run(dexArgs);
     if (resultCode != 0) {
       System.err.println("DX Dexer result code: " + resultCode);
+      throw new Exception("DX Dexer exited with code "+resultCode);
     }
     //Run DX Merger
     surface.setTitle(title_filename+title_edited+title_suffix+" - merging dex files...");
@@ -184,14 +183,21 @@ void build_windows(String packageName, String appName, String author, String des
     surface.setTitle(title_filename+title_edited+title_suffix+" - signing apk with default keystore...");
     String inFilename =joinPath(buildPath, "bin/" + appName + ".apk.unsigned");
     String outFilename = joinPath(buildPath, "bin/" + appName + ".apk");
-    ZipSigner signer = new ZipSigner();
+    ZipSigner signer = null;
+    signer=new ZipSigner();
     signer.setKeymode("testkey");
-    signer.signZip(inFilename, outFilename);
+    try {
+      signer.signZip(inFilename, outFilename);
+    }
+    catch(Throwable t) {
+      t.printStackTrace();
+    }
     surface.setTitle(title_filename+title_edited+title_suffix);
   }
   catch(Exception e) {
     surface.setTitle(title_filename+title_edited+title_suffix);
     e.printStackTrace();
+    displayLogError(e);
   }
 }
 public static void dexJar(String inputPath, String outputPath) {
@@ -269,6 +275,7 @@ String build_generateMainActivity(String packageName) {
     "    protected void onCreate(Bundle savedInstanceState) {"+
     "        super.onCreate(savedInstanceState);"+
     "        setContentView(R.layout.activity_main);"+
+    "        getActionBar().setDisplayShowHomeEnabled(false);"+
     "    }"+
     "}";
   return ret;

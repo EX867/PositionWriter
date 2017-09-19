@@ -35,7 +35,7 @@ import java.util.Vector;
  * as files, images, bookmarks, or text into your processing application. once
  * dropped you can access the information of the object from a DropEvent that
  * has been forwarded to the processing sketch.
- * 
+ *
  * @example dropBasics
  */
 public class SDrop {
@@ -68,7 +68,7 @@ public class SDrop {
 
 	/**
 	 * in processing you instantiate SDrop with drop = new SDrop(this);
-	 * 
+	 *
 	 * @param theComponent
 	 */
 	public SDrop(Component theComponent) {
@@ -76,7 +76,7 @@ public class SDrop {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param theComponent
 	 * @param theObject
 	 */
@@ -121,7 +121,7 @@ public class SDrop {
 	 * can add a control window asa component to sojamo.drop. objects dropped
 	 * into the component, here control window ,will be forwarded to your
 	 * processing sketch.
-	 * 
+	 *
 	 * @param theComponent
 	 *            Component
 	 */
@@ -131,7 +131,7 @@ public class SDrop {
 
 	/**
 	 * add a drop listener to your sketch.
-	 * 
+	 *
 	 * @example dropListener
 	 * @param theListener
 	 *            DropListener
@@ -142,7 +142,7 @@ public class SDrop {
 
 	/**
 	 * remove a drop listener from your sketch.
-	 * 
+	 *
 	 * @example dropListener
 	 * @param theListener
 	 *            DropListener
@@ -154,12 +154,18 @@ public class SDrop {
 	protected Vector getDropListeners() {
 		return _myDropListener;
 	}
-
+  protected void dragExit(){
+		for (int i = (_myDropListener.size() - 1); i >= 0; i--) {
+			//if (((DropListener) _myDropListener.get(i)).isSpecificTargetLocation) {
+				((DropListener) _myDropListener.get(i)).dragExit();
+			//}
+		}
+  }
 	protected void updateDropListener(float theX, float theY) {
 		for (int i = (_myDropListener.size() - 1); i >= 0; i--) {
-			if (((DropListener) _myDropListener.get(i)).isSpecificTargetLocation) {
+			//if (((DropListener) _myDropListener.get(i)).isSpecificTargetLocation) {
 				((DropListener) _myDropListener.get(i)).updateLocation(theX, theY);
-			}
+			//}
 		}
 	}
 

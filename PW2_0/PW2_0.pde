@@ -42,29 +42,31 @@ boolean jeonjehong=false;
  2.+ : keysound sound right double click-wavedit load
  
  //other
- 2.+ : processLine() threading
- 2.+ : enhance midi input&&output support
- 2.+ : disable auto input option
+ 2.+ : multi threading
+ 2.+ : enhance midi input&&output support**
+ 2.+ : disable auto input mode**
  2.+ : add html+vel color autoinput(option)
- 2.+ : change getUIid() to binary search
+ 2.+ : change getUIid() to binary search (or hashmap)
  2.+ : change DelayValue to DelayValueSum and do binary search
  2.+ : change Analyzer.getDelayValue() to use cached values
  2.+ : add KeySoundPlayer and midi->autoPlay tools
  2.+ : support skip blank characters character in find replace.
  2.+ : directly edit and save zip(for users)
- 2.+ : directly export to zip button(element name Button:I_ZIP) and make it to appinventor ext too...
- 2.+ : (option) keySound autosave
+ 2.+ : (option) keySound autosave, undo
  2.+ : linux file chooser (element name Button:I_PATH)
  2.+ : multi language support
  2.+ : led editor multi tab support
- 2.+ : keysound Ctrl+Z support
- 2.+ : auto led edit disable option
- 2.+ : note on highlight 
+ 2.+ : note on highlight
+ 2.+ : only store setting data if they are modified
  ... : get developer path in code.
  2.+ : calculator support hexcode.(and some functions for color)
- 2.+ : infoviewer design upgrade.
+ 2.+ : delay value edit shortcut(from unitor-lpassist)
+ 2.+ : remote controller support (https://stackoverflow.com/questions/21628146/using-sockets-between-android-device-and-pc-same-network)
+ 
+ skinedit : change theme to appcompat-material
  uncloud : wait uncloud update!!
  uncloud : customize list : display date and upload state inside list.
+ uncloud : infoviewer design upgrade.
  // ==== ERROR ==== //
  // ==== WARNING ==== //
  hardcoded 8(textEditor)
@@ -76,6 +78,7 @@ void settings() {
 }
 //https://github.com/processing/processing/wiki/Export-Info-and-Tips
 boolean Debug=false;
+boolean pfocused=true;
 void setup() {
   buildVersion();
   if (Debug) {
@@ -100,6 +103,7 @@ void draw() {
   } else {
     draw_main();
   }
+  pfocused=focused;
 }
 void keyPressed() {
   if (Debug) {
@@ -128,7 +132,7 @@ void setup_main() {
   //setup utils
   textTransfer=new TextTransfer();
   createMissingFiles();
-  External_setup(); 
+  External_setup();
   if (new File(joinPath(GlobalPath, "jeonjehong")).isFile()) {
     jeonjehong=true;
     println("jeonjehong=true");
@@ -282,7 +286,7 @@ void editable_keyTyped() {
       } else if (functionId==S_UNDO) {
         UndoLog();
         setStatusR("undo");
-      } else if (functionId==S_REDO) { 
+      } else if (functionId==S_REDO) {
         RedoLog();
         setStatusR("redo");
       } else if (functionId==S_RESETFOCUS) {//lost focus(Ctrl+T)

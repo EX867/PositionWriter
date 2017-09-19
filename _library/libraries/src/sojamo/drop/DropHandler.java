@@ -90,6 +90,7 @@ public class DropHandler
    * @param event DropTargetEvent
    */
   public void dragExit(DropTargetEvent event) {
+    _mySDrop.dragExit();
   }
 
 
