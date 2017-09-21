@@ -258,8 +258,17 @@ class Button extends UIelement {
       adderror=true;
       int a=0;
       while (a<analyzer.uLines.size()) {//WARNING!!! assert analyzer.uLines.size()==Lines.lines()
-        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.APON||analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN)printError(2/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use autoPlay command in led file.");
+        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.APON/*||analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN*/)printError(2/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use autoPlay command in led file.");
         a=a+1;
+      }
+      a=0;
+      if (ignoreMc==false) {
+        while (a<analyzer.uLines.size()) {
+          if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.MAPPING)printError(4, a, "LedEditor", Lines.getLine(a), "mapping is unitor command. enable ignoreMc to disable unitor errors.");
+          else if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN)printError(4, a, "LedEditor", Lines.getLine(a), "chain is unitor command. enable ignoreMc to disable unitor errors.");
+          else if (analyzer.uLines.get(a).mc)printError(4/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc is unitor command. enable ignoreMc to disable unitor errors.");
+          a=a+1;
+        }
       }
       adderror=false;
     } else if (name.equals("I_OLDINPUT")) {//Settings
@@ -274,8 +283,17 @@ class Button extends UIelement {
       adderror=true;
       int a=0;
       while (a<analyzer.uLines.size()) {
-        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.APON||analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN)printError(2/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use autoPlay command in led file.");
+        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.APON/*||analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN*/)printError(2/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use autoPlay command in led file.");
         a=a+1;
+      }
+      a=0;
+      if (ignoreMc==false) {
+        while (a<analyzer.uLines.size()) {
+          if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.MAPPING)printError(4, a, "LedEditor", Lines.getLine(a), "mapping is unitor command. enable ignoreMc to disable unitor errors.");
+          else if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN)printError(4, a, "LedEditor", Lines.getLine(a), "chain is unitor command. enable ignoreMc to disable unitor errors.");
+          else if (analyzer.uLines.get(a).mc)printError(4/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc is unitor command. enable ignoreMc to disable unitor errors.");
+          a=a+1;
+        }
       }
       adderror=false;
     } else if (name.equals("I_CYXMODE")) {//Settings
@@ -291,6 +309,10 @@ class Button extends UIelement {
       int a=0;
       while (a<analyzer.uLines.size()) {
         if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.ON)printError(3/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use led on command in autoPlay." );
+        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.MAPPING) {
+          printError(3/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use led on command in autoPlay." );
+          if (ignoreMc==false)printError(4, a, "LedEditor", Lines.getLine(a), "mapping is unitor command. enable ignoreMc to disable unitor errors.");
+        }
         a=a+1;
       }
       adderror=false;
@@ -302,12 +324,14 @@ class Button extends UIelement {
         int a=0;
         if (Mode==CYXMODE) {
           while (a<analyzer.uLines.size()) {
-            if (analyzer.uLines.get(a).mc)printError(5/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc not working!");
+            if (analyzer.uLines.get(a).mc)printError(5/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc is unitor command. enable ignoreMc to disable unitor errors.");
             a=a+1;
           }
         } else {
           while (a<analyzer.uLines.size()) {
-            if (analyzer.uLines.get(a).mc)printError(4/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc not working!");
+            if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.MAPPING)printError(4, a, "LedEditor", Lines.getLine(a), "mapping is unitor command. enable ignoreMc to disable unitor errors.");
+            else if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN)printError(4, a, "LedEditor", Lines.getLine(a), "chain is unitor command. enable ignoreMc to disable unitor errors.");
+            else if (analyzer.uLines.get(a).mc)printError(4/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc is unitor command. enable ignoreMc to disable unitor errors.");
             a=a+1;
           }
         }     
@@ -2824,23 +2848,7 @@ class PadButton extends UIelement {
           }
         } else if (name.equals("KEYSOUND_PAD")) {
           if (mouseState==AN_RELEASE&&pressed) {
-            int a=0;
-            while (a<ButtonX) {
-              int b=0;
-              while (b<ButtonY) {
-                KS.get(ksChain)[a][b].multiLed=1;//this is strange,but right.
-                KS.get(ksChain)[a][b].multiSound=0;
-                b=b+1;
-              }
-              a=a+1;
-            }
-            ksChain=Y;
-            int soundviewid=getUIid("I_SOUNDVIEW");
-            int ledviewid=getUIid("I_LEDVIEW");
-            ((ScrollList)UI[soundviewid]).setItems(KS.get(ksChain)[X][Y].ksSound.toArray(new String[0]));
-            ((ScrollList)UI[ledviewid]).setItems(KS.get(ksChain)[X][Y].ksLedFile.toArray(new String[0]));
-            if (UI[soundviewid].disabled==false)UI[soundviewid].render();
-            if (UI[ledviewid].disabled==false)UI[ledviewid].render();
+            triggerChain(Y);
           }
         }
         render();
@@ -2862,7 +2870,9 @@ class PadButton extends UIelement {
     for (int a=0; a<=ButtonY; a++) {
       line(position.x-size.x, position.y-ButtonY*interval/2+a*interval, position.x+size.x-size.y/4, position.y-ButtonY*interval/2+a*interval);
     }
+    strokeWeight(4);
     noStroke();
+    textSize(20);
     if (name.equals("KEYLED_PAD")) {
       int a=0;
       if (Mode==AUTOINPUT||Mode==MANUALINPUT||Mode==RIGHTOFFMODE) {
@@ -2870,7 +2880,14 @@ class PadButton extends UIelement {
         while (a<ButtonX) {
           int b=0;
           while (b<ButtonY) {
-            if (LED.get(currentLedFrame)[a][b]!=OFFCOLOR) {
+            if (LED.get(currentLedFrame)[a][b]==RNDCOLOR) {
+              fill(UIcolors[I_BACKGROUND]);
+              text("rnd", padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2);
+              stroke(UIcolors[I_BACKGROUND]);
+              noFill();
+              rect(padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2, interval*2/5, interval*2/5);
+              noStroke();
+            } else if (LED.get(currentLedFrame)[a][b]!=OFFCOLOR) {
               fill(LED.get(currentLedFrame)[a][b]);
               rect(padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2, interval*2/5, interval*2/5);
             }
@@ -3136,6 +3153,26 @@ class PadButton extends UIelement {
         a=a+1;
       }
     }
+  }
+  synchronized void triggerChain(int c) {
+    if (c<0||c>Chain)return;
+    ksChain=c;
+    int a=0;
+    while (a<ButtonX) {
+      int b=0;
+      while (b<ButtonY) {
+        KS.get(ksChain)[a][b].multiLed=1;//this is strange,but right.
+        KS.get(ksChain)[a][b].multiSound=0;
+        b=b+1;
+      }
+      a=a+1;
+    }
+    int soundviewid=getUIid("I_SOUNDVIEW");
+    int ledviewid=getUIid("I_LEDVIEW");
+    ((ScrollList)UI[soundviewid]).setItems(KS.get(ksChain)[X][Y].ksSound.toArray(new String[0]));
+    ((ScrollList)UI[ledviewid]).setItems(KS.get(ksChain)[X][Y].ksLedFile.toArray(new String[0]));
+    if (UI[soundviewid].disabled==false)UI[soundviewid].registerRender=true;
+    if (UI[ledviewid].disabled==false)UI[ledviewid].registerRender=true;
   }
 }
 

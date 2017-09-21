@@ -322,7 +322,7 @@ class KsButton {
     while (ksNextTime<=ksCurrentTime) {//change frame
       //#refactor!!!
       ksautorun_render=true;
-      while (ksCurrentIndex<ksLED.get(multiLed-1).size()) {
+      while (multiLed>0&&ksCurrentIndex<ksLED.get(multiLed-1).size()) {
         if (((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.DELAY) {
           endframe=false;
           ksNextTime=ksNextTime+max(1, (int)ksDelayValue.get(multiLed-1).get(ksCurrentDelayIndex));
@@ -335,6 +335,8 @@ class KsButton {
             //add leds to ksLED array.
             if (line.hasVel) {
               if (line.vel>=0&&line.vel<=127)ksDisplay[line.x-1][line.y-1]=k[line.vel];
+            } else if (line.html==RNDCOLOR) {
+              if (ignoreMc)ksDisplay[line.x-1][line.y-1]=k[floor(random(0, 128))];
             } else ksDisplay[line.x-1][line.y-1]=line.html;
           }
         } else if (((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.OFF) {
@@ -343,7 +345,22 @@ class KsButton {
             //add leds to ksLED array.
             ksDisplay[line.x-1][line.y-1]=OFFCOLOR;
           }
-        } 
+        } else if (ignoreMc&&((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.CHAIN) {
+          Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLED.get(multiLed-1).get(ksCurrentIndex);
+          keySoundPad.triggerChain(line.x-1);
+        } else if (ignoreMc&&((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.MAPPING) {
+          Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLED.get(multiLed-1).get(ksCurrentIndex);
+          if (line.hasVel) {
+            int size=KS.get(ksChain)[line.x-1][line.y-1].ksSound.size();
+            if (line.vel>=0&&line.vel<size)KS.get(ksChain)[line.x-1][line.y-1].multiSound=min(max(1, line.vel+1), size)-1;
+          } else {
+            int size=KS.get(ksChain)[line.x-1][line.y-1].ksLedFile.size();
+            if (line.vel>=0&&line.vel<size) {
+              KS.get(ksChain)[line.x-1][line.y-1].multiLed=min(max(1, line.vel+1), size)-1;
+              KS.get(ksChain)[line.x-1][line.y-1].multiLedBackup=KS.get(ksChain)[line.x][line.y].multiLed;
+            }
+          }
+        }
         ksCurrentIndex++;
         //bpm is translated to ms in readFrame.
       }

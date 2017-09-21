@@ -800,6 +800,10 @@ class UIelement {
     firstPress=0;
   }
   boolean react() {//render in react. if reacted - return true
+    if (registerRender) {
+      render();
+      registerRender=false;
+    }
     if (mouseState==AN_RELEASED)pressed=false;
     if (disabled)return false;
     firstOn=firstOn+drawInterval;
@@ -839,10 +843,6 @@ class UIelement {
       }
     } else {
       resetFocus();
-    }
-    if (registerRender) {
-      render();
-      registerRender=false;
     }
     return true;
   }

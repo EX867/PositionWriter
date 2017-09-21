@@ -103,10 +103,14 @@ class Analyzer {
     if (after!=null)uLines.set(line.line, after);
     if (before!=null) {
       if (before.Type==UnipackLine.ON) {
-        eraseLedPosition(frame, line.line, before.x, before.y, after!=null);
+        if (before.mc==false) {
+          eraseLedPosition(frame, line.line, before.x, before.y, after!=null);
+        }
       } else if (before.Type==UnipackLine.OFF) {
-        eraseLedPosition(frame, line.line, before.x, before.y, after!=null);
-        eraseApLedPosition(frame, line.line, before.x, before.y, after!=null);
+        if (before.mc==false) {
+          eraseLedPosition(frame, line.line, before.x, before.y, after!=null);
+          eraseApLedPosition(frame, line.line, before.x, before.y, after!=null);
+        }
       } else if (before.Type==UnipackLine.DELAY) {
         int a=DelayPoint.size()-1;//#binarysearch
         while (line.line<=DelayPoint.get(a)&&a>0) {
@@ -131,7 +135,9 @@ class Analyzer {
         }
         sliderUpdate=true;
       } else if (before.Type==UnipackLine.APON) {
-        eraseApLedPosition(frame, line.line, before.x, before.y, after!=null);
+        if (before.mc==false) {
+          eraseApLedPosition(frame, line.line, before.x, before.y, after!=null);
+        }
       } else if (before.Type==UnipackLine.CHAIN) {
         int a=apChainPoint.size()-1;
         while (line.line<=apChainPoint.get(a)&&a>0) {
@@ -146,16 +152,29 @@ class Analyzer {
     //add new
     if (after!=null) {
       if (after.Type==UnipackLine.ON) {
-        if (Mode==CYXMODE) {
+        if (after.mc==false) {
+          if (Mode==CYXMODE) {
+            adderror=true;
+            printError(3/*remove when changing mode!*/, line.line, "LedEditor", line.after, "can't use led on command in autoPlay.");
+            adderror=false;
+          }
+          if (after.hasVel) {
+            if (after.vel>=0&&after.vel<128)readFrameLedPosition(frame, line.line, after.x, after.y, k[after.vel], after);
+          } else if (after.hasHtml)readFrameLedPosition(frame, line.line, after.x, after.y, after.html, after);
+        } else if (ignoreMc==false) {
           adderror=true;
-          printError(3/*remove when changing mode!*/, line.line, "LedEditor", line.after, "can't use led on command in autoPlay.");
+          printError(4, line.line, "LedEditor", line.after, "mc is unitor command. enable ignoreMc to disable unitor errors.");
           adderror=false;
         }
-        if (after.hasVel)readFrameLedPosition(frame, line.line, after.x, after.y, k[after.vel], after);
-        else if (after.hasHtml)readFrameLedPosition(frame, line.line, after.x, after.y, after.html, after);
       } else if (after.Type==UnipackLine.OFF) {
-        readFrameLedPosition(frame, line.line, after.x, after.y, OFFCOLOR, after);
-        readFrameApLedPosition(frame, line.line, after.x, after.y, false, after);
+        if (after.mc==false) {
+          readFrameLedPosition(frame, line.line, after.x, after.y, OFFCOLOR, after);
+          readFrameApLedPosition(frame, line.line, after.x, after.y, false, after);
+        } else if (ignoreMc==false) {
+          adderror=true;
+          printError(4, line.line, "LedEditor", line.after, "mc is unitor command. enable ignoreMc to disable unitor errors.");
+          adderror=false;
+        }
       } else if (after.Type==UnipackLine.DELAY) {
         int a=DelayPoint.size();
         while (line.line<=DelayPoint.get(a-1)&&a>1)a--;//a cant be 0.
@@ -170,21 +189,40 @@ class Analyzer {
         BpmPoint.add(a, line.line);
         sliderUpdate=true;
       } else if (after.Type==UnipackLine.APON) {
-        if (Mode!=CYXMODE) {
+        if (after.mc==false) {
+          if (Mode!=CYXMODE) {
+            adderror=true;
+            printError(2/*remove when changing mode!*/, line.line, "LedEditor", line.after, "can't use autoPlay command in led file.");
+            adderror=false;
+          }
+          readFrameApLedPosition(frame, line.line, after.x, after.y, true, after);
+        } else if (ignoreMc==false) {
           adderror=true;
-          printError(2/*remove when changing mode!*/, line.line, "LedEditor", line.after, "can't use autoPlay command in led file.");
+          printError(5, line.line, "LedEditor", line.after, "mc is unitor command. enable ignoreMc to disable unitor errors.");
           adderror=false;
         }
-        readFrameApLedPosition(frame, line.line, after.x, after.y, true, after);
       } else if (after.Type==UnipackLine.CHAIN) {
-        if (Mode!=CYXMODE) {
-          adderror=true;
-          printError(2/*remove when changing mode!*/, line.line, "LedEditor", line.after, "can't use autoPlay command in led file.");
-          adderror=false;
+        if (Mode!=CYXMODE) {//unitor keyword
+          if (ignoreMc==false) {
+            adderror=true;
+            printError(4, line.line, "LedEditor", line.after, "mc is unitor command. enable ignoreMc to disable unitor errors.");
+            adderror=false;
+          }
         }
         int a=apChainPoint.size();
         while (line.line<=apChainPoint.get(a-1)&&a>1)a--;
         apChainPoint.add(a, line.line);
+      } else if (after.Type==UnipackLine.MAPPING) {
+        adderror=true;
+        if (Mode==CYXMODE) {//unitor keyword
+          printError(3, line.line, "LedEditor", line.after, "can't use led command in autoPlay file.");
+        }
+        if (ignoreMc==false) {
+          adderror=true;
+          printError(4, line.line, "LedEditor", line.after, "mc is unitor command. enable ignoreMc to disable unitor errors.");
+          adderror=false;
+        }
+        adderror=false;
       }
     }
     if (sliderUpdate)updateFrameSlider();
@@ -265,7 +303,8 @@ class Analyzer {
     static final int APON=6;
     static final int KEYSOUND=7;
     //unitor command
-    static final int MAPPING=8;//MAPPING [hasVel?s:l] y x [vel=index]
+    static final int MAPPING=8;//MAPPING [hasVel?s:l] y x [vel==index]
+    //rnd ON y x [hasHtml==false] [html==-1]
     //info
     static final int TITLE=11;
     static final int PRODUCERNAME=12;
@@ -446,20 +485,22 @@ class Analyzer {
       if (tokens.length == 4) {
         if (tokens[1].equals("mc")) {
           mc=true;
-          if (ignoreMc) {
-            if (isInt(tokens[2])) {
-              if (1<=int(tokens[2])&&int(tokens[2])<=32==false)printWarning(2, line, filename, tokens[2], "mc number is out of range.");
-              if (isInt(tokens[3])) {
-                if (0 <= Integer.parseInt(tokens[3]) && Integer.parseInt(tokens[3]) <= 127==false)printWarning(2, line, filename, in, "velocity number is out of range.");
-                return new UnipackLine(filename, UnipackLine.ON, true, int(tokens[2]), 0, true, false, int(tokens[3]), 0);
-              } else if (isHex(tokens[3]))return new UnipackLine(filename, UnipackLine.ON, true, int(tokens[2]), 0, false, true, 0, color(unhex(""+tokens[3].charAt(0)+tokens[3].charAt(1)), unhex(""+tokens[3].charAt(2)+tokens[3].charAt(3)), unhex(""+tokens[3].charAt(4)+tokens[3].charAt(5))));
-              else printError(2, line, filename, in, "velocity number or html color is incorrect!");
-            } else printError(2, line, filename, in, "mc number is not integer!");
-          } else printError(4, line, filename, in, "mc is unitor command. enable ignoreMc to disable unitor errors.");
+          if (isInt(tokens[2])) {
+            if (1<=int(tokens[2])&&int(tokens[2])<=32==false)printWarning(2, line, filename, tokens[2], "mc number is out of range.");
+            if (tokens[3].equals("rnd")) {
+              return new UnipackLine(filename, UnipackLine.ON, true, int(tokens[2]), 0, false, true, 0, RNDCOLOR);
+            } else if (isInt(tokens[3])) {
+              if (0 <= Integer.parseInt(tokens[3]) && Integer.parseInt(tokens[3]) <= 127==false)printWarning(2, line, filename, in, "velocity number is out of range.");
+              return new UnipackLine(filename, UnipackLine.ON, true, int(tokens[2]), 0, true, false, int(tokens[3]), 0);
+            } else if (isHex(tokens[3]))return new UnipackLine(filename, UnipackLine.ON, true, int(tokens[2]), 0, false, true, 0, color(unhex(""+tokens[3].charAt(0)+tokens[3].charAt(1)), unhex(""+tokens[3].charAt(2)+tokens[3].charAt(3)), unhex(""+tokens[3].charAt(4)+tokens[3].charAt(5))));
+            else printError(2, line, filename, in, "velocity number or html color is incorrect!");
+          } else printError(2, line, filename, in, "mc number is not integer!");
         } else {
           if (isInt(tokens[1]) && isInt(tokens[2])) {
             if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
-            if (isInt(tokens[3])) {
+            if (tokens[3].equals("rnd")) {
+              return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), false, true, 0, RNDCOLOR);
+            } else if (isInt(tokens[3])) {
               if (0 <= Integer.parseInt(tokens[3]) && Integer.parseInt(tokens[3]) <= 127==false)printWarning(2, line, filename, in, "velocity number is out of range.");
               return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), true, false, int(tokens[3]), 0);
             } else if (isHex(tokens[3]))return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), false, true, 0, color(unhex(""+tokens[3].charAt(0)+tokens[3].charAt(1)), unhex(""+tokens[3].charAt(2)+tokens[3].charAt(3)), unhex(""+tokens[3].charAt(4)+tokens[3].charAt(5))));
@@ -469,29 +510,31 @@ class Analyzer {
       } else if (tokens.length == 5) {
         if (tokens[1].equals("mc")) {
           mc=true;
-          if (ignoreMc) {
-            if (isInt(tokens[2])) {
-              if (1<=int(tokens[2])&&int(tokens[2])<=32==false)printWarning(2, line, filename, tokens[2], "mc number is out of range.");
-              if (tokens[3].equals("auto") || tokens[3].equals("a")) {
+          if (isInt(tokens[2])) {
+            if (1<=int(tokens[2])&&int(tokens[2])<=32==false)printWarning(2, line, filename, tokens[2], "mc number is out of range.");
+            if (tokens[3].equals("auto") || tokens[3].equals("a")) {
+              if (tokens[4].equals("rnd")) {
+                return new UnipackLine(filename, UnipackLine.ON, true, int(tokens[2]), 0, false, true, 0, RNDCOLOR);
+              } else if (isInt(tokens[4])) {
+                if (0 <= Integer.parseInt(tokens[4]) && Integer.parseInt(tokens[4]) <= 127==false) printWarning(2, line, filename, tokens[4], "velocity number is out of range.");
+                return new UnipackLine(filename, UnipackLine.ON, true, int(tokens[2]), 0, true, false, int(tokens[4]), 0);
+              } else printError(2, line, filename, tokens[4], "velocity number is not integer!");
+            } else {
+              if (isHex(tokens[3])) {
                 if (isInt(tokens[4])) {
-                  if (0 <= Integer.parseInt(tokens[4]) && Integer.parseInt(tokens[4]) <= 127==false) printWarning(2, line, filename, tokens[4], "velocity number is out of range.");
-                  return new UnipackLine(filename, UnipackLine.ON, true, int(tokens[2]), 0, true, false, int(tokens[4]), 0);
+                  if (0 <= Integer.parseInt(tokens[4]) && Integer.parseInt(tokens[4]) <= 127==false)printWarning(2, line, filename, tokens[4], "velocity number is out of range.");
+                  return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), 0, true, true, int(tokens[4]), color(unhex(""+tokens[3].charAt(0)+tokens[3].charAt(1)), unhex(""+tokens[3].charAt(2)+tokens[3].charAt(3)), unhex(""+tokens[3].charAt(4)+tokens[3].charAt(5))));
                 } else printError(2, line, filename, tokens[4], "velocity number is not integer!");
-              } else {
-                if (isHex(tokens[3])) {
-                  if (isInt(tokens[4])) {
-                    if (0 <= Integer.parseInt(tokens[4]) && Integer.parseInt(tokens[4]) <= 127==false)printWarning(2, line, filename, tokens[4], "velocity number is out of range.");
-                    return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), 0, true, true, int(tokens[4]), color(unhex(""+tokens[3].charAt(0)+tokens[3].charAt(1)), unhex(""+tokens[3].charAt(2)+tokens[3].charAt(3)), unhex(""+tokens[3].charAt(4)+tokens[3].charAt(5))));
-                  } else printError(2, line, filename, tokens[4], "velocity number is not integer!");
-                } else printError(2, line, filename, tokens[3], "html color is not correct hex number!");
-              }//end else
-            } else printError(2, line, filename, tokens[2], "mc number is not a integer!");
-          } else printError(4, line, filename, in, "mc is unitor command. enable ignoreMc to disable unitor errors.");
+              } else printError(2, line, filename, tokens[3], "html color is not correct hex number!");
+            }//end else
+          } else printError(2, line, filename, tokens[2], "mc number is not a integer!");
         } else {
           if (isInt(tokens[1]) && isInt(tokens[2])) {
             if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
             if (tokens[3].equals("auto") || tokens[3].equals("a")) {
-              if (isInt(tokens[4])) {
+              if (tokens[4].equals("rnd")) {
+                return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), false, true, 0, RNDCOLOR);
+              } else if (isInt(tokens[4])) {
                 if (0 <= Integer.parseInt(tokens[4]) && Integer.parseInt(tokens[4]) <= 127==false)printWarning(2, line, filename, tokens[4], "velocity number is out of range.");
                 return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), true, false, int(tokens[4]), 0);
               } else printError(2, line, filename, tokens[4], "velocity number is not integer!");
@@ -508,12 +551,10 @@ class Analyzer {
       } else if (tokens.length == 3) {//(autoPlay) - post filtered
         if (tokens[1].equals("mc")) {
           mc=true;
-          if (ignoreMc) {
-            if (isInt(tokens[2])) {
-              if (1<=int(tokens[2])&&int(tokens[2])<=32==false)printWarning(3, line, filename, tokens[2], "mc number is out of range.");
-              return new UnipackLine(filename, UnipackLine.APON, true, int(tokens[2]), 0, false, false, 0, OFFCOLOR+1);
-            } else printError(3, line, filename, tokens[2], "mc number is not integer!");
-          } else printError(5, line, filename, in, "mc is unitor command. enable ignoreMc to disable unitor errors.");
+          if (isInt(tokens[2])) {
+            if (1<=int(tokens[2])&&int(tokens[2])<=32==false)printWarning(3, line, filename, tokens[2], "mc number is out of range.");
+            return new UnipackLine(filename, UnipackLine.APON, true, int(tokens[2]), 0, false, false, 0, OFFCOLOR+1);
+          } else printError(3, line, filename, tokens[2], "mc number is not integer!");
         } else {
           if (isInt(tokens[1]) && isInt(tokens[2])) {
             if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(3, line, filename, in, "button number is out of range.");
@@ -525,19 +566,15 @@ class Analyzer {
       if (tokens.length == 3) {
         if (tokens[1].equals("mc")) {
           mc=true;
-          if (ignoreMc) {
-            if (isInt(tokens[2])) {
-              if (1<=int(tokens[2])&&int(tokens[2])<=32==false)printWarning(1, line, filename, tokens[2], "mc number is out of range.");
-              return new UnipackLine(filename, UnipackLine.OFF, true, int(tokens[2]), 0, false, false, 0, 0);
-            } else printError(1, line, filename, tokens[2], "mc number is not integer!");
-          } else if (Mode==CYXMODE)printError(5, line, filename, in, "mc is unitor command. enable ignoreMc to disable unitor errors.");
-          else printError(4, line, filename, in, "mc is unitor command. enable ignoreMc to disable unitor errors.");
+          if (isInt(tokens[2])) {
+            if (1<=int(tokens[2])&&int(tokens[2])<=32==false)printWarning(1, line, filename, tokens[2], "mc number is out of range.");
+            return new UnipackLine(filename, UnipackLine.OFF, true, int(tokens[2]), 0, false, false, 0, 0);
+          } else printError(1, line, filename, tokens[2], "mc number is not integer!");
         } else {
           if (isInt(tokens[1]) && isInt(tokens[2])) {
             if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(1, line, filename, in, "button number is out of range.");
             return new UnipackLine(filename, UnipackLine.OFF, false, int(tokens[2]), int(tokens[1]), false, false, 0, 0);
-          } else if (Mode==CYXMODE) printError(1, line, filename, in, "x or y number is not integer!");
-          else printError(1, line, filename, in, "x or y number is not integer!");
+          } else printError(1, line, filename, in, "x or y number is not integer!");
         }//end else
       } else printError(1, line, filename, in, "off command expects [off y x] or [off mc n].");
     } else if (tokens[0].equals("delay") || tokens[0].equals("d")) {
@@ -566,24 +603,34 @@ class Analyzer {
     } else if (tokens[0].equals("chain") || tokens[0].equals("c")) {//post filtered in ledEditor.
       if (tokens.length == 2) {
         if (isInt(tokens[1]))return new UnipackLine(filename, UnipackLine.CHAIN, false, int(tokens[1]), 0, true, false, 0, 0);
-        else printError(3, line, filename, in, "chain number is not integer!");
-      } else printError(3, line, filename, in, "chain command expects [chain c].");
-    } else if (tokens[0].equals("mapping")||tokens[0].equals("m")) {//for now, this can't use mc.
-      if (ignoreMc) {
-        if (tokens.length==5) {
-          if (isInt(tokens[2]) && isInt(tokens[3])) {
-            if (int(tokens[2])<=0||int(tokens[2])>ButtonY||int(tokens[3])<=0||int(tokens[3])>ButtonX)printWarning(1, line, filename, in, "button number is out of range.");
+        else printError(1, line, filename, in, "chain number is not integer!");
+      } else printError(1, line, filename, in, "chain command expects [chain c].");
+    } else if (tokens[0].equals("mapping")||tokens[0].equals("m")) {
+      if (tokens.length==5) {
+        if (tokens[2].equals("mc")) {
+          if (isInt(tokens[3])) {
+            if (int(tokens[3])<=0||int(tokens[3])>32)printWarning(2, line, filename, in, "mc number is out of range.");
             if (isInt(tokens[4])) {
-              if (int(tokens[4])<0)printWarning(1, line, filename, in, "mapping index number out of range.");
+              if (int(tokens[4])<0)printWarning(2, line, filename, in, "mapping index number out of range.");
               if (tokens[1].equals("s")) {
-                return new UnipackLine(filename, UnipackLine.MAPPING, false, int(tokens[2]), int(tokens[3]), true, false, int(tokens[4]), 0);
+                return new UnipackLine(filename, UnipackLine.MAPPING, true, int(tokens[3]), 0, true, false, int(tokens[4]), 0);
               } else if (tokens[1].equals("l")) {
-                return new UnipackLine(filename, UnipackLine.MAPPING, false, int(tokens[2]), int(tokens[3]), false, false, int(tokens[4]), 0);
-              } else printError(1, line, filename, in, "only 's' and 'l' can be used in option.");
-            } else printError(1, line, filename, in, "mapping index number must be a integer.");
-          }
-        } else printError(1, line, filename, in, "mapping command expects [mapping [s|l] y x n].");
-      } else printError(5, line, filename, in, "mapping is unitor command. enable ignoreMc to disable unitor errors.");
+                return new UnipackLine(filename, UnipackLine.MAPPING, true, int(tokens[3]), 0, false, false, int(tokens[4]), 0);
+              } else printError(2, line, filename, in, "only 's' and 'l' can be used in option.");
+            } else printError(2, line, filename, in, "mapping index number must be a integer.");
+          } else printError(2, line, filename, in, "mapping index number must be a integer.");
+        } else if (isInt(tokens[2]) && isInt(tokens[3])) {
+          if (int(tokens[2])<=0||int(tokens[2])>ButtonY||int(tokens[3])<=0||int(tokens[3])>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
+          if (isInt(tokens[4])) {
+            if (int(tokens[4])<0)printWarning(2, line, filename, in, "mapping index number out of range.");
+            if (tokens[1].equals("s")) {
+              return new UnipackLine(filename, UnipackLine.MAPPING, false, int(tokens[3]), int(tokens[2]), true, false, int(tokens[4]), 0);
+            } else if (tokens[1].equals("l")) {
+              return new UnipackLine(filename, UnipackLine.MAPPING, false, int(tokens[3]), int(tokens[2]), false, false, int(tokens[4]), 0);
+            } else printError(2, line, filename, in, "only 's' and 'l' can be used in option.");
+          } else printError(2, line, filename, in, "mapping index number must be a integer.");
+        }
+      } else printError(2, line, filename, in, "mapping command expects [mapping [s|l] y x n].");
     } else if (tokens[0].equals("filename")) {
       printError(1, line, filename, in, "filename command is not supported in PositionWriter 2.0.");
       if (tokens.length == 5||tokens.length == 6) {// [filename c y x loop] || [filename c y x loop option] || [filename c y x loop multi]
@@ -931,6 +978,10 @@ class Analyzer {
           led.add(line);
         } else if (line.Type==UnipackLine.BPM) {
           bpmv=line.valueF;
+        } else if (line.Type==UnipackLine.CHAIN) {
+          led.add(line);
+        } else if (line.Type==UnipackLine.MAPPING) {
+          led.add(line);
         }
         a=a+1;
       }
@@ -1131,7 +1182,7 @@ class Analyzer {
     while (a<in.length) {
       UnipackLine line=AnalyzeLine(a, "ExportLedFile", in[a]);
       if (line.Type==UnipackLine.ON) {//
-        if (line.mc) {
+        if (line.mc&&ignoreMc) {
           if (line.hasHtml&&line.hasVel) {
             ret.add("o mc "+line.x+" "+hex(line.html, 6)+" "+line.vel);
           } else if (line.hasVel) {
@@ -1149,7 +1200,7 @@ class Analyzer {
           }//else ignore
         }
       } else if (line.Type==UnipackLine.OFF) {//
-        if (line.mc) {//[off mc n]
+        if (line.mc&&ignoreMc) {//[off mc n]
           ret.add("f mc "+line.x);
         } else {//[off y x n]
           ret.add("f "+line.y+" "+line.x);
@@ -1162,6 +1213,13 @@ class Analyzer {
         }
       } else if (line.Type==UnipackLine.BPM) {
         bpmv=line.valueF;
+      } else if (ignoreMc) {
+        if (line.Type==UnipackLine.CHAIN) {
+          ret.add("c "+line.x);
+        } else if (line.Type==UnipackLine.MAPPING) {
+          if (line.hasVel)ret.add("m s "+line.y+" "+line.x+" "+line.vel);
+          else ret.add("m l "+line.y+" "+line.x+" "+line.vel);
+        }
       }//else ignore.
       a=a+1;
     }
