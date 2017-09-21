@@ -141,6 +141,9 @@ void External_setup() {
             setOverlay(0, 0, Width, Height);
           }
         } else if (currentFrame==19) {//skinedit
+          if (skinEditor.getDropAreaItem((int)x, (int)y)!=null) {
+            setOverlay(skinEditor.getDropAreaItem((int)x, (int)y).location);
+          }
         }
       }
       @Override
@@ -199,6 +202,13 @@ void External_setup() {
             setStatusR("Loaded : "+title_filename+".");
           } else if (currentFrame==11) {//mp3 converter
             ((ScrollList)UI[getUIidRev("MP3_INPUT")]).addItem(filename);
+          } else if (currentFrame==19) {
+            File file=new File(filename);
+            if (skinEditor.getDropAreaItem((int)x, (int)y)!=null) {
+              if (isImageFile(file)) {
+                skinEditor.getDropAreaItem((int)x, (int)y).setImage(loadImage(file.getAbsolutePath()));
+              }
+            }
           }
         }
         catch(Exception e) {
@@ -421,6 +431,11 @@ boolean isSoundFile(File file) {
   }
   return false;
 }
+boolean isImageFile(File file) {//.gif, .jpg, .tga, .png
+  String ext=getFileExtension(file.getName());
+  if (ext.equals("gif")||ext.equals("jpg")||ext.equals("tga")||ext.equals("png"))return true;
+  return false;
+}
 String readFile(String path) throws Exception {
   surface.setTitle(title_filename+title_edited+title_suffix+" - reading "+path+"...");
   BufferedReader read=createReader(path);
@@ -536,3 +551,15 @@ void deleteFile(File f) throws IOException {//https://stackoverflow.com/question
     throw new FileNotFoundException("Failed to delete file: " + f);
 }
 //=======================================================================================================
+void openFileExplorer(String path) {
+  if (platform==WINDOWS) {//WARNING!!! Windows specific
+    //https://stackoverflow.com/questions/15875295/open-a-folder-in-explorer-using-java
+    try {
+      java.awt.Desktop.getDesktop().open(new File(path));
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+    }
+  } else if (platform==LINUX) {
+  }
+}

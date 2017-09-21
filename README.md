@@ -43,15 +43,15 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 
 #### pwrelease.bat
 * before using this, you must change path information. read **release/readme.md**
-* [Resource Hacker](http://www.angusj.com/resourcehacker/) - C:\Program Files (x86)\Resource Hacker : used to build setup.
-* [NSIS](http://nsis.sourceforge.net/Main_Page) - C:\Program Files (x86)\NSIS : used to cnahge icon.
+* [NSIS](http://nsis.sourceforge.net/Main_Page) - C:\Program Files (x86)\NSIS : used to build setup.
+* [Resource Hacker](http://www.angusj.com/resourcehacker/) - C:\Program Files (x86)\Resource Hacker : used to change icon.
 
 --------
 ## Libraries using
 #### PW2_0
 * [Jave (ffmpeg wrapper)](http://www.sauronsoftware.it/projects/jave/) : included in code folder.
 * [sDrop](http://www.sojamo.de/libraries/drop/) : drag-and-drop support, library mod included in library folder.
-* Android dx Dexer, Eclipse compiler (from [APDE](https://github.com/Calsign/APDE) repo)
+* Android DX Dexer, Eclipse compiler (from [APDE](https://github.com/Calsign/APDE) repo)
 * sdklib (from android sdk)
 * [ZipSigner](https://github.com/simtel12/zip-signer)
 * Base64 Encoder from [BouncyCastleProvider](https://www.bouncycastle.org)

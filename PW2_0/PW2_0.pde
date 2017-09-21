@@ -62,6 +62,8 @@ boolean jeonjehong=false;
  2.+ : calculator support hexcode.(and some functions for color)
  2.+ : delay value edit shortcut(from unitor-lpassist)
  2.+ : remote controller support (https://stackoverflow.com/questions/21628146/using-sockets-between-android-device-and-pc-same-network)
+ 2.+ : midi<->led converter
+ 2.+ : autoplay led link - triggering led(run triggering and frame both in led editor, stop link with clear button - this will enable rnd command in led editor too.)
  
  skinedit : change theme to appcompat-material
  uncloud : wait uncloud update!!
@@ -73,6 +75,7 @@ boolean jeonjehong=false;
  */
 void settings() {
   size(880+480+60, 800+60+60);
+  smooth(8);
   //size(displayHeight*142/92,displayHeight);
   //scale=(float)142/92;
 }
@@ -149,6 +152,7 @@ void setup_main() {
   pushMatrix();
   scale(scale);
   pushMatrix();
+  loadDefaultImages();
   UI_setup();
   //translate(Frames[currentFrame].position.x-Frames[currentFrame].size.x, Frames[currentFrame]. position.y-Frames[currentFrame].size.y);
   AU_setup();
@@ -190,7 +194,6 @@ void setup_main() {
   popMatrix();
   statusR.text=startText;
   statusR.render();
-  loadDefaultImages();
   uncloud_setup();
 }
 long drawStart=0;
@@ -256,9 +259,6 @@ void testSetup() {
 }
 
 void editable_keyTyped() {
-  if (key=='a'&&shortcutExcept()) {
-    build_windows("com.kimjisub.launchpad.theme.test", "test", "pw2.0", "test test", "test theme", color(255));
-  }
   int a=1;
   while (a<Shortcuts.length) {
     if (Shortcuts[a].isPressed(ctrlPressed, altPressed, shiftPressed, key, keyCode, shortcutExcept(), currentFrame)) {

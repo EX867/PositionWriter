@@ -214,6 +214,9 @@ class Button extends UIelement {
       resetFocusBeforeFrame();
       UI[getUIid("MP3_TIME")].disabled=false;
       Frames[getFrameid("F_MP3CONVERT")].prepare(currentFrame);
+    } else if (name.equals("I_OPENSKINEDIT")) {//External
+      resetFocusBeforeFrame();
+      Frames[getFrameid("F_SKINEDIT")].prepare(currentFrame);
     } else if (name.equals("I_CHANGETITLE")) {
       resetFocusBeforeFrame();
       ((TextBox)UI[getUIidRev("TITLEEDIT_TEXT")]).text=title_filename;
@@ -240,16 +243,7 @@ class Button extends UIelement {
     } else if (name.equals("I_CAFELINK")) {//External
       link ("http://cafe.naver.com/unipad");
     } else if (name.equals("I_PATH")) {
-      if (platform==WINDOWS) {//WARNING!!! Windows specific
-        //https://stackoverflow.com/questions/15875295/open-a-folder-in-explorer-using-java
-        try {
-          java.awt.Desktop.getDesktop().open(new File(GlobalPath));
-        }
-        catch(Exception e) {
-          e.printStackTrace();
-        }
-      } else if (platform==LINUX) {
-      }
+      openFileExplorer(GlobalPath);
     } else if (name.equals("I_INFO")) {//UI
       Frames [getFrameid("F_INFO")].prepare (currentFrame);
     } else if (name.equals("I_DEFAULTINPUT")) {//Settings
@@ -691,6 +685,17 @@ class Button extends UIelement {
       link("https://github.com/EX867/PositionWriter/releases");
       Frames[currentFrame].returnBack();
     } else if (name.equals("UPDATE_EXIT")) {
+      Frames[currentFrame].returnBack();
+    } else if (name.equals("SKIN_TEXT1")) {
+    } else if (name.equals("SKIN_BUILD")) {
+      String packageText=((TextBox)UI[getUIidRev("SKIN_PACKAGE")]).text;
+      String appnameText=filterString(((TextBox)UI[getUIidRev("SKIN_APPNAME")]).text, new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"});
+      if (appnameText.equals("")==false&&isValidPackageName(packageText)) {
+        build_windows(packageText, appnameText, ((TextBox)UI[getUIidRev("SKIN_AUTHOR")]).text, ((TextBox)UI[getUIidRev("SKIN_DESCRIPTION")]).text, ((TextBox)UI[getUIidRev("SKIN_TITLE")]).text, ((Button)UI[getUIidRev("SKIN_TEXT1")]).colorInfo);
+        Frames[currentFrame].returnBack();
+        openFileExplorer(joinPath(joinPath(joinPath(GlobalPath, TempPath), appnameText), "bin/apk/" ));//appName + ".apk"
+      }
+    } else if (name.equals("SKIN_EXIT")) {
       Frames[currentFrame].returnBack();
     }
   }
@@ -1261,6 +1266,22 @@ class TextBox extends UIelement {
         textSize(textSize*4/3);
         text("*", position.x+size.x-textSize, position.y);
       }
+    } else if (name.equals("SKIN_PACKAGE")) {
+      if (isValidPackageName(text)==false) {
+        stroke(UIcolors[I_TABC2]);
+        noFill();
+        strokeWeight(2);
+        rect(position.x, position.y, size.x, size.y);
+        noStroke();
+      }
+    } else if (name.equals("SKIN_APPNAME")) {
+      if (text.equals("")) {
+        stroke(UIcolors[I_TABC2]);
+        noFill();
+        strokeWeight(2);
+        rect(position.x, position.y, size.x, size.y);
+        noStroke();
+      }
     }
     textAlign(CENTER, CENTER);
   }
@@ -1457,6 +1478,8 @@ class TextBox extends UIelement {
         if (((ScrollList)UI[getUIid("I_LEDVIEW")]).selected==-1)return;
         KS.get(ksChain)[ksX][ksY].ksLedLoop.set(((ScrollList)UI[getUIid("I_LEDVIEW")]).selected, value);
       }
+    } else if (name.equals("SKIN_PACKAGE")) {
+      description.content="com.kimjisub.launchpad.theme."+text;
     }
     //render();
   }
@@ -2167,8 +2190,10 @@ class TextEditor extends UIelement {//only render and add text. this class not d
       while (b<tokens.length) {
         if (Mode!=CYXMODE&&(tokens[b].equals("on")||tokens[b].equals("o")||tokens[b].equals("off")||tokens[b].equals("f")||tokens[b].equals("delay")||tokens[b].equals("d")||tokens[b].equals("auto")||tokens[b].equals("a")||tokens[b].equals("bpm")||tokens[b].equals("b"))) {
           fill(UIcolors[I_KEYWORDTEXT]);
-        } else if (Mode!=CYXMODE&&ignoreMc&&(tokens[b].equals("mc")||tokens[b].equals("chain")||tokens[b].equals("c")||tokens[b].equals("mapping")||tokens[b].equals("m")||tokens[b].equals("rnd"))) {
+        } else if (Mode!=CYXMODE&&ignoreMc&&(tokens[b].equals("chain")||tokens[b].equals("c")||tokens[b].equals("mapping")||tokens[b].equals("m"))) {
           fill(UIcolors[I_UNITORTEXT]);
+        } else if (Mode!=CYXMODE &&ignoreMc&&(tokens[b].equals("mc")||tokens[b].equals("s")||tokens[b].equals("l")||tokens[b].equals("rnd"))) {
+          fill(UIcolors[I_UNITORTEXT2]);
         } else if (Mode==CYXMODE&&((ignoreMc&&tokens[b].equals("mc"))||tokens[b].equals("on")||tokens[b].equals("o")||tokens[b].equals("off")||tokens[b].equals("f")||tokens[b].equals("delay")||tokens[b].equals("d")||tokens[b].equals("chain")||tokens[b].equals("c"))) {
           fill(UIcolors[I_KEYWORDTEXT]);
         } else {

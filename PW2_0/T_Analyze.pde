@@ -264,6 +264,8 @@ class Analyzer {
     //extra
     static final int APON=6;
     static final int KEYSOUND=7;
+    //unitor command
+    static final int MAPPING=8;//MAPPING [hasVel?s:l] y x [vel=index]
     //info
     static final int TITLE=11;
     static final int PRODUCERNAME=12;
@@ -453,7 +455,7 @@ class Analyzer {
               } else if (isHex(tokens[3]))return new UnipackLine(filename, UnipackLine.ON, true, int(tokens[2]), 0, false, true, 0, color(unhex(""+tokens[3].charAt(0)+tokens[3].charAt(1)), unhex(""+tokens[3].charAt(2)+tokens[3].charAt(3)), unhex(""+tokens[3].charAt(4)+tokens[3].charAt(5))));
               else printError(2, line, filename, in, "velocity number or html color is incorrect!");
             } else printError(2, line, filename, in, "mc number is not integer!");
-          } else printError(4, line, filename, in, "mc not working!");
+          } else printError(4, line, filename, in, "mc is unitor command. enable ignoreMc to disable unitor errors.");
         } else {
           if (isInt(tokens[1]) && isInt(tokens[2])) {
             if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
@@ -484,7 +486,7 @@ class Analyzer {
                 } else printError(2, line, filename, tokens[3], "html color is not correct hex number!");
               }//end else
             } else printError(2, line, filename, tokens[2], "mc number is not a integer!");
-          } else printError(4, line, filename, in, "mc not working!");
+          } else printError(4, line, filename, in, "mc is unitor command. enable ignoreMc to disable unitor errors.");
         } else {
           if (isInt(tokens[1]) && isInt(tokens[2])) {
             if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
@@ -511,7 +513,7 @@ class Analyzer {
               if (1<=int(tokens[2])&&int(tokens[2])<=32==false)printWarning(3, line, filename, tokens[2], "mc number is out of range.");
               return new UnipackLine(filename, UnipackLine.APON, true, int(tokens[2]), 0, false, false, 0, OFFCOLOR+1);
             } else printError(3, line, filename, tokens[2], "mc number is not integer!");
-          } else printError(5, line, filename, in, "mc not working!");
+          } else printError(5, line, filename, in, "mc is unitor command. enable ignoreMc to disable unitor errors.");
         } else {
           if (isInt(tokens[1]) && isInt(tokens[2])) {
             if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(3, line, filename, in, "button number is out of range.");
@@ -528,8 +530,8 @@ class Analyzer {
               if (1<=int(tokens[2])&&int(tokens[2])<=32==false)printWarning(1, line, filename, tokens[2], "mc number is out of range.");
               return new UnipackLine(filename, UnipackLine.OFF, true, int(tokens[2]), 0, false, false, 0, 0);
             } else printError(1, line, filename, tokens[2], "mc number is not integer!");
-          } else if (Mode==CYXMODE)printError(5, line, filename, in, "mc not working!");
-          else printError(4, line, filename, in, "mc not working!");
+          } else if (Mode==CYXMODE)printError(5, line, filename, in, "mc is unitor command. enable ignoreMc to disable unitor errors.");
+          else printError(4, line, filename, in, "mc is unitor command. enable ignoreMc to disable unitor errors.");
         } else {
           if (isInt(tokens[1]) && isInt(tokens[2])) {
             if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(1, line, filename, in, "button number is out of range.");
@@ -566,6 +568,22 @@ class Analyzer {
         if (isInt(tokens[1]))return new UnipackLine(filename, UnipackLine.CHAIN, false, int(tokens[1]), 0, true, false, 0, 0);
         else printError(3, line, filename, in, "chain number is not integer!");
       } else printError(3, line, filename, in, "chain command expects [chain c].");
+    } else if (tokens[0].equals("mapping")||tokens[0].equals("m")) {//for now, this can't use mc.
+      if (ignoreMc) {
+        if (tokens.length==5) {
+          if (isInt(tokens[2]) && isInt(tokens[3])) {
+            if (int(tokens[2])<=0||int(tokens[2])>ButtonY||int(tokens[3])<=0||int(tokens[3])>ButtonX)printWarning(1, line, filename, in, "button number is out of range.");
+            if (isInt(tokens[4])) {
+              if (int(tokens[4])<0)printWarning(1, line, filename, in, "mapping index number out of range.");
+              if (tokens[1].equals("s")) {
+                return new UnipackLine(filename, UnipackLine.MAPPING, false, int(tokens[2]), int(tokens[3]), true, false, int(tokens[4]), 0);
+              } else if (tokens[1].equals("l")) {
+                return new UnipackLine(filename, UnipackLine.MAPPING, false, int(tokens[2]), int(tokens[3]), false, false, int(tokens[4]), 0);
+              } else printError(1, line, filename, in, "only 's' and 'l' can be used in option.");
+            } else printError(1, line, filename, in, "mapping index number must be a integer.");
+          }
+        } else printError(1, line, filename, in, "mapping command expects [mapping [s|l] y x n].");
+      } else printError(5, line, filename, in, "mapping is unitor command. enable ignoreMc to disable unitor errors.");
     } else if (tokens[0].equals("filename")) {
       printError(1, line, filename, in, "filename command is not supported in PositionWriter 2.0.");
       if (tokens.length == 5||tokens.length == 6) {// [filename c y x loop] || [filename c y x loop option] || [filename c y x loop multi]

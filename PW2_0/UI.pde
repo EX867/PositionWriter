@@ -73,7 +73,7 @@ void UI_load() {
   int a=0;
   while (a<Datas.length) {
     int id=Datas[a].getInt("id");
-    if (a<CustomDatas.length) {
+    if (id<CustomDatas.length) {
       UIcolors[id]=color(int(CustomDatas[a].getFloat("r")), int(CustomDatas[a].getFloat("g")), int(CustomDatas[a].getFloat("b")), int(CustomDatas[a].getFloat("a")));
       UIcolornames[id]=CustomDatas[a].getContent();
     } else {
@@ -217,6 +217,8 @@ void UI_load() {
       UI[id]=new Logger(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getInt("textsize"));
     } else if (Type==TYPE_INFOVIEWER) {
       UI[id]=new InfoViewer(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getInt("textsize"));
+    } else if (Type==TYPE_SKINEDIT) {
+      UI[id]=new SkinEditView (id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"));
     } else {
       UI[id]=new UIelement(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"));
     }
@@ -295,14 +297,14 @@ void UI_setup() {
   ((TextEditor)UI[textfieldId]).originalY=UI[textfieldId].position.y;
   ((TextEditor)UI[textfieldId]).originalSY=UI[textfieldId].size.y;
   // ========= hardcoded data ========== //
-  ((ScrollList)UI[getUIidRev("I_SIGNALCHAIN")]).setItems(new String[]{"WAVE"});
-  ((ScrollList)UI[getUIidRev("I_EFFECTORS")]).setItems(new String[]{"SIMPLE EDIT TOOL", "TIME STRETCHER"});
-  UI[getUIidRev("I_CUTPOINT")].disabled=true;
-  UI[getUIidRev("T_SIGNALCHAIN")].disabled=true;
-  UI[getUIidRev("T_AUTOMATION")].disabled=true;
-  UI[getUIidRev("I_SIGNALCHAIN")].disabled=true;
-  UI[getUIidRev("I_EFFECTORS")].disabled=true;
-  UI[getUIidRev("I_AUTOMATION")].disabled=true;
+  ((ScrollList)UI[getUIid("I_SIGNALCHAIN")]).setItems(new String[]{"WAVE"});
+  ((ScrollList)UI[getUIid("I_EFFECTORS")]).setItems(new String[]{"SIMPLE EDIT TOOL", "TIME STRETCHER"});
+  UI[getUIid("I_CUTPOINT")].disabled=true;
+  UI[getUIid("T_SIGNALCHAIN")].disabled=true;
+  UI[getUIid("T_AUTOMATION")].disabled=true;
+  UI[getUIid("I_SIGNALCHAIN")].disabled=true;
+  UI[getUIid("I_EFFECTORS")].disabled=true;
+  UI[getUIid("I_AUTOMATION")].disabled=true;
   //
   userMacro1=((Button)UI[getUIid("I_NUMBER1")]).text.replace("\\n", "\n");
   userMacro2=((Button)UI[getUIid("I_NUMBER2")]).text.replace("\\n", "\n");
@@ -318,6 +320,9 @@ void UI_setup() {
   }
   catch(Exception e) {
   }
+  //
+  skinEditor=(SkinEditView)UI[getUIidRev("SKIN_EDIT")];
+  skinEditor.setComponents((TextBox)UI[getUIidRev("SKIN_PACKAGE")], (TextBox)UI[getUIidRev("SKIN_TITLE")], (TextBox)UI[getUIidRev("SKIN_AUTHOR")], (TextBox)UI[getUIidRev("SKIN_DESCRIPTION")], (TextBox)UI[getUIidRev("SKIN_APPNAME")], (Button)UI[getUIidRev("SKIN_TEXT1")]);
   // === Custom settings load === //
   loadCustomSettings();
   //---
@@ -437,9 +442,16 @@ class Rect {
     position=new PVector(x, y);
     size=new PVector(w, h);
   }
-  void render() {
-    fill(UIcolors[I_OVERLAY]);
+  void render(color fill_, color stroke_) {
+    if (fill_==0)noFill();
+    else fill(fill_);
+    if (stroke_==0)noStroke();
+    else stroke(stroke_);
     rect(position.x, position.y, size.x, size.y);
+  }
+  boolean includes(float x, float y) {
+    if (position.x-size.x<x&&x<position.x+size.x&&position.y-size.y<y&&y<position.y+size.y)return true;
+    return false;
   }
 }
 Rect Overlay=null;//for now,this is controlled by droplistener!! fix it...(or make ui library and port this code to that...)
@@ -452,7 +464,7 @@ void setOverlay(Rect rect) {//one frame overlay
 void drawOverlays() {
   if (Overlay!=null) {
     registerRender();
-    Overlay.render();
+    Overlay.render(UIcolors[I_OVERLAY], 0);
   }
 }
 void UI_update() {

@@ -127,8 +127,8 @@ boolean statusLchanged=false;
 boolean statusRchanged=false;
 int displayingError=-1;
 void setStatusL(String text) {
+  if (statusL.text.equals(text)==false)statusLchanged=true;
   statusL.text=text;
-  statusLchanged=true;
 }
 void setStatusR(String text) {
   statusR.text=text;

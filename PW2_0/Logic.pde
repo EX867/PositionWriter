@@ -29,6 +29,7 @@ Label statusL;
 Label statusR;
 PadButton keyLedPad;
 PadButton keySoundPad;
+SkinEditView skinEditor;
 
 int currentLedFrame=0;
 int currentLedTime=0;

@@ -19,6 +19,7 @@
     <element id="16" x="710" y="460" w="450" h="370">F_UNCLOUD</element>
     <element id="17" x="710" y="460" w="450" h="90">F_LOGIN</element>
     <element id="18" x="710" y="460" w="200" h="200">F_UPDATE</element>
+    <element id="19" x="710" y="460" w="710" h="460">F_SKINEDIT</element>
   </Frames>
   <UIelements>
     <!--Re-arranged-->
@@ -71,8 +72,9 @@
     <element id="37" type="TYPE_BUTTON" x="275" y="385" w="120" h="20" description="input mode in positionwriter 1.x" value="false" text="1.x input" textsize="20">I_OLDINPUT</element>
     <element id="38" type="TYPE_BUTTON" x="275" y="430" w="120" h="20" description="prints autoPlay commands." value="false" text="autoPlay" textsize="20">I_CYXMODE</element>
     <element id="39" type="TYPE_BUTTON" x="225" y="740" w="190" h="30" description="ignore mc errors(default true)" value="false" text="ignore mc" textsize="25">I_IGNOREMC</element>
-    <element id="40" type="TYPE_BUTTON" x="125" y="810" w="90" h="30" description="open mc - 10by10 converter" text="Open&#10;mc converter" textsize="20">I_OPENMC</element>
-    <element id="33" type="TYPE_BUTTON" x="325" y="810" w="90" h="30" description="open audio converter(ffmpeg)" text="Open&#10;audio converter" textsize="20">I_OPENMP3</element>
+    <element id="40" type="TYPE_BUTTON" x="80" y="810" w="70" h="30" description="open mc - 10by10 converter" text="Open&#10;mc converter" textsize="15">I_OPENMC</element>
+    <element id="33" type="TYPE_BUTTON" x="225" y="810" w="70" h="30" description="open audio converter(ffmpeg)" text="Open&#10;audio converter" textsize="15">I_OPENMP3</element>
+    <element id="189" type="TYPE_BUTTON" x="370" y="810" w="70" h="30" description="open unipad skin builder" text="Open&#10;skin builder" textsize="15">I_OPENSKINEDIT</element>
     <element id="41" type="TYPE_SCROLLLIST" x="675" y="460" w="215" h="390" description="" textsize="17" reorderable="false">I_SHORTCUTS</element>
     <element id="42" type="TYPE_DROPDOWN" x="225" y="485" w="200" h="25" description="select language" textsize="20">I_LANGUAGE</element>
     <element id="43" type="TYPE_SCROLLLIST" x="675" y="460" w="215" h="390" description="" textsize="17" reorderable="false">I_UICOLORS</element>
@@ -86,8 +88,8 @@
     <element id="51" type="TYPE_TEXTBOX" x="1130" y="105" w="220" h="40" description="" title="Project" text="" hint="unipack's title for exporting." textsize="20">I_PROJECTNAME</element>
     <element id="52" type="TYPE_TEXTBOX" x="1130" y="195" w="220" h="40" description="" title="Title" text="DefaultName" hint="Enter title." textsize="20">I_TITLE</element>
     <element id="53" type="TYPE_TEXTBOX" x="1130" y="285" w="220" h="40" description="" title="ProducerName" text="DefaultProducer" hint="Enter producer name" textsize="20">I_PRODUCERNAME</element>
-    <element id="54" type="TYPE_TEXTBOX" x="1130" y="375" w="220" h="40" description="" title="ButtonX" value="8" hint="Enter width" textsize="20">I_BUTTONX</element>
-    <element id="55" type="TYPE_TEXTBOX" x="1130" y="465" w="220" h="40" description="" title="ButtonY" value="8" hint="Enter height" textsize="20">I_BUTTONY</element>
+    <element id="54" type="TYPE_TEXTBOX" x="1130" y="375" w="220" h="40" description="" title="ButtonY" value="8" hint="Enter width" textsize="20">I_BUTTONX</element>
+    <element id="55" type="TYPE_TEXTBOX" x="1130" y="465" w="220" h="40" description="" title="ButtonX" value="8" hint="Enter height" textsize="20">I_BUTTONY</element>
     <element id="56" type="TYPE_TEXTBOX" x="1130" y="555" w="220" h="40" description="" title="Chain" value="3" hint="Enter chain" textsize="20">I_CHAIN</element>
     <element id="57" type="TYPE_BUTTON" x="1130" y="643" w="210" h="35" description="" value="true" text="landscape" textsize="25">I_LANDSCAPE</element>
     <element id="58" type="TYPE_BUTTON" x="1130" y="729" w="210" h="35" description="" value="true" text="squareButtons" textsize="25">I_SQUAREBUTTONS</element>
@@ -226,13 +228,21 @@
     <element id="180" type="TYPE_BUTTON" x="200" y="200" w="180" h="180" description="new version released. click to open download page." text="get new&#10;&#10;version" textsize="30">UPDATE_UPDATE</element>
     <element id="181" type="TYPE_BUTTON" x="365" y="-35" w="25" h="25" description="cancel" image="I_EXIT.png">UPDATE_EXIT</element>
     <!---->
-    
-    <!--181 elements-->
+    <element id="182" type="TYPE_SKINEDIT" x="710" y="460" w="700" h="450" description="">SKIN_EDIT</element>
+    <element id="183" type="TYPE_TEXTBOX" x="160" y="860" w="135" h="35" description="com.kimjisub.launchpad.theme.test" title="...launchpad.theme." text="test" hint="theme_package_name" numberonly="false" textsize="20">SKIN_PACKAGE</element>
+    <element id="184" type="TYPE_TEXTBOX" x="400" y="860" w="95" h="35" description="" title="Title" text="" hint="Test Skin" numberonly="false" textsize="20">SKIN_TITLE</element>
+    <element id="185" type="TYPE_TEXTBOX" x="600" y="860" w="95" h="35" description="" title="Author" text="" hint="User" numberonly="false" textsize="20">SKIN_AUTHOR</element>
+    <element id="186" type="TYPE_TEXTBOX" x="900" y="860" w="195" h="35" description="" title="Description" text="" hint="Description" numberonly="false" textsize="20">SKIN_DESCRIPTION</element>
+    <element id="187" type="TYPE_TEXTBOX" x="1200" y="860" w="95" h="35" description="App name can't be empty!" title="App name" text="" hint="Test Skin" numberonly="false" textsize="20">SKIN_APPNAME</element>
+    <element id="188" type="TYPE_BUTTON" x="50" y="600" w="30" h="30" description="text color" color="FFFFFFFF">SKIN_TEXT1</element>
+    <element id="190" type="TYPE_BUTTON" x="1350" y="860" w="45" h="35" description="build skin!" image="I_CONVERT.png">SKIN_BUILD</element>
+    <element id="181" type="TYPE_BUTTON" x="1370" y="780" w="25" h="25" description="exit frame" image="I_EXIT.png">SKIN_EXIT</element>
+    <!--189 elements-->
   </UIelements>
   <FrameData>
     <F_KEYLED>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|<!--TAB_WAVEDIT-->|STATUS_BAR_L|STATUS_BAR_R|I_CHANGETITLE|T_VELOCITY|T_HTML|T_TEXT|KEYLED_PAD|I_PLAYSTOP|I_INFRAME|I_LOOP|I_FRAMESLIDER|I_FRAMESLIDERLOOP|I_TIME1|I_LEDREFRESH|I_NUMBER1|I_NUMBER2|I_HTMLSEL|I_VELNUM|I_TEXTFIELD|I_OPENFIND|I_HTMLR|I_HTMLG|I_HTMLB|I_HTMLH|I_HTMLS|I_HTMLV|I_RECENT1|I_RECENT2|I_RECENT3|I_RECENT4|I_RECENT5|I_RECENT6|I_RECENT7|I_RECENT8|I_RECENT9|I_RECENTA|I_FINDTEXTBOX|I_REPLACETEXTBOX|I_NEXTFIND|I_PREVIOUSFIND|I_CALCULATE|I_REPLACEALL</F_KEYLED>
     <F_KEYSOUND>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|<!--TAB_WAVEDIT-->|STATUS_BAR_L|STATUS_BAR_R|I_CHANGETITLE|I_CLEARKEYSOUND|I_RELOADKEYSOUND|KEYSOUND_PAD|I_FILEVIEW1|T_SOUNDVIEW|T_LEDVIEW|I_SOUNDVIEW|I_LEDVIEW|KS_SOUNDMULTI|KS_LEDMULTI|KS_LOOP|</F_KEYSOUND>
-    <F_SETTINGS>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|<!--TAB_WAVEDIT-->|STATUS_BAR_L|STATUS_BAR_R|T_SHORTCUTS|T_UICOLORS|I_AUTOSAVE|I_AUTOSAVETIME|I_RESOLUTION|I_TEXTSIZE|I_AUTOSTOP|I_STARTFROM|I_DEFAULTINPUT|I_OLDINPUT|I_CYXMODE|<!--I_LANGUAGE-->|I_RELOADINSTART|I_IGNOREMC|I_OPENMC|I_OPENMP3|I_DESCRIPTIONTIME|I_SHORTCUTS|I_UICOLORS|I_PROJECTS|I_RELOAD|<!--I_ZIP-->I_MIDI|I_CAFELINK|I_INFO|I_EXIT|I_PROJECTNAME|I_TITLE|I_PRODUCERNAME|I_BUTTONX|I_BUTTONY|I_CHAIN|I_LANDSCAPE|I_SQUAREBUTTONS|I_PATH|</F_SETTINGS>
+    <F_SETTINGS>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|<!--TAB_WAVEDIT-->|STATUS_BAR_L|STATUS_BAR_R|T_SHORTCUTS|T_UICOLORS|I_AUTOSAVE|I_AUTOSAVETIME|I_RESOLUTION|I_TEXTSIZE|I_AUTOSTOP|I_STARTFROM|I_DEFAULTINPUT|I_OLDINPUT|I_CYXMODE|<!--I_LANGUAGE-->|I_RELOADINSTART|I_IGNOREMC|I_OPENMC|I_OPENMP3|I_OPENSKINEDIT|I_DESCRIPTIONTIME|I_SHORTCUTS|I_UICOLORS|I_PROJECTS|I_RELOAD|<!--I_ZIP-->I_MIDI|I_CAFELINK|I_INFO|I_EXIT|I_PROJECTNAME|I_TITLE|I_PRODUCERNAME|I_BUTTONX|I_BUTTONY|I_CHAIN|I_LANDSCAPE|I_SQUAREBUTTONS|I_PATH|</F_SETTINGS>
     <F_WAVEDIT>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|TAB_WAVEDIT|STATUS_BAR_L|STATUS_BAR_R|I_PLAY|I_STOP|I_LOOP|I_PROGRESSBAR|I_TIME2|I_WAVEDITOR|I_VISUALIZER|T_FILEVIEW|T_CUTPOINT|T_TRACKLIST|I_FILEVIEW3|I_CUTPOINT|I_NORMALIZE|I_REVERSE|T_SIGNALCHAIN|T_AUTOMATION|I_SIGNALCHAIN|I_EFFECTORS|I_AUTOMATION|</F_WAVEDIT>
     <F_EXPORT>TAB_KEYLED|</F_EXPORT>
     <F_DIALOG>DIALOG_EXIT|DIALOG_CONTENT|DIALOG_OK|DIALOG_CANCEL|</F_DIALOG>
@@ -247,5 +257,6 @@
     <F_UNCLOUD>UN_PRIVATE|UN_LIST|UN_USERINFO|UN_LOGIN|MC_EXIT|UN_UPLOAD|UN_UPDATE|UN_DELETE|UN_DOWNLOAD|UN_UNIPACKINFO|</F_UNCLOUD>
     <F_LOGIN>LOGIN_ID|LOGIN_PASSWORD|LOGIN_OK|MC_EXIT</F_LOGIN>
     <F_UPDATE>UPDATE_UPDATE|UPDATE_EXIT|</F_UPDATE>
+    <F_SKINEDIT>SKIN_EDIT|SKIN_PACKAGE|SKIN_TITLE|SKIN_AUTHOR|SKIN_DESCRIPTION|SKIN_APPNAME|SKIN_TEXT1|SKIN_BUILD|SKIN_EXIT</F_SKINEDIT>
   </FrameData>
 </Data>
