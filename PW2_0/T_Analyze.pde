@@ -104,12 +104,20 @@ class Analyzer {
     if (before!=null) {
       if (before.Type==UnipackLine.ON) {
         if (before.mc==false) {
-          eraseLedPosition(frame, line.line, before.x, before.y, after!=null);
+          for (int a=before.x; a<=before.x2; a++) {
+            for (int b=before.y; b<=before.y2; b++) {
+              eraseLedPosition(frame, line.line, a, b, after!=null);
+            }
+          }
         }
       } else if (before.Type==UnipackLine.OFF) {
         if (before.mc==false) {
-          eraseLedPosition(frame, line.line, before.x, before.y, after!=null);
-          eraseApLedPosition(frame, line.line, before.x, before.y, after!=null);
+          for (int a=before.x; a<=before.x2; a++) {
+            for (int b=before.y; b<=before.y2; b++) {
+              eraseLedPosition(frame, line.line, a, b, after!=null);
+              eraseApLedPosition(frame, line.line, a, b, after!=null);
+            }
+          }
         }
       } else if (before.Type==UnipackLine.DELAY) {
         int a=DelayPoint.size()-1;//#binarysearch
@@ -136,7 +144,11 @@ class Analyzer {
         sliderUpdate=true;
       } else if (before.Type==UnipackLine.APON) {
         if (before.mc==false) {
-          eraseApLedPosition(frame, line.line, before.x, before.y, after!=null);
+          for (int a=before.x; a<=before.x2; a++) {
+            for (int b=before.y; b<=before.y2; b++) {
+              eraseApLedPosition(frame, line.line, a, b, after!=null);
+            }
+          }
         }
       } else if (before.Type==UnipackLine.CHAIN) {
         int a=apChainPoint.size()-1;
@@ -159,8 +171,20 @@ class Analyzer {
             adderror=false;
           }
           if (after.hasVel) {
-            if (after.vel>=0&&after.vel<128)readFrameLedPosition(frame, line.line, after.x, after.y, k[after.vel], after);
-          } else if (after.hasHtml)readFrameLedPosition(frame, line.line, after.x, after.y, after.html, after);
+            if (after.vel>=0&&after.vel<128) {
+              for (int a=after.x; a<=after.x2; a++) {
+                for (int b=after.y; b<=after.y2; b++) {
+                  readFrameLedPosition(frame, line.line, a, b, k[after.vel], after);
+                }
+              }
+            }
+          } else if (after.hasHtml) {
+            for (int a=after.x; a<=after.x2; a++) {
+              for (int b=after.y; b<=after.y2; b++) {
+                readFrameLedPosition(frame, line.line, a, b, after.html, after);
+              }
+            }
+          }
         } else if (ignoreMc==false) {
           adderror=true;
           printError(4, line.line, "LedEditor", line.after, "mc is unitor command. enable ignoreMc to disable unitor errors.");
@@ -168,8 +192,12 @@ class Analyzer {
         }
       } else if (after.Type==UnipackLine.OFF) {
         if (after.mc==false) {
-          readFrameLedPosition(frame, line.line, after.x, after.y, OFFCOLOR, after);
-          readFrameApLedPosition(frame, line.line, after.x, after.y, false, after);
+          for (int a=after.x; a<=after.x2; a++) {
+            for (int b=after.y; b<=after.y2; b++) {
+              readFrameLedPosition(frame, line.line, a, b, OFFCOLOR, after);
+              readFrameApLedPosition(frame, line.line, a, b, false, after);
+            }
+          }
         } else if (ignoreMc==false) {
           adderror=true;
           printError(4, line.line, "LedEditor", line.after, "mc is unitor command. enable ignoreMc to disable unitor errors.");
@@ -195,7 +223,11 @@ class Analyzer {
             printError(2/*remove when changing mode!*/, line.line, "LedEditor", line.after, "can't use autoPlay command in led file.");
             adderror=false;
           }
-          readFrameApLedPosition(frame, line.line, after.x, after.y, true, after);
+          for (int a=after.x; a<=after.x2; a++) {
+            for (int b=after.y; b<=after.y2; b++) {
+              readFrameApLedPosition(frame, line.line, a, b, true, after);
+            }
+          }
         } else if (ignoreMc==false) {
           adderror=true;
           printError(5, line.line, "LedEditor", line.after, "mc is unitor command. enable ignoreMc to disable unitor errors.");
@@ -268,10 +300,9 @@ class Analyzer {
     }
     return 0;//error
   }
-  //getDelayValue : slow!!!
   int getDelayValue(int line) {//milliseconds.
     if (line==-1)return 0;
-    UnipackLine info=analyzer.AnalyzeLine(line, "get delay value", Lines.getLine(line));
+    UnipackLine info=uLines.get(line);//analyzer.AnalyzeLine(line, "get delay value", Lines.getLine(line));
     if (info.Type==UnipackLine.DELAY) {//else error.
       if (info.hasHtml) return floor((info.x*2400/(getBpm(line)*info.y))*100);
       else return info.x;
@@ -279,18 +310,34 @@ class Analyzer {
     return 0;
   }
   void onLED(UnipackLine info, int frame) {
-    if (0>info.vel||info.vel>127)LED.get(frame)[info.x-1][info.y-1]=OFFCOLOR;
-    else if (info.hasVel)LED.get(frame)[info.x-1][info.y-1]=k[info.vel];
-    else if (info.hasHtml)LED.get(frame)[info.x-1][info.y-1]=info.html;
+    for (int a=info.x; a<=info.x2; a++) {
+      for (int b=info.y; b<=info.y2; b++) {
+        if (0>info.vel||info.vel>127)LED.get(frame)[a-1][b-1]=OFFCOLOR;
+        else if (info.hasVel)LED.get(frame)[a-1][b-1]=k[info.vel];
+        else if (info.hasHtml)LED.get(frame)[a-1][a-1]=info.html;
+      }
+    }
   }
   void offLED(UnipackLine info, int frame) {//DELETE
-    LED.get(frame)[info.x-1][info.y-1]=OFFCOLOR;
+    for (int a=info.x; a<=info.x2; a++) {
+      for (int b=info.y; b<=info.y2; b++) {
+        LED.get(frame)[a-1][b-1]=OFFCOLOR;
+      }
+    }
   }
   void onApLED(UnipackLine info, int frame) {
-    apLED.get(frame)[info.x-1][info.y-1]=true;
+    for (int a=info.x; a<=info.x2; a++) {
+      for (int b=info.y; b<=info.y2; b++) {
+        apLED.get(frame)[a-1][b-1]=true;
+      }
+    }
   }
   void offApLED(UnipackLine info, int frame) {//DELETE
-    apLED.get(frame)[info.x-1][info.y-1]=false;
+    for (int a=info.x; a<=info.x2; a++) {
+      for (int b=info.y; b<=info.y2; b++) {
+        apLED.get(frame)[a-1][b-1]=false;
+      }
+    }
   }
   class UnipackLine {
     static final int EMPTY=-1;
@@ -319,6 +366,8 @@ class Analyzer {
     int chain=0;
     int x=0;
     int y=0;
+    int x2=0;
+    int y2=0;
     int vel=0;
     color html;
     boolean hasVel;
@@ -357,17 +406,34 @@ class Analyzer {
       mc=mc_;
       x=x_;
       y=y_;
+      x2=x;
+      y2=y;
       hasVel=hasVel_;
       hasHtml=hasHtml_;
       vel=vel_;
       html=html_;
       if (printlog)printLog("AnalyzeLine", "("+createInfo+") Type/ "+Type+" mc/ "+str(mc)+" x/ "+x+" y/ "+y+" vel/ "+str(hasVel)+" "+vel_+" html/ "+str(hasHtml)+" "+html);
     }
+    UnipackLine(String createInfo, int Type_, boolean mc_, int x_, int y_, int x2_, int y2_, boolean hasVel_, boolean hasHtml_, int vel_, color html_) {//only used on range commands
+      Type=Type_;
+      mc=mc_;
+      x=min(x_, x2_);
+      y=min(y_, y2_);
+      x2=max(x_, x2_);
+      y2=max(y_, y2_);
+      hasVel=hasVel_;
+      hasHtml=hasHtml_;
+      vel=vel_;
+      html=html_;
+      if (printlog)printLog("AnalyzeLine", "("+createInfo+") Type/ "+Type+" mc/ "+str(mc)+" x/ "+x+" y/ "+y+" x2/ "+x2+" y2/ "+y2+" vel/ "+str(hasVel)+" "+vel_+" html/ "+str(hasHtml)+" "+html);
+    }
     UnipackLine(String createInfo, int Type_, int c_, int x_, int y_, String filename_, boolean absolute_, int loop_) {
       Type=Type_;
       chain=c_;
       x=x_;
       y=y_;
+      x2=x;
+      y2=y;
       filename=filename_;
       absolute=absolute_;
       loop=loop_;
@@ -496,16 +562,20 @@ class Analyzer {
             else printError(2, line, filename, in, "velocity number or html color is incorrect!");
           } else printError(2, line, filename, in, "mc number is not integer!");
         } else {
-          if (isInt(tokens[1]) && isInt(tokens[2])) {
-            if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
+          if (isRange(tokens[1]) && isRange(tokens[2])) {
+            int y=getRangeFirst(tokens[1]);
+            int y2=getRangeSecond(tokens[1]);
+            int x=getRangeFirst(tokens[2]);
+            int x2=getRangeSecond(tokens[2]);
+            if (y<=0||y>ButtonY||x<=0||x>ButtonX||y2<=0||y2>ButtonY||x2<=0||x2>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
             if (tokens[3].equals("rnd")) {
-              return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), false, true, 0, RNDCOLOR);
+              return new UnipackLine(filename, UnipackLine.ON, false, x, y, x2, y2, false, true, 0, RNDCOLOR);
             } else if (isInt(tokens[3])) {
-              if (0 <= Integer.parseInt(tokens[3]) && Integer.parseInt(tokens[3]) <= 127==false)printWarning(2, line, filename, in, "velocity number is out of range.");
-              return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), true, false, int(tokens[3]), 0);
-            } else if (isHex(tokens[3]))return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), false, true, 0, color(unhex(""+tokens[3].charAt(0)+tokens[3].charAt(1)), unhex(""+tokens[3].charAt(2)+tokens[3].charAt(3)), unhex(""+tokens[3].charAt(4)+tokens[3].charAt(5))));
+              if (0 <= int(tokens[3]) && int(tokens[3]) <= 127==false)printWarning(2, line, filename, in, "velocity number is out of range.");
+              return new UnipackLine(filename, UnipackLine.ON, false, x, y, x2, y2, true, false, int(tokens[3]), 0);
+            } else if (isHex(tokens[3]))return new UnipackLine(filename, UnipackLine.ON, false, x, y, x2, y2, false, true, 0, color(unhex(""+tokens[3].charAt(0)+tokens[3].charAt(1)), unhex(""+tokens[3].charAt(2)+tokens[3].charAt(3)), unhex(""+tokens[3].charAt(4)+tokens[3].charAt(5))));
             else printError(2, line, filename, tokens[3], "velocity number or html color is incorrect!");
-          } else printError(2, line, filename, in, "x or y number is not integer!");
+          } else printError(2, line, filename, in, "x or y number is not integer or range!");
         }//end else
       } else if (tokens.length == 5) {
         if (tokens[1].equals("mc")) {
@@ -529,24 +599,28 @@ class Analyzer {
             }//end else
           } else printError(2, line, filename, tokens[2], "mc number is not a integer!");
         } else {
-          if (isInt(tokens[1]) && isInt(tokens[2])) {
-            if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
+          if (isRange(tokens[1]) && isRange(tokens[2])) {
+            int y=getRangeFirst(tokens[1]);
+            int y2=getRangeSecond(tokens[1]);
+            int x=getRangeFirst(tokens[2]);
+            int x2=getRangeSecond(tokens[2]);
+            if (y<=0||y>ButtonY||x<=0||x>ButtonX||y2<=0||y2>ButtonY||x2<=0||x2>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
             if (tokens[3].equals("auto") || tokens[3].equals("a")) {
               if (tokens[4].equals("rnd")) {
-                return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), false, true, 0, RNDCOLOR);
+                return new UnipackLine(filename, UnipackLine.ON, false, x, y, x2, y2, false, true, 0, RNDCOLOR);
               } else if (isInt(tokens[4])) {
-                if (0 <= Integer.parseInt(tokens[4]) && Integer.parseInt(tokens[4]) <= 127==false)printWarning(2, line, filename, tokens[4], "velocity number is out of range.");
-                return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), true, false, int(tokens[4]), 0);
+                if (0 <= int(tokens[4]) && int(tokens[4]) <= 127==false)printWarning(2, line, filename, tokens[4], "velocity number is out of range.");
+                return new UnipackLine(filename, UnipackLine.ON, false, x, y, x2, y2, true, false, int(tokens[4]), 0);
               } else printError(2, line, filename, tokens[4], "velocity number is not integer!");
             } else {
               if (isHex(tokens[3])) {
                 if (isInt(tokens[4])) {
-                  if (0 <= Integer.parseInt(tokens[4]) && Integer.parseInt(tokens[4]) <= 127==false)printWarning(2, line, filename, tokens[4], "velocity number is out of range.");
-                  return new UnipackLine(filename, UnipackLine.ON, false, int(tokens[2]), int(tokens[1]), true, true, int(tokens[4]), color(unhex(""+tokens[3].charAt(0)+tokens[3].charAt(1)), unhex(""+tokens[3].charAt(2)+tokens[3].charAt(3)), unhex(""+tokens[3].charAt(4)+tokens[3].charAt(5))));
+                  if (0 <= int(tokens[4]) && int(tokens[4]) <= 127==false)printWarning(2, line, filename, tokens[4], "velocity number is out of range.");
+                  return new UnipackLine(filename, UnipackLine.ON, false, x, y, x2, y2, true, true, int(tokens[4]), color(unhex(""+tokens[3].charAt(0)+tokens[3].charAt(1)), unhex(""+tokens[3].charAt(2)+tokens[3].charAt(3)), unhex(""+tokens[3].charAt(4)+tokens[3].charAt(5))));
                 } else printError(2, line, filename, tokens[4], "velocity number is not integer!");
               } else printError(2, line, filename, tokens[3], "html color is not correct hex number!");
             }//end else
-          } else printError(2, line, filename, in, "x or y number is not integer!");
+          } else printError(2, line, filename, in, "x or y number is not integer or range!");
         }//end else
       } else if (tokens.length == 3) {//(autoPlay) - post filtered
         if (tokens[1].equals("mc")) {
@@ -556,9 +630,13 @@ class Analyzer {
             return new UnipackLine(filename, UnipackLine.APON, true, int(tokens[2]), 0, false, false, 0, OFFCOLOR+1);
           } else printError(3, line, filename, tokens[2], "mc number is not integer!");
         } else {
-          if (isInt(tokens[1]) && isInt(tokens[2])) {
-            if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(3, line, filename, in, "button number is out of range.");
-            return new UnipackLine(filename, UnipackLine.APON, false, int(tokens[2]), int(tokens[1]), false, false, 0, OFFCOLOR+1);
+          if (isRange(tokens[1]) && isRange(tokens[2])) {
+            int y=getRangeFirst(tokens[1]);
+            int y2=getRangeSecond(tokens[1]);
+            int x=getRangeFirst(tokens[2]);
+            int x2=getRangeSecond(tokens[2]);
+            if (y<=0||y>ButtonY||x<=0||x>ButtonX||y2<=0||y2>ButtonY||x2<=0||x2>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
+            return new UnipackLine(filename, UnipackLine.APON, false, x, y, x2, y2, false, false, 0, OFFCOLOR+1);
           } else printError(3, line, filename, in, "x or y number is not integer!");
         }//end else
       } else printError(1, line, filename, in, "on command expects [on y x auto...] or [on y x html...].");
@@ -571,9 +649,13 @@ class Analyzer {
             return new UnipackLine(filename, UnipackLine.OFF, true, int(tokens[2]), 0, false, false, 0, 0);
           } else printError(1, line, filename, tokens[2], "mc number is not integer!");
         } else {
-          if (isInt(tokens[1]) && isInt(tokens[2])) {
-            if (int(tokens[1])<=0||int(tokens[1])>ButtonY||int(tokens[2])<=0||int(tokens[2])>ButtonX)printWarning(1, line, filename, in, "button number is out of range.");
-            return new UnipackLine(filename, UnipackLine.OFF, false, int(tokens[2]), int(tokens[1]), false, false, 0, 0);
+          if (isRange(tokens[1]) && isRange(tokens[2])) {
+            int y=getRangeFirst(tokens[1]);
+            int y2=getRangeSecond(tokens[1]);
+            int x=getRangeFirst(tokens[2]);
+            int x2=getRangeSecond(tokens[2]);
+            if (y<=0||y>ButtonY||x<=0||x>ButtonX||y2<=0||y2>ButtonY||x2<=0||x2>ButtonX)printWarning(2, line, filename, in, "button number is out of range.");
+            return new UnipackLine(filename, UnipackLine.OFF, false, x, y, x2, y2, false, false, 0, 0);
           } else printError(1, line, filename, in, "x or y number is not integer!");
         }//end else
       } else printError(1, line, filename, in, "off command expects [off y x] or [off mc n].");
@@ -749,12 +831,16 @@ class Analyzer {
     count=frame+count;
     while (frame<=count&&a<Lines.lines()) {//reset
       UnipackLine info=uLines.get(a);//AnalyzeLine(a, "readFrame - read "+count+" frames", Lines.getLine(a));
+      if (info.mc) {
+        a++;
+        continue;
+      }
       if (info.Type==UnipackLine.ON) {
-        if (0<info.x&&info.x<=ButtonX&&0<info.y&&info.y<=ButtonY) {
+        if (0<info.x&&info.x<=ButtonX&&0<info.y&&info.y<=ButtonY&&0<info.x2&&info.x2<=ButtonX&&0<info.y2&&info.y2<=ButtonY) {
           onLED(info, frame);
         }
       } else if (info.Type==UnipackLine.OFF) {
-        if (0<info.x&&info.x<=ButtonX&&0<info.y&&info.y<=ButtonY) {
+        if (0<info.x&&info.x<=ButtonX&&0<info.y&&info.y<=ButtonY&&0<info.x2&&info.x2<=ButtonX&&0<info.y2&&info.y2<=ButtonY) {
           offLED(info, frame);
           offApLED(info, frame);
         }
@@ -771,7 +857,7 @@ class Analyzer {
           b=b+1;
         }
       } else if (info.Type==UnipackLine.APON) {
-        if (0<info.x&&info.x<=ButtonX&&0<info.y&&info.y<=ButtonY) {
+        if (0<info.x&&info.x<=ButtonX&&0<info.y&&info.y<=ButtonY&&0<info.x2&&info.x2<=ButtonX&&0<info.y2&&info.y2<=ButtonY) {
           onApLED(info, frame);
         }
       } 
@@ -788,13 +874,17 @@ class Analyzer {
       UnipackLine info=new UnipackLine("read frame - read while no event", DEFAULT);
       while (a<Lines.lines()) {//reset
         info=uLines.get(a);//AnalyzeLine(a, "read frame - read while no event", Lines.getLine(a));
+        if (info.mc) {
+          a++;
+          continue;
+        }
         if (info.Type==UnipackLine.ON) {
-          if (info.x==x&&info.y==y) {
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) {
             changed=true;
             temp=info;
           }
         } else if (info.Type==UnipackLine.OFF) {
-          if (info.x==x&&info.y==y) {
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) {
             changed=true;
             temp=info;
           }
@@ -815,6 +905,9 @@ class Analyzer {
         a++;
       }
       if (changed==false&&a==Lines.lines()) {
+        if (temp.mc) {
+          return;
+        }
         if (temp.Type==UnipackLine.ON)onLED (temp, frame);
         else if (temp.Type==UnipackLine.OFF) offLED (temp, frame);
         else if (temp.Type==DEFAULT) {//dirty!
@@ -837,10 +930,14 @@ class Analyzer {
       if (skip&&a==line)a++;
       while (a <max) {
         info=uLines.get(a);//AnalyzeLine(a, "erase frame - read while no event", Lines.getLine(a));
+        if (info.mc) {
+          a++;
+          continue;
+        }
         if (info.Type==UnipackLine.ON) {
-          if (x==info.x&&y==info.y) onLED (info, frame);
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) onLED (info, frame);
         } else if (info.Type==UnipackLine.OFF) {
-          if (x==info.x&&y==info.y) offLED (info, frame);
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) offLED (info, frame);
         }
         if (skip&&a==line)a++;
         a=a+1;
@@ -858,13 +955,17 @@ class Analyzer {
       UnipackLine info=new UnipackLine("read frame - read while no event", DEFAULT);
       while (a<Lines.lines()) {//reset
         info=uLines.get(a);//AnalyzeLine(a, "read frame - read while no event", Lines.getLine(a));
+        if (info.mc) {
+          a++;
+          continue;
+        }
         if (info.Type==UnipackLine.APON) {
-          if (info.x==x&&info.y==y) {
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) {
             changed=true;
             temp=info;
           }
         } else if (info.Type==UnipackLine.OFF) {
-          if (info.x==x&&info.y==y) {
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) {
             changed=true;
             temp=info;
           }
@@ -885,6 +986,9 @@ class Analyzer {
         a++;
       }
       if (changed==false&&a==Lines.lines()) {
+        if (temp.mc) {
+          return;
+        }
         if (temp.Type==UnipackLine.APON)onApLED (temp, frame);
         else if (temp.Type==UnipackLine.OFF) offApLED (temp, frame);
         else if (temp.Type==DEFAULT) {//dirty!
@@ -907,10 +1011,14 @@ class Analyzer {
       if (skip&&a==line)a++;
       while (a <max) {
         info=uLines.get(a);//AnalyzeLine(a, "erase frame - read while no event", Lines.getLine(a));
+        if (info.mc) {
+          a++;
+          continue;
+        }
         if (info.Type==UnipackLine.APON) {
-          if (x==info.x&&y==info.y) onApLED (info, frame);
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) onApLED (info, frame);
         } else if (info.Type==UnipackLine.OFF) {
-          if (x==info.x&&y==info.y) offApLED (info, frame);
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) offApLED (info, frame);
         }
         if (skip&&a==line)a++;
         a=a+1;
@@ -1177,10 +1285,10 @@ class Analyzer {
   }
   ArrayList<String> toUnipadLed(String[] in) {
     ArrayList<String> ret=new ArrayList<String>();
-    int a=0;
+    int c=0;
     float bpmv=120;
-    while (a<in.length) {
-      UnipackLine line=AnalyzeLine(a, "ExportLedFile", in[a]);
+    while (c<in.length) {
+      UnipackLine line=AnalyzeLine(c, "ExportLedFile", in[c]);
       if (line.Type==UnipackLine.ON) {//
         if (line.mc&&ignoreMc) {
           if (line.hasHtml&&line.hasVel) {
@@ -1192,18 +1300,34 @@ class Analyzer {
           }//else ignore
         } else {
           if (line.hasHtml&&line.hasVel) {
-            ret.add("o "+line.y+" "+line.x+" "+hex(line.html, 6)+" "+line.vel);
+            for (int b=line.y; b<=line.y2; b++) {
+              for (int a=line.x; a<line.x2; a++) {
+                ret.add("o "+b+" "+a+" "+hex(line.html, 6)+" "+line.vel);
+              }
+            }
           } else if (line.hasVel) {
-            ret.add("o "+line.y+" "+line.x+" a "+line.vel);
+            for (int b=line.y; b<=line.y2; b++) {
+              for (int a=line.x; a<line.x2; a++) {
+                ret.add("o "+b+" "+a+" a "+line.vel);
+              }
+            }
           } else if (line.hasHtml) {
-            ret.add("o "+line.y+" "+line.x+" "+hex(line.html, 6));
+            for (int b=line.y; b<=line.y2; b++) {
+              for (int a=line.x; a<line.x2; a++) {
+                ret.add("o "+b+" "+a+" "+hex(line.html, 6));
+              }
+            }
           }//else ignore
         }
       } else if (line.Type==UnipackLine.OFF) {//
         if (line.mc&&ignoreMc) {//[off mc n]
           ret.add("f mc "+line.x);
         } else {//[off y x n]
-          ret.add("f "+line.y+" "+line.x);
+          for (int b=line.y; b<=line.y2; b++) {
+            for (int a=line.x; a<line.x2; a++) {
+              ret.add("f "+b+" "+a);
+            }
+          }
         }
       } else if (line.Type==UnipackLine.DELAY) {
         if (line.hasHtml) {//bpm
@@ -1221,7 +1345,7 @@ class Analyzer {
           else ret.add("m l "+line.y+" "+line.x+" "+line.vel);
         }
       }//else ignore.
-      a=a+1;
+      c=c+1;
     }
     return ret;
   }

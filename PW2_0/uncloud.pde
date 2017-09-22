@@ -49,6 +49,7 @@ void uncloud_setup() {
 }
 void uncloud_prepare() {//called on opening projects window
   uncloudList.clear();
+  uncloudIndex.clear();
   //get uncloud file list.
   if (uncloud_userkey.equals("")==false) {
     JSONObject send=new JSONObject();
@@ -144,6 +145,7 @@ boolean uncloud_login() {
   return true;
 }
 void uncloud_upload(int index) {
+  if (uncloud_userkey.equals(""))return;
   if (index==-1)return;
   //this will open info file and change updated to true.
   JSONObject send=new JSONObject();
@@ -165,11 +167,13 @@ void uncloud_upload(int index) {
   }
 }
 void uncloud_update(int index) {
+  if (uncloud_userkey.equals(""))return;
   if (index==-1)return;
   uncloud_delete(index);
   uncloud_upload(index);
 }
 void uncloud_delete(int index) {
+  if (uncloud_userkey.equals(""))return;
   if (index==-1)return;
   if (uncloudIndex.get(index).id.equals("")) {//assertion
     displayLogError("uncloudIndex.get(index).id is not loaded!");
@@ -186,6 +190,7 @@ void uncloud_delete(int index) {
   }
 }
 void uncloud_getdetail(int index) {
+  if (uncloud_userkey.equals(""))return;
   if (index==-1)return;
   if (uncloudIndex.get(index).id.equals("")) {//assertion
     displayLogError("uncloudIndex.get(index).id is not loaded!");
@@ -207,6 +212,7 @@ void uncloud_getdetail(int index) {
   }
 }
 void uncloud_download(int index) {
+  if (uncloud_userkey.equals(""))return;
   if (index==-1)return;
   if (uncloudIndex.get(index).id.equals("")) {//assertion
     displayLogError("uncloudIndex.get(index).id is not loaded!");

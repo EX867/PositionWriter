@@ -28,6 +28,7 @@ PVector MouseClick=new PVector(0, 0);
 //state variables
 int mouseState=AN_RELEASED;
 int mouseFrame=0;
+int mouseButtonLast=-1;//mouseButton works not correctly in release...
 boolean keyState=false;
 boolean keyInit=false;
 int keyFrame=0;
@@ -330,7 +331,20 @@ void UI_setup() {
 }
 void loadCustomSettings() {
   String datapath=getDataPath();
-  if (new File(joinPath(datapath, "Settings.xml")).exists()==false)return;
+  if (new File(joinPath(datapath, "Settings.xml")).exists()==false) {
+    //change totally initial(first launch) scale to initialScale on here...
+    ((Slider)UI[getUIid("I_RESOLUTION")]).valueF=initialScale;
+    scale=initialScale;
+    surface.setSize(floor(initialWidth*scale), floor(initialHeight*scale));
+    setSize(floor(initialWidth*scale), floor(initialHeight*scale));
+    popMatrix();
+    popMatrix();
+    pushMatrix();
+    scale(scale);
+    pushMatrix();
+    registerRender();
+    return;
+  }
   XML XmlData=loadXML("Settings.xml");
   XML Data;
   Data=XmlData.getChild("I_AUTOSAVE");
@@ -348,8 +362,8 @@ void loadCustomSettings() {
     ((Slider)UI[getUIid("I_RESOLUTION")]).valueF=Data.getFloat("value");
     scale=Data.getFloat("value");
     if (scale<=0)scale=1;
-    surface.setSize(floor(1420*scale), floor(920*scale));
-    setSize(floor(1420*scale), floor(920*scale));
+    surface.setSize(floor(initialWidth*scale), floor(initialHeight*scale));
+    setSize(floor(initialWidth*scale), floor(initialHeight*scale));
     popMatrix();
     popMatrix();
     pushMatrix();
@@ -388,6 +402,13 @@ void loadCustomSettings() {
     ((Button)UI[getUIid("I_OLDINPUT")]).value=toBoolean(Data.getString("value"));
     if (toBoolean(Data.getString("value"))==true) {
       Mode=MANUALINPUT;
+    }
+  }
+  Data=XmlData.getChild("I_RIGHTOFFMODE");
+  if (Data!=null) {
+    ((Button)UI[getUIid("I_RIGHTOFFMODE")]).value=toBoolean(Data.getString("value"));
+    if (toBoolean(Data.getString("value"))==true) {
+      Mode=RIGHTOFFMODE;
     }
   }
   Data=XmlData.getChild("I_DEFAULTINPUT");
@@ -509,6 +530,7 @@ void getMouseState() {
       }
       keyInterval=frameCount-keyFrame;
       mouseState=AN_PRESS;
+      mouseButtonLast=mouseButton;
       keyFrame=frameCount;
       doubleClickDist=dist(MouseClick.x, MouseClick.y, MouseX, MouseY);
       MouseClick.x=MouseX;
@@ -604,11 +626,11 @@ boolean isMouseOn(float x, float y, float w, float h) {//RADIUS
   return false;
 }
 boolean isMousePressed(float x, float y, float w, float h) {
-  if (mousePressed&&mouseButton==LEFT&&x-w<MouseX&&MouseX<x+w&&y-h<MouseY&&MouseY<y+h)return true;
+  if (mousePressed&&mouseButtonLast==LEFT&&x-w<MouseX&&MouseX<x+w&&y-h<MouseY&&MouseY<y+h)return true;
   return false;
 }
 boolean isMousePressedRight(float x, float y, float w, float h) {
-  if (mousePressed&&mouseButton==RIGHT&&x-w<MouseX&&MouseX<x+w&&y-h<MouseY&&MouseY<y+h)return true;
+  if (mousePressed&&mouseButtonLast==RIGHT&&x-w<MouseX&&MouseX<x+w&&y-h<MouseY&&MouseY<y+h)return true;
   return false;
 }
 class Frame {

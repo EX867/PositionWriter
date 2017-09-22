@@ -15,7 +15,9 @@ void detectProcessing() {
 }
 float Width=1420;
 float Height=920;
-String VERSION="{\"type\"=\"beta\",\"major\"=2,\"minor\"=0,\"patch\"=0,\"build\"=4,\"build_date\"=\"17----\"}";//type=beta or production
+float initialWidth=1420;
+float initialHeight=920;
+String VERSION="{\"type\"=\"beta\",\"major\"=2,\"minor\"=0,\"patch\"=0,\"build\"=4,\"build_date\"=\"170922\"}";//type=beta or production
 String startText="PositionWriter <major>.<minor> <type> [<build>] (<build_date> build)";//template for startText. see buildVersion() to get actual string.
 String title_suffix=" | Position Writer 2.0";
 String title_filename="";
@@ -29,6 +31,7 @@ boolean loadedOnce_led=false;
 boolean loadedOnce_keySound=false;
 
 boolean jeonjehong=false;
+boolean initialOpen=false;
 /*
 // === Note for writing manual === //
  * : "Shift+Number" in Manualinput has deleted.
@@ -44,16 +47,13 @@ boolean jeonjehong=false;
  //other
  2.+ : multi threading
  2.+ : enhance midi input&&output support**
- 2.+ : disable auto input mode**
  2.+ : add html+vel color autoinput(option)
  2.+ : change getUIid() to binary search (or hashmap)
  2.+ : change DelayValue to DelayValueSum and do binary search
- 2.+ : change Analyzer.getDelayValue() to use cached values
  2.+ : add KeySoundPlayer and midi->autoPlay tools
- 2.+ : support skip blank characters character in find replace.
  2.+ : directly edit and save zip(for users)
  2.+ : (option) keySound autosave, undo
- 2.+ : linux file chooser (element name Button:I_PATH)
+ 2.+ : linux file chooser
  2.+ : multi language support
  2.+ : led editor multi tab support
  2.+ : note on highlight
@@ -64,6 +64,7 @@ boolean jeonjehong=false;
  2.+ : remote controller support (https://stackoverflow.com/questions/21628146/using-sockets-between-android-device-and-pc-same-network)
  2.+ : midi<->led converter
  2.+ : autoplay led link - triggering led(run triggering and frame both in led editor, stop link with clear button - this will enable rnd command in led editor too.)
+ 2.+ : drag to print range commands
  
  skinedit : change theme to appcompat-material
  uncloud : wait uncloud update!!
@@ -71,13 +72,16 @@ boolean jeonjehong=false;
  uncloud : infoviewer design upgrade.
  // ==== ERROR ==== //
  // ==== WARNING ==== //
- hardcoded 8(textEditor)
+ hardcoded numbers(textEditor,skinedit)
  */
+float initialScale;
 void settings() {
-  size(880+480+60, 800+60+60);
   smooth(8);
-  //size(displayHeight*142/92,displayHeight);
-  //scale=(float)142/92;
+  initialScale=min((float)displayWidth/1920, (float)displayHeight/1080);
+  initialWidth=1420;//*displayScale;
+  initialHeight=920;//*displayScale;
+  size(int(1420*initialScale), int(920*initialScale));
+  scale=initialScale;//(float)142/92;
 }
 //https://github.com/processing/processing/wiki/Export-Info-and-Tips
 boolean Debug=false;
@@ -140,6 +144,11 @@ void setup_main() {
     jeonjehong=true;
     println("jeonjehong=true");
   }
+  if (new File(joinPath(getDataPath(), "Initial")).isFile()) {
+    initialOpen=true;
+    println("initial=true");
+    new File(joinPath(getDataPath(), "Initial")).delete();
+  }
   //load data and settings
   //...
   //setup data
@@ -159,6 +168,10 @@ void setup_main() {
   //
   testSetup();
   title_filename=newFile();
+  // === Initial Open === //
+  if (initialOpen) {
+    registerPrepare(getFrameid("F_INITIAL"));
+  }
   // === Load in start === // loadedOnce_xxx can't be true on start, but settings.xml can set it to true on start. if true, reload.
   if (loadedOnce_keySound) {
     printLog("LoadInStart", title_keysoundfoldername);
@@ -187,13 +200,13 @@ void setup_main() {
   } else {
     title_keyledfilename=title_filename;
   }
-  //
+  //end things
   surface.setTitle(title_filename+title_edited+title_suffix);
   checkVersion();
   popMatrix();
-  popMatrix();
   statusR.text=startText;
   statusR.render();
+  popMatrix();
   uncloud_setup();
 }
 long drawStart=0;
@@ -323,22 +336,22 @@ void editable_keyTyped() {
         temp.render();
         frameSlider.render();
       } else if (functionId==S_AUTOINPUTUP) {
-        if (Mode==AUTOINPUT) {
+        if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
           if (selectedColorType==DS_VEL)((VelocityButton)UI[velnumId]).cursorUp();
           else ((ColorPicker)UI[htmlselId]).cursorUp();
         }
       } else if (functionId==S_AUTOINPUTLEFT) {
-        if (Mode==AUTOINPUT) {
+        if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
           if (selectedColorType==DS_VEL)((VelocityButton)UI[velnumId]).cursorLeft();
           else ((ColorPicker)UI[htmlselId]).cursorLeft();
         }
       } else if (functionId==S_AUTOINPUTDOWN) {
-        if (Mode==AUTOINPUT) {
+        if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
           if (selectedColorType==DS_VEL)((VelocityButton)UI[velnumId]).cursorDown();
           else ((ColorPicker)UI[htmlselId]).cursorDown();
         }
       } else if (functionId==S_AUTOINPUTRIGHT) {
-        if (Mode==AUTOINPUT) {
+        if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
           if (selectedColorType==DS_VEL)((VelocityButton)UI[velnumId]).cursorRight();
           else ((ColorPicker)UI[htmlselId]).cursorRight();
         }

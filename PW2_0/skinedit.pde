@@ -465,17 +465,17 @@ class SkinEditView extends UIelement {
       }
       popMatrix();
     } else {
-      if (mousePressed&&new Rect(0, 0, 90, 90).includes(mouse.x, mouse.y)) {
-        pushMatrix();
-        if (play) {
-          scale((float)180/skin_play.width, (float)180/skin_play.height);
-          image(skin_play, 0, 0);
-        } else {
-          scale((float)180/skin_pause.width, (float)180/skin_pause.height);
-          image(skin_pause, 0, 0);
-        }
-        popMatrix();
+      //if (mousePressed&&new Rect(0, 0, 90, 90).includes(mouse.x, mouse.y)) {
+      pushMatrix();
+      if (play) {
+        scale((float)180/skin_play.width, (float)180/skin_play.height);
+        image(skin_play, 0, 0);
+      } else {
+        scale((float)180/skin_pause.width, (float)180/skin_pause.height);
+        image(skin_pause, 0, 0);
       }
+      popMatrix();
+      //}
     }
     pushMatrix();
     if (mousePressed&&new Rect(180, 0, 90, 90).includes(mouse.x, mouse.y)) {

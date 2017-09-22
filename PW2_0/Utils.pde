@@ -22,6 +22,21 @@ public boolean isInt(String str) {
   }
   return true;
 }
+public boolean isRange(String str) {
+  if(isInt(str))return true;
+  String[] ints=split(str, "~");
+  return isInt(ints[0])&&isInt(ints[1]);
+}
+public int getRangeFirst(String str){
+  if(isInt(str))return int(str);
+  String[] ints=split(str, "~");
+  return int(ints[0]);
+}
+public int getRangeSecond(String str){
+  if(isInt(str))return int(str);
+  String[] ints=split(str, "~");
+  return int(ints[1]);
+}
 public static boolean isNumber(String str) {
   if (str.equals(""))return false;
   char[] chars = str.toCharArray();

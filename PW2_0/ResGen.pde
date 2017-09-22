@@ -9,6 +9,7 @@ void generateSettings() {
   text+="  <I_AUTOSTOP value=\""+str(((Button)UI[getUIid("I_AUTOSTOP")]).value)+"\"></I_AUTOSTOP>\n";
   text+="  <I_DEFAULTINPUT value=\""+str(((Button)UI[getUIid("I_DEFAULTINPUT")]).value)+"\"></I_DEFAULTINPUT>\n";
   text+="  <I_OLDINPUT value=\""+str(((Button)UI[getUIid("I_OLDINPUT")]).value)+"\"></I_OLDINPUT>\n";
+  text+="  <I_RIGHTOFFMODE value=\""+str(((Button)UI[getUIid("I_RIGHTOFFMODE")]).value)+"\"></I_RIGHTOFFMODE>\n";
   text+="  <I_CYXMODE value=\""+str(((Button)UI[getUIid("I_CYXMODE")]).value)+"\"></I_CYXMODE>\n";
   text+="  <I_LANGUAGE value=\""+((DropDown)UI[getUIid("I_LANGUAGE")]).selection+"\"></I_LANGUAGE>\n";
   text+="  <I_DESCRIPTIONTIME value=\""+((TextBox)UI[getUIid("I_DESCRIPTIONTIME")]).value+"\"></I_DESCRIPTIONTIME>\n";

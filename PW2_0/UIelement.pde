@@ -228,8 +228,8 @@ class Button extends UIelement {
       surface.setTitle(title_filename+title_edited+title_suffix);
     } else if (name.equals("I_PROJECTS")) {
       resetFocusBeforeFrame();
-      uncloud_prepare();
-      Frames[getFrameid("F_UNCLOUD")].prepare(currentFrame);
+      //uncloud_prepare();
+      //Frames[getFrameid("F_UNCLOUD")].prepare(currentFrame);//#uncloud this is disabled in current version!!
     } else if (name.equals("I_RELOAD")) {
       L_ResizeData(((TextBox)UI[getUIid("I_CHAIN")]).value, ((TextBox)UI[getUIid("I_BUTTONX")]).value, ((TextBox)UI[getUIid("I_BUTTONY")]).value);
       analyzer.clear();
@@ -249,9 +249,11 @@ class Button extends UIelement {
     } else if (name.equals("I_DEFAULTINPUT")) {//Settings
       value=true;
       ((Button)UI [getUIid("I_OLDINPUT")]).value=false;
+      ((Button)UI [getUIidRev("I_RIGHTOFFMODE")]).value=false;
       ((Button)UI [getUIid("I_CYXMODE")]).value=false;
       UI [getUIid("I_DEFAULTINPUT")].render();
       UI [getUIid("I_OLDINPUT")].render();
+      UI [getUIidRev("I_RIGHTOFFMODE")].render();
       UI [getUIid("I_CYXMODE")].render();
       Mode=AUTOINPUT;
       removeErrorsWithCode(3, 5);
@@ -274,11 +276,40 @@ class Button extends UIelement {
     } else if (name.equals("I_OLDINPUT")) {//Settings
       value=true;
       ((Button)UI [getUIid("I_DEFAULTINPUT")]).value=false;
+      ((Button)UI [getUIidRev("I_RIGHTOFFMODE")]).value=false;
       ((Button)UI [getUIid("I_CYXMODE")]).value=false;
       UI [getUIid("I_DEFAULTINPUT")].render();
       UI [getUIid("I_OLDINPUT")].render();
+      UI [getUIidRev("I_RIGHTOFFMODE")].render();
       UI [getUIid("I_CYXMODE")].render();
       Mode=MANUALINPUT;
+      removeErrorsWithCode(3, 5);
+      adderror=true;
+      int a=0;
+      while (a<analyzer.uLines.size()) {
+        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.APON/*||analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN*/)printError(2/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use autoPlay command in led file.");
+        a=a+1;
+      }
+      a=0;
+      if (ignoreMc==false) {
+        while (a<analyzer.uLines.size()) {
+          if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.MAPPING)printError(4, a, "LedEditor", Lines.getLine(a), "mapping is unitor command. enable ignoreMc to disable unitor errors.");
+          else if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN)printError(4, a, "LedEditor", Lines.getLine(a), "chain is unitor command. enable ignoreMc to disable unitor errors.");
+          else if (analyzer.uLines.get(a).mc)printError(4/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc is unitor command. enable ignoreMc to disable unitor errors.");
+          a=a+1;
+        }
+      }
+      adderror=false;
+    } else if (name.equals("I_RIGHTOFFMODE")) {// duplication x3. make it to function!
+      value=true;
+      ((Button)UI [getUIid("I_DEFAULTINPUT")]).value=false;
+      ((Button)UI [getUIid("I_OLDINPUT")]).value=false;
+      ((Button)UI [getUIid("I_CYXMODE")]).value=false;
+      UI [getUIid("I_DEFAULTINPUT")].render();
+      UI [getUIid("I_OLDINPUT")].render();
+      UI [getUIidRev("I_RIGHTOFFMODE")].render();
+      UI [getUIid("I_CYXMODE")].render();
+      Mode=RIGHTOFFMODE;
       removeErrorsWithCode(3, 5);
       adderror=true;
       int a=0;
@@ -300,8 +331,10 @@ class Button extends UIelement {
       value=true;
       ((Button)UI [getUIid("I_DEFAULTINPUT")]).value=false;
       ((Button)UI [getUIid("I_OLDINPUT")]).value=false;
+      ((Button)UI [getUIidRev("I_RIGHTOFFMODE")]).value=false;
       UI [getUIid("I_DEFAULTINPUT")].render();
       UI [getUIid("I_OLDINPUT")].render();
+      UI [getUIidRev("I_RIGHTOFFMODE")].render();
       UI [getUIid("I_CYXMODE")].render();
       Mode=CYXMODE;
       removeErrorsWithCode(2, 4);
@@ -411,52 +444,52 @@ class Button extends UIelement {
         }
         description.content="["+int(red(colorInfo))+", "+int(green(colorInfo))+", "+int(blue(colorInfo))+"]";//this also do in colorpicker.
       }
-      if (Mode==AUTOINPUT) {
+      if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
         selectedColorType=DS_HTML;
         ((ColorPicker)UI[htmlselId]).selectHtml(ID);
       } else if (Mode==MANUALINPUT)writeDisplay(" "+hex(colorInfo, 6));
     } else if (name.equals("I_RECENT2")) {
-      if (Mode==AUTOINPUT) {
+      if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
         selectedColorType=DS_HTML;
         ((ColorPicker)UI[htmlselId]).selectHtml(ID);
       } else if (Mode==MANUALINPUT)writeDisplay(" "+hex(colorInfo, 6));
     } else if (name.equals("I_RECENT3")) {
-      if (Mode==AUTOINPUT) {
+      if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
         selectedColorType=DS_HTML;
         ((ColorPicker)UI[htmlselId]).selectHtml(ID);
       } else if (Mode==MANUALINPUT)writeDisplay(" "+hex(colorInfo, 6));
     } else if (name.equals("I_RECENT4")) {
-      if (Mode==AUTOINPUT) {
+      if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
         selectedColorType=DS_HTML;
         ((ColorPicker)UI[htmlselId]).selectHtml(ID);
       } else if (Mode==MANUALINPUT)writeDisplay(" "+hex(colorInfo, 6));
     } else if (name.equals("I_RECENT5")) {
-      if (Mode==AUTOINPUT) {
+      if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
         selectedColorType=DS_HTML;
         ((ColorPicker)UI[htmlselId]).selectHtml(ID);
       } else if (Mode==MANUALINPUT)writeDisplay(" "+hex(colorInfo, 6));
     } else if (name.equals("I_RECENT6")) {
-      if (Mode==AUTOINPUT) {
+      if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
         selectedColorType=DS_HTML;
         ((ColorPicker)UI[htmlselId]).selectHtml(ID);
       } else if (Mode==MANUALINPUT)writeDisplay(" "+hex(colorInfo, 6));
     } else if (name.equals("I_RECENT7")) {
-      if (Mode==AUTOINPUT) {
+      if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
         selectedColorType=DS_HTML;
         ((ColorPicker)UI[htmlselId]).selectHtml(ID);
       } else if (Mode==MANUALINPUT)writeDisplay(" "+hex(colorInfo, 6));
     } else if (name.equals("I_RECENT8")) {
-      if (Mode==AUTOINPUT) {
+      if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
         selectedColorType=DS_HTML;
         ((ColorPicker)UI[htmlselId]).selectHtml(ID);
       } else if (Mode==MANUALINPUT)writeDisplay(" "+hex(colorInfo, 6));
     } else if (name.equals("I_RECENT9")) {
-      if (Mode==AUTOINPUT) {
+      if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
         selectedColorType=DS_HTML;
         ((ColorPicker)UI[htmlselId]).selectHtml(ID);
       } else if (Mode==MANUALINPUT) writeDisplay(" "+hex(colorInfo, 6));
     } else if (name.equals("I_RECENTA")) {
-      if (Mode==AUTOINPUT) {
+      if (Mode==AUTOINPUT||Mode==RIGHTOFFMODE) {
         selectedColorType=DS_HTML;
         ((ColorPicker)UI[htmlselId]).selectHtml(ID);
       } else if (Mode==MANUALINPUT)writeDisplay(" "+hex(colorInfo, 6));
@@ -677,19 +710,19 @@ class Button extends UIelement {
     } else if (name.equals("UN_UPLOAD")) {
       resetFocusBeforeFrame();
       tempCode=DIALOG_UPLOAD;
-      Frames[getFrameid("F_LOGIN")].prepare(currentFrame);
+      Frames[getFrameid("F_DIALOG")].prepare(currentFrame);
     } else if (name.equals("UN_UPDATE")) {
       resetFocusBeforeFrame();
       tempCode=DIALOG_UPDATE;
-      Frames[getFrameid("F_LOGIN")].prepare(currentFrame);
+      Frames[getFrameid("F_DIALOG")].prepare(currentFrame);
     } else if (name.equals("UN_DELETE")) {
       resetFocusBeforeFrame();
       tempCode=DIALOG_DELETE;
-      Frames[getFrameid("F_LOGIN")].prepare(currentFrame);
+      Frames[getFrameid("F_DIALOG")].prepare(currentFrame);
     } else if (name.equals("UN_DOWNLOAD")) {
       resetFocusBeforeFrame();
       tempCode=DIALOG_DOWNLOAD;
-      Frames[getFrameid("F_LOGIN")].prepare(currentFrame);
+      Frames[getFrameid("F_DIALOG")].prepare(currentFrame);
     } else if (name.equals("DIALOG_EXIT")) {
       tempCode=0;//no happens
       Frames[currentFrame].returnBack();
@@ -721,6 +754,8 @@ class Button extends UIelement {
       }
     } else if (name.equals("SKIN_EXIT")) {
       Frames[currentFrame].returnBack();
+    } else if (name.equals("INITIAL_HOWTOUSE")) {
+      link("https://github.com/EX867/PositionWriter/wiki/How-to-use-v2-(english)");
     }
   }
 }
@@ -951,8 +986,8 @@ class Slider extends UIelement {
       }
       if (name.equals("I_RESOLUTION")) {
         if (valueF<=0)valueF=1;
-        surface.setSize(floor(1420*valueF), floor(920*valueF));
-        setSize(floor(1420*valueF), floor(920*valueF));
+        surface.setSize(floor(initialWidth*valueF), floor(initialHeight*valueF));
+        setSize(floor(initialWidth*valueF), floor(initialHeight*valueF));
       } else if (name.equals("I_FRAMESLIDER")) {
         currentLedTime=valueI;
         timeLabel.text=currentLedTime+"/"+maxI;
@@ -1100,7 +1135,7 @@ class DragSlider extends UIelement {//only int
   @Override
     void render() {
     if (skip)return;
-    if (bypass&&(mousePressed==false||(mousePressed&&mouseButton==LEFT)))return;
+    if (bypass&&(mousePressed==false||(mousePressed&&mouseButtonLast==LEFT)))return;
     skip=true;
     frameSlider.render();
     skip=false;
@@ -1234,6 +1269,7 @@ class TextBox extends UIelement {
       offset=textSize/3;
       text(title+"/ ", position.x-size.x+textSize-5, position.y-textSize*2/3);
     }
+    //#font
     textSize(textSize);
     if (selectionLen>0) {
       fill(UIcolors[I_TEXTBOXSELECTION]);
@@ -1743,7 +1779,7 @@ class ScrollList extends UIelement {
     if (isMouseOn(position.x, position.y, size.x, size.y)) {
       if (mouseState==AN_PRESS) {
         focus=ID;
-        if ((isMousePressed(position.x+size.x-SLIDER_HALFWIDTH, position.y, SLIDER_HALFWIDTH, size.y)||(sliderClicked/*&&mousePressed&&mouseButton==RIGHT*/))) {
+        if ((isMousePressed(position.x+size.x-SLIDER_HALFWIDTH, position.y, SLIDER_HALFWIDTH, size.y)||(sliderClicked/*&&mousePressed&&mouseButtonLast==RIGHT*/))) {
           sliderClicked=true;
         } else {//isMousePressed(position.x-SLIDER_HALFWIDTH, position.y, size.x-SLIDER_HALFWIDTH, size.y)
           setSelect((int)(MouseY-(position.y-size.y-(sliderPos-(position.y-size.y+sliderLength))*(max(1, View.length*ITEM_HEIGHT-size.y*2)/max(1, size.y*2-sliderLength*2))))/ITEM_HEIGHT);
@@ -1753,7 +1789,7 @@ class ScrollList extends UIelement {
             if (keyInterval<DOUBLE_CLICK&&doubleClicked==0&&doubleClickDist<10) {//double click (10 hardcoded!!)
               doubleClicked=1;
               if (name.equals("I_LEDVIEW")) {
-                if (mouseButton==RIGHT) {
+                if (mouseButtonLast==RIGHT) {
                   skip=true;
                   focus=DEFAULT;
                   resetFocus();
@@ -2779,8 +2815,12 @@ class PadButton extends UIelement {
         if (jeonjehong&&mouseState==AN_PRESS) {
           printLed(X, Y);
         } else if ((jeonjehong==false&&mouseState==AN_RELEASE)&&pressed) {
-          if (mouseButton==LEFT)printLed(X, Y);
-          else if (Mode==RIGHTOFFMODE)printLed(X, Y, false, 1);
+          if (Mode==RIGHTOFFMODE) {
+            if (mouseButtonLast==LEFT)printLed(X, Y, false, 0);
+            else printLed(X, Y, false, 1);
+          } else {
+            if (mouseButtonLast==LEFT)printLed(X, Y);
+          }
         }
       }
       if (name.equals("KEYSOUND_PAD")) {
@@ -2827,7 +2867,7 @@ class PadButton extends UIelement {
               UI[ledviewid].registerRender=true;
             }
           }
-        } else if (mouseState==AN_PRESS&&mouseButton==LEFT) {
+        } else if (mouseState==AN_PRESS&&mouseButtonLast==LEFT) {
           padClickX=X;
           padClickY=Y;
           triggerButton(X, Y);
@@ -2881,9 +2921,9 @@ class PadButton extends UIelement {
           int b=0;
           while (b<ButtonY) {
             if (LED.get(currentLedFrame)[a][b]==RNDCOLOR) {
-              fill(UIcolors[I_BACKGROUND]);
+              fill(UIcolors[I_PADFOREGROUND]);
               text("rnd", padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2);
-              stroke(UIcolors[I_BACKGROUND]);
+              stroke(UIcolors[I_PADFOREGROUND]);
               noFill();
               rect(padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2, interval*2/5, interval*2/5);
               noStroke();

@@ -47,7 +47,7 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 * [Resource Hacker](http://www.angusj.com/resourcehacker/) - C:\Program Files (x86)\Resource Hacker : used to change icon.
 
 --------
-## Libraries using
+## Libraries and other things
 #### PW2_0
 * [Jave (ffmpeg wrapper)](http://www.sauronsoftware.it/projects/jave/) : included in code folder.
 * [sDrop](http://www.sojamo.de/libraries/drop/) : drag-and-drop support, library mod included in library folder.
@@ -56,3 +56,5 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 * [ZipSigner](https://github.com/simtel12/zip-signer)
 * Base64 Encoder from [BouncyCastleProvider](https://www.bouncycastle.org)
 * [RubberBand tine stretcher JNI](https://github.com/JorenSix/RubberBandJNI)
+* Source code pro font
+* [JungGothic font](http://www.kepa.or.kr/Board/View.aspx?ID_BL=1911&ID_BT=8001)
