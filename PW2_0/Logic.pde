@@ -331,19 +331,29 @@ class KsButton {
           break;
         } else if (((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.ON) {
           Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLED.get(multiLed-1).get(ksCurrentIndex);
-          if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY) {
+          if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY&&0<line.x2&&line.x2<=ButtonX&&0<line.y2&&line.y2<=ButtonY) {
             //add leds to ksLED array.
-            if (line.hasVel) {
-              if (line.vel>=0&&line.vel<=127)ksDisplay[line.x-1][line.y-1]=k[line.vel];
-            } else if (line.html==RNDCOLOR) {
-              if (ignoreMc)ksDisplay[line.x-1][line.y-1]=k[floor(random(0, 128))];
-            } else ksDisplay[line.x-1][line.y-1]=line.html;
+            for (int a=line.x; a<=line.x2; a++) {
+              for (int b=line.y; b<=line.y2; b++) {
+                if (line.hasHtml) {
+                  if (line.html==RNDCOLOR) {
+                    if (ignoreMc)ksDisplay[a-1][b-1]=k[floor(random(0, 128))];
+                  } else ksDisplay[a-1][b-1]=line.html;
+                } else {
+                  if (line.vel>=0&&line.vel<=127)ksDisplay[a-1][b-1]=k[line.vel];
+                }
+              }
+            }
           }
         } else if (((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.OFF) {
           Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLED.get(multiLed-1).get(ksCurrentIndex);
-          if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY) {
+          if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY&&0<line.x2&&line.x2<=ButtonX&&0<line.y2&&line.y2<=ButtonY) {
             //add leds to ksLED array.
-            ksDisplay[line.x-1][line.y-1]=OFFCOLOR;
+            for (int a=line.x; a<=line.x2; a++) {
+              for (int b=line.y; b<=line.y2; b++) {
+                ksDisplay[a-1][b-1]=OFFCOLOR;
+              }
+            }
           }
         } else if (ignoreMc&&((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.CHAIN) {
           Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLED.get(multiLed-1).get(ksCurrentIndex);
@@ -515,13 +525,10 @@ void updateFrameSlider() {
     frameSlider.maxI+=DelayValue.get(a);
     a=a+1;
   }
-  //printLog("updateFrameSlider()", "frameSlider.maxI = "+frameSlider.maxI);
   frameSlider.adjust(min(frameSlider.maxI, max(frameSlider.minI, frameSlider.valueI)));
-  //printLog("updateFrameSlider()", "frameSlider.valueI = "+frameSlider.valueI);
   currentLedTime=frameSlider.valueI;
   timeLabel.text=currentLedTime+"/"+frameSlider.maxI;
   setFrameByTime();
-  //printLog("updateFrameSlider()", "currentLedFrame = "+currentLedFrame);
   frameSlider.render();
 }
 void autoRun() {
@@ -576,7 +583,7 @@ void autoRun() {
 } 
 void setFrameByTime() {
   currentLedFrame=0;
-  int a=1;
+  int a=0;
   int sum=0;
   while (a<DelayValue.size()) {
     sum=sum+DelayValue.get(a);
@@ -591,9 +598,9 @@ void setFrameByTime() {
 }
 void setTimeByFrame() {
   currentLedTime=0;
-  int a=0;
-  while (a<currentLedFrame) {//warning! this can be incorrect
-    currentLedTime+=DelayValue.get(a);
+  int a=1;
+  while (a<=currentLedFrame) {//warning! this can be incorrect
+    currentLedTime+=analyzer.getDelayValue(DelayPoint.get(a));
     a=a+1;
   }
   timeLabel.text=currentLedTime+"/"+frameSlider.maxI;

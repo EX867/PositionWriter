@@ -140,6 +140,9 @@ void External_setup() {
           } else {
             setOverlay(0, 0, Width, Height);
           }
+        } else if (currentFrame==11) {//mp3 converter
+          UIelement elem=UI[getUIidRev("MP3_INPUT")];
+          setOverlay(elem.position.x, elem.position.y, elem.size.x, elem.size.y);
         } else if (currentFrame==19) {//skinedit
           if (skinEditor.getDropAreaItem((int)x, (int)y)!=null) {
             setOverlay(skinEditor.getDropAreaItem((int)x, (int)y).location);

@@ -497,18 +497,20 @@ class Button extends UIelement {
       exit();
     } else if (name.equals("I_NUMBER1")) {
       int before=LED.size();
+      int first=currentLedFrame;
       writeDisplay(userMacro1);
-      if (LED.size()==before+1) {//ap.size and led.size is equal.
-        currentLedFrame++;
+      if (LED.size()!=before) {//ap.size and led.size is equal.
+        currentLedFrame=min(first+(LED.size()-before), DelayPoint.size()-1);
         setTimeByFrame();
         frameSlider.render();
       }
     } else if (name.equals("I_NUMBER2")) {
       int before=LED.size();
+      int first=currentLedFrame;
       writeDisplay(userMacro2);
-      UI[textfieldId].render();
-      if (LED.size()==before+1) {
-        currentLedFrame++;
+      if (LED.size()!=before) {
+        currentLedFrame+=(LED.size()-before);
+        currentLedFrame=min(first+(LED.size()-before), DelayPoint.size()-1);
         setTimeByFrame();
         frameSlider.render();
       }
@@ -545,11 +547,12 @@ class Button extends UIelement {
         if (patternMatcher.findUpdated==false)findData=patternMatcher.findAll(Lines.toString());
         findIndex=findIndex+1;
         if (findIndex>=findData.size())findIndex=0;
-        Lines.setCursorByIndex(findData.get(findIndex).startpoint);
-        Lines.selectFromCursor(findData.get(findIndex).text.length());
-        focus=textfieldId;
-        ((TextEditor)UI[textfieldId]).moveToCursor();
-        //UI[textfieldId].render();
+        if (findData.size()>0) {
+          Lines.setCursorByIndex(findData.get(findIndex).startpoint);
+          Lines.selectFromCursor(findData.get(findIndex).text.length());
+          focus=textfieldId;
+          ((TextEditor)UI[textfieldId]).moveToCursor();
+        }
         UI[findId].render();
       }
     } else if (name.equals("I_PREVIOUSFIND")) {
@@ -557,11 +560,12 @@ class Button extends UIelement {
         if (patternMatcher.findUpdated==false)findData=patternMatcher.findAll(Lines.toString());
         findIndex=findIndex-1;
         if (findIndex<0)findIndex=findData.size()-1;
-        Lines.setCursorByIndex(findData.get(findIndex).startpoint);
-        Lines.selectFromCursor(findData.get(findIndex).text.length());
-        focus=textfieldId;
-        ((TextEditor)UI[textfieldId]).moveToCursor();
-        //UI[textfieldId].render();
+        if (findData.size()>0) {
+          Lines.setCursorByIndex(findData.get(findIndex).startpoint);
+          Lines.selectFromCursor(findData.get(findIndex).text.length());
+          focus=textfieldId;
+          ((TextEditor)UI[textfieldId]).moveToCursor();
+        }
         UI[findId].render();
       }
     } else if (name.equals("I_REPLACEALL")) {
@@ -1203,7 +1207,7 @@ class TextBox extends UIelement {
     if (focus==ID) {
       isFocused=true;
     }
-    if (super.react()==false)return false;
+    if (super.react()==false&&focus!=ID)return false;
     if (isMouseOn(position.x, position.y, size.x, size.y)) {
       if (mousePressed) {
         if (editorClicked) {
@@ -1513,8 +1517,10 @@ class TextBox extends UIelement {
       ((ColorPicker)UI[id]).updateColor();
     } else if (name.equals("I_AUTOSAVETIME")) {
       value=max(10, value);
-    } else if (name.equals("I_DESCRIPTIONTIME")||name.equals("I_BUTTONX")) {
+    } else if (name.equals("I_DESCRIPTIONTIME")) {
       value=max(1, value);
+    } else if (name.equals("I_BUTTONX")||name.equals("I_BUTTONY")) {
+      value=max(1, min(value, PAD_MAX));
     } else if (name.equals("I_CHAIN")) {
       value=min(max(1, value), 8);
     } else if (name.equals("I_TEXTSIZE")) {
@@ -2505,7 +2511,6 @@ class TextEditor extends UIelement {//only render and add text. this class not d
     sliderLength=size.y*size.y/max(size.y, max(Lines.lines()+10, size.y*2/textSize)*textSize/2);//half
     sliderPos=position.y+min(max(-size.y+sliderLength, sliderPos-position.y), size.y-sliderLength);//FIX
     moveToCursor();
-    patternMatcher.findUpdated=false;
   }
   void cursorLeft() {
     if (shiftPressed) {
@@ -3040,6 +3045,7 @@ class PadButton extends UIelement {
     printLed(X, Y, false, 0);
   }
   synchronized void printLed(int X, int Y, boolean async, int option) {//option only used in specific mode
+    if (X<0||Y<0||X>=ButtonX||Y>=ButtonY)return;
     if (Mode==AUTOINPUT) {
       int line=Lines.lines();
       int frame=LED.size()-1;
@@ -3209,8 +3215,8 @@ class PadButton extends UIelement {
     }
     int soundviewid=getUIid("I_SOUNDVIEW");
     int ledviewid=getUIid("I_LEDVIEW");
-    ((ScrollList)UI[soundviewid]).setItems(KS.get(ksChain)[X][Y].ksSound.toArray(new String[0]));
-    ((ScrollList)UI[ledviewid]).setItems(KS.get(ksChain)[X][Y].ksLedFile.toArray(new String[0]));
+    ((ScrollList)UI[soundviewid]).setItems(KS.get(ksChain)[ksX][ksY].ksSound.toArray(new String[0]));
+    ((ScrollList)UI[ledviewid]).setItems(KS.get(ksChain)[ksX][ksY].ksLedFile.toArray(new String[0]));
     if (UI[soundviewid].disabled==false)UI[soundviewid].registerRender=true;
     if (UI[ledviewid].disabled==false)UI[ledviewid].registerRender=true;
   }

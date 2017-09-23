@@ -67,53 +67,76 @@ class McConverter {
                         } else {
                           buffer=buffer+tokens[0]+" "+c.y+" "+c.x;
                           if (tokens.length==4&&(tokens[0].equals("on")||tokens[0].equals("o"))) {
-                            logui.logs.add("[Warning (line : "+b+")] ["+current+"] [on mc n vel] is converted into [on y x auto vel]. if this is right, ignore this.");
-                            autoWarningCount++;
                             buffer=buffer+" auto";
                           }
                         }
                       }
-                    } else {
-                      if (isInt(tokens[1])==false) {
-                        logui.logs.add("[Error (line : "+b+")] ["+current+"] 2nd argument is not a number. conversion may not be correct!");
-                      }
-                      Pos c=McToTen(new Pos(int(tokens[2]), int(tokens[1]), false));
-                      if (c.x==-1) {
-                        logui.logs.add("[Error (line : "+b+")] ["+current+"] position out of range, cannot convert.");
+                    } else {//10 to mc=====================================================================================
+                      if (tokens[1].equals("mc")) {
+                        logui.logs.add("[Warning (line : "+b+")] ["+current+"] this is not pure 10*10 unipack file!(unitor mc pack) line skipped.");
                         d=tokens.length;
                       } else {
-                        buffer=buffer+tokens[0]+" "+c.y+" "+c.x;
-                        if (tokens.length==4&&(tokens[0].equals("on")||tokens[0].equals("o"))) {
-                          if (tokens[3].length()!=6) {
-                            logui.logs.add("[Warning (line : "+b+")] ["+current+"] [on y x vel] is converted into [on y x auto vel]. if this is right, ignore this.");
-                            autoWarningCount++;
-                            buffer=buffer+" auto";
+                        if (isInt(tokens[1])==false) {
+                          logui.logs.add("[Error (line : "+b+")] ["+current+"] 2nd argument is not a number. conversion may not be correct!");
+                        }
+                        Pos c=TenToMc(new Pos(int(tokens[2]), int(tokens[1]), false));
+                        if (c.x==-1) {
+                          logui.logs.add("[Error (line : "+b+")] ["+current+"] position out of range, cannot convert.");
+                          d=tokens.length;
+                        } else {
+                          if (c.mc) {
+                            buffer=buffer+tokens[0]+" mc "+c.x;
+                          } else {
+                            buffer=buffer+tokens[0]+" "+c.y+" "+c.x;
                           }
                         }
                       }
                     }
-                  } else {//10 to mc=====================================================================================
-                    if (tokens[1].equals("mc")) {
-                      logui.logs.add("[Warning (line : "+b+")] ["+current+"] this is not pure 10*10 unipack file!(unitor mc pack) line skipped.");
+                  }
+                }
+              } else if (tokens[0].equals("mapping")) {
+                if (direc) {//mc to 10=================================================================================
+                  if (tokens[2].equals("mc")) {
+                    Pos c=McToTen(new Pos(int(tokens[3]), 0, true));
+                    if (c.x==-1) {
+                      logui.logs.add("[Error (line : "+b+")] ["+current+"] position out of range, cannot convert.");
                       d=tokens.length;
                     } else {
-                      if (isInt(tokens[1])==false) {
-                        logui.logs.add("[Error (line : "+b+")] ["+current+"] 2nd argument is not a number. conversion may not be correct!");
-                      }
-                      Pos c=TenToMc(new Pos(int(tokens[2]), int(tokens[1]), false));
-                      if (c.x==-1) {
-                        logui.logs.add("[Error (line : "+b+")] ["+current+"] position out of range, cannot convert.");
-                        d=tokens.length;
+                      buffer=buffer+tokens[0]+" "+tokens[1]+" "+c.y+" "+c.x;
+                    }
+                  } else {
+                    if (isInt(tokens[1])==false) {
+                      logui.logs.add("[Error (line : "+b+")] ["+current+"] 2nd argument is not a number. conversion may not be correct!");
+                    }
+                    Pos c=McToTen(new Pos(int(tokens[3]), int(tokens[2]), false));
+                    if (c.x==-1) {
+                      logui.logs.add("[Error (line : "+b+")] ["+current+"] position out of range, cannot convert.");
+                      d=tokens.length;
+                    } else {
+                      buffer=buffer+tokens[0]+" "+tokens[1]+" "+c.y+" "+c.x;
+                    }
+                  }
+                } else {//10 to mc=====================================================================================
+                  if (tokens[1].equals("mc")) {
+                    logui.logs.add("[Warning (line : "+b+")] ["+current+"] this is not pure 10*10 unipack file!(unitor mc pack) line skipped.");
+                    d=tokens.length;
+                  } else {
+                    if (isInt(tokens[1])==false) {
+                      logui.logs.add("[Error (line : "+b+")] ["+current+"] 2nd argument is not a number. conversion may not be correct!");
+                    }
+                    Pos c=TenToMc(new Pos(int(tokens[2]), int(tokens[1]), false));
+                    if (c.x==-1) {
+                      logui.logs.add("[Error (line : "+b+")] ["+current+"] position out of range, cannot convert.");
+                      d=tokens.length;
+                    } else {
+                      if (c.mc) {
+                        buffer=buffer+tokens[0]+" mc "+c.x;
                       } else {
-                        if (c.mc) {
-                          buffer=buffer+tokens[0]+" mc "+c.x;
-                        } else {
-                          buffer=buffer+tokens[0]+" "+c.y+" "+c.x;
-                        }
+                        buffer=buffer+tokens[0]+" "+c.y+" "+c.x;
                       }
                     }
-                  }//======================================================================================================
-                }
+                  }
+                }//======================================================================================================
               } else {
                 buffer=buffer+tokens[0];
                 d=1;
@@ -505,7 +528,7 @@ class McConverter {
         logui.logs.add("[Error (line : "+0+")] ["+current+"] <Exception> : "+e.toString());
       }
     }
-    logui.logs.add("[Warning (line : "+0+")] [keyLED] "+autoWarningCount+" of [on mc n vel]'s are converted into [on y x auto vel]. if this is right, ignore this.");
+    //logui.logs.add("[Warning (line : "+0+")] [keyLED] "+autoWarningCount+" of [on mc n vel]'s are converted into [on y x auto vel]. if this is right, ignore this.");
     if (direc)logui.logs.add("[ Mode : <Mc->10*10> ][ Files : "+fileCount+" ]---");
     else logui.logs.add("[ Mode : <10*10->Mc> ][ Files : "+fileCount+" ]---");
     UI[id].disabled=false;

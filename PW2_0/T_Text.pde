@@ -83,11 +83,17 @@ class ModString {
     if (text==null)return;
     l.add(line_, text);
     analyzer.add(line_, null, text);
+    patternMatcher.findUpdated=false;
   }
   void addLineWithoutReading(int line_, String text) {//used to readFrame()
     if (text==null)return;
     l.add(line_, text);
     analyzer.addWithoutReading(line, null, text);
+    patternMatcher.findUpdated=false;
+  }
+  void deleteLineWithoutReading(int line_) {
+    l.remove(line_);
+    patternMatcher.findUpdated=false;
   }
   void readAll() {
     analyzer.readAll(l);
@@ -96,28 +102,33 @@ class ModString {
     String before=l.get(line_);
     l.set(line_, text);
     analyzer.add(line_, before, text);
+    patternMatcher.findUpdated=false;
   }
   void deleteLine(int line_) {
     String before=l.get(line_);
     l.remove(line_);
     line=min(line, l.size()-1);
     analyzer.add(line_, before, null);
+    patternMatcher.findUpdated=false;
   }
   void addLineWithoutRecord(int line_, String text) {
     if (text==null)return;
     l.add(line_, text);
     analyzer.addWithoutRecord(line_, null, text);
+    patternMatcher.findUpdated=false;
   }
   void setLineWithoutRecord(int line_, String text) {
     String before=l.get(line_);//#return
     l.set(line_, text);
     analyzer.addWithoutRecord(line_, before, text);
+    patternMatcher.findUpdated=false;
   }
   void deleteLineWithoutRecord(int line_) {
     String before=l.get(line_);
     l.remove(line_);
     line=min(line, l.size()-1);
     analyzer.addWithoutRecord(line_, before, null);
+    patternMatcher.findUpdated=false;
   }
   String getLine(int line_) {
     try {//FIX
@@ -135,7 +146,7 @@ class ModString {
     if (text.equals(""))return;
     String[] lines=split(text, "\n");
     boolean reread=false;
-    if (lines.length>50)reread=true;//HARDCODED!!!
+    if (lines.length>READ_THRESHOLD)reread=true;
     String endText;
     analyzer.total=lines.length;
     if (cursor>l.get(line).length())cursor=l.get(line).length();
@@ -160,41 +171,60 @@ class ModString {
     if (endText.equals("")==false)setLine(line, l.get(line)+endText);
     analyzer.total=0;
     analyzer.index=0;
+    patternMatcher.findUpdated=false;
   }
   void insert(int cursor_, int line_, String text) {
     if (text.equals(""))return;
     String[] lines=split(text, "\n");
+    boolean reread=false;
+    if (lines.length>READ_THRESHOLD)reread=true;
     String endText;
     analyzer.total=lines.length;
     if (cursor_==l.get(line_).length())endText="";
     else endText=l.get(line_).substring(cursor_, l.get(line_).length());
     setLine(line_, l.get(line_).substring(0, cursor_)+lines[0]);
     int a=1;
+    if (reread)analyzer.clear();
     while (a<lines.length) {
       analyzer.index=a;
       line_++;
-      addLine(line_, lines[a]);
+      if (reread)addLineWithoutReading(line_, lines[a]);
+      else addLine(line_, lines[a]);
       a=a+1;
+    }
+    if (reread) {
+      analyzer.readAll(l);
+      updateFrameSlider();
     }
     if (endText.equals("")==false)setLine(line_, l.get(line_)+endText);
     analyzer.total=0;
     analyzer.index=0;
+    patternMatcher.findUpdated=false;
   }
   void delete(int sl, int sp, int el, int ep) {
     if (( sl<el||(sl==el&&sp<ep))==false)return;
     analyzer.total=el-sl;
+    boolean reread=false;
+    if (analyzer.total>READ_THRESHOLD)reread=true;
     String endText=l.get(el).substring(ep, l.get(el).length());
     setLine(sl, l.get(sl).substring(0, sp));
     int a=sl+1;
+    if (reread)analyzer.clear();
     while (a<=el) {
       analyzer.index=a;
-      deleteLine(sl+1);
+      if (reread)deleteLineWithoutReading(sl+1);
+      else deleteLine(sl+1);
       a=a+1;
     }
-    setLine(sl, l.get(sl)+endText);
+    if (reread==false)setLine(sl, l.get(sl)+endText);
+    if (reread) {
+      analyzer.readAll(l);
+      updateFrameSlider();
+    }
     maxcursor=cursor;
     analyzer.total=0;
     analyzer.index=0;
+    patternMatcher.findUpdated=false;
   }
   void deleteSelection() {
     maxcursor=cursor;

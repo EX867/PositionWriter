@@ -309,35 +309,19 @@ class Analyzer {
     }
     return 0;
   }
-  void onLED(UnipackLine info, int frame) {
-    for (int a=info.x; a<=info.x2; a++) {
-      for (int b=info.y; b<=info.y2; b++) {
-        if (0>info.vel||info.vel>127)LED.get(frame)[a-1][b-1]=OFFCOLOR;
-        else if (info.hasVel)LED.get(frame)[a-1][b-1]=k[info.vel];
-        else if (info.hasHtml)LED.get(frame)[a-1][a-1]=info.html;
-      }
-    }
+  void onLED(UnipackLine info, int x, int y, int frame) {
+    if (0>info.vel||info.vel>127)LED.get(frame)[x-1][y-1]=OFFCOLOR;
+    else if (info.hasHtml)LED.get(frame)[x-1][y-1]=info.html;
+    else if (info.hasVel)LED.get(frame)[x-1][y-1]=k[info.vel];
   }
-  void offLED(UnipackLine info, int frame) {//DELETE
-    for (int a=info.x; a<=info.x2; a++) {
-      for (int b=info.y; b<=info.y2; b++) {
-        LED.get(frame)[a-1][b-1]=OFFCOLOR;
-      }
-    }
+  void offLED(UnipackLine info, int x, int y, int frame) {//DELETE
+    LED.get(frame)[x-1][y-1]=OFFCOLOR;
   }
-  void onApLED(UnipackLine info, int frame) {
-    for (int a=info.x; a<=info.x2; a++) {
-      for (int b=info.y; b<=info.y2; b++) {
-        apLED.get(frame)[a-1][b-1]=true;
-      }
-    }
+  void onApLED(UnipackLine info, int x, int y, int frame) {
+    apLED.get(frame)[x-1][y-1]=true;
   }
-  void offApLED(UnipackLine info, int frame) {//DELETE
-    for (int a=info.x; a<=info.x2; a++) {
-      for (int b=info.y; b<=info.y2; b++) {
-        apLED.get(frame)[a-1][b-1]=false;
-      }
-    }
+  void offApLED(UnipackLine info, int x, int y, int frame) {//DELETE
+    apLED.get(frame)[x-1][y-1]=false;
   }
   class UnipackLine {
     static final int EMPTY=-1;
@@ -827,22 +811,30 @@ class Analyzer {
         b=b+1;
       }
     }
-    int a=DelayPoint.get(frame)+1;
+    int d=DelayPoint.get(frame)+1;
     count=frame+count;
-    while (frame<=count&&a<Lines.lines()) {//reset
-      UnipackLine info=uLines.get(a);//AnalyzeLine(a, "readFrame - read "+count+" frames", Lines.getLine(a));
+    while (frame<=count&&d<Lines.lines()) {//reset
+      UnipackLine info=uLines.get(d);//AnalyzeLine(a, "readFrame - read "+count+" frames", Lines.getLine(a));
       if (info.mc) {
-        a++;
+        d++;
         continue;
       }
       if (info.Type==UnipackLine.ON) {
         if (0<info.x&&info.x<=ButtonX&&0<info.y&&info.y<=ButtonY&&0<info.x2&&info.x2<=ButtonX&&0<info.y2&&info.y2<=ButtonY) {
-          onLED(info, frame);
+          for (int a=info.x; a<=info.x2; a++) {
+            for (int b=info.y; b<=info.y2; b++) {
+              onLED(info, a, b, frame);
+            }
+          }
         }
       } else if (info.Type==UnipackLine.OFF) {
         if (0<info.x&&info.x<=ButtonX&&0<info.y&&info.y<=ButtonY&&0<info.x2&&info.x2<=ButtonX&&0<info.y2&&info.y2<=ButtonY) {
-          offLED(info, frame);
-          offApLED(info, frame);
+          for (int a=info.x; a<=info.x2; a++) {
+            for (int b=info.y; b<=info.y2; b++) {
+              offLED(info, a, b, frame);
+              offApLED(info, a, b, frame);
+            }
+          }
         }
       } else if (info.Type==UnipackLine.DELAY) {
         frame++;
@@ -858,10 +850,14 @@ class Analyzer {
         }
       } else if (info.Type==UnipackLine.APON) {
         if (0<info.x&&info.x<=ButtonX&&0<info.y&&info.y<=ButtonY&&0<info.x2&&info.x2<=ButtonX&&0<info.y2&&info.y2<=ButtonY) {
-          onApLED(info, frame);
+          for (int a=info.x; a<=info.x2; a++) {
+            for (int b=info.y; b<=info.y2; b++) {
+              onApLED(info, a, b, frame);
+            }
+          }
         }
-      } 
-      a++;
+      }
+      d++;
     }
   }
   void readFrameLedPosition(int frame, int line, int x, int y, color c, UnipackLine toset) {//assert line is in frame.
@@ -890,8 +886,8 @@ class Analyzer {
           }
         } else if (info.Type==UnipackLine.DELAY) {
           if (changed==false) {
-            if (temp.Type==UnipackLine.ON)onLED (temp, frame);
-            else if (temp.Type==UnipackLine.OFF) offLED (temp, frame);
+            if (temp.Type==UnipackLine.ON)onLED (temp, x, y, frame);
+            else if (temp.Type==UnipackLine.OFF) offLED (temp, x, y, frame);
             else if (temp.Type==DEFAULT) {//dirty!
               LED.get(frame)[x-1][y-1]=c;
             }
@@ -908,8 +904,8 @@ class Analyzer {
         if (temp.mc) {
           return;
         }
-        if (temp.Type==UnipackLine.ON)onLED (temp, frame);
-        else if (temp.Type==UnipackLine.OFF) offLED (temp, frame);
+        if (temp.Type==UnipackLine.ON)onLED (temp, x, y, frame);
+        else if (temp.Type==UnipackLine.OFF) offLED (temp, x, y, frame);
         else if (temp.Type==DEFAULT) {//dirty!
           LED.get(frame)[x-1][y-1]=c;
         }
@@ -935,9 +931,9 @@ class Analyzer {
           continue;
         }
         if (info.Type==UnipackLine.ON) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) onLED (info, frame);
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) onLED (info, x, y, frame);
         } else if (info.Type==UnipackLine.OFF) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) offLED (info, frame);
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) offLED (info, x, y, frame);
         }
         if (skip&&a==line)a++;
         a=a+1;
@@ -971,8 +967,8 @@ class Analyzer {
           }
         } else if (info.Type==UnipackLine.DELAY) {
           if (changed==false) {
-            if (temp.Type==UnipackLine.APON)onApLED (temp, frame);
-            else if (temp.Type==UnipackLine.OFF) offApLED (temp, frame);
+            if (temp.Type==UnipackLine.APON)onApLED (temp, x, y, frame);
+            else if (temp.Type==UnipackLine.OFF) offApLED (temp, x, y, frame);
             else if (temp.Type==DEFAULT) {//dirty!
               apLED.get(frame)[x-1][y-1]=c;
             }
@@ -989,8 +985,8 @@ class Analyzer {
         if (temp.mc) {
           return;
         }
-        if (temp.Type==UnipackLine.APON)onApLED (temp, frame);
-        else if (temp.Type==UnipackLine.OFF) offApLED (temp, frame);
+        if (temp.Type==UnipackLine.APON)onApLED (temp, x, y, frame);
+        else if (temp.Type==UnipackLine.OFF) offApLED (temp, x, y, frame);
         else if (temp.Type==DEFAULT) {//dirty!
           apLED.get(frame)[x-1][y-1]=c;
         }
@@ -1016,9 +1012,9 @@ class Analyzer {
           continue;
         }
         if (info.Type==UnipackLine.APON) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) onApLED (info, frame);
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) onApLED (info, x, y, frame);
         } else if (info.Type==UnipackLine.OFF) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) offApLED (info, frame);
+          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) offApLED (info, x, y, frame);
         }
         if (skip&&a==line)a++;
         a=a+1;
@@ -1029,20 +1025,36 @@ class Analyzer {
   void readAll(ArrayList<String> lines) {
     clear();
     float bpm=120;
-    int a=0;
-    while (a<lines.size()) {
+    int d=0;
+    while (d<lines.size()) {
       adderror=true;
-      UnipackLine line=AnalyzeLine(a, "readFrame", lines.get(a));
+      UnipackLine line=AnalyzeLine(d, "readFrame", lines.get(d));
       adderror=false;
       uLines.add(line);
       if (line.Type==UnipackLine.ON) {
-        if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY)onLED(line, LED.size()-1);
+        if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY&&0<line.x2&&line.x2<=ButtonX&&0<line.y2&&line.y2<=ButtonY) {
+          for (int a=line.x; a<=line.x2; a++) {
+            for (int b=line.y; b<=line.y2; b++) {
+              onLED(line, a, b, LED.size()-1);
+            }
+          }
+        }
       } else if (line.Type==UnipackLine.APON) {
-        if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY)onApLED(line, apLED.size()-1);
+        if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY&&0<line.x2&&line.x2<=ButtonX&&0<line.y2&&line.y2<=ButtonY) {
+          for (int a=line.x; a<=line.x2; a++) {
+            for (int b=line.y; b<=line.y2; b++) {
+              onApLED(line, a, b, apLED.size()-1);
+            }
+          }
+        }
       } else if (line.Type==UnipackLine.OFF) {
-        if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY) {
-          offLED(line, LED.size()-1);
-          offApLED(line, apLED.size()-1);
+        if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY&&0<line.x2&&line.x2<=ButtonX&&0<line.y2&&line.y2<=ButtonY) {
+          for (int a=line.x; a<=line.x2; a++) {
+            for (int b=line.y; b<=line.y2; b++) {
+              offLED(line, a, b, LED.size()-1);
+              offApLED(line, a, b, apLED.size()-1);
+            }
+          }
         }
       } else if (line.Type==UnipackLine.DELAY) {
         LED.add(new color[ButtonX][ButtonY]);
@@ -1057,14 +1069,16 @@ class Analyzer {
           }
           b=b+1;
         }
-        DelayPoint.add(a);
+        DelayPoint.add(d);
       } else if (line.Type==UnipackLine.BPM) {
-        BpmPoint.add(a);
+        BpmPoint.add(d);
       } else if (line.Type==UnipackLine.CHAIN) {
-        apChainPoint.add(a);
+        apChainPoint.add(d);
       }//else ignore
-      a=a+1;
+      d=d+1;
     }
+    currentLedFrame=min(currentLedFrame, DelayPoint.size()-1);
+    setTimeByFrame();
   }
   boolean loadLedFile(String path, ArrayList<UnipackLine> led, ArrayList<Integer> delayv) {
     try {

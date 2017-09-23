@@ -17,7 +17,7 @@ float Width=1420;
 float Height=920;
 float initialWidth=1420;
 float initialHeight=920;
-String VERSION="{\"type\"=\"beta\",\"major\"=2,\"minor\"=0,\"patch\"=0,\"build\"=4,\"build_date\"=\"170922\"}";//type=beta or production
+String VERSION="{\"type\"=\"beta\",\"major\"=2,\"minor\"=0,\"patch\"=0,\"build\"=4,\"build_date\"=\"170923 (2)\"}";//type=beta or production
 String startText="PositionWriter <major>.<minor> <type> [<build>] (<build_date> build)";//template for startText. see buildVersion() to get actual string.
 String title_suffix=" | Position Writer 2.0";
 String title_filename="";
@@ -65,6 +65,7 @@ boolean initialOpen=false;
  2.+ : midi<->led converter
  2.+ : autoplay led link - triggering led(run triggering and frame both in led editor, stop link with clear button - this will enable rnd command in led editor too.)
  2.+ : drag to print range commands
+ 2.+ : currently, mc converter cannot manipulate range commands. add!
  
  skinedit : change theme to appcompat-material
  uncloud : wait uncloud update!!
@@ -122,6 +123,18 @@ void keyPressed() {
     }
   } else {
     keyPressed_main();
+  }
+}
+void keyTyped() {
+  if (Debug) {
+    try {
+      keyTyped_main();
+    }
+    catch(Exception e) {
+      displayLogError(e);
+    }
+  } else {
+    keyTyped_main();
   }
 }
 void setup_main() {

@@ -590,7 +590,7 @@ boolean shortcutExcept() {
   if (UI[focus].Type!=TYPE_TEXTEDITOR&&UI[focus].Type!=TYPE_TEXTBOX)return true;
   return false;
 }
-void keyTyped() {
+void keyTyped_main() {
   pushMatrix();
   scale(scale);
   pushMatrix();
