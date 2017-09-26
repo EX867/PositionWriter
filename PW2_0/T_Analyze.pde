@@ -1080,39 +1080,41 @@ class Analyzer {
     currentLedFrame=min(currentLedFrame, DelayPoint.size()-1);
     setTimeByFrame();
   }
-  boolean loadLedFile(String path, ArrayList<UnipackLine> led, ArrayList<Integer> delayv) {
+  boolean loadLedFile(String path, ArrayList<UnipackLine> led, ArrayList<Integer> delayv) {//assert is file.
     try {
-      led.clear();
-      delayv.clear();
-      String alltext=readFile(path);
-      String[] lines=split(alltext, "\n");
-      int a=0;
-      float  bpmv=120;
-      while (a<lines.length) {
-        UnipackLine line=AnalyzeLine(a, "LoadLedFile", lines[a]);
-        if (line.Type==UnipackLine.ON) {
-          led.add(line);
-        } else if (line.Type==UnipackLine.OFF) {
-          led.add(line);
-        } else if (line.Type==UnipackLine.DELAY) {
-          if (line.hasHtml)floor((line.x*2400/(bpmv*line.y))*100);
-          else delayv.add(line.x);//ms
-          led.add(line);
-        } else if (line.Type==UnipackLine.BPM) {
-          bpmv=line.valueF;
-        } else if (line.Type==UnipackLine.CHAIN) {
-          led.add(line);
-        } else if (line.Type==UnipackLine.MAPPING) {
-          led.add(line);
-        }
-        a=a+1;
-      }
-      //return readFrame(split(readFile(path), "\n"), led, delayv, new ArrayList<Integer>(), new ArrayList<Integer>(), new ArrayList<UnipackLine>(), false);
+      return parseLed(readFile(path), led, delayv);
     }
     catch(Exception e) {
       e.printStackTrace();
       return false;
     }
+  }
+  boolean parseLed(String alltext, ArrayList<UnipackLine> led, ArrayList<Integer> delayv) {
+    led.clear();
+    delayv.clear();
+    String[] lines=split(alltext, "\n");
+    int a=0;
+    float  bpmv=120;
+    while (a<lines.length) {
+      UnipackLine line=AnalyzeLine(a, "LoadLedFile", lines[a]);
+      if (line.Type==UnipackLine.ON) {
+        led.add(line);
+      } else if (line.Type==UnipackLine.OFF) {
+        led.add(line);
+      } else if (line.Type==UnipackLine.DELAY) {
+        if (line.hasHtml)floor((line.x*2400/(bpmv*line.y))*100);
+        else delayv.add(line.x);//ms
+        led.add(line);
+      } else if (line.Type==UnipackLine.BPM) {
+        bpmv=line.valueF;
+      } else if (line.Type==UnipackLine.CHAIN) {
+        led.add(line);
+      } else if (line.Type==UnipackLine.MAPPING) {
+        led.add(line);
+      }
+      a=a+1;
+    }
+    //return readFrame(split(readFile(path), "\n"), led, delayv, new ArrayList<Integer>(), new ArrayList<Integer>(), new ArrayList<UnipackLine>(), false);
     return true;
   }
   ArrayList<UnipackLine> loadKeySound(String path) throws Exception {
@@ -1439,5 +1441,32 @@ class Analyzer {
     catch(Exception e) {
       e.printStackTrace();//failed!
     }
+  }
+  String ImageToLed(PImage image) {
+    image.loadPixels();
+    StringBuilder str=new StringBuilder();
+    for (int a=0; a<image.pixels.length; a++) {
+      str.append("on "+str(a/image.width+1)+" "+str(a%image.width+1)+" "+hex(image.pixels[a], 6)+"\n");
+    }
+    image=null;
+    return str.toString();
+  }
+  PImage LedToImage(String text) {
+    PImage image=createImage(ButtonX, ButtonY, ARGB);
+    ArrayList<UnipackLine> lines=new ArrayList<UnipackLine>();
+    parseLed(text, lines, new ArrayList<Integer>());
+    image.loadPixels();
+    for (int a=0; a<lines.size(); a++) {
+      if (lines.get(a).Type==UnipackLine.ON) {
+        if (lines.get(a).hasHtml)image.pixels[(lines.get(a).y-1)*image.width+lines.get(a).x-1]=lines.get(a).html;
+        else image.pixels[(lines.get(a).y-1)*image.width+lines.get(a).x-1]=k[lines.get(a).vel];
+      } else if (lines.get(a).Type==UnipackLine.OFF) {
+        image.pixels[(lines.get(a).y-1)*image.width+lines.get(a).x-1]=OFFCOLOR;
+      } else if (lines.get(a).Type==UnipackLine.DELAY) {
+        break;
+      }
+    }
+    image.updatePixels();
+    return image;
   }
 }

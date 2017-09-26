@@ -158,7 +158,22 @@ void External_setup() {
           String filename=de.file().getAbsolutePath().replace("\\", "/");
           if (filename==null)return;
           if (currentFrame==1) {//keyled
-            analyzer.loadKeyLedGlobal(filename);
+            if (de.file().isFile()&&isImageFile(de.file())) {
+              currentLedFrame=0;
+              PImage image=loadImage(filename);
+              if (image.width>PAD_MAX||image.height>PAD_MAX)return;
+              frameSlider.skip=true;
+              ((TextBox)UI[getUIid("I_CHAIN")]).value=1;
+              ((TextBox)UI[getUIid("I_CHAIN")]).text="1";
+              ((TextBox)UI[getUIid("I_BUTTONX")]).value=image.width;
+              ((TextBox)UI[getUIid("I_BUTTONX")]).text=str(image.width);
+              ((TextBox)UI[getUIid("I_BUTTONY")]).value=image.height;
+              ((TextBox)UI[getUIid("I_BUTTONY")]).text=str(image.height);
+              L_ResizeData(1, image.width, image.height);
+              ((TextEditor)UI[textfieldId]).setText(analyzer.ImageToLed(image));
+              frameSlider.skip=false;
+              registerRender();
+            } else analyzer.loadKeyLedGlobal(filename);
             title_filename=filename;
             title_edited="";
             loadedOnce_led=true;
@@ -514,7 +529,12 @@ void saveWorkingFile() {
   if (title_edited.equals("*")==false)return;
   String filename=title_filename;
   if (currentFrame==1) {
-    writeFile(filename, Lines.toString());
+    String ext=getFileExtension(filename);
+    if (ext.equals("png")||ext.equals("jpg")||ext.equals("tga")||ext.equals("gif")) {
+      analyzer.LedToImage(Lines.toString()).save(filename);
+    } else {
+      writeFile(filename, Lines.toString());
+    }
     loadedOnce_led=true;
   } else if (currentFrame==2) {//only save keysound in keysound_saved/keySound in absolute path
     analyzer.writeKS(filename, false);
@@ -553,6 +573,7 @@ void deleteFile(File f) throws IOException {//https://stackoverflow.com/question
   if (!f.delete())
     throw new FileNotFoundException("Failed to delete file: " + f);
 }
+
 //=======================================================================================================
 void openFileExplorer(String path) {
   if (platform==WINDOWS) {//WARNING!!! Windows specific

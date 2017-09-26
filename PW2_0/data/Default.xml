@@ -140,7 +140,7 @@
     <element id="106" type="TYPE_BUTTON" x="1340" y="797" w="18" h="18" description="toggle calculation expression" value="false" image="I_CALCULATE.png">I_CALCULATE</element>
     <element id="107" type="TYPE_BUTTON" x="1340" y="837" w="18" h="18" description="replace all matches" image="I_REPLACEALL.png">I_REPLACEALL</element>
     <!---->
-    <element id="63" type="TYPE_BUTTON" x="350" y="290" w="350" h="290" description="" image="F_INFO.png">INFO_DESCRIPTION</element>
+    <element id="63" type="TYPE_BUTTON" x="350" y="290" w="324" h="275" description="" image="F_INFO.png">INFO_DESCRIPTION</element>
     <element id="127" type="TYPE_BUTTON" x="665" y="-35" w="25" h="25" description="exit frame" image="I_EXIT.png">INFO_EXIT</element>
     <element id="128" type="TYPE_BUTTON" x="590" y="620" w="25" h="25" description="https://github.com/EX867/PositionWriter" image="I_GITHUB.png">INFO_GITHUBLINK</element>
     <element id="129" type="TYPE_BUTTON" x="645" y="620" w="25" h="25" description="https://processing.org" image="I_PROCESSING.png">INFO_PROCESSINGLINK</element>
@@ -228,7 +228,7 @@
     <!---->
     <element id="180" type="TYPE_BUTTON" x="200" y="200" w="180" h="180" description="new version released. click to open download page." text="get new&#10;&#10;version" textsize="30">UPDATE_UPDATE</element>
     <element id="181" type="TYPE_BUTTON" x="365" y="-35" w="25" h="25" description="cancel" image="I_EXIT.png">UPDATE_EXIT</element>
-    <element id="192" type="TYPE_BUTTON" x="200" y="200" w="180" h="180" description="click to go to manual page (https://github.com/EX867/PositionWriter/wiki/How-to-use-v2-(english))" text="--------------------------&#10;&#10;It seems this is first&#10;open after update.&#10;&#10;See how to use new features.&#10;&#10;--------------------------&#10;&#10;* beta 4 release&#10;&#10;* please report bugs&#10;to me!!" textsize="20">INITIAL_HOWTOUSE</element>
+    <element id="192" type="TYPE_BUTTON" x="200" y="200" w="180" h="180" description="click to go to manual page (https://github.com/EX867/PositionWriter/wiki/How-to-use-v2-(english))" text="--------------------------&#10;&#10;It seems this is first&#10;open after update.&#10;&#10;See how to use new features.&#10;&#10;--------------------------&#10;&#10;* beta 5 release&#10;&#10;* please report bugs&#10;to me!!" textsize="20">INITIAL_HOWTOUSE</element>
     <!---->
     <element id="182" type="TYPE_SKINEDIT" x="710" y="460" w="700" h="450" description="">SKIN_EDIT</element>
     <element id="183" type="TYPE_TEXTBOX" x="160" y="860" w="135" h="35" description="com.kimjisub.launchpad.theme.test" title="...launchpad.theme." text="test" hint="theme_package_name" numberonly="false" textsize="20">SKIN_PACKAGE</element>

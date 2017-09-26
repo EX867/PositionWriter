@@ -1,4 +1,4 @@
-class Button extends UIelement {
+class Button extends UIelement implements ImageComponent {
   //attributes
   int ButtonType=0;
   static final int TYPE_BUTTON_TEXT=0;
@@ -25,10 +25,11 @@ class Button extends UIelement {
     ButtonType=TYPE_BUTTON_COLOR;
     colorInfo=colorInfo_;
   }
-  public Button(int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, String imageName_) {
+  public Button(int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, String imageName_, boolean mask) {//mask is not stored in here.
     super(ID_, Type_, name_, description_, x_, y_, w_, h_);
     ButtonType=TYPE_BUTTON_IMAGE;
     image=loadImage(imageName_);
+    if (mask)ImageMaskIds.add(ID);
   }
   public Button(int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, String text_, int textSize_, boolean value_) {
     super(ID_, Type_, name_, description_, x_, y_, w_, h_);
@@ -37,11 +38,12 @@ class Button extends UIelement {
     textSize=max(1, textSize_);
     value=value_;
   }
-  public Button(int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, String imageName_, boolean value_) {
+  public Button(int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, String imageName_, boolean value_, boolean mask) {
     super(ID_, Type_, name_, description_, x_, y_, w_, h_);
     ButtonType=TYPE_BUTTON_TOGGLE_IMAGE;
     image=loadImage(imageName_);
     value=value_;
+    if (mask)ImageMaskIds.add(ID);
   }
   @Override
     boolean react() {
@@ -673,9 +675,45 @@ class Button extends UIelement {
       Shortcuts[tempShortcut.ID].keyCoden=tempShortcut.keyCoden;
       setShortcutData();
       Frames[currentFrame].returnBack();
+    } else if (name.equals("PC_RECENT1")) {
+      if (((Button)UI[ID]).colorInfo!=((Button)UI[ID+1]).colorInfo) {
+        int a=ID+9;
+        while (a>ID) {
+          ((Button)UI[a]).colorInfo=((Button)UI[a-1]).colorInfo;
+          Button temp=((Button)UI[a]);
+          UI[a].description.content="["+int(red(temp.colorInfo))+", "+int(green(temp.colorInfo))+", "+int(blue(temp.colorInfo))+"]";
+          UI[a].render();
+          a=a-1;
+        }
+        description.content="["+int(red(colorInfo))+", "+int(green(colorInfo))+", "+int(blue(colorInfo))+"]";//this also do in colorpicker.
+      }
+      ((ColorPicker)UI[getUIid("PC_HTMLSEL")]).setHtml(ID);
+    } else if (name.equals("PC_RECENT2")) {
+      ((ColorPicker)UI[getUIid("PC_HTMLSEL")]).setHtml(ID);
+    } else if (name.equals("PC_RECENT3")) {
+      ((ColorPicker)UI[getUIid("PC_HTMLSEL")]).setHtml(ID);
+    } else if (name.equals("PC_RECENT4")) {
+      ((ColorPicker)UI[getUIid("PC_HTMLSEL")]).setHtml(ID);
+    } else if (name.equals("PC_RECENT5")) {
+      ((ColorPicker)UI[getUIid("PC_HTMLSEL")]).setHtml(ID);
+    } else if (name.equals("PC_RECENT6")) {
+      ((ColorPicker)UI[getUIid("PC_HTMLSEL")]).setHtml(ID);
+    } else if (name.equals("PC_RECENT7")) {
+      ((ColorPicker)UI[getUIid("PC_HTMLSEL")]).setHtml(ID);
+    } else if (name.equals("PC_RECENT8")) {
+      ((ColorPicker)UI[getUIid("PC_HTMLSEL")]).setHtml(ID);
+    } else if (name.equals("PC_RECENT9")) {
+      ((ColorPicker)UI[getUIid("PC_HTMLSEL")]).setHtml(ID);
+    } else if (name.equals("PC_RECENTA")) {
+      ((ColorPicker)UI[getUIid("PC_HTMLSEL")]).setHtml(ID);
     } else if (name.equals("PC_EXIT")) {
       color c=((ColorPicker)UI[getUIidRev("PC_HTMLSEL")]).selectedRGB;
-      UIcolors[tempColor]=color(red(c), green(c), blue(c), alpha(UIcolors[tempColor]));
+      if (tempColor==-1) {//text1
+        ((Button)UI[getUIidRev("SKIN_TEXT1")]).colorInfo=c;
+      } else {
+        UIcolors[tempColor]=color(red(c), green(c), blue(c), alpha(UIcolors[tempColor]));
+        if (tempColor==I_BACKGROUND)maskImages(UIcolors[I_BACKGROUND]);
+      }
       Frames[currentFrame].returnBack();
     } else if (name.equals("MC_MC10")) {
       if (text.equals("mc->10")) text="10->mc";
@@ -748,6 +786,16 @@ class Button extends UIelement {
     } else if (name.equals("UPDATE_EXIT")) {
       Frames[currentFrame].returnBack();
     } else if (name.equals("SKIN_TEXT1")) {
+      skip=true;
+      focus=DEFAULT;
+      resetFocus();
+      skip=false;
+      tempColor=-1;
+      ColorPicker pick=((ColorPicker)UI[getUIidRev("PC_HTMLSEL")]);
+      pick.skip=true;
+      pick.setColor(colorInfo);
+      pick.skip=false;
+      Frames[getFrameid("F_PICKCOLOR")].prepare(currentFrame);
     } else if (name.equals("SKIN_BUILD")) {
       String packageText=((TextBox)UI[getUIidRev("SKIN_PACKAGE")]).text;
       String appnameText=filterString(((TextBox)UI[getUIidRev("SKIN_APPNAME")]).text, new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"});
@@ -760,6 +808,15 @@ class Button extends UIelement {
       Frames[currentFrame].returnBack();
     } else if (name.equals("INITIAL_HOWTOUSE")) {
       link("https://github.com/EX867/PositionWriter/wiki/How-to-use-v2-(english)");
+    }
+  }
+  @Override void maskImage(color c) {
+    if (image!=null) {
+      image.loadPixels();
+      for (int a=0; a<image.pixels.length; a++) {
+        image.pixels[a]=color(red(c), green(c), blue(c), alpha(image.pixels[a]));
+      }
+      image.updatePixels();
     }
   }
 }
@@ -1277,6 +1334,7 @@ class TextBox extends UIelement {
     textSize(textSize);
     if (selectionLen>0) {
       fill(UIcolors[I_TEXTBOXSELECTION]);
+      selectionLen=min(selectionLen, text.length()-selectionStart);
       String selectionPart=text.substring(selectionStart, selectionStart+selectionLen);
       if (selectionStart==0)rect(position.x-size.x+textSize+textWidth(selectionPart)/2, position.y+offset, textWidth(selectionPart)/2, textSize/2);
       else rect(position.x-size.x+textSize+textWidth(selectionPart)/2+textWidth(text.substring(0, selectionStart)), position.y+offset, textWidth(selectionPart)/2, textSize/2);
@@ -2172,12 +2230,28 @@ class TextEditor extends UIelement {//only render and add text. this class not d
     }
     if (isMouseOn(position.x-SLIDER_HALFWIDTH, position.y, size.x-SLIDER_HALFWIDTH, size.y)) {
       if (mouseState==AN_PRESS) {
-        adjustCursor();
-        Lines.selStartLine=Lines.line;
-        Lines.selStartPoint=Lines.cursor;
-        clickline=Lines.line;
-        clickcursor=Lines.cursor;
-        Lines.resetSelection();
+        if (shiftPressed) {
+          if (Lines.line==Lines.selStartLine&&Lines.cursor==Lines.selStartPoint) {//reverse
+            clickline=Lines.selEndLine;
+            clickcursor=Lines.selEndPoint;
+            adjustCursor();
+            Lines.selStartLine=Lines.line;
+            Lines.selStartPoint=Lines.cursor;
+          } else {
+            clickline=Lines.selStartLine;
+            clickcursor=Lines.selStartPoint;
+            adjustCursor();
+            Lines.selEndLine=Lines.line;
+            Lines.selEndPoint=Lines.cursor;
+          }
+        } else {
+          adjustCursor();
+          Lines.selStartLine=Lines.line;
+          Lines.selStartPoint=Lines.cursor;
+          Lines.resetSelection();
+          clickline=Lines.line;
+          clickcursor=Lines.cursor;
+        }
         editorClicked=true;
       }
     }
@@ -2276,7 +2350,7 @@ class TextEditor extends UIelement {//only render and add text. this class not d
       }
       if (a<987654321/*WARNING!!!*/&&commentPoint!=Lines.getLine(a).length()) {
         fill(UIcolors[I_COMMENTTEXT]);
-        if (commentPoint==-13)return;//warning!!!
+        if (commentPoint<0)return;//warning!!!
         String showText=Lines.getLine(a).substring(commentPoint, Lines.getLine(a).length());
         text(showText, position.x-size.x+textSize*3+textWidth(Lines.getLine(a).substring(0, commentPoint))+5, position.y-size.y+(a+1)*textSize+Yoffset);
       }
@@ -2593,6 +2667,7 @@ class TextEditor extends UIelement {//only render and add text. this class not d
       Lines.addLineWithoutReading(Lines.lines(), lines[a]);
       a=a+1;
     }
+    analyzer.clear();
     Lines.readAll();
     updateFrameSlider();
     //if (lines.length>0)Lines.deleteLine(0);//for deleting first line.
@@ -2742,6 +2817,12 @@ class ColorPicker extends UIelement {
     selectedHtml=id;
     UI[temp].render();
     UI[selectedHtml].render();
+  }
+  void setHtml(int id) {
+    setColor(((Button)UI[id]).colorInfo);
+    render();
+    updateTextBoxes1();
+    updateTextBoxes2();
   }
   @Override
     void render() {

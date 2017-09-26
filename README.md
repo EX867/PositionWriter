@@ -2,6 +2,7 @@
 ![PositionWriter](https://github.com/EX867/PositionWriter/blob/master/_image/icon2_0.png)
 
 유니팩 led 편집기 입니다.<br>
+
 [recursive link](https://github.com/EX867/PositionWriter)
 
 ---------
@@ -24,6 +25,7 @@
 ---------
 ## How to use (이프로그램 어떻게 쓰나요?)
 [PW1.4](https://github.com/EX867/PositionWriter/wiki/How-to-use-(v1))<br>
+[PW2.0](https://github.com/EX867/PositionWriter/wiki/How-to-use-v2-(english))<br>
 [PW2.0 (한글)](https://github.com/EX867/PositionWriter/wiki/How-to-use-(v2)-korean)
 
 --------

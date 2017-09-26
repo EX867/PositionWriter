@@ -1,4 +1,4 @@
-Frame[] Frames; //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+Frame[] Frames; //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 String[] Framenames;
 int Description_current;
 boolean Description_enabled=false;
@@ -45,6 +45,8 @@ boolean altPressed=false;
 boolean skipRendering=false;
 //dnd
 int draggedListId=-1;//stores last dragged list. so selection -1 check needed.
+//image thing
+ArrayList<Integer> ImageMaskIds=new ArrayList<Integer>();//in I_BACKGROUND change, mask these id.images to background.(alpha is preserved.)
 void createMissingFiles() {
   String datapath="";
   if (DEVELOPER_BUILD) {
@@ -156,13 +158,13 @@ void UI_load() {
     if (Type==TYPE_BUTTON) {
       if (Datas[a].hasAttribute("value")) {
         if (Datas[a].hasAttribute("image")) {
-          UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getString("image"), toBoolean (Datas[a].getString ("value")));
+          UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getString("image"), toBoolean (Datas[a].getString ("value")), toBoolean(Datas[a].getString("mask", "true")));
         } else if (Datas[a].hasAttribute("text")) {
           UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getString("text"), Datas[a].getInt("textsize", 1), toBoolean (Datas[a].getString ("value")));
         }
       } else {
         if (Datas[a].hasAttribute("image")) {
-          UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getString("image"));
+          UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getString("image"), toBoolean(Datas[a].getString("mask", "true")));
         } else if (Datas[a].hasAttribute("color")) {
           UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), unhex(Datas[a].getString("color")));
         } else if (Datas[a].hasAttribute("text")) {
@@ -326,6 +328,7 @@ void UI_setup() {
   skinEditor.setComponents((TextBox)UI[getUIidRev("SKIN_PACKAGE")], (TextBox)UI[getUIidRev("SKIN_TITLE")], (TextBox)UI[getUIidRev("SKIN_AUTHOR")], (TextBox)UI[getUIidRev("SKIN_DESCRIPTION")], (TextBox)UI[getUIidRev("SKIN_APPNAME")], (Button)UI[getUIidRev("SKIN_TEXT1")]);
   // === Custom settings load === //
   loadCustomSettings();
+  maskImages(UIcolors[I_BACKGROUND]);
   //---
   Frames[currentFrame].prepare();
 }
@@ -602,7 +605,7 @@ void keyTyped_main() {
   popMatrix();
   popMatrix();
 }
-void mouseWheel(MouseEvent e) {
+void mouseWheel_main(MouseEvent e) {
   if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).mouseWheel(e);
   else if (UI[focus].Type==TYPE_SCROLLLIST)((ScrollList)UI[focus]).mouseWheel(e);
   if (UI[focus].Type==TYPE_LOGGER)((Logger)UI[focus]).mouseWheel(e);
@@ -1071,4 +1074,13 @@ void setUIcolorsData() {
     a=a+1;
   }
   ((ScrollList)UI[getUIid("I_UICOLORS")]).setItems(items.toArray(new String[0]));
+}
+//==========================================================================================
+interface ImageComponent {
+  void maskImage(color c);
+}
+void maskImages(color c) {
+  for (int a=0; a<ImageMaskIds.size(); a++) {
+    ((ImageComponent)UI[ImageMaskIds.get(a)]).maskImage(c);
+  }
 }

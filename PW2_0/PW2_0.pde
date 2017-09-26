@@ -17,7 +17,7 @@ float Width=1420;
 float Height=920;
 float initialWidth=1420;
 float initialHeight=920;
-String VERSION="{\"type\"=\"beta\",\"major\"=2,\"minor\"=0,\"patch\"=0,\"build\"=4,\"build_date\"=\"170923 (2)\"}";//type=beta or production
+String VERSION="{\"type\"=\"beta\",\"major\"=2,\"minor\"=0,\"patch\"=0,\"build\"=5,\"build_date\"=\"170927\"}";//type=beta or production
 String startText="PositionWriter <major>.<minor> <type> [<build>] (<build_date> build)";//template for startText. see buildVersion() to get actual string.
 String title_suffix=" | Position Writer 2.0";
 String title_filename="";
@@ -33,8 +33,6 @@ boolean loadedOnce_keySound=false;
 boolean jeonjehong=false;
 boolean initialOpen=false;
 /*
-// === Note for writing manual === //
- * : "Shift+Number" in Manualinput has deleted.
  
  // ==== TODO ==== //
  //wavedit
@@ -135,6 +133,18 @@ void keyTyped() {
     }
   } else {
     keyTyped_main();
+  }
+}
+void mouseWheel(MouseEvent ev) {
+  if (Debug) {
+    try {
+      mouseWheel_main(ev);
+    }
+    catch(Exception e) {
+      displayLogError(e);
+    }
+  } else {
+    mouseWheel_main(ev);
   }
 }
 void setup_main() {

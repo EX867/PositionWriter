@@ -12,7 +12,7 @@ public class ModPlayer implements StateReturner, SliderUpdater {
   Slider slider;
   Label time;
   //
-  public  double length;
+  public double length;
   public boolean loop=false;
   public double loopStart=0;
   public double loopEnd=0;
