@@ -64,11 +64,11 @@ void createMissingFiles() {
     EX_fileCopy(joinPath(datapath, "Shortcuts_default.xml"), joinPath(datapath, "Shortcuts.xml"));
   }
 }
-void UI_load() {
-  // ========= get XML data ========== //
-  //load other external data
+void loadColors(String customPath) {
   XML XmlData=loadXML("Colors_default.xml");
-  XML CustomXmlData=loadXML("Colors.xml");
+  XML CustomXmlData=null;
+  if (customPath.equals(""))CustomXmlData=loadXML("Colors.xml");
+  else CustomXmlData=loadXML(customPath);
   XML[] Datas=XmlData.getChildren("element");
   XML[] CustomDatas=CustomXmlData.getChildren("element");
   UIcolors=new color[Datas.length];
@@ -85,21 +85,18 @@ void UI_load() {
     }
     a=a+1;
   }
-  // ========= get XML data ========== //
-  XmlData=loadXML("MidiInput.xml");
-  MidiStart=XmlData.getChild("Start").getInt("value", MidiStart);
-  MidiInterval=XmlData.getChild("Interval").getInt("value", MidiInterval);
-  if (MidiInterval<0)MidiInterval=max(1, abs(MidiInterval));
-  MidiScale=XmlData.getChild("Scale").getInt("value", MidiScale);
-  // ========= get XML data ========== //
-  XmlData=loadXML("Shortcuts_default.xml");
-  CustomXmlData=loadXML("Shortcuts.xml");
+}
+void loadShortcuts(String customPath) {
+  XML XmlData=loadXML("Shortcuts_default.xml");
+  XML CustomXmlData=null;
+  if (customPath.equals(""))CustomXmlData=loadXML("Shortcuts.xml");
+  else CustomXmlData=loadXML(customPath);
   XML[] internals=XmlData.getChildren("internal");
   XML[] Custom_internals=XmlData.getChildren("internal");
   XML[] Custom_externals=XmlData.getChildren("external");
   Shortcuts=new Shortcut[internals.length+Custom_externals.length+1];
-  a=0;
-  Datas=internals;
+  int a=0;
+  XML[] Datas=internals;
   //Shortcut(int ID_,String name_, int FunctionId_, boolean ctrl_, boolean alt_, boolean shift_, int key_, int keyCode_, String textEditor_, int frame_,String text_) {
   while (a<internals.length) {
     int id=Datas[a].getInt("id");
@@ -117,15 +114,25 @@ void UI_load() {
     Shortcuts[id]=new Shortcut(id, Datas[a].getContent(), S_EXTERNAL, toBoolean(Datas[a].getString("ctrl")), toBoolean(Datas[a].getString("alt")), toBoolean(Datas[a].getString("shift")), Datas[a].getInt("key"), Datas[a].getInt("keycode"), Datas[a].getString("textEditor"), 1, Datas[a].getString("mode"), Datas[a].getString("text"), Datas[a].getString("description", ""));
     a=a+1;
   }
+}
+void UI_load() {
+  loadColors("");
+  loadShortcuts("");
+  // ========= get XML data ========== //
+  XML XmlData=loadXML("MidiInput.xml");
+  MidiStart=XmlData.getChild("Start").getInt("value", MidiStart);
+  MidiInterval=XmlData.getChild("Interval").getInt("value", MidiInterval);
+  if (MidiInterval<0)MidiInterval=max(1, abs(MidiInterval));
+  MidiScale=XmlData.getChild("Scale").getInt("value", MidiScale);
   // ========= get XML data ========== //
   XmlData=loadXML("Default.xml");
   XML Data=XmlData.getChild("Frames");
-  Datas=Data.getChildren("element");
+  XML[] Datas=Data.getChildren("element");
   Frames=new Frame[Datas.length+1];
   Framenames=new String[Datas.length+1];
   Frames[DEFAULT]=new Frame(DEFAULT, "", -10, -10, 10, 10);
   Framenames[DEFAULT]="";
-  a=0;
+  int a=0;
   while (a<Datas.length) {
     int id=Datas[a].getInt("id");
     Framenames[id]=Datas[a].getContent();
@@ -320,6 +327,7 @@ void UI_setup() {
   try {
     ((ScrollList)UI[getUIid("MP3_CODEC")]).setItems((String[])new it.sauronsoftware.jave.Encoder().getAudioEncoders());
     ((ScrollList)UI[getUIid("MP3_FORMAT")]).setItems((String[])new it.sauronsoftware.jave.Encoder().getSupportedEncodingFormats());
+    ((Button)UI[getUIid("INITIAL_HOWTOUSE")]).text=readFile("versionText");
   }
   catch(Exception e) {
   }
@@ -327,14 +335,14 @@ void UI_setup() {
   skinEditor=(SkinEditView)UI[getUIidRev("SKIN_EDIT")];
   skinEditor.setComponents((TextBox)UI[getUIidRev("SKIN_PACKAGE")], (TextBox)UI[getUIidRev("SKIN_TITLE")], (TextBox)UI[getUIidRev("SKIN_AUTHOR")], (TextBox)UI[getUIidRev("SKIN_DESCRIPTION")], (TextBox)UI[getUIidRev("SKIN_APPNAME")], (Button)UI[getUIidRev("SKIN_TEXT1")]);
   // === Custom settings load === //
-  loadCustomSettings();
+  loadCustomSettings("");
   maskImages(UIcolors[I_BACKGROUND]);
   //---
   Frames[currentFrame].prepare();
 }
-void loadCustomSettings() {
+void loadCustomSettings(String customPath) {
   String datapath=getDataPath();
-  if (new File(joinPath(datapath, "Settings.xml")).exists()==false) {
+  if (customPath.equals("")&&new File(joinPath(datapath, "Settings.xml")).exists()==false) {
     //change totally initial(first launch) scale to initialScale on here...
     ((Slider)UI[getUIid("I_RESOLUTION")]).valueF=initialScale;
     scale=initialScale;
@@ -348,7 +356,9 @@ void loadCustomSettings() {
     registerRender();
     return;
   }
-  XML XmlData=loadXML("Settings.xml");
+  XML XmlData;
+  if (customPath.equals(""))XmlData=loadXML("Settings.xml");
+  else XmlData=loadXML(customPath);
   XML Data;
   Data=XmlData.getChild("I_AUTOSAVE");
   if (Data!=null) {
@@ -450,6 +460,10 @@ boolean renderRegistered=false;
 void registerRender() {
   renderRegistered=true;
 }
+int returnRegistered=0;
+void registerReturn(int frame) {
+  returnRegistered=frame;
+}
 boolean prepareRegistered=false;
 int prepareId=0;
 void registerPrepare(int id) {
@@ -511,6 +525,10 @@ void UI_update() {
     UI[focusbefore].skip=false;
     Frames[prepareId].prepare(currentFrame);
     prepareRegistered=false;
+  }
+  if (returnRegistered>0) {
+    Frames[returnRegistered].returnBack();
+    returnRegistered=0;
   }
   if (renderRegistered) {
     Frames[currentFrame].render();
@@ -699,6 +717,7 @@ class Frame {
       title_keysoundedited=title_edited;
       surface.setTitle(title_filename+title_edited+title_suffix);
     }
+    Frames[currentFrame].render();
     currentFrame=ID;
     popMatrix();
     fill(0, 100);

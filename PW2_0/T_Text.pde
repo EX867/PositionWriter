@@ -300,14 +300,15 @@ class ModString {
   }
   String getSelection() {//error
     if (selStartLine==selEndLine)return l.get(selStartLine).substring(selStartPoint, selEndPoint);
-    String ret=l.get(selStartLine).substring(selStartPoint, l.get(selStartLine).length());
+    StringBuilder ret=new StringBuilder();
+    ret.append(l.get(selStartLine).substring(selStartPoint, l.get(selStartLine).length()));
     int a=selStartLine+1;
     while (a<selEndLine) {
-      ret=ret+"\n"+l.get(a);
+      ret=ret.append("\n").append(l.get(a));
       a=a+1;
     }
-    ret=ret+"\n"+l.get(selEndLine).substring(0, selEndPoint);
-    return ret;
+    ret=ret.append("\n").append(l.get(selEndLine).substring(0, selEndPoint));
+    return ret.toString();
   }
   String getSelectionBeforePart(int line_) {
     if (line_==selStartLine) {

@@ -709,9 +709,11 @@ class Button extends UIelement implements ImageComponent {
     } else if (name.equals("PC_EXIT")) {
       color c=((ColorPicker)UI[getUIidRev("PC_HTMLSEL")]).selectedRGB;
       if (tempColor==-1) {//text1
-        ((Button)UI[getUIidRev("SKIN_TEXT1")]).colorInfo=c;
+        Button text=((Button)UI[getUIidRev("SKIN_TEXT1")]);
+        text.colorInfo=color(red(c), green(c), blue(c), ((TextBox)UI[getUIid("PC_ALPHA")]).value);
+        ((SkinEditView)UI[getUIidRev("SKIN_EDIT")]).maskImage1(text.colorInfo);
       } else {
-        UIcolors[tempColor]=color(red(c), green(c), blue(c), alpha(UIcolors[tempColor]));
+        UIcolors[tempColor]=color(red(c), green(c), blue(c), ((TextBox)UI[getUIid("PC_ALPHA")]).value);
         if (tempColor==I_BACKGROUND)maskImages(UIcolors[I_BACKGROUND]);
       }
       Frames[currentFrame].returnBack();
@@ -786,23 +788,22 @@ class Button extends UIelement implements ImageComponent {
     } else if (name.equals("UPDATE_EXIT")) {
       Frames[currentFrame].returnBack();
     } else if (name.equals("SKIN_TEXT1")) {
-      skip=true;
-      focus=DEFAULT;
-      resetFocus();
-      skip=false;
+      resetFocusBeforeFrame();
       tempColor=-1;
       ColorPicker pick=((ColorPicker)UI[getUIidRev("PC_HTMLSEL")]);
+      ((TextBox)UI[getUIid("PC_ALPHA")]).value=int(alpha(colorInfo));
+      ((TextBox)UI[getUIid("PC_ALPHA")]).text=str(int(alpha(colorInfo)));
       pick.skip=true;
       pick.setColor(colorInfo);
       pick.skip=false;
       Frames[getFrameid("F_PICKCOLOR")].prepare(currentFrame);
     } else if (name.equals("SKIN_BUILD")) {
-      String packageText=((TextBox)UI[getUIidRev("SKIN_PACKAGE")]).text;
+      String packageText="com.kimjisub.launchpad.theme."+((TextBox)UI[getUIidRev("SKIN_PACKAGE")]).text;
       String appnameText=filterString(((TextBox)UI[getUIidRev("SKIN_APPNAME")]).text, new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"});
       if (appnameText.equals("")==false&&isValidPackageName(packageText)) {
+        resetFocusBeforeFrame();
+        Frames[getFrameid("F_ERROR")].prepare(currentFrame);
         build_windows(packageText, appnameText, ((TextBox)UI[getUIidRev("SKIN_AUTHOR")]).text, ((TextBox)UI[getUIidRev("SKIN_DESCRIPTION")]).text, ((TextBox)UI[getUIidRev("SKIN_TITLE")]).text, ((Button)UI[getUIidRev("SKIN_TEXT1")]).colorInfo);
-        Frames[currentFrame].returnBack();
-        openFileExplorer(joinPath(joinPath(joinPath(GlobalPath, TempPath), appnameText), "bin/apk/" ));//appName + ".apk"
       }
     } else if (name.equals("SKIN_EXIT")) {
       Frames[currentFrame].returnBack();
@@ -1573,6 +1574,8 @@ class TextBox extends UIelement {
       int id=getUIidRev("PC_HTMLSEL");
       ((ColorPicker)UI[id]).updateFromTextBoxHSB();
       ((ColorPicker)UI[id]).updateColor();
+    } else if (name.equals("PC_ALPHA")) {
+      value=min(255, max(0, value));
     } else if (name.equals("I_AUTOSAVETIME")) {
       value=max(10, value);
     } else if (name.equals("I_DESCRIPTIONTIME")) {
@@ -1910,6 +1913,8 @@ class ScrollList extends UIelement {
                 skip=false;
                 tempColor=selected+1;
                 ColorPicker pick=((ColorPicker)UI[getUIidRev("PC_HTMLSEL")]);
+                ((TextBox)UI[getUIid("PC_ALPHA")]).value=int(alpha(UIcolors[tempColor]));
+                ((TextBox)UI[getUIid("PC_ALPHA")]).text=str(int(alpha(UIcolors[tempColor])));
                 pick.skip=true;
                 pick.setColor(UIcolors[tempColor]);
                 pick.skip=false;
@@ -2704,7 +2709,7 @@ class ColorPicker extends UIelement {
     colorImage.translate(size.x, size.y);
     colorImage.noStroke();
     colorImage.fill(UIcolors[I_BACKGROUND]);
-    colorImage.ellipse(0, 0, size.x, size.y);
+    colorImage.ellipse(0, 0, size.x*11/12, size.y*11/12);
     int a=0;
     while (a<255) {
       colorImage.fill(HSBtoRGB((float)a/255, 1.0F, 1.0F));
@@ -2780,6 +2785,9 @@ class ColorPicker extends UIelement {
     ((TextBox)UI[htmls]).text=str(int(red(selectedRGB)));
     ((TextBox)UI[htmls+1]).text=str(int(green(selectedRGB)));
     ((TextBox)UI[htmls+2]).text=str(int(blue(selectedRGB)));
+    ((TextBox)UI[htmls]).value=int(red(selectedRGB));
+    ((TextBox)UI[htmls+1]).value=int(green(selectedRGB));
+    ((TextBox)UI[htmls+2]).value=int(blue(selectedRGB));
     UI[htmls].render();
     UI[htmls+1].render();
     UI[htmls+2].render();
@@ -2788,6 +2796,9 @@ class ColorPicker extends UIelement {
     ((TextBox)UI[htmls+3]).text=str(int(red(selectedHSB)));
     ((TextBox)UI[htmls+4]).text=str(int(green(selectedHSB)));
     ((TextBox)UI[htmls+5]).text=str(int(blue(selectedHSB)));
+    ((TextBox)UI[htmls+3]).value=int(red(selectedHSB));
+    ((TextBox)UI[htmls+4]).value=int(green(selectedHSB));
+    ((TextBox)UI[htmls+5]).value=int(blue(selectedHSB));
     if (skip==false) {
       UI[htmls+3].render();
       UI[htmls+4].render();

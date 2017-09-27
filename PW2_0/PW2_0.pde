@@ -17,7 +17,8 @@ float Width=1420;
 float Height=920;
 float initialWidth=1420;
 float initialHeight=920;
-String VERSION="{\"type\"=\"beta\",\"major\"=2,\"minor\"=0,\"patch\"=0,\"build\"=5,\"build_date\"=\"170927\"}";//type=beta or production
+String VERSION="{\"type\"=\"production\",\"major\"=0,\"minor\"=0,\"patch\"=0,\"build\"=0,\"build_date\"=\"\"}";
+;//type=beta or production - loaded from file from now.
 String startText="PositionWriter <major>.<minor> <type> [<build>] (<build_date> build)";//template for startText. see buildVersion() to get actual string.
 String title_suffix=" | Position Writer 2.0";
 String title_filename="";
@@ -86,7 +87,6 @@ void settings() {
 boolean Debug=false;
 boolean pfocused=true;
 void setup() {
-  buildVersion();
   if (Debug) {
     try {
       setup_main();
@@ -225,10 +225,17 @@ void setup_main() {
   }
   //end things
   surface.setTitle(title_filename+title_edited+title_suffix);
-  checkVersion();
+  try {
+    VERSION=readFile("versionInfo.json");
+    buildVersion();
+    checkVersion();
+    statusR.text=startText;
+  }
+  catch(Exception e) {
+    displayLogError("can't load version.");
+  }
+  Frames[currentFrame].render();
   popMatrix();
-  statusR.text=startText;
-  statusR.render();
   popMatrix();
   uncloud_setup();
 }

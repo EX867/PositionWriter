@@ -190,6 +190,7 @@
     <element id="143" type="TYPE_TEXTBOX" x="80" y="570" w="70" h="30" description="" value="255" title="hue" hint="0~255" textsize="20">PC_HTMLH</element>
     <element id="144" type="TYPE_TEXTBOX" x="230" y="570" w="70" h="30" description="" value="255" title="saturation" hint="0~255" textsize="20">PC_HTMLS</element>
     <element id="145" type="TYPE_TEXTBOX" x="380" y="570" w="70" h="30" description="" value="255" title="brightness" hint="0~255" textsize="20">PC_HTMLV</element>
+    <element id="194" type="TYPE_TEXTBOX" x="50" y="430" w="40" h="30" description="" value="255" title="alpha" hint="0~255" textsize="20">PC_ALPHA</element>
     <element id="146" type="TYPE_BUTTON" x="76" y="650" w="25" h="25" description="" color="FFFFFFFF">PC_RECENT1</element>
     <element id="147" type="TYPE_BUTTON" x="153" y="650" w="25" h="25" description="" color="FFFFFFFF">PC_RECENT2</element>
     <element id="148" type="TYPE_BUTTON" x="230" y="650" w="25" h="25" description="" color="FFFFFFFF">PC_RECENT3</element>
@@ -228,7 +229,7 @@
     <!---->
     <element id="180" type="TYPE_BUTTON" x="200" y="200" w="180" h="180" description="new version released. click to open download page." text="get new&#10;&#10;version" textsize="30">UPDATE_UPDATE</element>
     <element id="181" type="TYPE_BUTTON" x="365" y="-35" w="25" h="25" description="cancel" image="I_EXIT.png">UPDATE_EXIT</element>
-    <element id="192" type="TYPE_BUTTON" x="200" y="200" w="180" h="180" description="click to go to manual page (https://github.com/EX867/PositionWriter/wiki/How-to-use-v2-(english))" text="--------------------------&#10;&#10;It seems this is first&#10;open after update.&#10;&#10;See how to use new features.&#10;&#10;--------------------------&#10;&#10;* beta 5 release&#10;&#10;* please report bugs&#10;to me!!" textsize="20">INITIAL_HOWTOUSE</element>
+    <element id="192" type="TYPE_BUTTON" x="200" y="200" w="180" h="180" description="click to go to manual page (https://github.com/EX867/PositionWriter/wiki/How-to-use-v2-(english))" text="this will be set in code." textsize="20">INITIAL_HOWTOUSE</element>
     <!---->
     <element id="182" type="TYPE_SKINEDIT" x="710" y="460" w="700" h="450" description="">SKIN_EDIT</element>
     <element id="183" type="TYPE_TEXTBOX" x="160" y="860" w="135" h="35" description="com.kimjisub.launchpad.theme.test" title="...launchpad.theme." text="test" hint="theme_package_name" numberonly="false" textsize="20">SKIN_PACKAGE</element>
@@ -239,7 +240,7 @@
     <element id="188" type="TYPE_BUTTON" x="50" y="600" w="30" h="30" description="text color" color="FFFFFFFF">SKIN_TEXT1</element>
     <element id="190" type="TYPE_BUTTON" x="1350" y="860" w="45" h="35" description="build skin!" image="I_CONVERT.png">SKIN_BUILD</element>
     <element id="193" type="TYPE_BUTTON" x="1370" y="780" w="25" h="25" description="exit frame" image="I_EXIT.png">SKIN_EXIT</element>
-    <!--193 elements-->
+    <!--194 elements-->
   </UIelements>
   <FrameData>
     <F_KEYLED>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|<!--TAB_WAVEDIT-->|STATUS_BAR_L|STATUS_BAR_R|I_CHANGETITLE|T_VELOCITY|T_HTML|T_TEXT|KEYLED_PAD|I_PLAYSTOP|I_INFRAME|I_LOOP|I_FRAMESLIDER|I_FRAMESLIDERLOOP|I_TIME1|I_LEDREFRESH|I_NUMBER1|I_NUMBER2|I_HTMLSEL|I_VELNUM|I_TEXTFIELD|I_OPENFIND|I_HTMLR|I_HTMLG|I_HTMLB|I_HTMLH|I_HTMLS|I_HTMLV|I_RECENT1|I_RECENT2|I_RECENT3|I_RECENT4|I_RECENT5|I_RECENT6|I_RECENT7|I_RECENT8|I_RECENT9|I_RECENTA|I_FINDTEXTBOX|I_REPLACETEXTBOX|I_NEXTFIND|I_PREVIOUSFIND|I_CALCULATE|I_REPLACEALL</F_KEYLED>
@@ -248,7 +249,7 @@
     <F_WAVEDIT>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|TAB_WAVEDIT|STATUS_BAR_L|STATUS_BAR_R|I_PLAY|I_STOP|I_LOOP|I_PROGRESSBAR|I_TIME2|I_WAVEDITOR|I_VISUALIZER|T_FILEVIEW|T_CUTPOINT|T_TRACKLIST|I_FILEVIEW3|I_CUTPOINT|I_NORMALIZE|I_REVERSE|T_SIGNALCHAIN|T_AUTOMATION|I_SIGNALCHAIN|I_EFFECTORS|I_AUTOMATION|</F_WAVEDIT>
     <F_INITIAL>INITIAL_HOWTOUSE|UPDATE_EXIT|</F_INITIAL>
     <F_DIALOG>DIALOG_EXIT|DIALOG_CONTENT|DIALOG_OK|DIALOG_CANCEL|</F_DIALOG>
-    <F_PICKCOLOR>PC_HTMLSEL|PC_HTMLR|PC_HTMLG|PC_HTMLB|PC_HTMLH|PC_HTMLS|PC_HTMLV|PC_RECENT1|PC_RECENT2|PC_RECENT3|PC_RECENT4|PC_RECENT5|PC_RECENT6|PC_RECENT7|PC_RECENT8|PC_RECENT9|PC_RECENTA|PC_EXIT</F_PICKCOLOR>
+    <F_PICKCOLOR>PC_HTMLSEL|PC_HTMLR|PC_HTMLG|PC_HTMLB|PC_HTMLH|PC_HTMLS|PC_HTMLV|PC_ALPHA|PC_RECENT1|PC_RECENT2|PC_RECENT3|PC_RECENT4|PC_RECENT5|PC_RECENT6|PC_RECENT7|PC_RECENT8|PC_RECENT9|PC_RECENTA|PC_EXIT</F_PICKCOLOR>
     <F_ERROR>ERROR_LOG|ERROR_EXIT</F_ERROR>
     <F_INFO>INFO_DESCRIPTION|INFO_EXIT|INFO_GITHUBLINK|INFO_PROCESSINGLINK|INFO_DEVELOPERLINK|INFO_JEONJEHONGLINK|INFO_ASDFLINK|</F_INFO>
     <F_MCCONVERT>MC_INPUT|MC_OUTPUT|MC_MC10|MC_CONVERT|MC_EXIT</F_MCCONVERT>

@@ -49,32 +49,32 @@ void checkVersion() {
     if (version.getString("type").equals("beta")) {//if production>=current->production, beta>=current->beta
       if (production.getInt("major")==version.getInt("major")) {//only compare if major is same.
         if (production.getInt("minor")>version.getInt("minor")) {
-          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          registerPrepare(getFrameid("F_UPDATE"));
           return;
         } else if (production.getInt("minor")==version.getInt("minor")&&production.getInt("patch")>version.getInt("patch")) {
-          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          registerPrepare(getFrameid("F_UPDATE"));
           return;
         }
       }
       if (beta.getInt("major")==version.getInt("major")) {//only compare if major is same.
         if (beta.getInt("minor")>version.getInt("minor")) {
-          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          registerPrepare(getFrameid("F_UPDATE"));
           return;
         } else if (beta.getInt("minor")==version.getInt("minor")&&beta.getInt("patch")>version.getInt("patch")) {
-          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          registerPrepare(getFrameid("F_UPDATE"));
           return;
         } else if (beta.getInt("minor")==version.getInt("minor")&&beta.getInt("patch")==version.getInt("patch")&&beta.getInt("build")>version.getInt("build")) {
-          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          registerPrepare(getFrameid("F_UPDATE"));
           return;
         }
       }
     } else if (version.getString("type").equals("prodection")) {//if production>=current->production
       if (production.getInt("major")==version.getInt("major")) {//only compare if major is same.
         if (production.getInt("minor")>version.getInt("minor")) {
-          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          registerPrepare(getFrameid("F_UPDATE"));
           return;
         } else if (production.getInt("minor")==version.getInt("minor")&&production.getInt("patch")>version.getInt("patch")) {
-          Frames[getFrameid("F_UPDATE")].prepare(currentFrame);
+          registerPrepare(getFrameid("F_UPDATE"));
           return;
         }
       }
@@ -84,15 +84,11 @@ void checkVersion() {
     //there is problem with internet, so ignore.
   }
 }
-void External_setup() {
-  //load path data
-  //String AppdataLocal=joinPath(getAppData(),"PositionWriter/Local/path.txt");
+void loadPaths(String customPath) {
   String username=getUsername();
-  KeySoundPath=getDocuments();
-  WavEditPath=joinPath(GlobalPath, "wavedit");
-  //
   XML XmlData;
-  XmlData=loadXML("Path.xml");//WARNING!! if Path.xml not exists, program will not work correctly.
+  if (customPath.equals(""))XmlData=loadXML("Path.xml");//WARNING!! if Path.xml not exists, program will not work correctly.
+  else XmlData=loadXML(customPath);
   XML Data=null;
   if (XmlData!=null)Data=XmlData.getChild("GlobalPath");//
   if (Data==null)GlobalPath=joinPath(getDocuments(), "PositionWriter");
@@ -116,6 +112,14 @@ void External_setup() {
   if (XmlData!=null)Data=XmlData.getChild("external");//
   if (Data==null)ExternalPath="External";
   else ExternalPath=Data.getContent().replace("?", username);
+}
+void External_setup() {
+  //load path data
+  //String AppdataLocal=joinPath(getAppData(),"PositionWriter/Local/path.txt");
+  KeySoundPath=getDocuments();
+  WavEditPath=joinPath(GlobalPath, "wavedit");
+  //
+  loadPaths("");
   //...https://stackoverflow.com/questions/1555658/is-it-possible-in-java-to-access-private-fields-via-reflection
   try {
     Field f= surface.getClass().getDeclaredField("canvas");
@@ -140,6 +144,8 @@ void External_setup() {
           } else {
             setOverlay(0, 0, Width, Height);
           }
+        } else if (currentFrame==3) {
+          setOverlay(0, 0, Width, Height);
         } else if (currentFrame==11) {//mp3 converter
           UIelement elem=UI[getUIidRev("MP3_INPUT")];
           setOverlay(elem.position.x, elem.position.y, elem.size.x, elem.size.y);
@@ -218,6 +224,30 @@ void External_setup() {
               surface.setTitle(title_filename+title_edited+title_suffix);
             }
             setStatusR("Loaded : "+title_filename+".");
+          } else if (currentFrame==3) {
+            String name=getFileName(filename);
+            if (name.equals("android.jar")) {
+              EX_fileCopy(filename, joinPath(joinPath(GlobalPath, ExternalPath), "android.jar"));
+              setStatusR("Copied : android.jar");
+              registerRender();
+            } else if (name.equals("Colors.xml")) {
+              loadColors(filename);
+              maskImages(UIcolors[I_BACKGROUND]);
+              setStatusR("Loaded : Colors.xml");
+              registerRender();
+            } else if (name.equals("Shortcuts.xml")) {
+              loadShortcuts(filename);
+              setStatusR("Loaded : Shortcuts.xml");
+              registerRender();
+            } else if (name.equals("Settings.xml")) {
+              loadCustomSettings(filename);
+              setStatusR("Loaded : Settings.xml");
+              registerRender();
+            } else if (name.equals("Paths.xml")) {
+              loadPaths(filename);
+              setStatusR("Loaded : Paths.xml");
+              registerRender();
+            }
           } else if (currentFrame==11) {//mp3 converter
             ((ScrollList)UI[getUIidRev("MP3_INPUT")]).addItem(filename);
           } else if (currentFrame==19) {

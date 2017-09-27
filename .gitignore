@@ -10,4 +10,7 @@ PW1_4/application.windows32
 PW1_4/application.windows64
 PW2_0/application.windows32
 PW2_0/application.windows64
+PW2_0/data/Colors.xml
+PW2_0/data/Shortcuts.xml
+PW2_0/data/Settings.xml
 release/PositionWriter
