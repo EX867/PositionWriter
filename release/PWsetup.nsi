@@ -59,12 +59,16 @@ Section "32bit" SEC01
   SetOutPath "$INSTDIR\PositionWriter_32\"
   File /r "C:\Users\user\Documents\[Projects]\PositionWriter\release\PositionWriter\PositionWriter_32\*"
   CreateShortCut "$STARTMENU\PW${VERSION}_32.lnk" "$INSTDIR\PositionWriter_32\PW${VERSION}.exe"
+  Delete "$INSTDIR\PositionWriter_32\PW1_4.exe" ; delete old version executable
+  Delete "$STARTMENU\PW1_4_32.lnk"
 SectionEnd
 
 Section "64bit" SEC02
   SetOutPath "$INSTDIR\PositionWriter_64\"
   File /r "C:\Users\user\Documents\[Projects]\PositionWriter\release\PositionWriter\PositionWriter_64\*"
   CreateShortCut "$STARTMENU\PW${VERSION}_64.lnk" "$INSTDIR\PositionWriter_64\PW${VERSION}.exe"
+  Delete "$INSTDIR\PositionWriter_64\PW1_4.exe" ; delete old version executable
+  Delete "$STARTMENU\PW1_4_64.lnk"
 SectionEnd
 
 Section -Post
