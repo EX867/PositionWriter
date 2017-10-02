@@ -38,7 +38,6 @@ SetCompressor bzip2
 
 ; Language files
 !insertmacro MUI_LANGUAGE "English"
-!insertmacro MUI_LANGUAGE "Korean"
 
 ; Reserve files
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS

@@ -116,9 +116,6 @@ class ThreadBuilder implements Runnable {
       surface.setTitle(title_filename+title_edited+title_suffix+" - creating files for build...");
       logs.add("creating files for build...");
       registerRender();
-      surface.setTitle(title_filename+title_edited+title_suffix+" - creating build files...");
-      logs.add("creating build files...");
-      registerRender();
       String drawable=joinPath(buildPath, "res/drawable/");
       skin_appIcon.save(drawable+"appicon.png");
       skin_themeIcon.save(drawable+"theme_ic.png");
@@ -216,6 +213,8 @@ class ThreadBuilder implements Runnable {
       }
       //Run DX Dexer
       surface.setTitle(title_filename+title_edited+title_suffix+" - dexing...");
+      logs.add("Dexing source...");
+      registerRender();
       String[] dxArgs= new String[] {
         "--num-threads=1", 
         "--output=" + joinPath(buildPath, /*"bin/main-classes.dex"*/"bin/classes.dex"), //The output location of the sketch's dexed classes

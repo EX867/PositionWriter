@@ -23,17 +23,17 @@ public boolean isInt(String str) {
   return true;
 }
 public boolean isRange(String str) {
-  if(isInt(str))return true;
+  if (isInt(str))return true;
   String[] ints=split(str, "~");
   return isInt(ints[0])&&isInt(ints[1]);
 }
-public int getRangeFirst(String str){
-  if(isInt(str))return int(str);
+public int getRangeFirst(String str) {
+  if (isInt(str))return int(str);
   String[] ints=split(str, "~");
   return int(ints[0]);
 }
-public int getRangeSecond(String str){
-  if(isInt(str))return int(str);
+public int getRangeSecond(String str) {
+  if (isInt(str))return int(str);
   String[] ints=split(str, "~");
   return int(ints[1]);
 }
@@ -164,7 +164,8 @@ boolean isHex(String in) {
  }*/
 color brighter(color a, float brighter) {
   //if (red(a)==0&&green(a)==0&&blue(a)==0)return (floor(max(0, min(255, brighter))));
-  return HSBtoRGB((float)hue(a)/255, (float)saturation(a)/255, (float)max(0, min(255, brightness(a)+brighter))/255);
+  color b=HSBtoRGB((float)hue(a)/255, (float)saturation(a)/255, (float)max(0, min(255, brightness(a)+brighter))/255);
+  return color(red(b), green(b), blue(b), alpha(a));
 }         
 public static int HSBtoRGB(float hue, float saturation, float brightness) {
   int r = 0, g = 0, b = 0;

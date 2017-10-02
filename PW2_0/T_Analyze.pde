@@ -280,20 +280,18 @@ class Analyzer {
     int high = BpmPoint.size() - 1;
     int mid;
     int index=-1;
-    if (line==-1)return DEFAULT_BPM;
-    if (high==0)return DEFAULT_BPM;
-    if (line>BpmPoint.get(high))index=high;
-    else {
-      while (low <= high) {
-        mid = (low + high) / 2;
-        if (BpmPoint.get(mid-1)>=line&&BpmPoint.get(mid)>=line) high = mid - 1;
-        else if (BpmPoint.get(mid-1)<line&&BpmPoint.get(mid)<line) low = mid + 1;
-        else index= mid-1;
-      }
+    if (high<=0)return DEFAULT_BPM;
+    if (line<BpmPoint.get(1))return DEFAULT_BPM;
+    if (line>BpmPoint.get(high))return uLines.get(BpmPoint.get(high)).valueF;
+    while (low <= high) {
+      mid = (low + high) / 2;
+      if (BpmPoint.get(mid-1)>=line&&BpmPoint.get(mid)>=line) high = mid - 1;
+      else if (BpmPoint.get(mid-1)<line&&BpmPoint.get(mid)<line) low = mid + 1;
+      else index= mid-1;
     }
     if (index==0) return DEFAULT_BPM;
     else {
-      UnipackLine info=AnalyzeLine(index, "get bpm", Lines.getLine(index));
+      UnipackLine info=uLines.get(index);//AnalyzeLine(index, "get bpm", Lines.getLine(index));
       if (info.Type==UnipackLine.BPM) {
         return info.valueF;
       }
