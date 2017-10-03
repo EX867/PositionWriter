@@ -91,7 +91,7 @@
     <element id="53" type="TYPE_TEXTBOX" x="1130" y="285" w="220" h="40" description="" title="ProducerName" text="DefaultProducer" hint="Enter producer name" textsize="20">I_PRODUCERNAME</element>
     <element id="54" type="TYPE_TEXTBOX" x="1130" y="375" w="220" h="40" description="" title="ButtonY" value="8" hint="Enter width" textsize="20">I_BUTTONX</element>
     <element id="55" type="TYPE_TEXTBOX" x="1130" y="465" w="220" h="40" description="" title="ButtonX" value="8" hint="Enter height" textsize="20">I_BUTTONY</element>
-    <element id="56" type="TYPE_TEXTBOX" x="1130" y="555" w="220" h="40" description="" title="Chain" value="3" hint="Enter chain" textsize="20">I_CHAIN</element>
+    <element id="56" type="TYPE_TEXTBOX" x="1130" y="555" w="220" h="40" description="" title="Chain" value="8" hint="Enter chain" textsize="20">I_CHAIN</element>
     <element id="57" type="TYPE_BUTTON" x="1130" y="643" w="210" h="35" description="" value="true" text="landscape" textsize="25">I_LANDSCAPE</element>
     <element id="58" type="TYPE_BUTTON" x="1130" y="729" w="210" h="35" description="" value="true" text="squareButtons" textsize="25">I_SQUAREBUTTONS</element>
     <element id="59" type="TYPE_BUTTON" x="1130" y="810" w="220" h="20" description="open file explorer" text="-- initialize --" textsize="15">I_PATH</element>

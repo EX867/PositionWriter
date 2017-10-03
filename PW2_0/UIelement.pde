@@ -577,6 +577,8 @@ class Button extends UIelement implements ImageComponent {
       RecordLog();
       ((TextEditor)UI[textfieldId]).setText(patternMatcher.replaceAll(Lines.toString(), ((TextBox)UI[getUIid("I_REPLACETEXTBOX")]).text, findData));
       RecordLog();
+      title_edited="*";
+      surface.setTitle(title_filename+title_edited+title_suffix);
     } else if (name.equals("I_CALCULATE")) {
       patternMatcher.registerFind(((TextBox)UI[getUIid("I_FINDTEXTBOX")]).text, value);
       patternMatcher.registerReplace(((TextBox)UI[getUIid("I_REPLACETEXTBOX")]).text, value);

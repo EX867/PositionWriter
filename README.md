@@ -6,7 +6,7 @@
 [recursive link](https://github.com/EX867/PositionWriter)
 
 한국사람들을 위한 다운로드 링크!!
-<h1>[다운로드 하기](https://github.com/EX867/PositionWriter/releases)</h1>
+[<h1>다운로드 하기</h1>](https://github.com/EX867/PositionWriter/releases)
 
 ---------
 ## Made with processing

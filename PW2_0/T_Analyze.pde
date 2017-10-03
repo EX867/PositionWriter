@@ -1269,7 +1269,7 @@ class Analyzer {
             a=a+1;
           }
         } else {
-          throw new Exception("keyLED not exists : "+keyLEDf.getAbsolutePath());
+          //throw new Exception("keyLED not exists : "+keyLEDf.getAbsolutePath()); - just ignore
         }
         if (projectf.isFile()) {
           ((TextBox)UI[getUIid("I_PROJECTNAME")]).text=readFile(projectf.getAbsolutePath());
@@ -1428,7 +1428,7 @@ class Analyzer {
       writeFile(joinPath(path, "keySound"), text);
       if (canonical==false)writeFile(joinPath(path, "keyLED"), ledtext);
       writeFile(joinPath(path, "info"), info.toString());
-      if (canonical) {
+      if (canonical==false) {
         if (((TextBox)UI[getUIid("I_PROJECTNAME")]).text.equals("")==false) {
           writeFile(joinPath(path, ".project"), filterString(((TextBox)UI[getUIid("I_PROJECTNAME")]).text, new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}));
         } else {
