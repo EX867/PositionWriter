@@ -514,8 +514,9 @@ void UI_update() {
     if (statusRchanged)statusR.render();
     setStatusL("");
   }
-  if (pfocused==false&&focused) {
+  if (pfocused==false&&focused) {//on focus.
     registerRender();
+    ((ScrollList)UI[getUIid("I_FILEVIEW1")]).setItems(listFilePaths_related(listFilePaths_history));
   }
   if (prepareRegistered) {
     int focusbefore=focus;

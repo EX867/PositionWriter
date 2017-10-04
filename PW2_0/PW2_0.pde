@@ -65,6 +65,7 @@ boolean initialOpen=false;
  2.+ : autoplay led link - triggering led(run triggering and frame both in led editor, stop link with clear button - this will enable rnd command in led editor too.)
  2.+ : drag to print range commands
  2.+ : currently, mc converter cannot manipulate range commands. add!
+ 2.+ : show sound file name toggle button.
  
  skinedit : change theme to appcompat-material
  uncloud : wait uncloud update!!

@@ -232,7 +232,8 @@
     <element id="192" type="TYPE_BUTTON" x="200" y="200" w="180" h="180" description="click to go to manual page (https://github.com/EX867/PositionWriter/wiki/How-to-use-v2-(english))" text="this will be set in code." textsize="20">INITIAL_HOWTOUSE</element>
     <!---->
     <element id="182" type="TYPE_SKINEDIT" x="710" y="460" w="700" h="450" description="">SKIN_EDIT</element>
-    <element id="183" type="TYPE_TEXTBOX" x="160" y="860" w="135" h="35" description="com.kimjisub.launchpad.theme.test" title="...launchpad.theme." text="test" hint="theme_package_name" numberonly="false" textsize="20">SKIN_PACKAGE</element>
+    <element id="183" type="TYPE_TEXTBOX" x="100" y="860" w="65" h="35" description="com.kimjisub.launchpad.theme.test" title="...theme." text="test" hint="test" numberonly="false" textsize="20">SKIN_PACKAGE</element>
+    <element id="195" type="TYPE_TEXTBOX" x="235" y="860" w="60" h="35" description="" title="Version" text="" hint="1.0.0" numberonly="false" textsize="20">SKIN_VERSION</element>
     <element id="184" type="TYPE_TEXTBOX" x="400" y="860" w="95" h="35" description="" title="Title" text="" hint="Test Skin" numberonly="false" textsize="20">SKIN_TITLE</element>
     <element id="185" type="TYPE_TEXTBOX" x="600" y="860" w="95" h="35" description="" title="Author" text="" hint="User" numberonly="false" textsize="20">SKIN_AUTHOR</element>
     <element id="186" type="TYPE_TEXTBOX" x="900" y="860" w="195" h="35" description="" title="Description" text="" hint="Description" numberonly="false" textsize="20">SKIN_DESCRIPTION</element>
@@ -240,7 +241,7 @@
     <element id="188" type="TYPE_BUTTON" x="50" y="600" w="30" h="30" description="text color" color="FFFFFFFF">SKIN_TEXT1</element>
     <element id="190" type="TYPE_BUTTON" x="1350" y="860" w="45" h="35" description="build skin!" image="I_CONVERT.png">SKIN_BUILD</element>
     <element id="193" type="TYPE_BUTTON" x="1370" y="780" w="25" h="25" description="exit frame" image="I_EXIT.png">SKIN_EXIT</element>
-    <!--194 elements-->
+    <!--195 elements-->
   </UIelements>
   <FrameData>
     <F_KEYLED>TAB_KEYLED|TAB_KEYSOUND|TAB_SETTINGS|<!--TAB_WAVEDIT-->|STATUS_BAR_L|STATUS_BAR_R|I_CHANGETITLE|T_VELOCITY|T_HTML|T_TEXT|KEYLED_PAD|I_PLAYSTOP|I_INFRAME|I_LOOP|I_FRAMESLIDER|I_FRAMESLIDERLOOP|I_TIME1|I_LEDREFRESH|I_NUMBER1|I_NUMBER2|I_HTMLSEL|I_VELNUM|I_TEXTFIELD|I_OPENFIND|I_HTMLR|I_HTMLG|I_HTMLB|I_HTMLH|I_HTMLS|I_HTMLV|I_RECENT1|I_RECENT2|I_RECENT3|I_RECENT4|I_RECENT5|I_RECENT6|I_RECENT7|I_RECENT8|I_RECENT9|I_RECENTA|I_FINDTEXTBOX|I_REPLACETEXTBOX|I_NEXTFIND|I_PREVIOUSFIND|I_CALCULATE|I_REPLACEALL</F_KEYLED>
@@ -260,6 +261,6 @@
     <F_UNCLOUD>UN_PRIVATE|UN_LIST|UN_USERINFO|UN_LOGIN|MC_EXIT|UN_UPLOAD|UN_UPDATE|UN_DELETE|UN_DOWNLOAD|UN_UNIPACKINFO|</F_UNCLOUD>
     <F_LOGIN>LOGIN_ID|LOGIN_PASSWORD|LOGIN_OK|MC_EXIT</F_LOGIN>
     <F_UPDATE>UPDATE_UPDATE|UPDATE_EXIT|</F_UPDATE>
-    <F_SKINEDIT>SKIN_EDIT|SKIN_PACKAGE|SKIN_TITLE|SKIN_AUTHOR|SKIN_DESCRIPTION|SKIN_APPNAME|SKIN_TEXT1|SKIN_BUILD|SKIN_EXIT</F_SKINEDIT>
+    <F_SKINEDIT>SKIN_EDIT|SKIN_PACKAGE|SKIN_TITLE|SKIN_AUTHOR|SKIN_DESCRIPTION|SKIN_APPNAME|SKIN_VERSION|SKIN_TEXT1|SKIN_BUILD|SKIN_EXIT</F_SKINEDIT>
   </FrameData>
 </Data>

@@ -33,11 +33,11 @@ public class ModPlayer implements StateReturner, SliderUpdater {
       loadedPath=path;
       fileLoaded=true;
       length= sample.getLength();
+      samplePlayer.setPosition(0);
     }
     catch(Exception e) {
       e.printStackTrace();
     }
-    samplePlayer.setPosition(0);
   }
   public void eject() {
     loadedPath = "";

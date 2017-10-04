@@ -867,7 +867,7 @@ class Analyzer {
       boolean changed=false;
       UnipackLine info=new UnipackLine("read frame - read while no event", DEFAULT);
       while (a<Lines.lines()) {//reset
-        info=uLines.get(a);//AnalyzeLine(a, "read frame - read while no event", Lines.getLine(a));
+        info=uLines.get(a);
         if (info.mc) {
           a++;
           continue;
@@ -895,7 +895,6 @@ class Analyzer {
           }
           frame++;
         }
-        //if (info.x==x&&info.y==y)break;
         a++;
       }
       if (changed==false&&a==Lines.lines()) {
@@ -918,22 +917,21 @@ class Analyzer {
       } else {
         LED.get (frame)[x-1][y-1]=LED.get (frame-1)[x-1][y-1];
       }
-      UnipackLine info;//=new UnipackLine("erase frame - read while no ev3ent", DEFAULT);
+      UnipackLine info;
       int max=Lines.lines();
       if (frame<DelayPoint.size()-1)max=DelayPoint.get(frame+1);
-      if (skip&&a==line)a++;
       while (a <max) {
-        info=uLines.get(a);//AnalyzeLine(a, "erase frame - read while no event", Lines.getLine(a));
-        if (info.mc) {
-          a++;
-          continue;
+        if (skip&&a==line) {//skip line to erase.
+        } else {
+          info=uLines.get(a);
+          if (!info.mc) {
+            if (info.Type==UnipackLine.ON) {
+              if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) onLED (info, x, y, frame);
+            } else if (info.Type==UnipackLine.OFF) {
+              if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) offLED (info, x, y, frame);
+            }
+          }
         }
-        if (info.Type==UnipackLine.ON) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) onLED (info, x, y, frame);
-        } else if (info.Type==UnipackLine.OFF) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) offLED (info, x, y, frame);
-        }
-        if (skip&&a==line)a++;
         a=a+1;
       }
       readFrameLedPosition (frame+1, max+1, x, y, LED.get (frame)[x-1][y-1], null);
@@ -1301,17 +1299,25 @@ class Analyzer {
     ArrayList<String> ret=new ArrayList<String>();
     int c=0;
     float bpmv=120;
+    boolean[][] first=new boolean[ButtonX][ButtonY];
+    for (int a=0; a<ButtonX; a++) {
+      for (int b=0; b>ButtonY; b++) {
+        first[a][b]=true;
+      }
+    }
     while (c<in.length) {
       UnipackLine line=AnalyzeLine(c, "ExportLedFile", in[c]);
       if (line.Type==UnipackLine.ON) {//
-        if (line.mc&&ignoreMc) {
-          if (line.hasHtml&&line.hasVel) {
-            ret.add("o mc "+line.x+" "+hex(line.html, 6)+" "+line.vel);
-          } else if (line.hasVel) {
-            ret.add("o mc "+line.x+" a "+line.vel);
-          } else if (line.hasHtml) {
-            ret.add("o mc "+line.x+" "+hex(line.html, 6));
-          }//else ignore
+        if (line.mc) {
+          if (ignoreMc) {
+            if (line.hasHtml&&line.hasVel) {
+              ret.add("o mc "+line.x+" "+hex(line.html, 6)+" "+line.vel);
+            } else if (line.hasVel) {
+              ret.add("o mc "+line.x+" a "+line.vel);
+            } else if (line.hasHtml) {
+              ret.add("o mc "+line.x+" "+hex(line.html, 6));
+            }//else ignore
+          }
         } else {
           if (line.hasHtml&&line.hasVel) {
             for (int b=line.y; b<=line.y2; b++) {
@@ -1333,15 +1339,24 @@ class Analyzer {
             }
           }//else ignore
         }
+        if (line.mc==false) {
+          first[line.x][line.y]=false;
+        }
       } else if (line.Type==UnipackLine.OFF) {//
-        if (line.mc&&ignoreMc) {//[off mc n]
-          ret.add("f mc "+line.x);
+        if (line.mc) {//[off mc n]
+          if (ignoreMc)ret.add("f mc "+line.x);
         } else {//[off y x n]
           for (int b=line.y; b<=line.y2; b++) {
             for (int a=line.x; a<line.x2; a++) {
+              if (first[a][b]) {
+                ret.add("o "+b+" "+a+" auto 0");
+              }
               ret.add("f "+b+" "+a);
             }
           }
+        }
+        if (line.mc==false) {
+          first[line.x][line.y]=false;
         }
       } else if (line.Type==UnipackLine.DELAY) {
         if (line.hasHtml) {//bpm

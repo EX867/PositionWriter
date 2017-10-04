@@ -293,7 +293,9 @@ String[] listFileNames(String dir) {
   }
   return new String[0];
 }
+String listFilePaths_history="";
 String[] listFilePaths_related(String dir) {
+  listFilePaths_history=dir;
   File file = new File(dir);
   dir=dir.replace('\\', '/');
   if (file==null)file=new File(GlobalPath);

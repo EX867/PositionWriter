@@ -35,6 +35,7 @@ static final int I_COMMENTTEXT=14;
 static final int I_UNITORTEXT=15;
 static final int I_UNITORTEXT2=17;
 static final int I_OVERLAY=16;
+static final int I_TABC3=18;
 
 // ========== Others ==========//
 static final int AN_PRESS=0;

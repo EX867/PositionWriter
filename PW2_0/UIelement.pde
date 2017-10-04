@@ -181,6 +181,14 @@ class Button extends UIelement implements ImageComponent {
       UI [getUIid("I_HTMLSEL")].disabled=true;
       UI [getUIid("I_TEXTFIELD")].disabled=false;
       UI [getUIid("I_OPENFIND")].disabled=false;
+      if (((Button)UI [getUIid("I_OPENFIND")]).value) {
+        UI[getUIidRev("I_FINDTEXTBOX")].disabled=false;
+        UI[getUIidRev("I_REPLACETEXTBOX")].disabled=false;
+        UI[getUIidRev("I_NEXTFIND")].disabled=false;
+        UI[getUIidRev("I_PREVIOUSFIND")].disabled=false;
+        UI[getUIidRev("I_CALCULATE")].disabled=false;
+        UI[getUIidRev("I_REPLACEALL")].disabled=false;
+      }
       currentTabKeyLed=3;
       Frames[currentFrame].render();
     } else if (name.equals("T_SHORTCUTS")) {
@@ -805,7 +813,7 @@ class Button extends UIelement implements ImageComponent {
       if (appnameText.equals("")==false&&isValidPackageName(packageText)) {
         resetFocusBeforeFrame();
         Frames[getFrameid("F_ERROR")].prepare(currentFrame);
-        build_windows(packageText, appnameText, ((TextBox)UI[getUIidRev("SKIN_AUTHOR")]).text, ((TextBox)UI[getUIidRev("SKIN_DESCRIPTION")]).text, ((TextBox)UI[getUIidRev("SKIN_TITLE")]).text, ((Button)UI[getUIidRev("SKIN_TEXT1")]).colorInfo);
+        build_windows(packageText, appnameText, ((TextBox)UI[getUIidRev("SKIN_AUTHOR")]).text, ((TextBox)UI[getUIidRev("SKIN_DESCRIPTION")]).text, ((TextBox)UI[getUIidRev("SKIN_TITLE")]).text, ((TextBox)UI[getUIidRev("SKIN_VERSION")]).text, ((Button)UI[getUIidRev("SKIN_TEXT1")]).colorInfo);
       }
     } else if (name.equals("SKIN_EXIT")) {
       Frames[currentFrame].returnBack();
@@ -870,8 +878,11 @@ class Label extends UIelement {
     if (name.equals("STATUS_BAR_R")) {
       textAlign(LEFT, CENTER);
       text(text, position.x-size.x+textSize, position.y-3);
-      if (error.size()>0)fill(UIcolors[I_TABC2]);
-      else fill(UIcolors[I_TABC1]);
+      if (error.size()>0) {
+        if (displayingError>=0&&displayingError<error.size()&&error.get(displayingError).type==Error.WARNING) {
+          fill(UIcolors[I_TABC3]);
+        } else fill(UIcolors[I_TABC2]);
+      } else fill(UIcolors[I_TABC1]);
       rect(position.x, position.y-size.y+5, size.x, 5);
       textAlign(RIGHT, CENTER);
       textSize(textSize*3/4);
@@ -1934,7 +1945,7 @@ class ScrollList extends UIelement {
           reordering=(int)(MouseY-(position.y-size.y-ITEM_HEIGHT/2-(sliderPos-(position.y-size.y+sliderLength))*(max(1, View.length*ITEM_HEIGHT-size.y*2)/max(1, size.y*2-sliderLength*2))))/ITEM_HEIGHT;
           if (selected==reordering||selected+1==reordering||reordering<0||reordering>View.length)reordering=-1;
         } else if (draggedListId!=-1) {
-          //update drag an drop thing in here(cannot occur in same time with reordering)
+          //update drag and drop thing in here(cannot occur in same time with reordering)
           if (((ScrollList)UI[draggedListId]).dragging&&((ScrollList)UI[draggedListId]).selected!=-1&&((ScrollList)UI[draggedListId]).itemClicked) {
             adding=(int)(MouseY-(position.y-size.y-ITEM_HEIGHT/2-(sliderPos-(position.y-size.y+sliderLength))*(max(1, View.length*ITEM_HEIGHT-size.y*2)/max(1, size.y*2-sliderLength*2))))/ITEM_HEIGHT;
             if (adding<0)adding=-1;
@@ -2046,7 +2057,7 @@ class ScrollList extends UIelement {
     } else {
       reordering=-1;
       if (mouseState==AN_PRESSED||mouseState==AN_RELEASE) {
-        if (pressed&&sliderClicked==false&&dragging==false) {
+        if (pressed&&sliderClicked==false/*&&dragging==false*/) {//?????
           draggedListId=ID;
           dragging=true;
         }
@@ -2364,7 +2375,11 @@ class TextEditor extends UIelement {//only render and add text. this class not d
       int err=getFirstErrorInLine(a);
       if (err<error.size()&&error.get(err).line==a) {//need check...
         errorpassed=true;
-        stroke(UIcolors[I_TABC2]);
+        if (error.get(err).type==Error.WARNING) {
+          stroke(UIcolors[I_TABC3]);
+        } else {
+          stroke(UIcolors[I_TABC2]);
+        }
         strokeWeight(2);
         line(position.x-size.x+textSize*3.2F, position.y-size.y+(a+1.5F)*textSize+Yoffset, position.x-size.x+textSize*3.2F+textWidth(Lines.getLine(a)), position.y-size.y+(a+1.5F)*textSize+Yoffset);
         noStroke();
@@ -2927,7 +2942,7 @@ class PadButton extends UIelement {
           noteOff(X, Y);
           if (draggedListId!=-1&&((ScrollList)UI[draggedListId]).dragging) {
             if (((ScrollList)UI[draggedListId]).selected!=-1) {
-              //update drag an drop thing in here(cannot occur in same time with reordering)
+              //update drag and drop thing in here(cannot occur in same time with reordering)
               if (UI[draggedListId].name.equals("I_FILEVIEW1")) {//||UI[draggedListId].name.equals("I_LEDVIEW")||UI[draggedListId].name.equals("I_SOUNDVIEW")) {
                 if (fileList[((ScrollList)UI[draggedListId]).selected].isFile()) {
                   if (isSoundFile(fileList[((ScrollList)UI[draggedListId]).selected])) {
@@ -3153,7 +3168,7 @@ class PadButton extends UIelement {
       while (a>0&&a>DelayPoint.get(aframe)) {
         Analyzer.UnipackLine info= analyzer.uLines.get(a);
         if (info.Type==Analyzer.UnipackLine.ON) {
-          if (info.x-1==X&&info.y-1==Y) {
+          if (info.x-1==X&&info.y-1==Y&&info.x==info.x2&&info.y==info.y2) {
             done=true;
             Lines.deleteLine(a);
             if (UI[textfieldId].disabled==false) {
@@ -3163,7 +3178,7 @@ class PadButton extends UIelement {
             break;
           }
         } else if (info.Type==Analyzer.UnipackLine.OFF) {
-          if (info.x-1==X&&info.y-1==Y) {
+          if (info.x-1==X&&info.y-1==Y&&info.x==info.x2&&info.y==info.y2) {
             done=true;
             Lines.deleteLine(a);
             boolean notsame=k[((VelocityButton)UI[velnumId]).selectedVelocity]!=LED.get(frame)[X][Y];
@@ -3183,12 +3198,12 @@ class PadButton extends UIelement {
         while (a>0) {
           Analyzer.UnipackLine info= analyzer.uLines.get(a);
           if (info.Type==Analyzer.UnipackLine.ON) {
-            if (info.x-1==X&&info.y-1==Y) {
+            if (info.x-1<=X&&X<=info.x2-1&&info.y-1<=Y&&Y<=info.y2-1) {
               on=true;
               break;
             }
           } else if (info.Type==Analyzer.UnipackLine.OFF) {
-            if (info.x-1==X&&info.y-1==Y) {
+            if (info.x-1<=X&&X<=info.x2-1&&info.y-1<=Y&&Y<=info.y2-1) {
               on=false;
               break;
             }
@@ -3301,7 +3316,8 @@ class PadButton extends UIelement {
     while (a<ButtonX) {
       int b=0;
       while (b<ButtonY) {
-        KS.get(ksChain)[a][b].multiLed=1;//this is strange,but right.
+        KS.get(ksChain)[a][b].multiLed=0;
+        KS.get(ksChain)[a][b].multiLedBackup=0;
         KS.get(ksChain)[a][b].multiSound=0;
         b=b+1;
       }

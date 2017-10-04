@@ -77,13 +77,13 @@ void loadDefaultImages() {
   skin_coverMiddle=loadImage("template/skin/phantom_.png");
 }
 
-void build_windows(String packageName, String appName, String author, String description, String themeName, color text) {
+void build_windows(String packageName, String appName, String author, String description, String themeName, String themeVersion, color text) {
   ((Logger)UI[getUIid("ERROR_LOG")]).logs.clear();
   if (new java.io.File(joinPath(joinPath(GlobalPath, ExternalPath), "android.jar")).isFile()==false) {
     displayLogError("You have to copy android.jar into \""+joinPath(joinPath(GlobalPath, ExternalPath), "android.jar")+"\" before building skin!");
     return;
   }
-  new Thread(new ThreadBuilder(packageName, appName, author, description, themeName, text)).start();
+  new Thread(new ThreadBuilder(packageName, appName, author, description, themeName, themeVersion, text)).start();
 }
 class ThreadBuilder implements Runnable {
   String packageName_; 
@@ -91,19 +91,21 @@ class ThreadBuilder implements Runnable {
   String author_; 
   String description_;
   String themeName_; 
+  String themeVersion_;
   color text_;
-  ThreadBuilder(String packageName, String appName, String author, String description, String themeName, color text) {
+  ThreadBuilder(String packageName, String appName, String author, String description, String themeName, String themeVersion, color text) {
     packageName_=packageName;
     appName_=appName;
     author_=author;
     description_=description;
     themeName_=themeName;
+    themeVersion_=themeVersion;
     text_=text;
   }
   void run() {
-    build_windows_thread(packageName_, appName_, author_, description_, themeName_, text_);
+    build_windows_thread(packageName_, appName_, author_, description_, themeName_, themeVersion_, text_);
   }
-  void build_windows_thread(String packageName, String appName, String author, String description, String themeName, color text) {
+  void build_windows_thread(String packageName, String appName, String author, String description, String themeName, String themeVersion, color text) {
     color actionBar=color(0);
     ArrayList<String> logs=((Logger)UI[getUIid("ERROR_LOG")]).logs;
     try {
@@ -144,7 +146,7 @@ class ThreadBuilder implements Runnable {
       writeFile(joinPath(buildPath, "res/values/colors.xml"), build_generateColors(actionBar, text));
       writeFile(joinPath(buildPath, "res/values/styles.xml"), build_generateStyles());
       writeFile(joinPath(buildPath, "res/values/strings.xml"), build_generateStrings(appName, author, description, themeName));
-      writeFile(joinPath(buildPath, "AndroidManifest.xml"), build_generateManifest(packageName));
+      writeFile(joinPath(buildPath, "AndroidManifest.xml"), build_generateManifest(packageName, themeVersion));
       new File(joinPath(buildPath, "gen/"+ packageName.replace(".", "/")+"/R.java")).getParentFile().mkdirs();
       new File(joinPath(buildPath, "gen/"+ packageName.replace(".", "/")+"/R.java")).createNewFile();
       new File(joinPath(buildPath, "bin")).mkdirs();
@@ -327,23 +329,24 @@ String build_generateColors(color actionBar, color text) {
     "</resources>";
   return ret;
 }
-String build_generateManifest(String packageName) {
-  String ret="<?xml version=\"1.0\" encoding=\"utf-8\"?>"+
-    "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\""+
-    "  package=\""+packageName+"\">"+
-    "  <application"+
-    "    android:allowBackup=\"true\""+
-    "    android:icon=\"@drawable/appicon\""+
-    "    android:label=\"@string/app_name\""+
-    "    android:supportsRtl=\"true\""+
-    "    android:theme=\"@style/AppTheme\">"+
-    "    <activity android:name=\".MainActivity\">"+
-    "      <intent-filter>"+
-    "          <action android:name=\"android.intent.action.MAIN\" />"+
-    "        <category android:name=\"android.intent.category.LAUNCHER\" />"+
-    "      </intent-filter>"+
-    "    </activity>"+
-    "  </application>"+
+String build_generateManifest(String packageName, String themeVersion) {
+  String ret="<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"+
+    "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n"+
+    "  package=\""+packageName+"\"\n"+
+    "  android:versionName=\""+themeVersion+"\">\n"+
+    "  <application\n"+
+    "    android:allowBackup=\"true\"\n"+
+    "    android:icon=\"@drawable/appicon\"\n"+
+    "    android:label=\"@string/app_name\"\n"+
+    "    android:supportsRtl=\"true\"\n"+
+    "    android:theme=\"@style/AppTheme\">\n"+
+    "    <activity android:name=\".MainActivity\">\n"+
+    "      <intent-filter>\n"+
+    "          <action android:name=\"android.intent.action.MAIN\" />\n"+
+    "        <category android:name=\"android.intent.category.LAUNCHER\" />\n"+
+    "      </intent-filter>\n"+
+    "    </activity>\n"+
+    "  </application>\n"+
     "</manifest>";
   return ret;
 }

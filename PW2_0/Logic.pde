@@ -196,6 +196,7 @@ class KsButton {
   }
   boolean loadSound(int index, String path) {//done
     ksSound.add(index, path);
+    println(path);
     ksSample.add(index, SampleManager.sample(path));
     if (ksSample.get(index)==null) {
       ksSound.remove(index);

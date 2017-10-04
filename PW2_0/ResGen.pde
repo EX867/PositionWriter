@@ -67,6 +67,7 @@ void generateColors() {
   text+="  <element id=\"15\" a=\""+alpha(UIcolors[I_UNITORTEXT])+"\" r=\""+red(UIcolors[I_UNITORTEXT])+"\" g=\""+green(UIcolors[I_UNITORTEXT])+"\" b=\""+blue(UIcolors[I_UNITORTEXT])+"\">I_UNITORTEXT</element>\n";
   text+="  <element id=\"16\" a=\""+alpha(UIcolors[I_OVERLAY])+"\" r=\""+red(UIcolors[I_OVERLAY])+"\" g=\""+green(UIcolors[I_OVERLAY])+"\" b=\""+blue(UIcolors[I_OVERLAY])+"\">I_OVERLAY</element>\n";
   text+="  <element id=\"17\" a=\""+alpha(UIcolors[I_UNITORTEXT2])+"\" r=\""+red(UIcolors[I_UNITORTEXT2])+"\" g=\""+green(UIcolors[I_UNITORTEXT2])+"\" b=\""+blue(UIcolors[I_UNITORTEXT2])+"\">I_UNITORTEXT2</element>\n";
+  text+="  <element id=\"18\" a=\""+alpha(UIcolors[I_TABC3])+"\" r=\""+red(UIcolors[I_TABC3])+"\" g=\""+green(UIcolors[I_TABC3])+"\" b=\""+blue(UIcolors[I_TABC3])+"\">I_TABC3</element>\n";
   text+="</Data>";
   try {
     writeFile("data/Colors.xml", text);

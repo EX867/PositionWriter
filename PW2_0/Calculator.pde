@@ -511,7 +511,7 @@ class Calculator {
     return build.toString();
   }
   ArrayList<ArrayList> getScriptsWithoutClear(String in) {
-    if (error)return null;
+    //if (error)return null;
     currentIdent="index";
     anyIdent=false;
     ArrayList<ArrayList> scripts2=new ArrayList<ArrayList>();
@@ -527,6 +527,7 @@ class Calculator {
         scr.append(']');
         //println("parsing... : "+scr.toString());
         scripts2.add(Parse(scr.toString()));
+        if (error)return null;
         //println("parsed : "+scr.toString());
       } else if (in.charAt(a)=='\\') {
         a=a+1;
@@ -649,6 +650,7 @@ class PatternMatcher {
   }
   String replaceAll(String text, String in, ArrayList<Result> results) {
     //reuse same scripts!
+    String originalText=text;
     if (errorReplace==false) {
       ArrayList<StringBuilder> build=buildResult(in);
       int offset=0;
@@ -668,11 +670,15 @@ class PatternMatcher {
         while (b<build.size()-1/*replacer.size()*/) {//WARNING!!!
           sb.append(build.get(b).toString());
           sb.append(calculator.returnValue(replacer.get(b)));//if build.size()==0, skip.
+          if (calculator.error) {
+            errorReplace=true;
+            println("failed! : /time : "+frameCount);
+            return originalText;
+          }
           b=b+1;
         }
         sb.append(build.get(b).toString());//error???
         text=text.substring(0, result.startpoint+offset)+sb.toString()+text.substring(result.startpoint+result.text.length()+offset, text.length());
-        //println(text);
         offset=offset+sb.length()-result.text.length();
         a=a+1;
       }

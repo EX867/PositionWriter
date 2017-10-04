@@ -18,4 +18,5 @@
   <element id="15" a="255.0" r="102.0" g="153.0" b="0.0">I_UNITORTEXT</element>
   <element id="16" a="100.0" r="0.0" g="0.0" b="0.0">I_OVERLAY</element>
   <element id="17" a="255.0" r="125.0" g="71.0" b="147.0">I_UNITORTEXT2</element>
+  <element id="18" a="255.0" r="222.0" g="213.0" b="38.0">I_TABC2</element>
 </Data>
