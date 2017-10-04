@@ -860,47 +860,41 @@ class Analyzer {
   }
   void readFrameLedPosition(int frame, int line, int x, int y, color c, UnipackLine toset) {//assert line is in frame.
     if (line>=Lines.lines())return;
+    line=line+1;
     if (0<x&&x<=ButtonX&&0<y&&y<=ButtonY) {
-      int a=line+1;
       UnipackLine temp=new UnipackLine("", DEFAULT);
-      if (toset!=null)temp=toset;
+      if (toset!=null)temp=toset;//dirty too.
       boolean changed=false;
-      UnipackLine info=new UnipackLine("read frame - read while no event", DEFAULT);
-      while (a<Lines.lines()) {//reset
-        info=uLines.get(a);
-        if (info.mc) {
-          a++;
-          continue;
-        }
-        if (info.Type==UnipackLine.ON) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) {
-            changed=true;
-            temp=info;
-          }
-        } else if (info.Type==UnipackLine.OFF) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) {
-            changed=true;
-            temp=info;
-          }
-        } else if (info.Type==UnipackLine.DELAY) {
-          if (changed==false) {
-            if (temp.Type==UnipackLine.ON)onLED (temp, x, y, frame);
-            else if (temp.Type==UnipackLine.OFF) offLED (temp, x, y, frame);
-            else if (temp.Type==DEFAULT) {//dirty!
-              LED.get(frame)[x-1][y-1]=c;
+      UnipackLine info;
+      while (line<Lines.lines()) {//reset
+        info=uLines.get(line);
+        if (!info.mc) {
+          if (info.Type==UnipackLine.ON) {
+            if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) {
+              changed=true;
+              temp=info;
             }
-            changed=false;
-          } else {
-            break;
+          } else if (info.Type==UnipackLine.OFF) {
+            if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) {
+              changed=true;
+              temp=info;
+            }
+          } else if (info.Type==UnipackLine.DELAY) {
+            if (changed==false) {
+              if (temp.Type==UnipackLine.ON)onLED (temp, x, y, frame);
+              else if (temp.Type==UnipackLine.OFF) offLED (temp, x, y, frame);
+              else if (temp.Type==DEFAULT) {//dirty!
+                LED.get(frame)[x-1][y-1]=c;
+              }
+            } else {
+              break;
+            }
+            frame++;
           }
-          frame++;
         }
-        a++;
+        line++;
       }
-      if (changed==false&&a==Lines.lines()) {
-        if (temp.mc) {
-          return;
-        }
+      if (changed==false&&line==Lines.lines()) {
         if (temp.Type==UnipackLine.ON)onLED (temp, x, y, frame);
         else if (temp.Type==UnipackLine.OFF) offLED (temp, x, y, frame);
         else if (temp.Type==DEFAULT) {//dirty!
@@ -934,7 +928,7 @@ class Analyzer {
         }
         a=a+1;
       }
-      readFrameLedPosition (frame+1, max+1, x, y, LED.get (frame)[x-1][y-1], null);
+      readFrameLedPosition (frame+1, max, x, y, LED.get (frame)[x-1][y-1], null);
     }
   }
   void readFrameApLedPosition(int frame, int line, int x, int y, boolean c, UnipackLine toset) {//assert line is in frame.
@@ -1301,7 +1295,7 @@ class Analyzer {
     float bpmv=120;
     boolean[][] first=new boolean[ButtonX][ButtonY];
     for (int a=0; a<ButtonX; a++) {
-      for (int b=0; b>ButtonY; b++) {
+      for (int b=0; b<ButtonY; b++) {
         first[a][b]=true;
       }
     }
@@ -1321,34 +1315,34 @@ class Analyzer {
         } else {
           if (line.hasHtml&&line.hasVel) {
             for (int b=line.y; b<=line.y2; b++) {
-              for (int a=line.x; a<line.x2; a++) {
+              for (int a=line.x; a<=line.x2; a++) {
                 ret.add("o "+b+" "+a+" "+hex(line.html, 6)+" "+line.vel);
               }
             }
           } else if (line.hasVel) {
             for (int b=line.y; b<=line.y2; b++) {
-              for (int a=line.x; a<line.x2; a++) {
+              for (int a=line.x; a<=line.x2; a++) {
                 ret.add("o "+b+" "+a+" a "+line.vel);
               }
             }
           } else if (line.hasHtml) {
             for (int b=line.y; b<=line.y2; b++) {
-              for (int a=line.x; a<line.x2; a++) {
+              for (int a=line.x; a<=line.x2; a++) {
                 ret.add("o "+b+" "+a+" "+hex(line.html, 6));
               }
             }
           }//else ignore
         }
         if (line.mc==false) {
-          first[line.x][line.y]=false;
+          first[line.x-1][line.y-1]=false;
         }
       } else if (line.Type==UnipackLine.OFF) {//
         if (line.mc) {//[off mc n]
           if (ignoreMc)ret.add("f mc "+line.x);
         } else {//[off y x n]
           for (int b=line.y; b<=line.y2; b++) {
-            for (int a=line.x; a<line.x2; a++) {
-              if (first[a][b]) {
+            for (int a=line.x; a<=line.x2; a++) {
+              if (first[a-1][b-1]) {
                 ret.add("o "+b+" "+a+" auto 0");
               }
               ret.add("f "+b+" "+a);
@@ -1356,7 +1350,7 @@ class Analyzer {
           }
         }
         if (line.mc==false) {
-          first[line.x][line.y]=false;
+          first[line.x-1][line.y-1]=false;
         }
       } else if (line.Type==UnipackLine.DELAY) {
         if (line.hasHtml) {//bpm

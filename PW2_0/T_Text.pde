@@ -317,12 +317,11 @@ class ModString {
     return "";
   }
   String getSelection(int line_) {
-
-
     if (line_==selStartLine)return l.get(selStartLine).substring(selStartPoint, l.get(selStartLine).length())+"\n";
     if (line_>selStartLine&&line_<selEndLine) {
       return l.get(line_)+"\n";
     }
+    if (selEndPoint>l.get(selEndLine).length())selEndPoint=l.get(selEndLine).length();
     if (line_==selEndLine)return l.get(selEndLine).substring(0, selEndPoint);
     return "";
   }

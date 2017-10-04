@@ -291,6 +291,7 @@ void draw_main() {
   catch(Exception e) {
     e.printStackTrace();
   }
+  autoSaveWrite();
   generateSettings();
   generateShortcuts();
   generateColors();
