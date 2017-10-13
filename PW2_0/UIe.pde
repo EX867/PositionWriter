@@ -610,6 +610,13 @@ class Button extends UIelement implements ImageComponent {
         int b=0;
         while (b<ButtonY) {
           KS.get(ksChain)[a][b].stopSound();
+          try {//test
+            sendMidiOut.setMessage(ShortMessage.NOTE_ON, 0/*fix*/, (8-b)*10+a+1, 0);
+            sendMidiOut();
+          }
+          catch(Exception e) {
+            e.printStackTrace();
+          }
           b=b+1;
         }
         a=a+1;
@@ -3310,7 +3317,7 @@ class PadButton extends UIelement {
     }
   }
   synchronized void triggerChain(int c) {
-    if (c<0||c>Chain)return;
+    if (c<0||c>=Chain)return;
     ksChain=c;
     int a=0;
     while (a<ButtonX) {

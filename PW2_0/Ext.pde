@@ -112,6 +112,9 @@ void loadPaths(String customPath) {
   if (XmlData!=null)Data=XmlData.getChild("external");//
   if (Data==null)ExternalPath="External";
   else ExternalPath=Data.getContent().replace("?", username);
+  if (XmlData!=null)Data=XmlData.getChild("midi");//
+  if (Data==null)MidiPath="Midi";
+  else MidiPath=Data.getContent().replace("?", username);
 }
 void External_setup() {
   //load path data

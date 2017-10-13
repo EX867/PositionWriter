@@ -119,13 +119,7 @@ void UI_load() {
   loadColors("");
   loadShortcuts("");
   // ========= get XML data ========== //
-  XML XmlData=loadXML("MidiInput.xml");
-  MidiStart=XmlData.getChild("Start").getInt("value", MidiStart);
-  MidiInterval=XmlData.getChild("Interval").getInt("value", MidiInterval);
-  if (MidiInterval<0)MidiInterval=max(1, abs(MidiInterval));
-  MidiScale=XmlData.getChild("Scale").getInt("value", MidiScale);
-  // ========= get XML data ========== //
-  XmlData=loadXML("Default.xml");
+  XML XmlData=loadXML("Default.xml");
   XML Data=XmlData.getChild("Frames");
   XML[] Datas=Data.getChildren("element");
   Frames=new Frame[Datas.length+1];

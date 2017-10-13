@@ -1,15 +1,15 @@
 import java.awt.datatransfer.*;
 import java.awt.Toolkit;
 import java.util.*;
-boolean toBoolean (String in) {
+static boolean toBoolean (String in) {
   if (in.equals ("true"))return true;
   return false;
 }
-boolean isBoolean (String in) {
+static boolean isBoolean (String in) {
   if (in.equals ("true")||in.equals("false"))return true;
   return false;
 }
-public boolean isInt(String str) {
+public static boolean isInt(String str) {
   if (str.equals("")) return false;
   if (str.length() > 9) return false;
   if (str.equals("-"))return false;

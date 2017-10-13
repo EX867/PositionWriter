@@ -3,86 +3,47 @@ import javax.sound.midi.*;
 import it.sauronsoftware.jave.*;
 //ModPlayer wavplayer;
 Visualizer visualizer;
-//
-MidiDevice.Info[] MidiDevices;
-ArrayList<javax.sound.midi.Receiver> MidiReceivers=new ArrayList<javax.sound.midi.Receiver>();//store successful recievers in list.
-int MidiStart=35;//LPD8 custom value
-int MidiInterval=8;
-int MidiScale=1;
-public class MidiInputReceiver implements javax.sound.midi.Receiver {//https://stackoverflow.com/questions/6937760/java-getting-input-from-midi-keyboard
-  public String name;
-  public MidiInputReceiver(String name) {
-    this.name = name;
-  }
-  int byteToPosX(int data) {
-    return MidiScale*(data-MidiStart)%MidiInterval;//test
-  }
-  int byteToPosY(int data) {
-    return MidiScale*(data-MidiStart)/MidiInterval;//test
-  }
-  public void send(MidiMessage msg, long timeStamp) {
+void AU_setup() {
+  visualizer=(Visualizer)UI[getUIidRev("I_VISUALIZER")];
+  MidiCommand.addBehavior("press", new PadPressCommand());
+  MidiCommand.addBehavior("release", new PadReleaseCommand());
+  MidiCommand.addBehavior("chain", new PadChainCommand());
+  reloadMidiDevices();
+  //wavplayer = new ModPlayer();
+  //wavplayer.load("C:/Users/user/Documents/again2.mp3");
+  //wavplayer.load("C:/Users/user/Documents/Studio One/Songs/Forget_Remix/Mixdown/Forget_Remix_1.wav");
+}
+public class PadPressCommand implements CommandBehavior {
+  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
     if (msg instanceof ShortMessage) {
       ShortMessage info=(ShortMessage)msg;
-      if (info.getCommand()==ShortMessage.NOTE_ON) {
-        println("midi on : "+info.getChannel()+"/ "+info.getData1()+" "+info.getData2());
+      if (info.getData2()!=0) {
+        if (params.length!=2)return;
         if (currentFrame==1) {
-          keyLedPad.printLed(byteToPosX(info.getData1()), byteToPosY(info.getData1()), true, 0);
+          keyLedPad.printLed(params[0], params[1], true, 0);
         } else if (currentFrame==2) {
-          keySoundPad.triggerButton(byteToPosX(info.getData1()), byteToPosY(info.getData1()), true);
+          keySoundPad.triggerButton(params[0], params[1], true);
         }
-      } else if (info.getCommand()==ShortMessage.NOTE_OFF) {
-        println("midi off : "+info.getChannel()+"/ "+info.getData1()+" "+info.getData2());
-        if (currentFrame==2) {
-          keySoundPad.noteOff(byteToPosX(info.getData1()), byteToPosY(info.getData1()));
-        }
-      } else if (info.getCommand()==ShortMessage.CONTROL_CHANGE) {
-        println("control change : "+info.getChannel()+"/ "+info.getData1()+" "+info.getData2());
-      } else if (info.getCommand()==ShortMessage.PROGRAM_CHANGE) {
-        println("program change : "+info.getChannel()+"/ "+info.getData1()+" "+info.getData2());
       } else {
-        //ignore
+        if (currentFrame==2) {
+          keySoundPad.noteOff(params[0], params[1]);
+        }
       }
     }
-  }
-  public void close() {
   }
 }
-void reloadMidiDevices() {
-  MidiReceivers.clear();
-  MidiDevice device;
-  MidiDevices = MidiSystem.getMidiDeviceInfo();
-  for (int i = 0; i < MidiDevices.length; i++) {
-    try {
-      device = MidiSystem.getMidiDevice(MidiDevices[i]);
-      //does the device have any transmitters? - if it does, add it to the device list
-      print(MidiDevices[i]+" ");
-      List<Transmitter> transmitters = device.getTransmitters();//get all transmitters
-      ArrayList<javax.sound.midi.Receiver> receivers=new ArrayList<javax.sound.midi.Receiver>();
-      for (int j = 0; j<transmitters.size(); j++) {//and for each transmitter
-        receivers.add(new MidiInputReceiver(device.getDeviceInfo().toString()));
-        transmitters.get(j).setReceiver(receivers.get(receivers.size()-1));
-      }
-      Transmitter trans = device.getTransmitter();
-      receivers.add(new MidiInputReceiver(device.getDeviceInfo().toString()));
-      trans.setReceiver(receivers.get(receivers.size()-1));
-      device.open();//open each device
-      MidiReceivers.addAll(receivers);
-      println(/*device.getDeviceInfo()*/"(Success!)");
-    } 
-    catch (MidiUnavailableException e) {
-      println("(Failed!)");
+public class PadReleaseCommand implements CommandBehavior {
+  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
+    if (currentFrame==2) {
+      keySoundPad.noteOff(params[0], params[1]);
     }
   }
-  if (MidiReceivers.size()>0) {
-    int a=1;
-    String sum=((MidiInputReceiver)MidiReceivers.get(0)).name;
-    while (a<MidiReceivers.size()) {
-      sum=sum+", "+((MidiInputReceiver)MidiReceivers.get(a)).name;
-      a=a+1;
+}
+public class PadChainCommand implements CommandBehavior {
+  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
+    if (currentFrame==2) {
+      keySoundPad.triggerChain(params[0]);
     }
-    setStatusR("Devices : "+sum);
-  } else {
-    setStatusR("No midi devices detected.");
   }
 }
 FFmpegConverter converter=new FFmpegConverter();
@@ -256,12 +217,6 @@ ArrayList<EnvPoint> volumep=new ArrayList<EnvPoint>();
 ArrayList<EnvPoint> panp=new ArrayList<EnvPoint>();
 ArrayList<EnvPoint> pitchp=new ArrayList<EnvPoint>();
 ArrayList<EnvPoint> speedp=new ArrayList<EnvPoint>();
-void AU_setup() {
-  visualizer=(Visualizer)UI[getUIidRev("I_VISUALIZER")];
-  //wavplayer = new ModPlayer();
-  //wavplayer.load("C:/Users/user/Documents/again2.mp3");
-  //wavplayer.load("C:/Users/user/Documents/Studio One/Songs/Forget_Remix/Mixdown/Forget_Remix_1.wav");
-}
 public static enum UGenType {
   UNDEFINED, SIMPLETOOL, TIMESTRETCHER,
 }

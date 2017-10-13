@@ -9,6 +9,7 @@ String KeySoundSavePath="";//GlobalPath+(KeySound_saved)
 String ProjectsPath="";//GlobalPath+(Projects)
 String TempPath="";//GlobalPath+(Temp)
 String ExternalPath="";//GlobalPath+(External)
+String MidiPath="";//GlobalPath+(Midi)
 //
 int ButtonX=8;
 int ButtonY=8;
@@ -338,10 +339,31 @@ class KsButton {
               for (int b=line.y; b<=line.y2; b++) {
                 if (line.hasHtml) {
                   if (line.html==RNDCOLOR) {
-                    if (ignoreMc)ksDisplay[a-1][b-1]=k[floor(random(0, 128))];
+                    if (ignoreMc) {
+                      int aaa=floor(random(0, 128));
+                      ksDisplay[a-1][b-1]=k[aaa];
+                      try {
+                        sendMidiOut.setMessage(ShortMessage.NOTE_ON, 0/*fix*/, (9-b)*10+a, aaa);
+                        sendMidiOut();
+                      }
+                      catch(Exception e) {
+                        println("asdf");
+                        e.printStackTrace();
+                      }
+                    }
                   } else ksDisplay[a-1][b-1]=line.html;
                 } else {
-                  if (line.vel>=0&&line.vel<=127)ksDisplay[a-1][b-1]=k[line.vel];
+                  if (line.vel>=0&&line.vel<=127) {
+                    ksDisplay[a-1][b-1]=k[line.vel];
+                    try {
+                      sendMidiOut.setMessage(ShortMessage.NOTE_ON, 0/*fix*/, (9-b)*10+a, line.vel);
+                      sendMidiOut();
+                    }
+                    catch(Exception e) {
+                      println("asdf");
+                      e.printStackTrace();
+                    }
+                  }
                 }
               }
             }
@@ -353,6 +375,14 @@ class KsButton {
             for (int a=line.x; a<=line.x2; a++) {
               for (int b=line.y; b<=line.y2; b++) {
                 ksDisplay[a-1][b-1]=OFFCOLOR;
+                try {
+                  sendMidiOut.setMessage(ShortMessage.NOTE_ON, 0/*fix*/, (9-b)*10+a, 0);
+                  sendMidiOut();
+                }
+                catch(Exception e) {
+                  println("asdf");
+                  e.printStackTrace();
+                }
               }
             }
           }
@@ -381,6 +411,7 @@ class KsButton {
         ksCurrentIndex=0;
         ksCurrentDelayIndex=0;
         ksCurrentLedLoop++;
+        if (multiLed<=0)multiLed=1;
         if (ksLedLoop.get(multiLed-1)==0||ksLedLoop.get(multiLed-1)>ksCurrentLedLoop) {
           return true;//not end(loop)
         } else {

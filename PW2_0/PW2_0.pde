@@ -66,6 +66,9 @@ boolean initialOpen=false;
  2.+ : drag to print range commands
  2.+ : currently, mc converter cannot manipulate range commands. add!
  2.+ : show sound file name toggle button.
+ 2.+ : toggle launchpad colors (vel color is slightly different...)
+
+ extra : gif animation file save/load
  
  skinedit : change theme to appcompat-material
  uncloud : wait uncloud update!!
@@ -276,21 +279,6 @@ void draw_main() {
 }
 @Override
   void exit() {
-  try {
-    if (MidiDevices!=null) {
-      int a=0;
-      while (a<MidiDevices.length) {
-        if (MidiDevices[a]!=null) {
-          MidiDevice device = MidiSystem.getMidiDevice(MidiDevices[a]);
-          if (device.isOpen())device.close();
-        }
-        a=a+1;
-      }
-    }
-  }
-  catch(Exception e) {
-    e.printStackTrace();
-  }
   autoSaveWrite();
   generateSettings();
   generateShortcuts();
