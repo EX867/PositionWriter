@@ -391,11 +391,11 @@ String getFileName(String path) {
 String changeFormat(String filename, String format) {
   return getExtensionElse(filename)+"."+format;
 }
-String getFileExtension(String filename) {
+static String getFileExtension(String filename) {
   if (filename.equals(""))return "";
   //assert filename.contains("/" || "\\")==false
   String[] words;
-  words=split(filename, ".");
+  words=filename.split("\\.");
   if (words.length>1)return words[words.length-1];
   else return "";
 }

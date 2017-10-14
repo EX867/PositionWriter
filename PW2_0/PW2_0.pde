@@ -67,7 +67,7 @@ boolean initialOpen=false;
  2.+ : currently, mc converter cannot manipulate range commands. add!
  2.+ : show sound file name toggle button.
  2.+ : toggle launchpad colors (vel color is slightly different...)
-
+ 
  extra : gif animation file save/load
  
  skinedit : change theme to appcompat-material
@@ -163,6 +163,7 @@ void setup_main() {
   noStroke();
   frameRate(50);
   surface.setIcon(loadImage("icon.png"));
+  setInverseK();
   //setup utils
   textTransfer=new TextTransfer();
   createMissingFiles();

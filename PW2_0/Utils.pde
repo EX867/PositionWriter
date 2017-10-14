@@ -247,6 +247,15 @@ public final class TextTransfer implements ClipboardOwner {//http://stackoverflo
   }
 }
 //================================================================================================================================
+int inverseK(color c) {
+  return kData.get(c);
+}
+HashMap<Integer, Integer> kData=new HashMap<Integer, Integer>();
+void setInverseK() {
+  for (int a=0; a<k.length; a++) {
+    kData.put(k[a], a);
+  }
+}
 color [] k=new color[]{
   #000000, 
   #bdbdbd, 

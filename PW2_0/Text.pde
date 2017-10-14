@@ -321,6 +321,7 @@ class ModString {
     if (line_>selStartLine&&line_<selEndLine) {
       return l.get(line_)+"\n";
     }
+    if (selEndLine>=l.size())selEndLine=l.size()-1;
     if (selEndPoint>l.get(selEndLine).length())selEndPoint=l.get(selEndLine).length();
     if (line_==selEndLine)return l.get(selEndLine).substring(0, selEndPoint);
     return "";

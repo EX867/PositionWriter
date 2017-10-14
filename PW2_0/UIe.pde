@@ -610,17 +610,11 @@ class Button extends UIelement implements ImageComponent {
         int b=0;
         while (b<ButtonY) {
           KS.get(ksChain)[a][b].stopSound();
-          try {//test
-            sendMidiOut.setMessage(ShortMessage.NOTE_ON, 0/*fix*/, (8-b)*10+a+1, 0);
-            sendMidiOut();
-          }
-          catch(Exception e) {
-            e.printStackTrace();
-          }
           b=b+1;
         }
         a=a+1;
       }
+      midiOffAll();
       int id=getUIidRev("KS_SOUNDMULTI");
       ((TextBox)UI[id]).value=max(1, min(KS.get(ksChain)[X][Y].multiSound, KS.get(ksChain)[X][Y].ksSound.size()));
       ((TextBox)UI[id]).text=""+((TextBox)UI[id]).value;
@@ -2919,6 +2913,7 @@ class ColorPicker extends UIelement {
 class PadButton extends UIelement {
   int padClickX=-1;
   int padClickY=-1;
+  color[][] before=new color[ButtonX][ButtonY];
   public PadButton( int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_) {
     super (ID_, Type_, name_, description_, x_, y_, w_, h_);
   }
@@ -3041,6 +3036,7 @@ class PadButton extends UIelement {
         while (a<ButtonX) {
           int b=0;
           while (b<ButtonY) {
+            color current=0;
             if (LED.get(currentLedFrame)[a][b]==RNDCOLOR) {
               fill(UIcolors[I_PADFOREGROUND]);
               text("rnd", padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2);
@@ -3049,8 +3045,13 @@ class PadButton extends UIelement {
               rect(padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2, interval*2/5, interval*2/5);
               noStroke();
             } else if (LED.get(currentLedFrame)[a][b]!=OFFCOLOR) {
+              current=inverseK(LED.get(currentLedFrame)[a][b]);
               fill(LED.get(currentLedFrame)[a][b]);
               rect(padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2, interval*2/5, interval*2/5);
+            }
+            if (before[a][b]!=current) {
+              MidiCommand.execute("led", current, a, b);
+              before[a][b]=current;
             }
             b=b+1;
           }

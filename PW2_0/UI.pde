@@ -724,11 +724,13 @@ class Frame {
       title_filename=title_keyledfilename;
       title_edited=title_keylededited;
       surface.setTitle(title_filename+title_edited+title_suffix);
+      midiOffAll();
     } else if (name.equals("F_KEYSOUND")) {
       currentTabGlobal=ID;
       title_filename=title_keysoundfoldername;
       title_edited=title_keysoundedited;
       surface.setTitle(title_filename+title_edited+title_suffix);
+      midiOffAll();
     } else if (name.equals("F_SETTINGS")) {
       currentTabGlobal=ID;
     } else if (name.equals("F_WAVEDIT")) {

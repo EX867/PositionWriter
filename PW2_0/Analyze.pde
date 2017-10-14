@@ -1186,6 +1186,9 @@ class Analyzer {
             ButtonY=8;
             Chain=8;
           }
+          MidiCommand.setState(ButtonX+"x"+ButtonY);
+          keyLedPad.before=new color[ButtonX][ButtonY];
+          keySoundPad.before=new color[ButtonX][ButtonY];
         } else {
           throw new Exception("info is not a file : "+infof.getAbsolutePath());
         }

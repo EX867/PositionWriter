@@ -5,15 +5,27 @@ import it.sauronsoftware.jave.*;
 Visualizer visualizer;
 void AU_setup() {
   visualizer=(Visualizer)UI[getUIidRev("I_VISUALIZER")];
-  MidiCommand.addBehavior("press", new PadPressCommand());
-  MidiCommand.addBehavior("release", new PadReleaseCommand());
-  MidiCommand.addBehavior("chain", new PadChainCommand());
+  MidiCommand.setBase(this);
+  MidiCommand.addInput("press", new PadPressCommand());
+  MidiCommand.addInput("release", new PadReleaseCommand());
+  MidiCommand.addInput("chain", new PadChainCommand());
   reloadMidiDevices();
   //wavplayer = new ModPlayer();
   //wavplayer.load("C:/Users/user/Documents/again2.mp3");
   //wavplayer.load("C:/Users/user/Documents/Studio One/Songs/Forget_Remix/Mixdown/Forget_Remix_1.wav");
 }
-public class PadPressCommand implements CommandBehavior {
+void midiOffAll() {
+  int a=0;
+  while (a<ButtonX) {
+    int b=0;
+    while (b<ButtonY) {
+      MidiCommand.execute("led", 0, a, b);
+      b=b+1;
+    }
+    a=a+1;
+  }
+}
+public class PadPressCommand implements InputBehavior {
   @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
     if (msg instanceof ShortMessage) {
       ShortMessage info=(ShortMessage)msg;
@@ -32,14 +44,14 @@ public class PadPressCommand implements CommandBehavior {
     }
   }
 }
-public class PadReleaseCommand implements CommandBehavior {
+public class PadReleaseCommand implements InputBehavior {
   @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
     if (currentFrame==2) {
       keySoundPad.noteOff(params[0], params[1]);
     }
   }
 }
-public class PadChainCommand implements CommandBehavior {
+public class PadChainCommand implements InputBehavior {
   @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
     if (currentFrame==2) {
       keySoundPad.triggerChain(params[0]);

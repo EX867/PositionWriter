@@ -125,17 +125,19 @@ class KsButton {
     ksSound=new ArrayList<String>();
     ksSample=new ArrayList<Sample>();
     ksSoundLoop=new ArrayList<Integer>();
-    ksPlayer=new SamplePlayer(ksac, 2);
+    if (c==0) {
+      ksPlayer=new SamplePlayer(ksac, 2);
+      ksac.out.addInput(ksPlayer);
+      ksPlayer.setKillOnEnd(false);
+    } else {
+      ksPlayer=KS.get(0)[x][y].ksPlayer;
+    }
     ksPlayer.setEndListener(new Bead() {
       public void messageReceived(Bead message) {
         autorun_startSound(false);
       }
     }
     );
-    //if (ksSound.size()==0) {
-    ksac.out.addInput(ksPlayer);
-    //}
-    ksPlayer.setKillOnEnd(false);
   }
   void delete() {
     int a=ksSample.size()-1;
@@ -342,27 +344,13 @@ class KsButton {
                     if (ignoreMc) {
                       int aaa=floor(random(0, 128));
                       ksDisplay[a-1][b-1]=k[aaa];
-                      try {
-                        sendMidiOut.setMessage(ShortMessage.NOTE_ON, 0/*fix*/, (9-b)*10+a, aaa);
-                        sendMidiOut();
-                      }
-                      catch(Exception e) {
-                        println("asdf");
-                        e.printStackTrace();
-                      }
+                      MidiCommand.execute("led", aaa, a-1, b-1);
                     }
                   } else ksDisplay[a-1][b-1]=line.html;
                 } else {
                   if (line.vel>=0&&line.vel<=127) {
                     ksDisplay[a-1][b-1]=k[line.vel];
-                    try {
-                      sendMidiOut.setMessage(ShortMessage.NOTE_ON, 0/*fix*/, (9-b)*10+a, line.vel);
-                      sendMidiOut();
-                    }
-                    catch(Exception e) {
-                      println("asdf");
-                      e.printStackTrace();
-                    }
+                    MidiCommand.execute("led", line.vel, a-1, b-1);
                   }
                 }
               }
@@ -375,14 +363,7 @@ class KsButton {
             for (int a=line.x; a<=line.x2; a++) {
               for (int b=line.y; b<=line.y2; b++) {
                 ksDisplay[a-1][b-1]=OFFCOLOR;
-                try {
-                  sendMidiOut.setMessage(ShortMessage.NOTE_ON, 0/*fix*/, (9-b)*10+a, 0);
-                  sendMidiOut();
-                }
-                catch(Exception e) {
-                  println("asdf");
-                  e.printStackTrace();
-                }
+                MidiCommand.execute("led", 0, a-1, b-1);
               }
             }
           }
@@ -541,6 +522,9 @@ synchronized void L_ResizeData(int Chain_, int ButtonX_, int ButtonY_) {//ADD KS
   ksChain=min(ksChain, Chain-1);
   ((ScrollList)UI[getUIid("I_SOUNDVIEW")]).setItems(KS.get(ksChain)[ksX][ksY].ksSound.toArray(new String[0]));
   ((ScrollList)UI[getUIid("I_LEDVIEW")]).setItems(KS.get(ksChain)[ksX][ksY].ksLedFile.toArray(new String[0]));
+  MidiCommand.setState(ButtonX+"x"+ButtonY);
+  keyLedPad.before=new color[ButtonX][ButtonY];
+  keySoundPad.before=new color[ButtonX][ButtonY];
   setStatusR("resized to "+Chain+":("+ButtonX+", "+ButtonY+")");
 }
 void updateFrameSlider() {
