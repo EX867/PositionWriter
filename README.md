@@ -15,6 +15,8 @@
 
 > *Yes!! Yes!!*
 
+<h1>Warning!!! this is not working now! I am matching processing codes into new class structure!</h1>
+
 ---------
 ## Installations (설치)
 ### Over Windows 7
@@ -43,7 +45,6 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 ---------
 ## Dependencies
 #### PW2_0
-* before running this inside processing, you must change `DEVELOPER_PATH` in PW2_0.pde.
 * [Beads](http://beadsproject.net) : you can install this inside processing.
 
 #### pwrelease.bat

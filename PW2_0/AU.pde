@@ -1,6 +1,9 @@
 import beads.*;
-import javax.sound.midi.*;
 import it.sauronsoftware.jave.*;
+import com.karnos.midimap.MidiCommand;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
+import com.karnos.midimap.InputBehavior;
 //ModPlayer wavplayer;
 Visualizer visualizer;
 void AU_setup() {
@@ -24,6 +27,10 @@ void midiOffAll() {
     }
     a=a+1;
   }
+}
+void reloadMidiDevices() {
+  String path=joinPath(GlobalPath, MidiPath);
+  setStatusR(MidiCommand.reloadDevices(path));
 }
 public class PadPressCommand implements InputBehavior {
   @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
@@ -280,3 +287,40 @@ public class SimpleToolParameter extends UGenParameter {
     pan=value;
   }
 }
+//String midiToLed(String path) {
+//  String ret="//"+getFileName(path);
+//  try {
+//    Sequence sequence = MidiSystem.getSequence(new File(path));
+//    Track[] tracks=sequence.getTracks();
+//    for (int t=0; t<tracks.length; t++) {
+//      Track track=tracks[t];//usually,first track is meta track.
+//      //It will make tracks.length sequences and while reading, it will merge all tracks.
+//      //convert tick to delay...
+//      for (int i=0; i < track.size(); i++) {
+//        MidiEvent event = track.get(i);
+//        System.out.print("@" + event.getTick() + " - ");
+//        MidiMessage message_ = event.getMessage();
+//        if (message_ instanceof ShortMessage) {
+//          ShortMessage message=(ShortMessage)message_;
+//          println("ShortMessage : "+message.getCommand()+" "+message.getData1()+" "+message.getData2());
+//        } else if (message_ instanceof MetaMessage) {
+//          MetaMessage message=(MetaMessage)message_;
+//          if (message.getType()==0x58) {//Time Signature
+//            int numerator=message.getData()[0];
+//            int denominator=message.getData()[1];
+//            int ticksPerClick=message.getData()[2];
+//            int notes32PerQuarter=message.getData()[3];
+//            println("Time Signature : "+numerator+"/"+denominator+" "+ticksPerClick+"-"+notes32PerQuarter);
+//          } else if (message.getType()==0x51) {//Set Tempo
+//            long bpm=60000000/(256*256*message.getData()[0]+256*message.getData()[1]+message.getData()[2]);
+//            println("Set Tempo : "+bpm);
+//          }
+//        }
+//      }
+//    }
+//  }
+//  catch(Exception e) {
+//    e.printStackTrace();
+//  }
+//  return ret;
+//}

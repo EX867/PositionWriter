@@ -3,14 +3,20 @@ PFont fontRegular;
 PFont fontBold;
 boolean DEBUG=true;
 boolean DEVELOPER_BUILD=false;//detect with processing.exe
-String DEVELOPER_PATH="C:/Users/user/Documents/[Projects]/PositionWriter/PW2_0";//you cannot get original sketchpath in runtime. so you need original sketchpath to access data in absolute path.
+String DEVELOPER_PATH="";//changed to use processing's dataPath(""). sometimes this doesn't works...there are some problems...
 void detectProcessing() {
   File file=new File("");
   println("detectProcessing : "+file.getAbsolutePath());
-  file=new File(joinPath(file.getAbsolutePath(), "processing.exe"));
-  if (file.exists()) {
+  if (new File(joinPath(file.getAbsolutePath(), "processing.exe")).exists()) {//windows
     println("yes. this is processing build.");
     DEVELOPER_BUILD=true;
+  }
+  if (new File(joinPath(file.getAbsolutePath(), "processing")).exists()) {//linux
+    println("yes. this is processing build.");
+    DEVELOPER_BUILD=true;
+  }
+  if (DEVELOPER_BUILD) {
+    DEVELOPER_PATH=dataPath("");
   }
 }
 float Width=1420;
@@ -45,32 +51,30 @@ boolean initialOpen=false;
  
  //other
  2.+ : multi threading
- 2.+ : enhance midi input&&output support**
  2.+ : add html+vel color autoinput(option)
- 2.+ : change getUIid() to binary search (or hashmap)
- 2.+ : change DelayValue to DelayValueSum and do binary search
+ 2.+ : change entire ui class structure!!!**
+ change some arraylists to multimap. this is important!!!
  2.+ : add KeySoundPlayer and midi->autoPlay tools
  2.+ : directly edit and save zip(for users)
  2.+ : (option) keySound autosave, undo
  2.+ : linux file chooser
  2.+ : multi language support
- 2.+ : led editor multi tab support
+ 2.+ : led editor multi tab support***
  2.+ : note on highlight
  2.+ : only store setting data if they are modified
- ... : get developer path in code.
  2.+ : calculator support hexcode.(and some functions for color)
  2.+ : delay value edit shortcut(from unitor-lpassist)
- 2.+ : remote controller support (https://stackoverflow.com/questions/21628146/using-sockets-between-android-device-and-pc-same-network)
- 2.+ : midi<->led converter
  2.+ : autoplay led link - triggering led(run triggering and frame both in led editor, stop link with clear button - this will enable rnd command in led editor too.)
  2.+ : drag to print range commands
  2.+ : currently, mc converter cannot manipulate range commands. add!
  2.+ : show sound file name toggle button.
  2.+ : toggle launchpad colors (vel color is slightly different...)
  
+ midi : midi<->led converter (merge threaded track needed)
+ 
  extra : gif animation file save/load
  
- skinedit : change theme to appcompat-material
+ skinedit : change theme to appcompat-material(later...)
  uncloud : wait uncloud update!!
  uncloud : customize list : display date and upload state inside list.
  uncloud : infoviewer design upgrade.

@@ -459,99 +459,12 @@ void writeDisplayLine(String text, boolean async) {
     else UI[textfieldId].render();
   }
 }
-// ========== LOG ========== //
-void addLog(Difference in) {
-  if (in.before!=null&&in.before.equals(in.after)==false)BeforeLog.add(in);
-  else if (in.after!=null&&in.after.equals(in.before)==false)BeforeLog.add(in);
-}
-class Difference {
-  int index=0;
-  int line;
-  String before;
-  String after;
-  int cursorLine;
-  int cursorPoint;
-  Difference(int line_, String before_, String after_) {
-    line=line_;
-    before=before_;
-    after=after_;
-    cursorLine=Lines.line;//for text editor
-    cursorPoint=Lines.cursor;
-  }
-  Difference setIndex(int index_) {
-    index=index_;
-    return this;
-  }
-  String toString() {
-    return index+" "+line+" / "+before+" / "+after;
-  }
-}
-static final int LOGHISTORY_SIZE=5000;//just AfterLog size.
-int log_nextIndex=0;//
-ArrayList<Difference> BeforeLog=new ArrayList<Difference>();
-ArrayList<Difference> AfterLog=new ArrayList<Difference>();//real log.
-ArrayList<Difference> RedoStack=new ArrayList<Difference>();
-void RecordLog() {
-  ShiftLog();
-}
-void ShiftLog() {//just add data to last.
-  RedoStack.clear();//clears stack on input.
-  if (BeforeLog.size()==0)return;
-  int a=0;
-  int index;
-  if (AfterLog.size()==0)index=0;
-  else index=AfterLog.get(AfterLog.size()-1).index;
-  index++;
-  while (a<BeforeLog.size()) {
-    AfterLog.add(BeforeLog.get(a).setIndex(index));
-    if (AfterLog.size()>LOGHISTORY_SIZE) {
-      AfterLog.remove(0);
-    }
-    a=a+1;
-  }
-  BeforeLog.clear();
-}
-void UndoLog() {//Lines!
-  if (BeforeLog.size()!=0)ShiftLog();
-  if (AfterLog.size()<=2)return;
-  int index=AfterLog.get(AfterLog.size()-1).index;
-  //println(index);
-  int a=AfterLog.size()-1;
-  while (a>0&&AfterLog.get(AfterLog.size()-1).index==index) {
-    if (AfterLog.get(a).before==null) {//found index
-      Lines.deleteLineWithoutRecord(AfterLog.get(a).line);
-    } else if (AfterLog.get(a).after==null) {
-      Lines.addLineWithoutRecord(AfterLog.get(a).line, AfterLog.get(a).before);
-    } else {
-      Lines.setLineWithoutRecord(AfterLog.get(a).line, AfterLog.get(a).before);
-    }
-    Lines.line=AfterLog.get(a-1).cursorLine;
-    Lines.cursor=AfterLog.get(a-1).cursorPoint;
-    RedoStack.add(AfterLog.get(a));
-    AfterLog.remove(a);
-    a=AfterLog.size()-1;
-  }
+void UndoLog() {
+  Lines.undo();
   if (UI[textfieldId].disabled==false)UI[textfieldId].render();
 }
 void RedoLog() {//Lines!
-  if (RedoStack.size()==0)return;
-  int a=RedoStack.size()-1;
-  int index=RedoStack.get(a).index;
-  //println(index);
-  while (a>=0&&RedoStack.get(RedoStack.size()-1).index==index) {
-    if (RedoStack.get(a).before==null) {
-      Lines.addLineWithoutRecord(RedoStack.get(a).line, RedoStack.get(a).after);
-    } else if (RedoStack.get(a).after==null) {
-      Lines.deleteLineWithoutRecord(RedoStack.get(a).line);
-    } else {
-      Lines.setLineWithoutRecord(RedoStack.get(a).line, RedoStack.get(a).after);
-    }
-    Lines.line=RedoStack.get(a).cursorLine;
-    Lines.cursor=RedoStack.get(a).cursorPoint;
-    AfterLog.add(RedoStack.get(a));
-    RedoStack.remove(a);
-    a=RedoStack.size()-1;
-  }
+  Lines.redo();
   if (UI[textfieldId].disabled==false)UI[textfieldId].render();
 }
 
