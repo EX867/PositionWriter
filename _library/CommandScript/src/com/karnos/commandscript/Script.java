@@ -1,4 +1,5 @@
 package com.karnos.commandscript;
+import java.util.ArrayList;
 public class Script{
   private ArrayList<String> l;//if modified, add difference.
   public int point=0;
@@ -10,10 +11,10 @@ public class Script{
   int maxpoint;
   EditRecorder recorder;
   Parser parser;
-  public Script(Parser parser_){
+  public Script(LineCommandProcesser processer){
     l=new ArrayList<String>();
     recorder=new EditRecorder();
-    parser=parser_;
+    parser=new Parser(processer);
   }
   public void clear(){
     for(int a=l.size()-1;a>=0;a--){
