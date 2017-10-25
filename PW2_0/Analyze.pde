@@ -28,23 +28,12 @@ class Analyzer {
     DelayPoint=null;
     DelayPoint=new ArrayList<Integer>();
     DelayPoint.add(-1);//starting line of frame (after delay command).
-    DelayValue=null;
-    DelayValue=new ArrayList<Integer>();
     BpmPoint=null;
     BpmPoint=new ArrayList<Integer>();
     BpmPoint.add(-1);//line of bpm command.
   }
   void add(int line, String before, String after) {//if  before is null,line added.->modify delay points.
     addLog(new Difference(line, before, after));
-    surface.setTitle(title_filename+title_edited+title_suffix+" - reading...("+index+"/"+total+")");
-    processLine(new Line(line, before, after));
-    title_edited="*";
-    surface.setTitle(title_filename+title_edited+title_suffix);
-  }
-  void addWithoutReading(int line, String before, String after) {//if  before is null,line added.->modify delay points.
-    addLog(new Difference(line, before, after));
-  }
-  void addWithoutRecord(int line, String before, String after) {
     surface.setTitle(title_filename+title_edited+title_suffix+" - reading...("+index+"/"+total+")");
     processLine(new Line(line, before, after));
     title_edited="*";

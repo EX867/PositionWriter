@@ -4,6 +4,7 @@ PFont fontBold;
 boolean DEBUG=true;
 boolean DEVELOPER_BUILD=false;//detect with processing.exe
 String DEVELOPER_PATH="";//changed to use processing's dataPath(""). sometimes this doesn't works...there are some problems...
+String startText="// === PW 2.0 === //";
 void detectProcessing() {
   File file=new File("");
   println("detectProcessing : "+file.getAbsolutePath());
@@ -52,12 +53,12 @@ boolean initialOpen=false;
  //other
  2.+ : multi threading
  2.+ : add html+vel color autoinput(option)
- 2.+ : change entire ui class structure!!!**
+ 2.+ : change entire ui class structure!!!*
  change some arraylists to multimap. this is important!!!
  2.+ : add KeySoundPlayer and midi->autoPlay tools
  2.+ : directly edit and save zip(for users)
  2.+ : (option) keySound autosave, undo
- 2.+ : linux file chooser
+ 2.+ : linux file chooser???
  2.+ : multi language support
  2.+ : led editor multi tab support***
  2.+ : note on highlight
@@ -65,10 +66,9 @@ boolean initialOpen=false;
  2.+ : calculator support hexcode.(and some functions for color)
  2.+ : delay value edit shortcut(from unitor-lpassist)
  2.+ : autoplay led link - triggering led(run triggering and frame both in led editor, stop link with clear button - this will enable rnd command in led editor too.)
- 2.+ : drag to print range commands
+ 2.+ : drag to print range commands***
  2.+ : currently, mc converter cannot manipulate range commands. add!
  2.+ : show sound file name toggle button.
- 2.+ : toggle launchpad colors (vel color is slightly different...)
  
  midi : midi<->led converter (merge threaded track needed)
  

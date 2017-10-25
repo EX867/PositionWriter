@@ -4,7 +4,7 @@ public abstract class Difference<Type>{
   Type before;
   Type after;
   public Difference(Type before_,Type after_){
-    before=befoer_;
+    before=before_;
     after=after_;
   }
   final Difference setIndex(int index_) {

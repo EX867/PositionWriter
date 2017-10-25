@@ -13,9 +13,6 @@ void AU_setup() {
   MidiCommand.addInput("release", new PadReleaseCommand());
   MidiCommand.addInput("chain", new PadChainCommand());
   reloadMidiDevices();
-  //wavplayer = new ModPlayer();
-  //wavplayer.load("C:/Users/user/Documents/again2.mp3");
-  //wavplayer.load("C:/Users/user/Documents/Studio One/Songs/Forget_Remix/Mixdown/Forget_Remix_1.wav");
 }
 void midiOffAll() {
   int a=0;

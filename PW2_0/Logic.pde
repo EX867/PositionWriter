@@ -52,7 +52,6 @@ ArrayList<color[][]> LED;//0 is empty!(OFFCOLOR)
 ArrayList<boolean[][]> apLED;//0 is empty!(OFFCOLOR)
 ArrayList<Integer> apChainPoint;
 ArrayList<Integer> DelayPoint;
-ArrayList<Integer> DelayValue;//updated in updateFrameSlider();
 ArrayList<Integer> BpmPoint;
 Analyzer analyzer=new Analyzer();
 ModString Lines=new ModString();//TextEditor.

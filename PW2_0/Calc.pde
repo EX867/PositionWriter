@@ -1,4 +1,5 @@
 import java.util.regex.*;
+//patternMatcher.findUpdated=false;
 Calculator calculator=new Calculator();
 PatternMatcher patternMatcher=new PatternMatcher();
 ArrayList<PatternMatcher.Result> findData=new ArrayList<PatternMatcher.Result>();

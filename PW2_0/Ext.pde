@@ -68,7 +68,7 @@ void checkVersion() {
           return;
         }
       }
-    } else if (version.getString("type").equals("prodection")) {//if production>=current->production
+    } else if (version.getString("type").equals("production")) {//if production>=current->production
       if (production.getInt("major")==version.getInt("major")) {//only compare if major is same.
         if (production.getInt("minor")>version.getInt("minor")) {
           registerPrepare(getFrameid("F_UPDATE"));

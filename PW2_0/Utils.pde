@@ -137,26 +137,6 @@ public static boolean isNumber(String str) {
   // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
   return !allowSigns && foundDigit;
 }
-boolean isHex(String in) {
-  if (in.length() != 6) return false;
-  String aaa = in;
-  aaa = aaa.replace('a', '0');
-  aaa = aaa.replace('b', '0');
-  aaa = aaa.replace('c', '0');
-  aaa = aaa.replace('d', '0');
-  aaa = aaa.replace('e', '0');
-  aaa = aaa.replace('f', '0');
-  aaa = aaa.replace('A', '0');
-  aaa = aaa.replace('B', '0');
-  aaa = aaa.replace('C', '0');
-  aaa = aaa.replace('D', '0');
-  aaa = aaa.replace('E', '0');
-  aaa = aaa.replace('F', '0');
-  aaa = aaa.trim();
-  if (isInt(aaa) == false) return false;
-  if (16777216 <= unhex(in) || unhex(in) < 0) return false;
-  return true;
-}
 /*color Colorblend(color a, color b) {
  float oa=alpha(a);
  float na=alpha(b);
@@ -484,4 +464,52 @@ boolean isValidPackageName(String content) {
   }
   return true;
 }
+synchronized String toUnipadString(ArrayList<String> l) {
+  if (l.size()==0)return "";
+  ArrayList<String> al=analyzer.toUnipadLed(l);
+  StringBuilder builder = new StringBuilder();
+  builder.append(al.get(0));
+  int a=1;
+  while (a<al.size()) {
+    builder.append("\n").append(al.get(a));
+    a=a+1;
+  }
+  return builder.toString();
+}
 //
+
+//
+void displayLogError(String content) {
+  Logger logger=(Logger)UI[getUIidRev("ERROR_LOG")];
+  logger.logs.add("");
+  logger.logs.add(content);
+  registerPrepare(getFrameid("F_ERROR"));
+}
+void displayLogError(Exception e) {
+  if (e.toString().contains("ignore")) {
+    printLog("displayLogError()", "error ignored ("+e.toString()+")");
+    return;
+  }
+  Logger logger=(Logger)UI[getUIidRev("ERROR_LOG")];
+  logger.logs.add("");
+  for (java.lang.StackTraceElement ee : e.getStackTrace()) {
+    String str=ee.toString();
+    logger.logs.add(str);
+  }
+  logger.logs.add("Error! Load Failed!");
+  logger.logs.add(e.toString());
+  e.printStackTrace();
+  registerPrepare(getFrameid("F_ERROR"));
+}
+//
+boolean statusLchanged=false;
+boolean statusRchanged=false;
+int displayingError=-1;
+void setStatusL(String text) {
+  if (statusL.text.equals(text)==false)statusLchanged=true;
+  statusL.text=text;
+}
+void setStatusR(String text) {
+  statusR.text=text;
+  statusRchanged=true;
+}
