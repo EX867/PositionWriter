@@ -45,8 +45,10 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
       errors.remove(a);
     }
     ArrayList<String> params=new ArrayList<String>();
+    ArrayList<Integer> paramsPoint=new ArrayList<Integer>();
     int a=0;
     StringBuilder buffer=new StringBuilder();
+    paramsPoint.add(0);//length is may be params+1. use params.size() instead.
     while (true) {
       if (a >= text.length()) break;
       while (a < text.length() && text.charAt(a) != seperator) {
@@ -67,11 +69,12 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
       params.add(buffer.toString());
       buffer=new StringBuilder();
       a++;//skip the seperator.
+      paramsPoint.add(a);
     }
     if (params.size() == 0) {
       return processer.getEmptyCommand();//so search() not returns result "expected (first layer)...".
     }
-    ArrayList<Parameter> command=search(params);
+    LinkedList<Parameter> command=search(params, paramsPoint, line, location_, text);
     if (command == null) {
       //error added from search function!!
       return processer.getErrorCommand();
@@ -82,52 +85,80 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
     }
     return processer.buildCommand(commandNames.get(key.toString()), params);
   }
-  private ArrayList<Parameter> search(ArrayList<String> tokens) {
+  private LinkedList<Parameter> search(ArrayList<String> tokens, ArrayList<Integer> tokensPoint, int line, String location_, String text) {//end 4 parameters are harming this generalization...
+    //this range problem has to solve later!
     //bfs to search!!
-    ArrayList<ArrayList<Parameter>> command=new ArrayList<ArrayList<Parameter>>();//result of matches
-    Multiset<ParameterExpectation> expectations=new Multiset<ParameterExpectation>();//string that really used for error. form=<name>(<type>)
-    LinkedList<Parameter> parents=new LinkedList<Parameter>();
+    ArrayList<LinkedList<Parameter>> command=new ArrayList<LinkedList<Parameter>>();//result of matches
+    Multiset<Parameter> parents=new Multiset<Parameter>(new LinkedList<Parameter>());//queue.
     parents.add(commands);
     int count=1;
     int index=0;
     while (parents.size() != 0) {
-      if (index >= tokens.size()) break;
+      if (index >= tokens.size()) break;//
       count=parents.size();
+      int matches=0;
+      LinkedList<Parameter> availableParameters=new LinkedList<Parameter>();
       for (int a=0; a < count; a++) {//ADD inside of this loop to bfs commands and matching command! what are expectations?
-        int matches=0;
-        for (Parameter next : commands.children) {
-          switch (next.type) {
-            case Parameter.STRING:
-              parents.add(next);
-            case Parameter.INTEGER:
-              if (isInt(tokens.get(index))) parents.add(next);
-            case Parameter.FLOAT:
-            case Parameter.RANGE:
-            case Parameter.FIXED:
-            case Parameter.WRAPPED_STRING:
-            case Parameter.HEX:
+        if (index < tokens.size()) {
+          for (Parameter next : parents.get(0).children) {
+            availableParameters.add(next);
+            switch (next.type) {
+              case Parameter.STRING:
+                parents.add(next);
+                matches++;
+              case Parameter.INTEGER:
+                if (isInt(tokens.get(index))) parents.add(next);
+                matches++;
+              case Parameter.FLOAT:
+                if (isFloat(tokens.get(index))) parents.add(next);
+                matches++;
+              case Parameter.RANGE:
+                if (isRange(tokens.get(index))) parents.add(next);
+                matches++;
+              case Parameter.FIXED:
+                if (tokens.get(index).equals(next.name)) parents.add(next);
+                matches++;
+              case Parameter.WRAPPED_STRING:
+                if (isWrappedString(tokens.get(index))) parents.add(next);
+                matches++;
+              case Parameter.HEX:
+                if (isHex(tokens.get(index))) parents.add(next);
+                matches++;
+            }
+          }
+        } else {
+          if (parents.get(0).isEnd) {//end of command
+            LinkedList<Parameter> result=new LinkedList<Parameter>();
+            command.add(result);
+            Parameter next=parents.get(0);
+            result.addFirst(next);
+            while (next.parent != null) {
+              result.addFirst(next.parent);
+              next=next.parent;
+            }
+            //else add to available errors... if no matching
+          } else {
+            availableParameters.add(parents.get(0));
           }
         }
+        parents.remove(parents.size() - 1);
+      }
+      if (matches == 0) {//no matching command in all available branches!
+        StringBuilder builder=new StringBuilder("");
+        int b=0;
+        for (Parameter next : availableParameters) {
+          builder.append(next.name).append('(').append(Parameter.getTypeName(next.type)).append(')');
+          if (b != availableParameters.size()) builder.append(" or ");
+          b++;
+        }
+        if (builder.length() != 0) builder.deleteCharAt(builder.length() - 1);
+        addError(new LineError(LineError.ERROR, line, tokensPoint.get(index), text.length(), location_, builder.toString() + " expected"));
+        return null;
       }
       index++;
     }
-    for (int a=0; a < parents.size(); a++) {
-      //expectations.add()
-    }
     if (command.size() == 0) return null;
     return command.get(0);
-  }
-  class ParameterExpectation implements Comparable<ParameterExpectation> {
-    int index;
-    String form;
-    public ParameterExpectation(int index_, String form_) {
-      index=index_;
-      form=form_;
-    }
-    @Override
-    public int compareTo(ParameterExpectation other) {
-      return index - other.index;
-    }
   }
   //===Checkers===//
   boolean isWrappedString(String in) {
