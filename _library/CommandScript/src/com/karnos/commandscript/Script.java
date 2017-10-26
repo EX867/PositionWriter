@@ -12,10 +12,13 @@ public class Script {
   int maxpoint;
   EditRecorder recorder;
   Parser parser;
-  public Script(LineCommandProcesser processer) {
+  String name;
+  public Script(String name_, LineCommandProcesser processer) {
+    name=name_;
     l=new ArrayList<String>();
     recorder=new EditRecorder();
     parser=new Parser(processer);
+    parser.location=name;
   }
   public void clear() {
     for (int a=l.size() - 1; a >= 0; a--) {
@@ -38,6 +41,9 @@ public class Script {
     }
     return builder.toString();
   }
+  public String toCommandString() {
+    return parser.toString();
+  }
   public ArrayList<String> raw() {
     return l;
   }
@@ -59,7 +65,13 @@ public class Script {
   public ArrayList<Command> getCommands() {
     return parser.lines;
   }
+  public Multiset<LineError> getErrors() {
+    return parser.errors;
+  }
   //===Edit===//
+  public void addLine(String text) {
+    addLine(l.size(), text);
+  }
   public void addLine(int line_, String text) {
     addLineWithoutParse(line_, text);
     parser.add(line_, null, text);

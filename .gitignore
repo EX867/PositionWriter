@@ -9,6 +9,7 @@ _library/MidiMap/bin
 _library/MidiMap/build/*.jar
 _library/CommandScript/.idea
 _library/CommandScript/bin
+_library/CommandScript/out
 _library/CommandScript/build/*.jar
 _library/CommandScript/CommandScript.iml
 release/*.exe

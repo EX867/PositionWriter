@@ -1,23 +1,25 @@
 package com.karnos.commandscript;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 public class Parser {//Analyzes specific Script and stores parsed commands.
+  public static boolean debug=true;
   public ArrayList<Command> lines;
   private Parameter commands;//root of commands
-  private HashMap<String, String> commandNames;//just giving a name for parameter sequence!
   LineCommandProcesser processer;
   public Multiset<LineError> errors;
   private LineError cacheError;
-  public char seperator=' ';
-  public char range='~';
-  public char wrapper='\"';
+  String location="";
+  char seperator=' ';
+  char range='~';
+  char wrapper='\"';
   public Parser(LineCommandProcesser processer_) {
     errors=new Multiset<LineError>();
     cacheError=new LineError(LineError.PRIOR, 0, 0, 0, "", "");
     processer=processer_;
     commands=processer.commands;
-    commandNames=processer.commandNames;
+    seperator=processer.seperator;
+    range=processer.range;
+    wrapper=processer.wrapper;
     lines=new ArrayList<Command>();
   }
   public void clear() {
@@ -25,6 +27,16 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
   }
   public void readAll(ArrayList<String> lines) {
     //ADD
+  }
+  @Override
+  public String toString() {
+    if (lines.size() == 0) return "";
+    StringBuilder builder=new StringBuilder();
+    builder.append(lines.get(0).toString());
+    for (int a=1; a < lines.size(); a++) {
+      builder.append("\n").append(lines.get(a).toString());
+    }
+    return builder.toString();
   }
   public void addError(LineError error) {
     errors.add(error);
@@ -36,10 +48,21 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
       errors.remove(index);
     }
   }
-  public void add(int line, String location_, String text) {
-    parse(line, location_, text);//make this to queue and thread...
+  public void add(int line, String before_, String after_) {
+    Command before=parse(line, location, before_);//make this to queue and thread...
+    Command after=parse(line, location, after_);//make this to queue and thread...
+    assert before != null || after != null;
+    if (before == null) {
+      lines.add(line, after);
+    } else if (after == null) {
+      lines.remove(line);
+    } else {
+      lines.set(line, after);
+    }
+    processer.processCommand(line, before, after);
   }
   public Command parse(int line, String location_, String text) {
+    if (text == null) return null;
     cacheError.line=line - 1;
     for (int a=errors.getBeforeIndex(cacheError); a < errors.size() && errors.get(a).line == line; ) {
       errors.remove(a);
@@ -56,12 +79,13 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
         if (text.charAt(a) == wrapper) {
           int wrapperChar=a;//use in error
           a++;
-          while (text.charAt(a) != wrapper) {
+          while (a >= text.length() || text.charAt(a) != wrapper) {
             if (a >= text.length()) {
               addError(new LineError(LineError.ERROR, line, wrapperChar, text.length(), location_, "unterminated wrapped string"));
               return processer.getErrorCommand();
             }
             buffer.append(text.charAt(a));
+            a++;
           }
         }
         a++;
@@ -80,10 +104,13 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
       return processer.getErrorCommand();
     }
     StringBuilder key=new StringBuilder();
+    int b=0;
     for (Parameter p : command) {
-      key.append(p.name).append(seperator);
+      key.append(p.name);
+      if (b != command.size() - 1) key.append(seperator);
+      b++;
     }
-    return processer.buildCommand(commandNames.get(key.toString()), params);
+    return processer.buildCommand(key.toString(), params);
   }
   private LinkedList<Parameter> search(ArrayList<String> tokens, ArrayList<Integer> tokensPoint, int line, String location_, String text) {//end 4 parameters are harming this generalization...
     //this range problem has to solve later!
@@ -93,71 +120,96 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
     parents.add(commands);
     int count=1;
     int index=0;
-    while (parents.size() != 0) {
-      if (index >= tokens.size()) break;//
+    while (index <= tokens.size()) {
       count=parents.size();
+      LinkedList<Parameter> parents_turn=new LinkedList<Parameter>();
+      for (int a=0; a < count; a++) {
+        parents_turn.add(parents.get(a));
+      }
+      parents.clear();
       int matches=0;
       LinkedList<Parameter> availableParameters=new LinkedList<Parameter>();
-      for (int a=0; a < count; a++) {//ADD inside of this loop to bfs commands and matching command! what are expectations?
+      for (int a=0; a < count; a++) {
         if (index < tokens.size()) {
-          for (Parameter next : parents.get(0).children) {
+          for (Parameter next : parents_turn.getFirst().children) {
             availableParameters.add(next);
-            switch (next.type) {
-              case Parameter.STRING:
+            if (debug) System.out.print("[" + parents_turn.getFirst().name + " - " + next.name + "] ");
+            if (next.type == Parameter.STRING) {
+              parents.add(next);
+              matches++;
+            } else if (next.type == Parameter.FLOAT) {
+              if (isFloat(tokens.get(index))) {
                 parents.add(next);
                 matches++;
-              case Parameter.INTEGER:
-                if (isInt(tokens.get(index))) parents.add(next);
+              }
+            } else if (next.type == Parameter.INTEGER) {
+              if (isInt(tokens.get(index))) {
+                parents.add(next);
                 matches++;
-              case Parameter.FLOAT:
-                if (isFloat(tokens.get(index))) parents.add(next);
+              }
+            } else if (next.type == Parameter.RANGE) {
+              if (isRange(tokens.get(index))) {
+                parents.add(next);
                 matches++;
-              case Parameter.RANGE:
-                if (isRange(tokens.get(index))) parents.add(next);
+              }
+            } else if (next.type == Parameter.FIXED) {
+              if (tokens.get(index).equals(next.name)) {
+                parents.add(next);
                 matches++;
-              case Parameter.FIXED:
-                if (tokens.get(index).equals(next.name)) parents.add(next);
+              }
+            } else if (next.type == Parameter.WRAPPED_STRING) {
+              if (isWrappedString(tokens.get(index))) {
+                parents.add(next);
                 matches++;
-              case Parameter.WRAPPED_STRING:
-                if (isWrappedString(tokens.get(index))) parents.add(next);
+              }
+            } else if (next.type == Parameter.HEX) {
+              if (isHex(tokens.get(index))) {
+                parents.add(next);
                 matches++;
-              case Parameter.HEX:
-                if (isHex(tokens.get(index))) parents.add(next);
-                matches++;
+              }
             }
           }
         } else {
-          if (parents.get(0).isEnd) {//end of command
+          availableParameters.add(parents_turn.getFirst());
+          if (parents_turn.getFirst().isEnd) {//end of command
             LinkedList<Parameter> result=new LinkedList<Parameter>();
             command.add(result);
-            Parameter next=parents.get(0);
+            Parameter next=parents_turn.getFirst();
             result.addFirst(next);
             while (next.parent != null) {
               result.addFirst(next.parent);
               next=next.parent;
             }
+            matches++;
             //else add to available errors... if no matching
           } else {
-            availableParameters.add(parents.get(0));
+            availableParameters.add(parents_turn.getFirst());
           }
         }
-        parents.remove(parents.size() - 1);
+        parents_turn.pollFirst();
       }
+      if (debug) System.out.println("[matching : " + matches + "] ");
       if (matches == 0) {//no matching command in all available branches!
-        StringBuilder builder=new StringBuilder("");
-        int b=0;
-        for (Parameter next : availableParameters) {
-          builder.append(next.name).append('(').append(Parameter.getTypeName(next.type)).append(')');
-          if (b != availableParameters.size()) builder.append(" or ");
-          b++;
+        if (availableParameters.size() == 0) {
+          addError(new LineError(LineError.ERROR, line, 0, text.length(), location_, " command is too long"));
+        } else {
+          StringBuilder builder=new StringBuilder("");
+          int b=0;
+          for (Parameter next : availableParameters) {
+            builder.append(next.name).append('(').append(Parameter.getTypeName(next.type)).append(')');
+            if (b != availableParameters.size() - 1) builder.append(" or ");
+            b++;
+          }
+          addError(new LineError(LineError.ERROR, line, tokensPoint.get(index), text.length(), location_, builder.toString() + " expected"));
         }
-        if (builder.length() != 0) builder.deleteCharAt(builder.length() - 1);
-        addError(new LineError(LineError.ERROR, line, tokensPoint.get(index), text.length(), location_, builder.toString() + " expected"));
         return null;
       }
       index++;
     }
-    if (command.size() == 0) return null;
+    if (command.size() == 0) {
+      addError(new LineError(LineError.ERROR, line, tokensPoint.get(index), text.length(), location_, "No matching command!"));
+      return null;
+    }
     return command.get(0);
   }
   //===Checkers===//
