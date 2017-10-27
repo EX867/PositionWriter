@@ -28,7 +28,7 @@
 		<!-- With included source files -->
 		<jar destfile="../build/CommandScript.jar" filesetmanifest="mergewithoutmain" duplicate="preserve">
 			<manifest>
-				<attribute name="Main-Class" value="com.karnos.commandscript.Script"/>
+				<attribute name="Main-Class" value="com.karnos.commandscript.test.Test"/>
 				<attribute name="Implementation-Version" value="${version}-${DSTAMP}"/>
 				<attribute name="Built-By" value="${built_by}"/>
 				<attribute name="Created-By" value="${built_by}"/>

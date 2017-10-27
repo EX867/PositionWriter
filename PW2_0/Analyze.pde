@@ -1,57 +1,6 @@
-class Analyzer {
-  ArrayList<UnipackLine> uLines=new ArrayList<UnipackLine>();
-  int index=0;
-  int total=0;
-  boolean printlog=false;
-  class Line {
-    int line;
-    String before;
-    String after;
-    Line(int l, String b, String a) {
-      line=l;
-      before=b;
-      after=a;
-    }
-  }
-  void clear() {
-    error.clear();
-    uLines=null;
-    uLines=new ArrayList<UnipackLine>();
-    LED=null;
-    LED=new ArrayList<color[][]>();
-    LED.add(new color[ButtonX][ButtonY]);
-    apLED=new ArrayList<boolean[][]>();
-    apLED.add(new boolean[ButtonX][ButtonY]);
-    apChainPoint=null;
-    apChainPoint=new ArrayList<Integer>();
-    apChainPoint.add(-1);
-    DelayPoint=null;
-    DelayPoint=new ArrayList<Integer>();
-    DelayPoint.add(-1);//starting line of frame (after delay command).
-    BpmPoint=null;
-    BpmPoint=new ArrayList<Integer>();
-    BpmPoint.add(-1);//line of bpm command.
-  }
-  void add(int line, String before, String after) {//if  before is null,line added.->modify delay points.
-    addLog(new Difference(line, before, after));
-    surface.setTitle(title_filename+title_edited+title_suffix+" - reading...("+index+"/"+total+")");
-    processLine(new Line(line, before, after));
-    title_edited="*";
-    surface.setTitle(title_filename+title_edited+title_suffix);
-  }
+
   void processLine(Line line) {
-    if (line.before==null)removeErrors(line.line+1);
-    else removeErrors(line.line);
-    if (printlog)print("bef > ");
-    adderror=false;
-    UnipackLine before=AnalyzeLine(line.line, "LedEditor", line.before);
-    if (printlog)print("aft > ");
-    adderror=true;
-    UnipackLine after=AnalyzeLine(line.line, "LedEditor", line.after);
-    adderror=false;//for later "AnalyzeLine".
     int frame=getFrame(line.line);
-    if (printlog)println("frame : "+frame);
-    boolean sliderUpdate=false;
     //remove old - process about on,off,delay,bpm 
     if (after==null) {
       uLines.remove(line.line);
@@ -304,26 +253,7 @@ class Analyzer {
   void offLED(UnipackLine info, int x, int y, int frame) {//DELETE
     LED.get(frame)[x-1][y-1]=OFFCOLOR;
   }
-  void onApLED(UnipackLine info, int x, int y, int frame) {
-    apLED.get(frame)[x-1][y-1]=true;
-  }
-  void offApLED(UnipackLine info, int x, int y, int frame) {//DELETE
-    apLED.get(frame)[x-1][y-1]=false;
-  }
   class UnipackLine {
-    static final int EMPTY=-1;
-    static final int ON=1;
-    static final int OFF=2;
-    static final int DELAY=3;
-    static final int CHAIN=4;
-    static final int BPM=5;
-    //extra
-    static final int APON=6;
-    static final int KEYSOUND=7;
-    //unitor command
-    static final int MAPPING=8;//MAPPING [hasVel?s:l] y x [vel==index]
-    //rnd ON y x [hasHtml==false] [html==-1]
-    //info
     static final int TITLE=11;
     static final int PRODUCERNAME=12;
     static final int BUTTONX=13;
@@ -332,92 +262,6 @@ class Analyzer {
     static final int LANDSCAPE=16;
     static final int SQUAREBUTTON=17;
     static final int UPDATED=18;
-    int Type=DEFAULT;
-    boolean mc=false;
-    int chain=0;
-    int x=0;
-    int y=0;
-    int x2=0;
-    int y2=0;
-    int vel=0;
-    color html;
-    boolean hasVel;
-    boolean hasHtml;
-
-    String filename;
-    boolean absolute;
-    int loop;
-
-    String value;
-    float valueF;
-    void debug() {
-      println("AnalyzeLine"+"Type/ "+Type+" mc/ "+str(mc)+" x/ "+x+" y/ "+y+" vel/ "+str(hasVel)+" "+vel+" html/ "+str(hasHtml)+" "+html);
-    }
-    UnipackLine(String createInfo, int Type_) {
-      Type=Type_;
-      if (printlog)printLog("AnalyzeLine", "("+createInfo+") Type/ "+Type);
-    }
-    UnipackLine(String createInfo, int Type_, boolean mc_) {
-      Type=Type_;
-      mc=mc_;
-      if (printlog)printLog("AnalyzeLine", "("+createInfo+") Type/ "+Type);
-    }
-    UnipackLine(String createInfo, int Type_, String value_) {
-      Type=Type_;
-      value=value_;
-      if (printlog)printLog("AnalyzeLine", "("+createInfo+") Type/ "+Type+" value/ "+value);
-    }
-    UnipackLine(String createInfo, int Type_, float value_) {
-      Type=Type_;
-      valueF=value_;
-      if (printlog)printLog("AnalyzeLine", "("+createInfo+") Type/ "+Type+" value/ "+valueF);
-    }
-    UnipackLine(String createInfo, int Type_, boolean mc_, int x_, int y_, boolean hasVel_, boolean hasHtml_, int vel_, color html_) {//if mc, ignore y. //if delay, x/y or x.
-      Type=Type_;
-      mc=mc_;
-      x=x_;
-      y=y_;
-      x2=x;
-      y2=y;
-      hasVel=hasVel_;
-      hasHtml=hasHtml_;
-      vel=vel_;
-      html=html_;
-      if (printlog)printLog("AnalyzeLine", "("+createInfo+") Type/ "+Type+" mc/ "+str(mc)+" x/ "+x+" y/ "+y+" vel/ "+str(hasVel)+" "+vel_+" html/ "+str(hasHtml)+" "+html);
-    }
-    UnipackLine(String createInfo, int Type_, boolean mc_, int x_, int y_, int x2_, int y2_, boolean hasVel_, boolean hasHtml_, int vel_, color html_) {//only used on range commands
-      Type=Type_;
-      mc=mc_;
-      x=min(x_, x2_);
-      y=min(y_, y2_);
-      x2=max(x_, x2_);
-      y2=max(y_, y2_);
-      hasVel=hasVel_;
-      hasHtml=hasHtml_;
-      vel=vel_;
-      html=html_;
-      if (printlog)printLog("AnalyzeLine", "("+createInfo+") Type/ "+Type+" mc/ "+str(mc)+" x/ "+x+" y/ "+y+" x2/ "+x2+" y2/ "+y2+" vel/ "+str(hasVel)+" "+vel_+" html/ "+str(hasHtml)+" "+html);
-    }
-    UnipackLine(String createInfo, int Type_, int c_, int x_, int y_, String filename_, boolean absolute_, int loop_) {
-      Type=Type_;
-      chain=c_;
-      x=x_;
-      y=y_;
-      x2=x;
-      y2=y;
-      filename=filename_;
-      absolute=absolute_;
-      loop=loop_;
-      if (printlog)printLog("AnalyzeLine", "("+createInfo+") Type/ "+Type+" chain/ "+chain+" x/ "+x+" y/ "+y+" filename/ "+filename+" absolute/ "+str(absolute)+" loop/ "+loop);
-    }
-    @Override
-      boolean equals(Object other) {
-      if (other.getClass().equals(this.getClass())==false)return false;
-      UnipackLine a=(UnipackLine)other;
-      if (Type==a.Type)return true;
-      return false;
-    }
-  }
   //keysound
   //autoPlay
   UnipackInfo getEmptyUnipackInfo() {
@@ -918,87 +762,6 @@ class Analyzer {
         a=a+1;
       }
       readFrameLedPosition (frame+1, max, x, y, LED.get (frame)[x-1][y-1], null);
-    }
-  }
-  void readFrameApLedPosition(int frame, int line, int x, int y, boolean c, UnipackLine toset) {//assert line is in frame.
-    if (line>=Lines.lines())return;
-    if (0<x&&x<=ButtonX&&0<y&&y<=ButtonY) {
-      int a=line+1;
-      UnipackLine temp=new UnipackLine("", DEFAULT);
-      if (toset!=null)temp=toset;
-      boolean changed=false;
-      UnipackLine info=new UnipackLine("read frame - read while no event", DEFAULT);
-      while (a<Lines.lines()) {//reset
-        info=uLines.get(a);//AnalyzeLine(a, "read frame - read while no event", Lines.getLine(a));
-        if (info.mc) {
-          a++;
-          continue;
-        }
-        if (info.Type==UnipackLine.APON) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) {
-            changed=true;
-            temp=info;
-          }
-        } else if (info.Type==UnipackLine.OFF) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) {
-            changed=true;
-            temp=info;
-          }
-        } else if (info.Type==UnipackLine.DELAY) {
-          if (changed==false) {
-            if (temp.Type==UnipackLine.APON)onApLED (temp, x, y, frame);
-            else if (temp.Type==UnipackLine.OFF) offApLED (temp, x, y, frame);
-            else if (temp.Type==DEFAULT) {//dirty!
-              apLED.get(frame)[x-1][y-1]=c;
-            }
-            changed=false;
-          } else {
-            break;
-          }
-          frame++;
-        }
-        //if (info.x==x&&info.y==y)break;
-        a++;
-      }
-      if (changed==false&&a==Lines.lines()) {
-        if (temp.mc) {
-          return;
-        }
-        if (temp.Type==UnipackLine.APON)onApLED (temp, x, y, frame);
-        else if (temp.Type==UnipackLine.OFF) offApLED (temp, x, y, frame);
-        else if (temp.Type==DEFAULT) {//dirty!
-          apLED.get(frame)[x-1][y-1]=c;
-        }
-      }
-    }
-  }
-  void eraseApLedPosition(int frame, int line, int x, int y, boolean skip) {
-    if (0<x&&x<=ButtonX&&0<y&&y<=ButtonY) {
-      int a=DelayPoint.get (frame)+1;
-      if (frame==0) {
-        apLED.get(frame)[x-1][y-1]=false;
-      } else {
-        apLED.get (frame)[x-1][y-1]=apLED.get (frame-1)[x-1][y-1];
-      }
-      UnipackLine info;//=new UnipackLine("erase frame - read while no ev3ent", DEFAULT);
-      int max=Lines.lines();
-      if (frame<DelayPoint.size()-1)max=DelayPoint.get(frame+1);
-      if (skip&&a==line)a++;
-      while (a <max) {
-        info=uLines.get(a);//AnalyzeLine(a, "erase frame - read while no event", Lines.getLine(a));
-        if (info.mc) {
-          a++;
-          continue;
-        }
-        if (info.Type==UnipackLine.APON) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) onApLED (info, x, y, frame);
-        } else if (info.Type==UnipackLine.OFF) {
-          if (info.x<=x&&x<=info.x2&&info.y<=y&&y<=info.y2) offApLED (info, x, y, frame);
-        }
-        if (skip&&a==line)a++;
-        a=a+1;
-      }
-      readFrameApLedPosition (frame+1, max+1, x, y, apLED.get (frame)[x-1][y-1], null);
     }
   }
   void readAll(ArrayList<String> lines) {

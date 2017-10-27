@@ -11,14 +11,14 @@ public class Script {
   public int selEndPoint;
   int maxpoint;
   EditRecorder recorder;
-  Parser parser;
+  Analyzer analyzer;
   String name;
-  public Script(String name_, LineCommandProcesser processer) {
+  public Script(String name_, LineCommandType commandType, LineCommandProcesser processer_) {
     name=name_;
     l=new ArrayList<String>();
     recorder=new EditRecorder();
-    parser=new Parser(processer);
-    parser.location=name;
+    analyzer=new Analyzer(commandType, processer_);
+    analyzer.location=name;
   }
   public void clear() {
     for (int a=l.size() - 1; a >= 0; a--) {
@@ -27,7 +27,7 @@ public class Script {
     line=0;
     point=0;
     l.clear();
-    parser.clear();
+    analyzer.clear();
     addLine(0, "");
     recorder.recordLog();
   }
@@ -42,7 +42,7 @@ public class Script {
     return builder.toString();
   }
   public String toCommandString() {
-    return parser.toString();
+    return analyzer.toString();
   }
   public ArrayList<String> raw() {
     return l;
@@ -59,48 +59,76 @@ public class Script {
     if (line_ >= l.get(line_).length()) return "";
     return l.get(line_);
   }
-  void readAll() {
-    parser.readAll(l);
+  public void readAll() {
+    analyzer.readAll(l);
+  }
+  //analyzer functions
+  public int getTotal() {
+    return analyzer.total;
+  }
+  public int getProgress() {
+    return analyzer.progress;
   }
   public ArrayList<Command> getCommands() {
-    return parser.lines;
+    return analyzer.lines;
   }
   public Multiset<LineError> getErrors() {
-    return parser.errors;
+    return analyzer.errors;
+  }
+  public void addError(LineError error) {
+    analyzer.addError(error);
+  }
+  public void removeErrors(int line_) {
+    analyzer.removeErrors(line_);
   }
   //===Edit===//
   public void addLine(String text) {
     addLine(l.size(), text);
   }
   public void addLine(int line_, String text) {
-    addLineWithoutParse(line_, text);
-    parser.add(line_, null, text);
+    addLine_(line_, text);
+    analyzer.read();
   }
   public void deleteLine(int line_) {
-    parser.add(line_, l.get(line_), null);
-    deleteLineWithoutParse(line_);
+    deleteLine_(line_);
+    analyzer.read();
   }
   public void setLine(int line_, String text) {
+    setLine_(line_, text);
+    analyzer.read();
+  }
+  public void addLine_(int line_, String text) {
+    addLineWithoutAnalyze(line_, text);
+    analyzer.add(line_, null, text);
+  }
+  public void deleteLine_(int line_) {
+    analyzer.add(line_, l.get(line_), null);
+    deleteLineWithoutAnalyze(line_);
+  }
+  public void setLine_(int line_, String text) {
     String before=l.get(line_);
-    setLineWithoutParse(line_, text);
-    parser.add(line_, before, text);
+    setLineWithoutAnalyze(line_, text);
+    analyzer.add(line_, before, text);
   }
   void addLineWithoutRecord(int line_, String text) {
     if (text == null) return;
     l.add(line_, text);
-    parser.add(line_, null, text);
+    analyzer.add(line_, null, text);
+    analyzer.read();
   }
   void deleteLineWithoutRecord(int line_) {
-    parser.add(line_, l.get(line_), null);
+    analyzer.add(line_, l.get(line_), null);
     l.remove(line_);
+    analyzer.read();
   }
   void setLineWithoutRecord(int line_, String text) {
     if (text == null) return;
     String before=l.get(line_);
     l.set(line_, text);
-    parser.add(line_, before, text);
+    analyzer.add(line_, before, text);
+    analyzer.read();
   }
-  void addLineWithoutParse(int line_, String text) {
+  void addLineWithoutAnalyze(int line_, String text) {
     if (text == null) return;
     l.add(line_, text);
     int afterLine=line;
@@ -109,7 +137,7 @@ public class Script {
     }
     recorder.add(new LineChange(line_, null, line, point, text, afterLine, point));
   }
-  void deleteLineWithoutParse(int line_) {
+  void deleteLineWithoutAnalyze(int line_) {
     int afterLine=line_ - 1;
     int afterPoint=0;
     if (line_ == 0) {
@@ -120,7 +148,7 @@ public class Script {
     recorder.add(new LineChange(line_, l.get(line_), line, point, null, afterLine, afterPoint));
     l.remove(line_);
   }
-  void setLineWithoutParse(int line_, String text) {
+  void setLineWithoutAnalyze(int line_, String text) {
     if (text == null) return;
     int afterPoint=Math.min(point, l.get(line).length());
     recorder.add(new LineChange(line_, l.get(line_), line, point, text, line, afterPoint));
@@ -136,32 +164,34 @@ public class Script {
     boolean reread=false;
     if (lines.length > READ_THRESHOLD) reread=true;
     String endText=l.get(line_).substring(point, l.get(line_).length());
-    if (reread) parser.clear();
-    if (reread) setLineWithoutParse(line_, l.get(line_).substring(0, point) + lines[0]);
-    else setLine(line_, l.get(line_).substring(0, point) + lines[0]);
+    if (reread) analyzer.clear();
+    if (reread) setLineWithoutAnalyze(line_, l.get(line_).substring(0, point) + lines[0]);
+    else setLine_(line_, l.get(line_).substring(0, point) + lines[0]);
     for (int a=1; a < lines.length; a++) {
       line_++;
-      if (reread) addLineWithoutParse(line_, lines[a]);
-      else addLine(line_, lines[a]);
+      if (reread) addLineWithoutAnalyze(line_, lines[a]);
+      else addLine_(line_, lines[a]);
     }
-    if (reread) parser.readAll(l);
-    if (endText.equals("") == false) setLine(line_, l.get(line_) + endText);
+    if (endText.equals("") == false) setLine_(line_, l.get(line_) + endText);
+    if (reread) analyzer.readAll(l);
+    else analyzer.read();
   }
   void delete(int startLine, int startPoint, int endLine, int endPoint) {
     if ((startLine < endLine || (startLine == endLine && startPoint < endPoint)) == false) return;
     boolean reread=false;
     if (endLine - startLine > READ_THRESHOLD) reread=true;
     String endText=l.get(endLine).substring(endPoint, l.get(endLine).length());
-    if (reread) parser.clear();
-    if (reread) setLineWithoutParse(startLine, l.get(startLine).substring(0, startPoint));
-    else setLine(startLine, l.get(startLine).substring(0, startPoint));
+    if (reread) analyzer.clear();
+    if (reread) setLineWithoutAnalyze(startLine, l.get(startLine).substring(0, startPoint));
+    else setLine_(startLine, l.get(startLine).substring(0, startPoint));
     for (int a=startLine + 1; a <= endLine; a++) {
-      if (reread) deleteLineWithoutParse(startLine + 1);
-      else deleteLine(startLine + 1);
+      if (reread) deleteLineWithoutAnalyze(startLine + 1);
+      else deleteLine_(startLine + 1);
     }
-    if (reread) setLineWithoutParse(startLine, l.get(startLine) + endText);//??????
-    else setLine(startLine, l.get(startLine) + endText);
-    if (reread) parser.readAll(l);
+    if (reread) setLineWithoutAnalyze(startLine, l.get(startLine) + endText);//??????
+    else setLine_(startLine, l.get(startLine) + endText);
+    if (reread) analyzer.readAll(l);
+    else analyzer.read();
     maxpoint=point;
   }
   void deleteBefore(boolean word) {//if word, ctrl. - fix needed
@@ -170,8 +200,8 @@ public class Script {
     if (point == 0) {
       if (line == 0) return;
       cursorLeft(false, false);
-      setLine(line, l.get(line) + l.get(line + 1));
-      deleteLine(line + 1);
+      setLine_(line, l.get(line) + l.get(line + 1));
+      deleteLine_(line + 1);
     } else if (word) {
       boolean isSpace=false;
       String before=l.get(line);
@@ -181,23 +211,24 @@ public class Script {
         l.set(line, l.get(line).substring(0, point - 1) + l.get(line).substring(Math.min(point, l.get(line).length()), l.get(line).length()));
         point--;
       }
-      parser.add(line, before, l.get(line));
+      analyzer.add(line, before, l.get(line));
     } else {
       String before=l.get(line);
       l.set(line, l.get(line).substring(0, point - 1) + l.get(line).substring(Math.min(point, l.get(line).length()), l.get(line).length()));
       cursorLeft(false, false);
       maxpoint=point;
-      parser.add(line, before, l.get(line));
+      analyzer.add(line, before, l.get(line));
     }
     maxpoint=point;
+    analyzer.read();
   }
   void deleteAfter(boolean word) {// - fix needed
     maxpoint=point;
     if (empty()) return;
     if (point == l.get(line).length()) {
       if (line == l.size() - 1) return;
-      setLine(line, l.get(line) + l.get(line + 1));
-      deleteLine(line + 1);
+      setLine_(line, l.get(line) + l.get(line + 1));
+      deleteLine_(line + 1);
     } else if (word) {
       boolean isSpace=false;
       String before=l.get(line);
@@ -206,13 +237,14 @@ public class Script {
         if (((isSpace && isSpaceChar(l.get(line).charAt(point)) == false)) || (!isSpace && isSpaceChar(l.get(line).charAt(point)))) break;
         l.set(line, l.get(line).substring(0, point) + l.get(line).substring(Math.min(point + 1, l.get(line).length()), l.get(line).length()));
       }
-      parser.add(line, before, l.get(line));
+      analyzer.add(line, before, l.get(line));
     } else {
       String before=l.get(line);
       l.set(line, l.get(line).substring(0, point) + l.get(line).substring(Math.min(point + 1, l.get(line).length()), l.get(line).length()));
-      parser.add(line, before, l.get(line));
+      analyzer.add(line, before, l.get(line));
     }
     maxpoint=point;
+    analyzer.read();
   }
   //===Cursor movements===//
   public void setCursor(int line_, int point_) {
@@ -521,8 +553,5 @@ public class Script {
     else if (selStartPoint < 0) selStartPoint=0;
     if (selEndPoint >= l.get(selEndLine).length()) selEndPoint=l.get(selEndLine).length() - 1;
     else if (selEndPoint < 0) selEndPoint=0;
-  }
-  public static void main(String[] args) {
-    System.out.println("CommandScript class files");
   }
 }

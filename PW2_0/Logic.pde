@@ -48,13 +48,6 @@ boolean InFrameInput=false;
 boolean autoStop=false;
 boolean startFrom=true;
 //led
-ArrayList<color[][]> LED;//0 is empty!(OFFCOLOR)
-ArrayList<boolean[][]> apLED;//0 is empty!(OFFCOLOR)
-ArrayList<Integer> apChainPoint;
-ArrayList<Integer> DelayPoint;
-ArrayList<Integer> BpmPoint;
-Analyzer analyzer=new Analyzer();
-ModString Lines=new ModString();//TextEditor.
 //keydsound
 ArrayList<KsButton[][]> KS;
 color[][] ksDisplay;
@@ -438,26 +431,6 @@ void I_ResetKs() {
   ksac.start();
 }
 synchronized void L_ResizeData(int Chain_, int ButtonX_, int ButtonY_) {//ADD KS(resize button,chain
-  ArrayList<color[][]> tempLED=LED;
-  ArrayList<boolean[][]> tempapLED=apLED;
-  LED=new ArrayList<color[][]>();
-  apLED=new ArrayList<boolean[][]>();
-  int a=0;
-  while (a<tempLED.size()) {
-    LED.add(new color[ButtonX_][ButtonY_]);
-    apLED.add(new boolean[ButtonX_][ButtonY_]);
-    int b=0;
-    while (b<min(tempLED.get(a).length, ButtonX_)) {
-      int c=0;
-      while (c<min(tempLED.get(a)[b].length, ButtonY_)) {
-        LED.get(a)[b][c]=tempLED.get(a)[b][c];
-        apLED.get(a)[b][c]=tempapLED.get(a)[b][c];
-        c=c+1;
-      }
-      b=b+1;
-    }
-    a=a+1;
-  }
   ArrayList<KsButton[][]> tempKS=KS;
   KS=new ArrayList<KsButton[][]>();
   a=0;

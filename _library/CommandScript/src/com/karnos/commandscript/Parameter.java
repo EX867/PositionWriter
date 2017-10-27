@@ -4,8 +4,8 @@ public class Parameter implements Comparable<Parameter> {//this is used for form
   public static final int ERROR=0;
   public static final int STRING=1;//number means priority too.
   public static final int FLOAT=2;
-  public static final int INTEGER=3;//in parsing-considered as float, but prior than float.
-  public static final int RANGE=4;//now only supports int.
+  public static final int RANGE=3;//now only supports int. this contains int.
+  public static final int INTEGER=4;//in parsing-considered as float, but prior than float.
   public static final int FIXED=5;//if fixed, name equals value.
   public static final int WRAPPED_STRING=6;//like string literals ignoring meta symbols.
   public static final int HEX=7;//hex value with length 6.(not supporting 8 for now)
@@ -14,16 +14,18 @@ public class Parameter implements Comparable<Parameter> {//this is used for form
   //identifiers
   public int type;//originally, are parameters are string.
   public String name;//name inside of command.
-  //range checking will be done in LineCommandProcesser.
+  public String[] variation;//variation for fixed commands.
+  //range checking will be done in LineCommandType.
   public boolean isEnd=false;//checks if this node is end of command.
   public Parameter(int type_, String name_) {
     type=type_;
     name=name_;
     children=new ArrayList<Parameter>();
   }
-  public Parameter(ParameterInfo info) {
+  public Parameter(ParamInfo info) {
     type=info.type;
     name=info.name;
+    if (info.variation != null) variation=info.variation;
     children=new ArrayList<Parameter>();
   }
   @Override
@@ -31,8 +33,8 @@ public class Parameter implements Comparable<Parameter> {//this is used for form
     if (other instanceof Parameter) {
       Parameter p=(Parameter)other;
       if (type == p.type && name.equals(p.name)) return true;
-    } else if (other instanceof ParameterInfo) {
-      ParameterInfo p=(ParameterInfo)other;
+    } else if (other instanceof ParamInfo) {
+      ParamInfo p=(ParamInfo)other;
       if (type == p.type && name.equals(p.name)) return true;
     }
     return false;

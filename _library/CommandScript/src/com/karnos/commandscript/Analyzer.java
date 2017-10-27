@@ -1,32 +1,62 @@
 package com.karnos.commandscript;
 import java.util.ArrayList;
 import java.util.LinkedList;
-public class Parser {//Analyzes specific Script and stores parsed commands.
-  public static boolean debug=true;
+public class Analyzer {//Analyzes specific Script and stores parsed commands.
+  public static boolean debug=false;
   public ArrayList<Command> lines;
   private Parameter commands;//root of commands
+  LineCommandType commandType;
   LineCommandProcesser processer;
+  LinkedList<LineChangeData> addList;
   public Multiset<LineError> errors;
   private LineError cacheError;
+  boolean recordError;
   String location="";
   char seperator=' ';
   char range='~';
   char wrapper='\"';
-  public Parser(LineCommandProcesser processer_) {
+  //these two vars are used in checking progress.
+  int total=0;
+  int progress=0;
+  public Analyzer(LineCommandType commandType_, LineCommandProcesser processer_) {
     errors=new Multiset<LineError>();
     cacheError=new LineError(LineError.PRIOR, 0, 0, 0, "", "");
-    processer=processer_;
-    commands=processer.commands;
-    seperator=processer.seperator;
-    range=processer.range;
-    wrapper=processer.wrapper;
+    commandType=commandType_;
+    commands=commandType.commands;
+    seperator=commandType.seperator;
+    range=commandType.range;
+    wrapper=commandType.wrapper;
     lines=new ArrayList<Command>();
+    addList=new LinkedList<LineChangeData>();
+    processer=processer_;
+    recordError=true;
   }
   public void clear() {
     processer.clear();
+    addList.clear();
+    lines.clear();
+    errors.clear();
+    total=0;
+    progress=0;
+  }
+  public void read() {//read the add list.
+    total=addList.size();
+    progress=0;
+    for (LineChangeData data : addList) {
+      analyzeLine(data.line, data.before, data.after);
+      progress++;
+    }
+    addList.clear();
+    total=0;
+    progress=0;
+    processer.onReadFinished();
   }
   public void readAll(ArrayList<String> lines) {
-    //ADD
+    clear();
+    for (int a=0; a < lines.size(); a++) {
+      add(a, null, lines.get(a));
+    }
+    read();
   }
   @Override
   public String toString() {
@@ -39,17 +69,25 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
     return builder.toString();
   }
   public void addError(LineError error) {
+    if (!recordError) return;
     errors.add(error);
   }
   public void removeErrors(int line) {
-    cacheError.line=line;
-    int index=errors.getBeforeIndex(cacheError) - 1;//because this returns after same values.
-    while (index >= 0 && index <= errors.size() && errors.get(index).line == line) {
-      errors.remove(index);
+    cacheError.line=line - 1;
+    for (int a=errors.getBeforeIndex(cacheError); a < errors.size() && errors.get(a).line == line; ) {
+      errors.remove(a);
     }
   }
-  public void add(int line, String before_, String after_) {
+  public void add(int line, String before, String after) {
+    addList.add(new LineChangeData(line, before, after));
+  }
+  public void analyzeLine(int line, String before_, String after_) {
+    if (before_ != null) {
+      removeErrors(line);
+    }
+    recordError=false;
     Command before=parse(line, location, before_);//make this to queue and thread...
+    recordError=true;
     Command after=parse(line, location, after_);//make this to queue and thread...
     assert before != null || after != null;
     if (before == null) {
@@ -63,10 +101,6 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
   }
   public Command parse(int line, String location_, String text) {
     if (text == null) return null;
-    cacheError.line=line - 1;
-    for (int a=errors.getBeforeIndex(cacheError); a < errors.size() && errors.get(a).line == line; ) {
-      errors.remove(a);
-    }
     ArrayList<String> params=new ArrayList<String>();
     ArrayList<Integer> paramsPoint=new ArrayList<Integer>();
     int a=0;
@@ -82,7 +116,7 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
           while (a >= text.length() || text.charAt(a) != wrapper) {
             if (a >= text.length()) {
               addError(new LineError(LineError.ERROR, line, wrapperChar, text.length(), location_, "unterminated wrapped string"));
-              return processer.getErrorCommand();
+              return commandType.getErrorCommand();
             }
             buffer.append(text.charAt(a));
             a++;
@@ -96,12 +130,12 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
       paramsPoint.add(a);
     }
     if (params.size() == 0) {
-      return processer.getEmptyCommand();//so search() not returns result "expected (first layer)...".
+      return commandType.getEmptyCommand();//so search() not returns result "expected (first layer)...".
     }
     LinkedList<Parameter> command=search(params, paramsPoint, line, location_, text);
     if (command == null) {
       //error added from search function!!
-      return processer.getErrorCommand();
+      return commandType.getErrorCommand();
     }
     StringBuilder key=new StringBuilder();
     int b=0;
@@ -110,17 +144,17 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
       if (b != command.size() - 1) key.append(seperator);
       b++;
     }
-    return processer.buildCommand(key.toString(), params);
+    return commandType.getCommand(this, key.toString(), params);
   }
-  private LinkedList<Parameter> search(ArrayList<String> tokens, ArrayList<Integer> tokensPoint, int line, String location_, String text) {//end 4 parameters are harming this generalization...
+  private LinkedList<Parameter> search(ArrayList<String> tokens, ArrayList<Integer> tokensPoint, int line, String location_, String text) {
+    //end 4 parameters are harming this generalization...
     //this range problem has to solve later!
-    //bfs to search!!
     ArrayList<LinkedList<Parameter>> command=new ArrayList<LinkedList<Parameter>>();//result of matches
     Multiset<Parameter> parents=new Multiset<Parameter>(new LinkedList<Parameter>());//queue.
     parents.add(commands);
     int count=1;
     int index=0;
-    while (index <= tokens.size()) {
+    while (index <= tokens.size()) {//bfs to search!
       count=parents.size();
       LinkedList<Parameter> parents_turn=new LinkedList<Parameter>();
       for (int a=0; a < count; a++) {
@@ -156,6 +190,16 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
               if (tokens.get(index).equals(next.name)) {
                 parents.add(next);
                 matches++;
+              } else {
+                if (next.variation != null) {
+                  for (String vari : next.variation) {
+                    if (tokens.get(index).equals(vari)) {
+                      parents.add(next);
+                      matches++;
+                      break;
+                    }
+                  }
+                }
               }
             } else if (next.type == Parameter.WRAPPED_STRING) {
               if (isWrappedString(tokens.get(index))) {
@@ -260,5 +304,15 @@ public class Parser {//Analyzes specific Script and stores parsed commands.
     if (isInt(str)) return Integer.parseInt(str);
     String[] ints=str.split("~");
     return Integer.parseInt(ints[1]);
+  }
+  static class LineChangeData {
+    int line;
+    String before;
+    String after;
+    public LineChangeData(int line_, String before_, String after_) {
+      line=line_;
+      before=before_;
+      after=after_;
+    }
   }
 }

@@ -4,35 +4,67 @@ import com.karnos.commandscript.*;
 import java.util.ArrayList;
 public class Test {
   public static void main(String[] args) {
+    //variations are only assigned once.
+    CommandType commandType=new CommandType();
+    //unipad led commands
+    //normal on
+    commandType.addCommand(new ParamInfo("on", Parameter.FIXED, "o"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("auto", Parameter.FIXED, "a"), new ParamInfo("vel", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("vel", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("html", Parameter.HEX), new ParamInfo("vel", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("html", Parameter.HEX));
+    //mc on
+    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("auto", Parameter.FIXED, "a"), new ParamInfo("vel", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("vel", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("html", Parameter.HEX), new ParamInfo("vel", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("html", Parameter.HEX));
+    //normal off
+    commandType.addCommand(new ParamInfo("off", Parameter.FIXED, "f"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE));
+    //delay
+    commandType.addCommand(new ParamInfo("delay", Parameter.FIXED, "d"), new ParamInfo("value", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("delay"), new ParamInfo("fraction", Parameter.STRING));
+    //bpm
+    commandType.addCommand(new ParamInfo("bpm", Parameter.FIXED, "b"), new ParamInfo("value", Parameter.FLOAT));
+    //chain
+    commandType.addCommand(new ParamInfo("chain", Parameter.FIXED, "c"), new ParamInfo("c", Parameter.INTEGER));
+    //mapping
+    commandType.addCommand(new ParamInfo("mapping", Parameter.FIXED, "m"), new ParamInfo("s"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("n", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("mapping"), new ParamInfo("l"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("n", Parameter.INTEGER));
     Processer processer=new Processer();
-    processer.addCommand(new ParameterInfo("a"), new ParameterInfo("Integer", "x"), new ParameterInfo("Integer", "y"));
-    processer.addCommand(new ParameterInfo("b"), new ParameterInfo("Integer", "x"), new ParameterInfo("Integer", "y"));
-    processer.addCommand(new ParameterInfo("a"), new ParameterInfo("String", "str1"), new ParameterInfo("String", "str2"));
-    processer.addCommand(new ParameterInfo("b"), new ParameterInfo("Integer", "x"), new ParameterInfo("String", "str1"));
-    Script script=new Script("test", processer);
-    //script.addLine("a 3 4");
-    //script.addLine("a 2 d");
-    script.addLine("b ew h");
-    script.addLine("b 7 d");
+    Script script=new Script("LedEditor", commandType, processer);
+    script.addLine("on 6 5 auto 2");
+    script.addLine("o 6 5 auto 2");
+    script.addLine("o 5 4 a 2");
+    script.addLine("on 2 3 1");
+    script.addLine("on mc 4 3");
+    script.addLine("on mc 2 auto 2");
+    script.addLine("on 1~3 3~6 auto 2");
+    script.addLine("o 4~5 2~6 4");
+    script.addLine("off 2 4");
+    script.addLine("f 2 4");
+    script.addLine("delay 5");
+    script.addLine("delay 2/3");
+    script.addLine("bpm 2.5");
+    script.addLine("chain 2");
+    script.addLine("m s 2 4 6");
+    script.addLine("o 2 2 2 2");
+    script.addLine("off 2 s");
     System.out.println("//===result===//");
-    System.out.println(script.toCommandString());
+    System.out.println(script.toString());
+    //System.out.println(script.toCommandString());
     for (LineError e : script.getErrors()) {
       System.out.println(e.toString());
     }
   }
 }
-class Processer extends LineCommandProcesser {
+class CommandType extends LineCommandType {
   @Override
-  public Command buildCommand(String commandName, ArrayList<String> params) {
+  public Command getCommand(Analyzer analyzer, String commandName, ArrayList<String> params) {
     System.out.println("[result] " + commandName);
     if (commandName.equals("a x y")) {
-      return new TestCommand("a", Integer.parseInt(params.get(1)), Integer.parseInt(params.get(2)));
-    } else if (commandName.equals("b x y")) {
-      return new TestCommand("b", Integer.parseInt(params.get(1)), Integer.parseInt(params.get(2)));
-    } else if (commandName.equals("a str1 str2")) {
-      return new TestCommand2(params.get(1), params.get(2));
+      return getEmptyCommand();
     }
-    return getErrorCommand();
+    return getEmptyCommand();
+    //return getErrorCommand();
   }
   @Override
   public Command getErrorCommand() {
@@ -42,6 +74,8 @@ class Processer extends LineCommandProcesser {
   public Command getEmptyCommand() {
     return new EmptyCommand();
   }
+}
+class Processer extends LineCommandProcesser {
   @Override
   public void processCommand(int line, Command before, Command after) {
     //if (before == null) System.out.println("[out] " + line + " added " + after.toString());
@@ -49,41 +83,11 @@ class Processer extends LineCommandProcesser {
     //else System.out.println("[out] " + line + " changed from " + before.toString() + " to " + after.toString());
   }
   @Override
+  public void onReadFinished() {
+    //set title progress to 0 etc...
+  }
+  @Override
   public void clear() {
-  }
-}
-class TestCommand implements Command {
-  String type;
-  int param1;
-  int param2;
-  public TestCommand(String type_, int param1_, int param2_) {
-    type=type_;
-    param1=param1_;
-    param2=param2_;
-  }
-  @Override
-  public String toString() {
-    return param1 + " " + param2;
-  }
-  @Override
-  public void execute(int time) {
-    System.out.println("command excuted!");
-  }
-}
-class TestCommand2 implements Command {
-  String param1;
-  String param2;
-  public TestCommand2(String param1_, String param2_) {
-    param1=param1_;
-    param2=param2_;
-  }
-  @Override
-  public String toString() {
-    return param1 + " " + param2;
-  }
-  @Override
-  public void execute(int time) {
-    System.out.println("command2 excuted!");
   }
 }
 class ErrorCommand implements Command {
