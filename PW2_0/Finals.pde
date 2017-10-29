@@ -8,8 +8,9 @@ static final int DEFAULT=0;
 
 static final int AUTOINPUT=1;
 static final int MANUALINPUT=2;
-static final int RIGHTOFFMODE=4;
-static final int CYXMODE=3;
+static final int RIGHTOFFMODE=3;
+//CYXMODE will replaced to "select commandSet" per tab.
+//ignoreMc will replaced to that too.
 
 static final int I_SAVE=1;
 static final int I_UNDO=2;
