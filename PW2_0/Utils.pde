@@ -25,7 +25,7 @@ public static boolean isInt(String str) {
 public boolean isRange(String str) {
   if (isInt(str))return true;
   String[] ints=split(str, "~");
-  return isInt(ints[0])&&isInt(ints[1]);
+  return ints.length==2&&isInt(ints[0])&&isInt(ints[1]);
 }
 public int getRangeFirst(String str) {
   if (isInt(str))return int(str);
@@ -36,6 +36,10 @@ public int getRangeSecond(String str) {
   if (isInt(str))return int(str);
   String[] ints=split(str, "~");
   return int(ints[1]);
+}
+public boolean isFraction(String str) {
+  String[] ints=split(str, "/");
+  return ints.length==2&&isInt(ints[0])&&isInt(ints[1]);
 }
 public static boolean isNumber(String str) {
   if (str.equals(""))return false;
@@ -230,7 +234,7 @@ public final class TextTransfer implements ClipboardOwner {//http://stackoverflo
 int inverseK(color c) {
   return kData.get(c);
 }
-HashMap<Integer, Integer> kData=new HashMap<Integer, Integer>();
+HashMap<Integer, Integer> kData=new HashMap<Integer, Integer>(100);
 void setInverseK() {
   for (int a=0; a<k.length; a++) {
     kData.put(k[a], a);

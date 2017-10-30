@@ -1,6 +1,7 @@
 static final long SAMPLEWAV_MAX_SIZE=(long)1024*1024*200;
 static final int SAMPLE_RATE=44100;
 static final int PAD_MAX=200;
+static final int LINE_MAX_LENGTH=200;
 static final color OFFCOLOR=0;
 static final color RNDCOLOR=2;
 static final float DEFAULT_BPM=120; 

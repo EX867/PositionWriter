@@ -58,7 +58,7 @@ public class Test {
 }
 class CommandType extends LineCommandType {
   @Override
-  public Command getCommand(Analyzer analyzer, String commandName, ArrayList<String> params) {
+  public Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
     System.out.println("[result] " + commandName);
     if (commandName.equals("a x y")) {
       return getEmptyCommand();

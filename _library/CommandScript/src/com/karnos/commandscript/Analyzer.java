@@ -84,6 +84,15 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
   public void analyzeLine(int line, String before_, String after_) {
     if (before_ != null) {
       removeErrors(line);
+      if (after_ == null) {
+        for (int index=errors.getBeforeIndex(cacheError); index < errors.size(); index++) {
+          errors.get(index).line-=1;
+        }
+      }
+    } else {
+      for (int index=errors.getBeforeIndex(cacheError); index < errors.size(); index++) {
+        errors.get(index).line+=1;
+      }
     }
     recordError=false;
     Command before=parse(line, location, before_);//make this to queue and thread...
@@ -101,6 +110,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
   }
   public Command parse(int line, String location_, String text) {
     if (text == null) return null;
+    text=text.split("//")[0];//remove comments
     ArrayList<String> params=new ArrayList<String>();
     ArrayList<Integer> paramsPoint=new ArrayList<Integer>();
     int a=0;
@@ -144,7 +154,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
       if (b != command.size() - 1) key.append(seperator);
       b++;
     }
-    return commandType.getCommand(this, key.toString(), params);
+    return commandType.getCommand(this, line, location_, text, key.toString(), params);
   }
   private LinkedList<Parameter> search(ArrayList<String> tokens, ArrayList<Integer> tokensPoint, int line, String location_, String text) {
     //end 4 parameters are harming this generalization...
@@ -281,7 +291,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
   public static boolean isRange(String str) {
     if (isInt(str)) return true;
     String[] ints=str.split("~");
-    return isInt(ints[0]) && isInt(ints[1]);
+    return ints.length==2&&isInt(ints[0]) && isInt(ints[1]);
   }
   public static boolean isHex(String in) {
     if (in.length() != 6) return false;

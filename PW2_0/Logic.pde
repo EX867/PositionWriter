@@ -32,7 +32,6 @@ PadButton keyLedPad;
 PadButton keySoundPad;
 SkinEditView skinEditor;
 
-int currentLedFrame=0;
 int currentLedTime=0;
 int ksChain=0;
 int ksX=0;
@@ -500,17 +499,10 @@ synchronized void L_ResizeData(int Chain_, int ButtonX_, int ButtonY_) {//ADD KS
   setStatusR("resized to "+Chain+":("+ButtonX+", "+ButtonY+")");
 }
 void updateFrameSlider() {
-  int a=1;
-  DelayValue.clear();
-  while (a<DelayPoint.size()) {
-    // print("delay line : "+DelayPoint.get(a)+" ");
-    DelayValue.add(analyzer.getDelayValue(DelayPoint.get(a)));
-    a=a+1;
-  }
-  a=0;
+  int a=0;
   frameSlider.maxI=0;
   while (a<DelayValue.size()) {
-    frameSlider.maxI+=DelayValue.get(a);
+    frameSlider.maxI+=analyzer.getDelayValue(DelayPoint.get(a+1));
     a=a+1;
   }
   frameSlider.adjust(min(frameSlider.maxI, max(frameSlider.minI, frameSlider.valueI)));
@@ -568,31 +560,6 @@ void autoRun() {
     }
     if (ksautorun_render)UI[getUIid("KEYSOUND_PAD")].render();
   }
-} 
-void setFrameByTime() {
-  currentLedFrame=0;
-  int a=0;
-  int sum=0;
-  while (a<DelayValue.size()) {
-    sum=sum+DelayValue.get(a);
-    if (currentLedTime<sum) {
-      break;
-    }
-    currentLedFrame++;
-    a=a+1;
-  }
-  frameSlider.adjust(currentLedTime);
-  timeLabel.text=currentLedTime+"/"+frameSlider.maxI;
-}
-void setTimeByFrame() {
-  currentLedTime=0;
-  int a=1;
-  while (a<=currentLedFrame) {//warning! this can be incorrect
-    currentLedTime+=analyzer.getDelayValue(DelayPoint.get(a));
-    a=a+1;
-  }
-  timeLabel.text=currentLedTime+"/"+frameSlider.maxI;
-  frameSlider.adjust(currentLedTime);
 }
 void autoRunReset() {
   autorun_paused=false;
@@ -617,18 +584,4 @@ void autoRunRewind() {
   } else {
     currentLedTime=(int)frameSliderLoop.valueS;
   }
-}
-int getFrameByTime(int time) {
-  int sum=0;
-  int a=0;
-  int frame=0;
-  while (a<DelayValue.size()) {
-    sum=sum+DelayValue.get(a);
-    if (time<sum) {
-      break;
-    }
-    frame++;
-    a=a+1;
-  }
-  return frame;
 }

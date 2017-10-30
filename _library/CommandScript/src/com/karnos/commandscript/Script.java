@@ -44,8 +44,11 @@ public class Script {
   public String toCommandString() {
     return analyzer.toString();
   }
-  public ArrayList<String> raw() {
+  public ArrayList<String> getRaw() {
     return l;
+  }
+  public void setRaw(ArrayList<String> l_) {
+    l=l_;
   }
   public boolean empty() {
     if (l.size() == 0) return true;

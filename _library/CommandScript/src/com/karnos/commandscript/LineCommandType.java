@@ -8,7 +8,7 @@ public abstract class LineCommandType {//processes commands.determinates analyze
   public LineCommandType() {
     commands=new Parameter(Parameter.STRING, "");//root not included in commands!!
   }
-  public abstract Command getCommand(Analyzer analyzer,String commandName, ArrayList<String> params);
+  public abstract Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params);
   public abstract Command getErrorCommand();
   public abstract Command getEmptyCommand();
   public void addCommand(ParamInfo... params) {//set seperator first. ex)on y(integer) x(integer) auto vel(integer) you not have to  write fixed explicitly.

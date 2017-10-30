@@ -621,7 +621,7 @@ class McConverter {
     return new Pos(-1, 0, false);//ignore
   }
 
-  boolean isAbsolutePath(String path) {
+  boolean isAbsolutePath(String path) {//warning!!
     if (path.contains(":"))return true;
     else return false;
   }
