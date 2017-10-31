@@ -196,6 +196,26 @@ public static int HSBtoRGB(float hue, float saturation, float brightness) {
   }
   return 0xff000000 | (r << 16) | (g << 8) | (b << 0);
 }
+class IntVector2 {
+  int x;
+  int y;
+  IntVector2() {
+    x=0;
+    y=0;
+  }
+  IntVector2(int x_, int y_) {
+    x=x_;
+    y=y_;
+  }
+  boolean equals(IntVector2 other) {
+    if (other.x==x&&other.y==y)return true;
+    return false;
+  }
+  boolean equals(int x_, int y_) {
+    if (x_==x&&y_==y)return true;
+    return false;
+  }
+}
 TextTransfer textTransfer;
 public final class TextTransfer implements ClipboardOwner {//http://stackoverflow.com/questions/6376975/how-to-paste-from-system-clipboard-content-to-an-arbitrary-window-using-java
   @Override public void lostOwnership(Clipboard aClipboard, Transferable aContents) {
@@ -241,149 +261,149 @@ void setInverseK() {
   }
 }
 color [] k=new color[]{
-  #000000, 
-  #bdbdbd, 
-  #eeeeee, 
-  #fafafa, //3
-  #f8bbd0, 
-  #ef5350, //5
-  #e57373, 
-  #ef9a9a, 
+  #00000000, 
+  #ffbdbdbd, 
+  #ffeeeeee, 
+  #fffafafa, //3
+  #fff8bbd0, 
+  #ffef5350, //5
+  #ffe57373, 
+  #ffef9a9a, 
 
-  #fff3e0, 
-  #ffa726, 
-  #ffb960, //10
-  #ffcc80, 
-  #ffe0b2, 
-  #ffee58, 
-  #fff59d, 
-  #fff9c4, 
+  #fffff3e0, 
+  #ffffa726, 
+  #ffffb960, //10
+  #ffffcc80, 
+  #ffffe0b2, 
+  #ffffee58, 
+  #fffff59d, 
+  #fffff9c4, 
 
-  #dcedc8, 
-  #8bc34a, //17
-  #aed581, 
-  #bfdf9f, 
-  #5ee2b0, 
-  #00ce3c, 
-  #00ba43, 
-  #119c3f, 
+  #ffdcedc8, 
+  #ff8bc34a, //17
+  #ffaed581, 
+  #ffbfdf9f, 
+  #ff5ee2b0, 
+  #ff00ce3c, 
+  #ff00ba43, 
+  #ff119c3f, 
 
-  #57ecc1, 
-  #00e864, 
-  #00e05c, 
-  #00d545, 
-  #7afddd, 
-  #00e4c5, 
-  #00e0b2, 
-  #01eec6, 
+  #ff57ecc1, 
+  #ff00e864, 
+  #ff00e05c, 
+  #ff00d545, 
+  #ff7afddd, 
+  #ff00e4c5, 
+  #ff00e0b2, 
+  #ff01eec6, 
 
-  #49efef, 
-  #00e7d8, 
-  #00e5d1, 
-  #01efde, 
-  #6addff, 
-  #00dafe, 
-  #01d6ff, 
-  #08acdc, 
+  #ff49efef, 
+  #ff00e7d8, 
+  #ff00e5d1, 
+  #ff01efde, 
+  #ff6addff, 
+  #ff00dafe, 
+  #ff01d6ff, 
+  #ff08acdc, 
 
-  #73cefe, 
-  #0d9bf7, 
-  #148de4, 
-  #2a77c9, 
-  #8693ff, 
-  #2196f3, //45
-  #4668f6, 
-  #4153dc, 
+  #ff73cefe, 
+  #ff0d9bf7, 
+  #ff148de4, 
+  #ff2a77c9, 
+  #ff8693ff, 
+  #ff2196f3, //45
+  #ff4668f6, 
+  #ff4153dc, 
 
-  #b095ff, 
-  #8453fd, 
-  #634acd, 
-  #5749c5, 
-  #ffb7ff, 
-  #e863fb, 
-  #d655ed, 
-  #d14fe9, 
+  #ffb095ff, 
+  #ff8453fd, 
+  #ff634acd, 
+  #ff5749c5, 
+  #ffffb7ff, 
+  #ffe863fb, 
+  #ffd655ed, 
+  #ffd14fe9, 
 
-  #fc99e3, 
-  #e736c2, 
-  #e52fbe, 
-  #e334b6, 
-  #ed353e, 
-  #ffa726, //61
-  #f4df0b, 
-  #66bb6a, 
+  #fffc99e3, 
+  #ffe736c2, 
+  #ffe52fbe, 
+  #ffe334b6, 
+  #ffed353e, 
+  #ffffa726, //61
+  #fff4df0b, 
+  #ff66bb6a, 
 
-  #5cd100, //64
-  #00d29e, 
-  #2388ff, 
-  #3669fd, 
-  #00b4d0, 
-  #475cdc, 
-  #b2bbcd, 
-  #95a0b2, 
+  #ff5cd100, //64
+  #ff00d29e, 
+  #ff2388ff, 
+  #ff3669fd, 
+  #ff00b4d0, 
+  #ff475cdc, 
+  #ffb2bbcd, 
+  #ff95a0b2, 
 
-  #f72737, 
-  #d2ea7b, 
-  #c8df10, 
-  #7fe422, 
-  #00c931, 
-  #00d7a6, 
-  #00d8fc, 
-  #0b9bfc, 
+  #fff72737, 
+  #ffd2ea7b, 
+  #ffc8df10, 
+  #ff7fe422, 
+  #ff00c931, 
+  #ff00d7a6, 
+  #ff00d8fc, 
+  #ff0b9bfc, 
 
-  #585cf5, 
-  #ac59f0, 
-  #d980dc, 
-  #b8814a, 
-  #ff9800, 
-  #abdf22, 
-  #9ee154, 
-  #66bb6a, //87
+  #ff585cf5, 
+  #ffac59f0, 
+  #ffd980dc, 
+  #ffb8814a, 
+  #ffff9800, 
+  #ffabdf22, 
+  #ff9ee154, 
+  #ff66bb6a, //87
 
-  #3bda47, 
-  #6fdeb9, 
-  #27dbda, 
-  #9cc8fd, 
-  #79b8f7, 
-  #afafef, 
-  #d580eb, 
-  #f74fca, 
+  #ff3bda47, 
+  #ff6fdeb9, 
+  #ff27dbda, 
+  #ff9cc8fd, 
+  #ff79b8f7, 
+  #ffafafef, 
+  #ffd580eb, 
+  #fff74fca, 
 
-  #ea8a1f, 
-  #dbdb08, 
-  #9cd60d, 
-  #f3d335, 
-  #c8af41, 
-  #00ca69, 
-  #24d2b0, 
-  #757ebe, 
+  #ffea8a1f, 
+  #ffdbdb08, 
+  #ff9cd60d, 
+  #fff3d335, 
+  #ffc8af41, 
+  #ff00ca69, 
+  #ff24d2b0, 
+  #ff757ebe, 
 
-  #5388db, 
-  #e5c5a6, 
-  #e93b3b, 
-  #f9a2a1, 
-  #ed9c65, 
-  #e1ca72, 
-  #b8da78, 
-  #98d52c, 
+  #ff5388db, 
+  #ffe5c5a6, 
+  #ffe93b3b, 
+  #fff9a2a1, 
+  #ffed9c65, 
+  #ffe1ca72, 
+  #ffb8da78, 
+  #ff98d52c, 
 
-  #626cbd, 
-  #cac8a0, 
-  #90d4c2, 
-  #ceddfe, 
-  #beccf7, 
-  #a3b1be, 
-  #b8c0d2, 
-  #d2e2f8, 
+  #ff626cbd, 
+  #ffcac8a0, 
+  #ff90d4c2, 
+  #ffceddfe, 
+  #ffbeccf7, 
+  #ffa3b1be, 
+  #ffb8c0d2, 
+  #ffd2e2f8, 
 
-  #fe1624, 
-  #cd2724, 
-  #9ccc65, //122
-  #009c1b, 
-  #ffff00, //124
-  #beb212, 
-  #f5d01d, //126
-  #e37829, 
+  #fffe1624, 
+  #ffcd2724, 
+  #ff9ccc65, //122
+  #ff009c1b, 
+  #ffffff00, //124
+  #ffbeb212, 
+  #fff5d01d, //126
+  #ffe37829, 
 };
 void drawIndicator(float x, float y, float w, float h, int thick) {
   noFill();
@@ -468,20 +488,6 @@ boolean isValidPackageName(String content) {
   }
   return true;
 }
-synchronized String toUnipadString(ArrayList<String> l) {
-  if (l.size()==0)return "";
-  ArrayList<String> al=analyzer.toUnipadLed(l);
-  StringBuilder builder = new StringBuilder();
-  builder.append(al.get(0));
-  int a=1;
-  while (a<al.size()) {
-    builder.append("\n").append(al.get(a));
-    a=a+1;
-  }
-  return builder.toString();
-}
-//
-
 //
 void displayLogError(String content) {
   Logger logger=(Logger)UI[getUIidRev("ERROR_LOG")];

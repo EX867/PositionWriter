@@ -4,7 +4,7 @@ PFont fontBold;
 boolean DEBUG=true;
 boolean DEVELOPER_BUILD=false;//detect with processing.exe
 String DEVELOPER_PATH="";//changed to use processing's dataPath(""). sometimes this doesn't works...there are some problems...
-String startText="// === PW 2.0 === //";
+String pw_startText="// === PW 2.0 === //";
 void detectProcessing() {
   File file=new File("");
   println("detectProcessing : "+file.getAbsolutePath());

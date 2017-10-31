@@ -625,17 +625,17 @@ void mouseWheel_main(MouseEvent e) {
 }
 void cursorLeft() {
   if (UI[focus].Type==TYPE_TEXTBOX)((TextBox)UI[focus]).cursorLeft();
-  else if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorLeft();
+  else if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorLeft(ctrlPressed,shiftPressed);
 }
 void cursorRight() {
   if (UI[focus].Type==TYPE_TEXTBOX)((TextBox)UI[focus]).cursorRight();
-  else if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorRight();
+  else if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorRight(ctrlPressed,shiftPressed);
 }
 void cursorUp() {
-  if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorUp();
+  if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorUp(ctrlPressed,shiftPressed);
 }
 void cursorDown() {
-  if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorDown();
+  if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorDown(ctrlPressed,shiftPressed);
 }
 boolean isMouseOn(float x, float y, float w, float h) {//RADIUS
   if (x-w<MouseX&&MouseX<x+w&&y-h<MouseY&&MouseY<y+h)return true;

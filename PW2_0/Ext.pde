@@ -116,6 +116,7 @@ void loadPaths(String customPath) {
   if (Data==null)MidiPath="Midi";
   else MidiPath=Data.getContent().replace("?", username);
 }
+boolean loadKeySoundFlag=false;//true if loading
 void External_setup() {
   //load path data
   //String AppdataLocal=joinPath(getAppData(),"PositionWriter/Local/path.txt");
@@ -182,7 +183,17 @@ void External_setup() {
               ((TextEditor)UI[textfieldId]).setText(analyzer.ImageToLed(image));
               frameSlider.skip=false;
               registerRender();
-            } else analyzer.loadKeyLedGlobal(filename);
+            } else {
+              if (de.file().isFile()) {
+                String text=readFile(filename).replace("\r\n", "\n").replace("\r", "\n");
+                keyled_textEditor.loadText(filename, text);
+                registerRender();
+              } else if (file.isDirectory()) {
+                throw new Exception("ignore");
+              } else {
+                throw new Exception("file not exists : "+filename);
+              }
+            }
             title_filename=filename;
             title_edited="";
             loadedOnce_led=true;

@@ -11,7 +11,7 @@ String TempPath="";//GlobalPath+(Temp)
 String ExternalPath="";//GlobalPath+(External)
 String MidiPath="";//GlobalPath+(Midi)
 //
-int ButtonX=8;
+int ButtonX=8;//global value!!!
 int ButtonY=8;
 int Chain=8;
 float Bpm=DEFAULT_BPM;
@@ -32,7 +32,6 @@ PadButton keyLedPad;
 PadButton keySoundPad;
 SkinEditView skinEditor;
 
-int currentLedTime=0;
 int ksChain=0;
 int ksX=0;
 int ksY=0;
@@ -55,26 +54,6 @@ ArrayList<Integer> ksLoadedSamplesCount=new ArrayList<Integer>();
 AudioContext ksac=new AudioContext();
 ArrayList<KsButton> ledstack=new ArrayList<KsButton>();//really, this is not a stack. it works more like queue, but I can't rename this!!
 boolean ksautorun_render=false;
-class IntVector2 {
-  int x;
-  int y;
-  IntVector2() {
-    x=0;
-    y=0;
-  }
-  IntVector2(int x_, int y_) {
-    x=x_;
-    y=y_;
-  }
-  boolean equals(IntVector2 other) {
-    if (other.x==x&&other.y==y)return true;
-    return false;
-  }
-  boolean equals(int x_, int y_) {
-    if (x_==x&&y_==y)return true;
-    return false;
-  }
-}
 ArrayList<IntVector2> CurrentNoteOn=new ArrayList<IntVector2>();
 //temp save variables
 boolean soundLoopEdit=true;//keysound loop edit

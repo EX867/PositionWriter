@@ -1,6 +1,6 @@
 String ToUnipadLed(Script script) {
   StringBuilder builder=new StringBuilder();
-  float bpmv=120;
+  float bpm=120;
   boolean[][] first=new boolean[ButtonX][ButtonY];
   for (int a=0; a<ButtonX; a++) {
     for (int b=0; b<ButtonY; b++) {
@@ -10,22 +10,29 @@ String ToUnipadLed(Script script) {
   script.readAll();
   ArrayList<Command> commands=script.getCommands();
   for (Command cmd : commands) {
-    UnipackCommand info=(UnipackCommand)cmd;
-    if (info instanceof OnCommand) {
-      OnCommand info2=(OnCommand)info;
-      first[info2.x-1][info2.y-1]=false;
-    } else if (info instanceof OffCommand) {
-      OffCommand info2=(OffCommand)info;
-      for (int b=info2.y1; b<=info2.y2; b++) {
-        for (int a=info2.x1; a<=info2.x2; a++) {
-          if (first[a-1][b-1]) {
-            builder.append("o "+b+" "+a+" auto 0\n");
+    if (cmd instanceof UnipackCommand) {
+      UnipackCommand info=(UnipackCommand)cmd;
+      if (info instanceof OnCommand) {
+        OnCommand info2=(OnCommand)info;
+        first[info2.x-1][info2.y-1]=false;
+      } else if (info instanceof OffCommand) {
+        OffCommand info2=(OffCommand)info;
+        for (int b=info2.y1; b<=info2.y2; b++) {
+          for (int a=info2.x1; a<=info2.x2; a++) {
+            if (first[a-1][b-1]) {
+              builder.append("o "+b+" "+a+" auto 0\n");
+            }
           }
         }
+        first[info2.x-1][info2.y-1]=false;
+      } else if (info instanceof BpmCommand) {
+        bpm=((BpmCommand)info).value;
       }
-      first[info2.x-1][info2.y-1]=false;
+      if (info instanceof DelayCommand) {
+        builder.append(((DelayCommand)info).toUnipadString(bpm)).append('\n');//includes multi line
+      }else if (info instanceof ChainCommand) {
+      } else builder.append(info.toUnipadString()).append('\n');//includes multi line
     }
-    builder.append(info.toUnipadString()).append('\n');//includes multi line
   }
   return builder.toString();
 }
