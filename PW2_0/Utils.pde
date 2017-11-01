@@ -261,149 +261,149 @@ void setInverseK() {
   }
 }
 color [] k=new color[]{
-  #00000000, 
-  #ffbdbdbd, 
-  #ffeeeeee, 
-  #fffafafa, //3
-  #fff8bbd0, 
-  #ffef5350, //5
-  #ffe57373, 
-  #ffef9a9a, 
+  0x00000000, 
+  0xffbdbdbd, 
+  0xffeeeeee, 
+  0xfffafafa, //3
+  0xfff8bbd0, 
+  0xffef5350, //5
+  0xffe57373, 
+  0xffef9a9a, 
 
-  #fffff3e0, 
-  #ffffa726, 
-  #ffffb960, //10
-  #ffffcc80, 
-  #ffffe0b2, 
-  #ffffee58, 
-  #fffff59d, 
-  #fffff9c4, 
+  0xfffff3e0, 
+  0xffffa726, 
+  0xffffb960, //10
+  0xffffcc80, 
+  0xffffe0b2, 
+  0xffffee58, 
+  0xfffff59d, 
+  0xfffff9c4, 
 
-  #ffdcedc8, 
-  #ff8bc34a, //17
-  #ffaed581, 
-  #ffbfdf9f, 
-  #ff5ee2b0, 
-  #ff00ce3c, 
-  #ff00ba43, 
-  #ff119c3f, 
+  0xffdcedc8, 
+  0xff8bc34a, //17
+  0xffaed581, 
+  0xffbfdf9f, 
+  0xff5ee2b0, 
+  0xff00ce3c, 
+  0xff00ba43, 
+  0xff119c3f, 
 
-  #ff57ecc1, 
-  #ff00e864, 
-  #ff00e05c, 
-  #ff00d545, 
-  #ff7afddd, 
-  #ff00e4c5, 
-  #ff00e0b2, 
-  #ff01eec6, 
+  0xff57ecc1, 
+  0xff00e864, 
+  0xff00e05c, 
+  0xff00d545, 
+  0xff7afddd, 
+  0xff00e4c5, 
+  0xff00e0b2, 
+  0xff01eec6, 
 
-  #ff49efef, 
-  #ff00e7d8, 
-  #ff00e5d1, 
-  #ff01efde, 
-  #ff6addff, 
-  #ff00dafe, 
-  #ff01d6ff, 
-  #ff08acdc, 
+  0xff49efef, 
+  0xff00e7d8, 
+  0xff00e5d1, 
+  0xff01efde, 
+  0xff6addff, 
+  0xff00dafe, 
+  0xff01d6ff, 
+  0xff08acdc, 
 
-  #ff73cefe, 
-  #ff0d9bf7, 
-  #ff148de4, 
-  #ff2a77c9, 
-  #ff8693ff, 
-  #ff2196f3, //45
-  #ff4668f6, 
-  #ff4153dc, 
+  0xff73cefe, 
+  0xff0d9bf7, 
+  0xff148de4, 
+  0xff2a77c9, 
+  0xff8693ff, 
+  0xff2196f3, //45
+  0xff4668f6, 
+  0xff4153dc, 
 
-  #ffb095ff, 
-  #ff8453fd, 
-  #ff634acd, 
-  #ff5749c5, 
-  #ffffb7ff, 
-  #ffe863fb, 
-  #ffd655ed, 
-  #ffd14fe9, 
+  0xffb095ff, 
+  0xff8453fd, 
+  0xff634acd, 
+  0xff5749c5, 
+  0xffffb7ff, 
+  0xffe863fb, 
+  0xffd655ed, 
+  0xffd14fe9, 
 
-  #fffc99e3, 
-  #ffe736c2, 
-  #ffe52fbe, 
-  #ffe334b6, 
-  #ffed353e, 
-  #ffffa726, //61
-  #fff4df0b, 
-  #ff66bb6a, 
+  0xfffc99e3, 
+  0xffe736c2, 
+  0xffe52fbe, 
+  0xffe334b6, 
+  0xffed353e, 
+  0xffffa726, //61
+  0xfff4df0b, 
+  0xff66bb6a, 
 
-  #ff5cd100, //64
-  #ff00d29e, 
-  #ff2388ff, 
-  #ff3669fd, 
-  #ff00b4d0, 
-  #ff475cdc, 
-  #ffb2bbcd, 
-  #ff95a0b2, 
+  0xff5cd100, //64
+  0xff00d29e, 
+  0xff2388ff, 
+  0xff3669fd, 
+  0xff00b4d0, 
+  0xff475cdc, 
+  0xffb2bbcd, 
+  0xff95a0b2, 
 
-  #fff72737, 
-  #ffd2ea7b, 
-  #ffc8df10, 
-  #ff7fe422, 
-  #ff00c931, 
-  #ff00d7a6, 
-  #ff00d8fc, 
-  #ff0b9bfc, 
+  0xfff72737, 
+  0xffd2ea7b, 
+  0xffc8df10, 
+  0xff7fe422, 
+  0xff00c931, 
+  0xff00d7a6, 
+  0xff00d8fc, 
+  0xff0b9bfc, 
 
-  #ff585cf5, 
-  #ffac59f0, 
-  #ffd980dc, 
-  #ffb8814a, 
-  #ffff9800, 
-  #ffabdf22, 
-  #ff9ee154, 
-  #ff66bb6a, //87
+  0xff585cf5, 
+  0xffac59f0, 
+  0xffd980dc, 
+  0xffb8814a, 
+  0xffff9800, 
+  0xffabdf22, 
+  0xff9ee154, 
+  0xff66bb6a, //87
 
-  #ff3bda47, 
-  #ff6fdeb9, 
-  #ff27dbda, 
-  #ff9cc8fd, 
-  #ff79b8f7, 
-  #ffafafef, 
-  #ffd580eb, 
-  #fff74fca, 
+  0xff3bda47, 
+  0xff6fdeb9, 
+  0xff27dbda, 
+  0xff9cc8fd, 
+  0xff79b8f7, 
+  0xffafafef, 
+  0xffd580eb, 
+  0xfff74fca, 
 
-  #ffea8a1f, 
-  #ffdbdb08, 
-  #ff9cd60d, 
-  #fff3d335, 
-  #ffc8af41, 
-  #ff00ca69, 
-  #ff24d2b0, 
-  #ff757ebe, 
+  0xffea8a1f, 
+  0xffdbdb08, 
+  0xff9cd60d, 
+  0xfff3d335, 
+  0xffc8af41, 
+  0xff00ca69, 
+  0xff24d2b0, 
+  0xff757ebe, 
 
-  #ff5388db, 
-  #ffe5c5a6, 
-  #ffe93b3b, 
-  #fff9a2a1, 
-  #ffed9c65, 
-  #ffe1ca72, 
-  #ffb8da78, 
-  #ff98d52c, 
+  0xff5388db, 
+  0xffe5c5a6, 
+  0xffe93b3b, 
+  0xfff9a2a1, 
+  0xffed9c65, 
+  0xffe1ca72, 
+  0xffb8da78, 
+  0xff98d52c, 
 
-  #ff626cbd, 
-  #ffcac8a0, 
-  #ff90d4c2, 
-  #ffceddfe, 
-  #ffbeccf7, 
-  #ffa3b1be, 
-  #ffb8c0d2, 
-  #ffd2e2f8, 
+  0xff626cbd, 
+  0xffcac8a0, 
+  0xff90d4c2, 
+  0xffceddfe, 
+  0xffbeccf7, 
+  0xffa3b1be, 
+  0xffb8c0d2, 
+  0xffd2e2f8, 
 
-  #fffe1624, 
-  #ffcd2724, 
-  #ff9ccc65, //122
-  #ff009c1b, 
-  #ffffff00, //124
-  #ffbeb212, 
-  #fff5d01d, //126
-  #ffe37829, 
+  0xfffe1624, 
+  0xffcd2724, 
+  0xff9ccc65, //122
+  0xff009c1b, 
+  0xffffff00, //124
+  0xffbeb212, 
+  0xfff5d01d, //126
+  0xffe37829, 
 };
 void drawIndicator(float x, float y, float w, float h, int thick) {
   noFill();
@@ -436,16 +436,16 @@ void writeDisplay(String text) {
 synchronized void writeDisplay(String text, boolean async) {
   int line=Lines.lines()-1;
   if (InFrameInput) {
-    if (currentLedFrame!=DelayPoint.size()-1)line=DelayPoint.get(currentLedFrame+1)-1;
+    if (keyled_textEditor.current.processer.displayFrame!=DelayPoint.size()-1)line=DelayPoint.get(keyled_textEditor.current.processer.displayFrame+1)-1;
     if (line==-1) {
       line=0;
     }
   }
-  ((TextEditor)UI[textfieldId]).insert(Lines.getLine(line).length(), line, text);
+  keyled_textEditor.insert(Lines.getLine(line).length(), line, text);
   RecordLog();
-  if (UI[textfieldId].disabled==false) {
-    if (async)UI[textfieldId].registerRender=true;
-    else UI[textfieldId].render();
+  if (keyled_textEditor.disabled==false) {
+    if (async)keyled_textEditor.registerRender=true;
+    else keyled_textEditor.render();
   }
 }
 void writeDisplayLine(String text) {
@@ -454,22 +454,22 @@ void writeDisplayLine(String text) {
 void writeDisplayLine(String text, boolean async) {
   int line=Lines.lines();
   if (InFrameInput) {
-    if (currentLedFrame!=DelayPoint.size()-1)line=DelayPoint.get(currentLedFrame+1);
+    if (keyled_textEditor.current.processer.displayFrame!=DelayPoint.size()-1)line=DelayPoint.get(keyled_textEditor.current.processer.displayFrame+1);
   }
-  ((TextEditor)UI[textfieldId]).addLine(line, text);
+  keyled_textEditor.addLine(line, text);
   RecordLog();
-  if (UI[textfieldId].disabled==false) {
-    if (async)UI[textfieldId].registerRender=true;
-    else UI[textfieldId].render();
+  if (keyled_textEditor.disabled==false) {
+    if (async)keyled_textEditor.registerRender=true;
+    else keyled_textEditor.render();
   }
 }
 void UndoLog() {
   Lines.undo();
-  if (UI[textfieldId].disabled==false)UI[textfieldId].render();
+  if (keyled_textEditor.disabled==false)keyled_textEditor.render();
 }
 void RedoLog() {//Lines!
   Lines.redo();
-  if (UI[textfieldId].disabled==false)UI[textfieldId].render();
+  if (keyled_textEditor.disabled==false)keyled_textEditor.render();
 }
 
 //===================================================================
@@ -514,7 +514,7 @@ void displayLogError(Exception e) {
 //
 boolean statusLchanged=false;
 boolean statusRchanged=false;
-int displayingError=-1;
+LineError displayingError=null;
 void setStatusL(String text) {
   if (statusL.text.equals(text)==false)statusLchanged=true;
   statusL.text=text;

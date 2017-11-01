@@ -34,18 +34,24 @@ void script_setup() {
   ledCommands.addCommand(new ParamInfo("mapping"), new ParamInfo("l"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("n", Parameter.INTEGER));
   //
   ksCommands=new UnipackCommands();
-  ksCommands.addCommand(new ParamInfo("kschain", Parameter.INTEGER), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("filename", Parameter.WRAPPED_STRING));
-  ksCommands.addCommand(new ParamInfo("kschain", Parameter.INTEGER), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("filename", Parameter.WRAPPED_STRING), new ParamInfo("loop", Parameter.INTEGER));
+  ksCommands.addCommand(new ParamInfo("kschain", Parameter.INTEGER), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("relative", Parameter.STRING));
+  ksCommands.addCommand(new ParamInfo("kschain", Parameter.INTEGER), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("relative", Parameter.STRING), new ParamInfo("loop", Parameter.INTEGER));
+  ksCommands.addCommand(new ParamInfo("kschain", Parameter.INTEGER), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("absolute", Parameter.WRAPPED_STRING));
+  ksCommands.addCommand(new ParamInfo("kschain", Parameter.INTEGER), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("absolute", Parameter.WRAPPED_STRING), new ParamInfo("loop", Parameter.INTEGER));
 }
 class LedScript extends Script {
   Script script;
-  LedProcesser processer;
+  LedProcesser processer=new LedProcesser();
   public LedScript(String name_) {
-    processer=new LedProcesser();
-    super(name, ledCommands, processer);
+    super(name_, ledCommands, null);
+    processer.setScript(this);
+    analyzer.processer=processer;//why!!!!
   }
   void setCmdSet(int cmdset) {
     processer.cmdset=cmdset;
+  }
+  int getCmdSet() {
+    return processer.cmdset;
   }
   @Override void readAll() {
     processer.bypass=true;
@@ -59,9 +65,9 @@ public LedScript loadLedScript(String name_, String text) {//line ending have to
   ledScript.insert(0, 0, text);
   return ledScript;
 }
-static class UnipackCommands extends LineCommandType {
+class UnipackCommands extends LineCommandType {
   @Override
-    public Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
+    public Command getCommand(com.karnos.commandscript.Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
     //add additional errors to analyzer
     String[] tokens=split(commandName, " ");
     int x1=0, x2=0, y1=0, y2=0;
@@ -73,10 +79,10 @@ static class UnipackCommands extends LineCommandType {
           return getErrorCommand();
         }
       } else if (a>0&&tokens[a-1].equals("y")&&tokens[a].equals("x")) {//position.
-        y1=getRangeFirst(params.get(a-1));
-        y2=getRangeSecond(params.get(a-1));
-        x1=getRangeFirst(params.get(a));
-        x2=getRangeSecond(params.get(a));
+        y1=com.karnos.commandscript.Analyzer.getRangeFirst(params.get(a-1));
+        y2=com.karnos.commandscript.Analyzer.getRangeSecond(params.get(a-1));
+        x1=com.karnos.commandscript.Analyzer.getRangeFirst(params.get(a));
+        x2=com.karnos.commandscript.Analyzer.getRangeSecond(params.get(a));
         if (y1<=0||y1>ButtonY||x1<=0||x1>ButtonX||y2<=0||y2>ButtonY||x2<=0||x2>ButtonX) {
           analyzer.addError(new LineError(LineError.WARNING, line, 0, text.length(), location, "position is out of range."));
           x1=min(max(1, x1), ButtonX);
@@ -88,29 +94,29 @@ static class UnipackCommands extends LineCommandType {
     }
     //assert x1!=0 if x,y exists.
     if (commandName.equals("on y x auto vel")) {
-      return new OnCommand(x1, x2, y1, y2, k[int(parms.get(4))], int(parms.get(4)));
+      return new OnCommand(x1, x2, y1, y2, k[int(params.get(4))], int(params.get(4)));
     } else if (commandName.equals("on y x auto vel p")) {
-      return new OnCommand(x1, x2, y1, y2, k[int(parms.get(4))], int(parms.get(4)), true);
+      return new OnCommand(x1, x2, y1, y2, k[int(params.get(4))], int(params.get(4)), true);
     } else if (commandName.equals("on y x vel")) {
-      return new OnCommand(x1, x2, y1, y2, k[int(parms.get(3))], int(parms.get(3)));
+      return new OnCommand(x1, x2, y1, y2, k[int(params.get(3))], int(params.get(3)));
     } else if (commandName.equals("on y x html vel")) {
-      return new OnCommand(x1, x2, y1, y2, color(unhex("FF"+parms.get(3))), int(parms.get(4)));
+      return new OnCommand(x1, x2, y1, y2, color(unhex("FF"+params.get(3))), int(params.get(4)));
     } else if (commandName.equals("on y x html")) {
-      return new OnCommand(x1, x2, y1, y2, color(unhex("FF"+parms.get(3))), OFFCOLOR);
+      return new OnCommand(x1, x2, y1, y2, color(unhex("FF"+params.get(3))), OFFCOLOR);
     } else if (commandName.equals("on y x auto rnd")) {
       return new OnCommand(x1, x2, y1, y2, RNDCOLOR, OFFCOLOR);
     } else if (commandName.equals("on y x rnd")) {
       return new OnCommand(x1, x2, y1, y2, RNDCOLOR, OFFCOLOR);
     } else if (commandName.equals("on mc n auto vel")) {
-      return new McOnCommand(int(params.get(2)), k[int(parms.get(4))], int(parms.get(4)));
+      return new McOnCommand(int(params.get(2)), k[int(params.get(4))], int(params.get(4)));
     } else if (commandName.equals("on mc n auto vel p")) {
-      return new McOnCommand(int(params.get(2)), k[int(parms.get(4))], int(parms.get(4)), true);
+      return new McOnCommand(int(params.get(2)), k[int(params.get(4))], int(params.get(4)), true);
     } else if (commandName.equals("on mc n vel")) {
-      return new McOnCommand(int(params.get(2)), k[int(parms.get(4))], int(parms.get(3)));
+      return new McOnCommand(int(params.get(2)), k[int(params.get(4))], int(params.get(3)));
     } else if (commandName.equals("on mc n html vel")) {
-      return new McOnCommand(int(params.get(2)), color(unhex("FF"+parms.get(3))), int(parms.get(4)));
+      return new McOnCommand(int(params.get(2)), color(unhex("FF"+params.get(3))), int(params.get(4)));
     } else if (commandName.equals("on mc n html")) {
-      return new McOnCommand(int(params.get(2)), color(unhex("FF"+parms.get(3))), 0);
+      return new McOnCommand(int(params.get(2)), color(unhex("FF"+params.get(3))), 0);
     } else if (commandName.equals("on mc n auto rnd")) {
       return new McOnCommand(int(params.get(2)), RNDCOLOR, 0);
     } else if (commandName.equals("on mc n rnd")) {
@@ -177,6 +183,11 @@ static class UnipackCommands extends LineCommandType {
       }
       return new MappingCommand(MappingCommand.LED, int(params.get(2)), int(params.get(1)), n);//sound
     }
+    if (commandName.equals("kschain y x relative")) {//ADD
+    } else if (commandName.equals("kschain y x relative loop")) {
+    } else if (commandName.equals("kschain y x absolute")) {
+    } else if (commandName.equals("kschain y x absolute loop")) {
+    }
     return getErrorCommand();
   }
   @Override
@@ -188,7 +199,7 @@ static class UnipackCommands extends LineCommandType {
     return new EmptyCommand();
   }
 }
-class LedProceser extends LineCommandProcesser {
+class LedProcesser extends LineCommandProcesser {
   static final int LED_CMDSET=1;
   static final int UNITOR_CMDSET=2;
   static final int AUTOPLAY_CMDSET=3;
@@ -200,21 +211,23 @@ class LedProceser extends LineCommandProcesser {
   int cmdset;
   boolean bypass=false;//used when speed is required.
   int displayFrame=0;
-  int displayTime==0;
-  public LedProcesser(Script script_, int ButtonX_, int ButtonY_) {
-    script=script_;
-    resize(ButtonX_, ButtonY_);
+  int displayTime=0;
+  public LedProcesser() {
+    resize(ButtonX, ButtonY);
     cmdset=LED_CMDSET;
   }
+  void setScript(Script script_) {
+    script=script_;
+  }
   int getFrame(int line) {
-    if(line<0)return 0;
+    if (line<0)return 0;
     return DelayPoint.getBeforeIndex(line-1)-1;//find frame with delay is meaningless.
   }
-  int getBpm(int line) {
+  float getBpm(int line) {
     int index=BpmPoint.getBeforeIndex(line-1)-1;
     if (index==0)return DEFAULT_BPM;
     //assert script.getCommands().get(index) instanceof BpmCommand
-    return ((BpmCommand)script.getCommands().get(index)).bpm;
+    return ((BpmCommand)script.getCommands().get(index)).value;
   }
   int getDelayValue(int line) {//milliseconds.
     if (line==-1)return 0;
@@ -234,25 +247,24 @@ class LedProceser extends LineCommandProcesser {
     if (bypass)return;
     int frame=getFrame(line);
     if (after==null) {
-      uLines.remove(line.line);
       for (int a=DelayPoint.size()-1; a>0&&line<DelayPoint.get(a); a--) {
         DelayPoint.set(a, DelayPoint.get(a)-1);
       }
-      for (int a=BpmPoint.size()-1; a>0&&line.line<BpmPoint.get(a); a--) {
+      for (int a=BpmPoint.size()-1; a>0&&line<BpmPoint.get(a); a--) {
         BpmPoint.set(a, BpmPoint.get(a)-1);
       }
-      for (int a=ChainPoint.size()-1; a>0&&line.line<ChainPoint.get(a); a--) {
+      for (int a=ChainPoint.size()-1; a>0&&line<ChainPoint.get(a); a--) {
         ChainPoint.set(a, ChainPoint.get(a)-1);
       }
     }//else 
     if (before==null) {
-      for (int a=DelayPoint.size()-1; a>0&&line.line<=DelayPoint.get(a); a--) {
+      for (int a=DelayPoint.size()-1; a>0&&line<=DelayPoint.get(a); a--) {
         DelayPoint.set(a, DelayPoint.get(a)+1);
       }
-      for (int a=BpmPoint.size()-1; a>0&&line.line<=BpmPoint.get(a); a--) {
+      for (int a=BpmPoint.size()-1; a>0&&line<=BpmPoint.get(a); a--) {
         BpmPoint.set(a, BpmPoint.get(a)+1);
       }
-      for (int a=ChainPoint.size()-1; a>0&&line.line<ChainPoint.get(a); a--) {
+      for (int a=ChainPoint.size()-1; a>0&&line<ChainPoint.get(a); a--) {
         ChainPoint.set(a, ChainPoint.get(a)+1);
       }
     }
@@ -269,7 +281,7 @@ class LedProceser extends LineCommandProcesser {
         //assert DelayCommand.get(index)==line
         DelayPoint.remove(index);
         LED.remove(frame);//assert frame>=1
-        if (currentLedFrame>LED.size()-1)currentLedFrame--;
+        if (displayFrame>LED.size()-1)displayFrame--;
       } else if (before instanceof BpmCommand) {
         int index=BpmPoint.getBeforeIndex(line-1);
         //assert BpmCommand.get(index)==line
@@ -307,14 +319,14 @@ class LedProceser extends LineCommandProcesser {
     }
   }
   void readAll() {
-    ArrayList<Command> cmds=script.getCommands();
+    ArrayList<Command> commands=script.getCommands();
     float bpm=DEFAULT_BPM;
     int line=0;
     for (Command cmd : commands) {
       if (cmd instanceof LightCommand) {
         LightCommand info=(LightCommand)cmd;
-        for (int a=max(1, info.x); a<=ButtonX&&a<=info.x2; a++) {
-          for (int b=max(1, info.y); b<=ButtonY&&b<=info.y2; b++) {
+        for (int a=max(1, info.x1); a<=ButtonX&&a<=info.x2; a++) {
+          for (int b=max(1, info.y1); b<=ButtonY&&b<=info.y2; b++) {
             LED.get(LED.size()-1)[a-1][b-1]=info.htmlc;
           }
         }
@@ -333,24 +345,22 @@ class LedProceser extends LineCommandProcesser {
       }//else ignore
       line++;
     }
-    displayFrame=min(frameDisplay, DelayPoint.size()-1); 
+    displayFrame=min(displayFrame, DelayPoint.size()-1); 
     setTimeByFrame(displayFrame);
   }
-  void insertLedPositon(int frame, int line, int x, int y, color c) {
-    if (line>=Lines.lines())return;
+  void insertLedPosition(int frame, int line, int x, int y, color c) {
+    if (line>=script.lines())return;
     if (0<x&&x<=ButtonX&&0<y&&y<=ButtonY) {
-      Arraylist<Command> commands=script.getCommands();
+      ArrayList<Command> commands=script.getCommands();
       boolean changed=false;
       color toSet=c;
       for (; line<script.lines(); line++) {
         Command cmd=commands.get(line);
         if (cmd instanceof LightCommand) {
           LightCommand info=(LightCommand)cmd;
-          if (!info.mc) {
-            if (info.x1<=x&&x<=info.x2&&info.y1<=y&&y<=info.y2) {
-              toSet=info.htmlc;
-              changed=true;
-            }
+          if (info.x1<=x&&x<=info.x2&&info.y1<=y&&y<=info.y2) {
+            toSet=info.htmlc;
+            changed=true;
           }
         } else if (cmd instanceof DelayCommand) {
           if (changed==false) {
@@ -372,16 +382,13 @@ class LedProceser extends LineCommandProcesser {
     } else {
       LED.get (frame)[x-1][y-1]=LED.get (frame-1)[x-1][y-1];
     }
-    UnipackLine info;
     int max=script.lines();
     if (frame<DelayPoint.size()-1)max=DelayPoint.get(frame+1);
-    for (int a=DelayPoint.get (frame)+1; a <max&&a++) {
+    for (int a=DelayPoint.get (frame)+1; a <max; a++) {
       Command cmd=script.getCommands().get(a);
       if (cmd instanceof LightCommand) {
         LightCommand info=(LightCommand)cmd;
-        if (!info.mc) {
-          if (info.x1<=x&&x<=info.x2&&info.y1<=y&&y<=info.y2)LED.get(frame)[x-1][y-1]=info.htmlc;
-        }
+        if (info.x1<=x&&x<=info.x2&&info.y1<=y&&y<=info.y2)LED.get(frame)[x-1][y-1]=info.htmlc;
       }
     }
     insertLedPosition (frame+1, max, x, y, LED.get (frame)[x-1][y-1]);
@@ -403,12 +410,12 @@ class LedProceser extends LineCommandProcesser {
     int d=DelayPoint.get(frame)+1;
     count=frame+count;
     ArrayList<Command> commands=script.getCommands();
-    for (; frame<=count&&d<Lines.lines(); d++) {//reset
+    for (; frame<=count&&d<script.lines(); d++) {//reset
       Command cmd=commands.get(d);//AnalyzeLine(a, "readFrame - read "+count+" frames", Lines.getLine(a));
       if (cmd instanceof LightCommand) {
         LightCommand info=(LightCommand)cmd;
-        for (int a=info.x; a<=info.x2; a++) {
-          for (int b=info.y; b<=info.y2; b++) {
+        for (int a=info.x1; a<=info.x2; a++) {
+          for (int b=info.y1; b<=info.y2; b++) {
             LED.get(frame)[a-1][b-1]=info.htmlc;
           }
         }
@@ -422,22 +429,36 @@ class LedProceser extends LineCommandProcesser {
       }
     }
   }
+  void setTimeByFrame() {
+    displayTime=getTimeByFrame(displayFrame);
+  }
   void setTimeByFrame(int frame) {
-    displayTime=0;
+    displayTime=getTimeByFrame(frame);
+  }
+  int getTimeByFrame(int frame) {
+    int time=0;
     for (int a=1; a<=frame; a++) {
-      displayTime+=getDelayValue(DelayPoint.get(a));
+      time+=getDelayValue(DelayPoint.get(a));
     }
+    return time;
+  }
+  void setFrameByTime() {
+    displayFrame=getFrameByTime(displayTime);
   }
   void setFrameByTime(int time) {
+    displayFrame=getFrameByTime(time);
+  }
+  int getFrameByTime(int time) {
     int sum=0;
-    displayFrame=0;
-    for (int a=0; a<DelayValue.size(); a++) {
-      sum=sum+DelayValue.get(a);
+    int frame=0;
+    for (int a=1; a<DelayPoint.size(); a++) {
+      sum=sum+getDelayValue(DelayPoint.get(a));
       if (time<sum) {
         break;
       }
-      displayFrame++;
+      frame++;
     }
+    return frame;
   }
   @Override
     public void onReadFinished() {
@@ -456,6 +477,18 @@ class LedProceser extends LineCommandProcesser {
     DelayPoint.add(-1); 
     BpmPoint.add(-1); 
     ChainPoint.add(-1);
+  }
+}
+class KsProcesser extends LineCommandProcesser {
+  @Override
+    public void processCommand(int line, Command before, Command after) {
+  }
+  @Override
+    public void onReadFinished() {
+    surface.setTitle(title_filename+title_edited+title_suffix);
+  }
+  @Override
+    public void clear() {
   }
 }
 class UnipackCommand implements Command {
@@ -506,7 +539,7 @@ class OnCommand extends LightCommand {
   }
 }
 class OffCommand extends LightCommand {
-  public OffCommand(int x1_, int x2_, int y1_, int y2_, ) {
+  public OffCommand(int x1_, int x2_, int y1_, int y2_) {
     super(x1_, x2_, y1_, y2_, OFFCOLOR, 0);
   }
   @Override public String toString() {
@@ -524,7 +557,9 @@ class McOnCommand extends UnitorCommand {
     htmlc=htmlc_;
   }
   public McOnCommand(int n_, int vel_, int htmlc_, boolean pulse_) {//pw supports pulse...
-    OnCommand(n_, vel_, htmlc_);
+    n=n_;
+    vel=vel_;
+    htmlc=htmlc_;
     pulse=pulse_;
   }
   @Override public String toString() {
@@ -550,8 +585,8 @@ class McOffCommand extends UnitorCommand {
     return "off mc "+n;
   }
 }
-class ApOnComand extends LightCommand {
-  public ApOnCommand(int x1_, int x2_, int y1_, int y2_, ) {
+class ApOnCommand extends LightCommand {
+  public ApOnCommand(int x1_, int x2_, int y1_, int y2_) {
     super(x1_, x2_, y1_, y2_, color(255), 3);
   }
   @Override public String toString() {
@@ -581,13 +616,13 @@ class DelayCommand extends UnipackCommand {
     return "delay "+up;
   }
   String toUnipadString(float bpm) {
-    if (isFraction)return floor((up*2400/(bpm*down))*100);
+    if (isFraction)return "delay "+floor((up*2400/(bpm*down))*100);
     return "delay "+up;
   }
 }
 class BpmCommand extends UnipackCommand {
-  int value;
-  public BpmCommand(int value_) {
+  float value;
+  public BpmCommand(float value_) {
     value=value_;
   }
   @Override public String toString() {

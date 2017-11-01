@@ -18,8 +18,8 @@ float Bpm=DEFAULT_BPM;
 //
 int selectedColorType;
 int velnumId;//shortcut
-int htmlselId;//shortcut
-int textfieldId;//shortcut
+int htmlselId;//
+LedTextEditor keyled_textEditor;
 Slider frameSlider;//shortcut
 DragSlider frameSliderLoop;//
 Label timeLabel;
@@ -67,9 +67,8 @@ boolean isNoteOn(int x, int y) {
 }
 class KsButton {
   int bC=0, bX=0, bY=0;
-  ArrayList<ArrayList> ksLED;//multi,<UnipackLine>
+  ArrayList<ArrayList> ksLed;//multi,<UnipackLine>
   ArrayList<String> ksLedFile;
-  ArrayList<ArrayList> ksDelayValue;//multi,<Integer>//You can delete this!!!
   int ksCurrentTime=0;
   int ksCurrentIndex=0;
   int ksNextTime=0;
@@ -89,8 +88,7 @@ class KsButton {
     bX=x;
     bY=y;
     ksLedFile=new ArrayList<String>();
-    ksLED=new ArrayList<ArrayList>();
-    ksDelayValue=new ArrayList<ArrayList>();
+    ksLed=new ArrayList<ArrayList>();
     ksLedLoop=new ArrayList<Integer>();
     ksSound=new ArrayList<String>();
     ksSample=new ArrayList<Sample>();
@@ -121,15 +119,12 @@ class KsButton {
     ksac.out.removeConnection(1, ksPlayer, 1);
   }
   boolean loadLed(int index, String path) {
-    ksLED.add(index, new ArrayList<Analyzer.UnipackLine>());
-    ksDelayValue.add(index, new ArrayList<Integer>());
-    if (analyzer.loadLedFile(path, ksLED.get(index), ksDelayValue.get(index))) {
+    try {
+      ksLed.add(index, loadLedScript(path, readFile(path)).getCommands());
       ksLedFile.add(index, path);
       ksLedLoop.add(index, 1);//ADD!!
-    } else {
-      ksLED.remove(index);
-      ksDelayValue.remove(index);
-      return false;
+    }
+    catch(Exception e) {
     }
     return true;
   }
@@ -137,10 +132,10 @@ class KsButton {
     int index=0;
     while (index<ksLedFile.size()) {
       String path=ksLedFile.get(index);
-      //not null ksLED.add(index, new ArrayList<Analyzer.UnipackLine>());
+      //not null ksLed.add(index, new ArrayList<Analyzer.UnipackLine>());
       //not null ksDelayValue.add(index, new ArrayList<Integer>());
-      if (analyzer.loadLedFile(path, ksLED.get(index), ksDelayValue.get(index))) {
-      }
+      //if (analyzer.  loadLedFile(path, ksLed.get(index), ksDelayValue.get(index))) {
+      //}
       index++;
     }
   }
@@ -151,19 +146,15 @@ class KsButton {
     String temp1=ksLedFile.get(index1);
     ksLedFile.set(index1, ksLedFile.get(index2));
     ksLedFile.set(index2, temp1);
-    ArrayList<Integer> temp2=ksDelayValue.get(index1);
-    ksDelayValue.set(index1, ksDelayValue.get(index2));
-    ksDelayValue.set(index2, temp2);
-    ArrayList<color[][]> temp3=ksLED.get(index1);
-    ksLED.set(index1, ksLED.get(index2));
-    ksLED.set(index2, temp3);
+    ArrayList<color[][]> temp3=ksLed.get(index1);
+    ksLed.set(index1, ksLed.get(index2));
+    ksLed.set(index2, temp3);
     Integer temp4=ksLedLoop.get(index1);
     ksLedLoop.set(index1, ksLedLoop.get(index2));
     ksLedLoop.set(index2, temp4);
   }
   void removeLed(int index) {//done
-    ksLED.remove(index);
-    ksDelayValue.remove(index);
+    ksLed.remove(index);
     ksLedFile.remove(index);
     ksLedLoop.remove(index);
   }
@@ -257,9 +248,9 @@ class KsButton {
     }
   }
   void autorun_startLed() {
-    if (ksLED.size()>0) {
+    if (ksLed.size()>0) {
       multiLed=multiLedBackup;
-      if (multiLed>=ksLED.size())multiLed=0;
+      if (multiLed>=ksLed.size())multiLed=0;
       autorun_resetLed();
       if (isInStack==false)ledstack.add(this);
       isInStack=true;
@@ -288,91 +279,92 @@ class KsButton {
     ksCurrentDelayIndex=0;
   }
   boolean autorun_led() {
-    if (multiLed-1>=ksLED.size()) {
-      autorun_resetLed();
-      return false;//end
-    }
-    boolean endframe=true;
-    while (ksNextTime<=ksCurrentTime) {//change frame
-      //#refactor!!!
-      ksautorun_render=true;
-      while (multiLed>0&&ksCurrentIndex<ksLED.get(multiLed-1).size()) {
-        if (((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.DELAY) {
-          endframe=false;
-          ksNextTime=ksNextTime+max(1, (int)ksDelayValue.get(multiLed-1).get(ksCurrentDelayIndex));
-          ksCurrentDelayIndex++;
-          ksCurrentIndex++;
-          break;
-        } else if (((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.ON) {
-          Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLED.get(multiLed-1).get(ksCurrentIndex);
-          if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY&&0<line.x2&&line.x2<=ButtonX&&0<line.y2&&line.y2<=ButtonY) {
-            //add leds to ksLED array.
-            for (int a=line.x; a<=line.x2; a++) {
-              for (int b=line.y; b<=line.y2; b++) {
-                if (line.hasHtml) {
-                  if (line.html==RNDCOLOR) {
-                    if (ignoreMc) {
-                      int aaa=floor(random(0, 128));
-                      ksDisplay[a-1][b-1]=k[aaa];
-                      MidiCommand.execute("led", aaa, a-1, b-1);
-                    }
-                  } else ksDisplay[a-1][b-1]=line.html;
-                } else {
-                  if (line.vel>=0&&line.vel<=127) {
-                    ksDisplay[a-1][b-1]=k[line.vel];
-                    MidiCommand.execute("led", line.vel, a-1, b-1);
-                  }
-                }
-              }
-            }
-          }
-        } else if (((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.OFF) {
-          Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLED.get(multiLed-1).get(ksCurrentIndex);
-          if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY&&0<line.x2&&line.x2<=ButtonX&&0<line.y2&&line.y2<=ButtonY) {
-            //add leds to ksLED array.
-            for (int a=line.x; a<=line.x2; a++) {
-              for (int b=line.y; b<=line.y2; b++) {
-                ksDisplay[a-1][b-1]=OFFCOLOR;
-                MidiCommand.execute("led", 0, a-1, b-1);
-              }
-            }
-          }
-        } else if (ignoreMc&&((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.CHAIN) {
-          Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLED.get(multiLed-1).get(ksCurrentIndex);
-          keySoundPad.triggerChain(line.x-1);
-        } else if (ignoreMc&&((Analyzer.UnipackLine)(ksLED.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.MAPPING) {
-          Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLED.get(multiLed-1).get(ksCurrentIndex);
-          if (line.hasVel) {
-            int size=KS.get(ksChain)[line.x-1][line.y-1].ksSound.size();
-            if (line.vel>=0&&line.vel<size)KS.get(ksChain)[line.x-1][line.y-1].multiSound=min(max(1, line.vel+1), size)-1;
-          } else {
-            int size=KS.get(ksChain)[line.x-1][line.y-1].ksLedFile.size();
-            if (line.vel>=0&&line.vel<size) {
-              KS.get(ksChain)[line.x-1][line.y-1].multiLed=min(max(1, line.vel+1), size)-1;
-              KS.get(ksChain)[line.x-1][line.y-1].multiLedBackup=KS.get(ksChain)[line.x][line.y].multiLed;
-            }
-          }
-        }
-        ksCurrentIndex++;
-        //bpm is translated to ms in readFrame.
-      }
-      if (endframe||ksCurrentIndex==ksLED.get(multiLed-1).size()) {//do end
-        ksCurrentTime=0;
-        ksNextTime=0;
-        ksCurrentIndex=0;
-        ksCurrentDelayIndex=0;
-        ksCurrentLedLoop++;
-        if (multiLed<=0)multiLed=1;
-        if (ksLedLoop.get(multiLed-1)==0||ksLedLoop.get(multiLed-1)>ksCurrentLedLoop) {
-          return true;//not end(loop)
-        } else {
-          ksCurrentLedLoop=0;
-          return false;//end
-        }
-      }
-    }
-    ksCurrentTime+=drawInterval;
-    return true;
+    return false;
+    //if (multiLed-1>=ksLed.size()) {
+    //  autorun_resetLed();
+    //  return false;//end
+    //}
+    //boolean endframe=true;
+    //while (ksNextTime<=ksCurrentTime) {//change frame
+    //  //#refactor!!!
+    //  ksautorun_render=true;
+    //  while (multiLed>0&&ksCurrentIndex<ksLed.get(multiLed-1).size()) {
+    //    if ((ksLed.get(multiLed-1).get(ksCurrentIndex))) instanceof DelayCommand) {
+    //      endframe=false;
+    //      ksNextTime=ksNextTime+max(1, (int)ksDelayValue.get(multiLed-1).get(ksCurrentDelayIndex));
+    //      ksCurrentDelayIndex++;
+    //      ksCurrentIndex++;
+    //      break;
+    //    } else if (((Analyzer.UnipackLine)(ksLed.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.ON) {
+    //      Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLed.get(multiLed-1).get(ksCurrentIndex);
+    //      if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY&&0<line.x2&&line.x2<=ButtonX&&0<line.y2&&line.y2<=ButtonY) {
+    //        //add leds to ksLed array.
+    //        for (int a=line.x; a<=line.x2; a++) {
+    //          for (int b=line.y; b<=line.y2; b++) {
+    //            if (line.hasHtml) {
+    //              if (line.html==RNDCOLOR) {
+    //                if (ignoreMc) {
+    //                  int aaa=floor(random(0, 128));
+    //                  ksDisplay[a-1][b-1]=k[aaa];
+    //                  MidiCommand.execute("led", aaa, a-1, b-1);
+    //                }
+    //              } else ksDisplay[a-1][b-1]=line.html;
+    //            } else {
+    //              if (line.vel>=0&&line.vel<=127) {
+    //                ksDisplay[a-1][b-1]=k[line.vel];
+    //                MidiCommand.execute("led", line.vel, a-1, b-1);
+    //              }
+    //            }
+    //          }
+    //        }
+    //      }
+    //    } else if (((Analyzer.UnipackLine)(ksLed.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.OFF) {
+    //      Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLed.get(multiLed-1).get(ksCurrentIndex);
+    //      if (0<line.x&&line.x<=ButtonX&&0<line.y&&line.y<=ButtonY&&0<line.x2&&line.x2<=ButtonX&&0<line.y2&&line.y2<=ButtonY) {
+    //        //add leds to ksLed array.
+    //        for (int a=line.x; a<=line.x2; a++) {
+    //          for (int b=line.y; b<=line.y2; b++) {
+    //            ksDisplay[a-1][b-1]=OFFCOLOR;
+    //            MidiCommand.execute("led", 0, a-1, b-1);
+    //          }
+    //        }
+    //      }
+    //    } else if (ignoreMc&&((Analyzer.UnipackLine)(ksLed.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.CHAIN) {
+    //      Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLed.get(multiLed-1).get(ksCurrentIndex);
+    //      keySoundPad.triggerChain(line.x-1);
+    //    } else if (ignoreMc&&((Analyzer.UnipackLine)(ksLed.get(multiLed-1).get(ksCurrentIndex))).Type==Analyzer.UnipackLine.MAPPING) {
+    //      Analyzer.UnipackLine line=(Analyzer.UnipackLine)ksLed.get(multiLed-1).get(ksCurrentIndex);
+    //      if (line.hasVel) {
+    //        int size=KS.get(ksChain)[line.x-1][line.y-1].ksSound.size();
+    //        if (line.vel>=0&&line.vel<size)KS.get(ksChain)[line.x-1][line.y-1].multiSound=min(max(1, line.vel+1), size)-1;
+    //      } else {
+    //        int size=KS.get(ksChain)[line.x-1][line.y-1].ksLedFile.size();
+    //        if (line.vel>=0&&line.vel<size) {
+    //          KS.get(ksChain)[line.x-1][line.y-1].multiLed=min(max(1, line.vel+1), size)-1;
+    //          KS.get(ksChain)[line.x-1][line.y-1].multiLedBackup=KS.get(ksChain)[line.x][line.y].multiLed;
+    //        }
+    //      }
+    //    }
+    //    ksCurrentIndex++;
+    //    //bpm is translated to ms in readFrame.
+    //  }
+    //  if (endframe||ksCurrentIndex==ksLed.get(multiLed-1).size()) {//do end
+    //    ksCurrentTime=0;
+    //    ksNextTime=0;
+    //    ksCurrentIndex=0;
+    //    ksCurrentDelayIndex=0;
+    //    ksCurrentLedLoop++;
+    //    if (multiLed<=0)multiLed=1;
+    //    if (ksLedLoop.get(multiLed-1)==0||ksLedLoop.get(multiLed-1)>ksCurrentLedLoop) {
+    //      return true;//not end(loop)
+    //    } else {
+    //      ksCurrentLedLoop=0;
+    //      return false;//end
+    //    }
+    //  }
+    //}
+    //ksCurrentTime+=drawInterval;
+    //return true;
   }
   public void stopSound() {
     if (ksPlayer==null)return;
@@ -411,7 +403,7 @@ void I_ResetKs() {
 synchronized void L_ResizeData(int Chain_, int ButtonX_, int ButtonY_) {//ADD KS(resize button,chain
   ArrayList<KsButton[][]> tempKS=KS;
   KS=new ArrayList<KsButton[][]>();
-  a=0;
+  int a=0;
   while (a<Chain_) {
     KS.add(new KsButton[ButtonX_][ButtonY_]);
     int b=0;
@@ -478,16 +470,16 @@ synchronized void L_ResizeData(int Chain_, int ButtonX_, int ButtonY_) {//ADD KS
   setStatusR("resized to "+Chain+":("+ButtonX+", "+ButtonY+")");
 }
 void updateFrameSlider() {
-  int a=0;
-  frameSlider.maxI=0;
-  while (a<DelayValue.size()) {
-    frameSlider.maxI+=analyzer.getDelayValue(DelayPoint.get(a+1));
-    a=a+1;
-  }
+  //int a=0;
+  //frameSlider.maxI=0;
+  //while (a<DelayPoint.size()) {
+  //  frameSlider.maxI+=analyzer.getDelayValue(DelayPoint.get(a+1));
+  //  a=a+1;
+  //}
   frameSlider.adjust(min(frameSlider.maxI, max(frameSlider.minI, frameSlider.valueI)));
-  currentLedTime=frameSlider.valueI;
-  timeLabel.text=currentLedTime+"/"+frameSlider.maxI;
-  setFrameByTime();
+  keyled_textEditor.current.processer.displayTime=frameSlider.valueI;
+  timeLabel.text=keyled_textEditor.current.processer.displayTime+"/"+frameSlider.maxI;
+  keyled_textEditor.current.processer.setFrameByTime();
   frameSlider.render();
 }
 void autoRun() {
@@ -495,32 +487,32 @@ void autoRun() {
     if (autorun_playing&&autorun_paused==false) {
       int sum=0;
       int a=1;
-      timeLabel.text=currentLedTime+"/"+frameSlider.maxI;
-      setFrameByTime();
-      frameSlider.adjust(currentLedTime);
-      currentLedTime+=drawInterval;
-      if (frameSliderLoop.bypass&&currentLedTime>=frameSlider.maxI) {
-        if (frameSlider.maxI!=0&&(autorun_loopCount>=autorun_loopCountTotal||autorun_infinite))currentLedTime=currentLedTime%frameSlider.maxI;
+      timeLabel.text=keyled_textEditor.current.processer.displayTime+"/"+frameSlider.maxI;
+      keyled_textEditor.current.processer.setFrameByTime();
+      frameSlider.adjust(keyled_textEditor.current.processer.displayTime);
+      keyled_textEditor.current.processer.displayTime+=drawInterval;
+      if (frameSliderLoop.bypass&&keyled_textEditor.current.processer.displayTime>=frameSlider.maxI) {
+        if (frameSlider.maxI!=0&&(autorun_loopCount>=autorun_loopCountTotal||autorun_infinite))keyled_textEditor.current.processer.displayTime=keyled_textEditor.current.processer.displayTime%frameSlider.maxI;
         else {
           if (autoStop) {
-            currentLedTime=min(frameSlider.maxI, autorun_backup);
+            keyled_textEditor.current.processer.displayTime=min(frameSlider.maxI, autorun_backup);
           } else {
-            currentLedTime=frameSlider.maxI;
+            keyled_textEditor.current.processer.displayTime=frameSlider.maxI;
           }
-          currentLedFrame=getFrameByTime(currentLedTime);
-          frameSlider.adjust(currentLedTime);
-          timeLabel.text=currentLedTime+"/"+frameSlider.maxI;
+          keyled_textEditor.current.processer.setFrameByTime();
+          frameSlider.adjust(keyled_textEditor.current.processer.displayTime);
+          timeLabel.text=keyled_textEditor.current.processer.displayTime+"/"+frameSlider.maxI;
           autorun_playing=false;
         }
-      } else if (frameSliderLoop.bypass==false&&currentLedTime>=frameSliderLoop.valueE) {
-        if (autorun_loopCount>=autorun_loopCountTotal||autorun_infinite)currentLedTime=int(frameSliderLoop.valueS+(currentLedTime-frameSliderLoop.valueS)%(frameSliderLoop.valueE-frameSliderLoop.valueS));
+      } else if (frameSliderLoop.bypass==false&&keyled_textEditor.current.processer.displayTime>=frameSliderLoop.valueE) {
+        if (autorun_loopCount>=autorun_loopCountTotal||autorun_infinite)keyled_textEditor.current.processer.displayTime=int(frameSliderLoop.valueS+(keyled_textEditor.current.processer.displayTime-frameSliderLoop.valueS)%(frameSliderLoop.valueE-frameSliderLoop.valueS));
         else {
           if (autoStop) {
-            currentLedTime=ceil(min(frameSliderLoop.valueE, autorun_backup));
+            keyled_textEditor.current.processer.displayTime=ceil(min(frameSliderLoop.valueE, autorun_backup));
           } else {
-            currentLedTime=ceil(frameSliderLoop.valueE);
+            keyled_textEditor.current.processer.displayTime=ceil(frameSliderLoop.valueE);
           }
-          setFrameByTime();
+          keyled_textEditor.current.processer.setFrameByTime();
           autorun_playing=false;
         }
       }
@@ -544,14 +536,14 @@ void autoRunReset() {
   autorun_paused=false;
   autorun_loopCount=0;
   autorun_playing=true;
-  if (autorun_playing==false)autorun_backup=currentLedTime;
+  if (autorun_playing==false)autorun_backup=keyled_textEditor.current.processer.displayTime;
   if (frameSliderLoop.bypass) {
-    if (startFrom==false||currentLedTime==frameSlider.maxI) {
-      currentLedTime=0;
+    if (startFrom==false||keyled_textEditor.current.processer.displayTime==frameSlider.maxI) {
+      keyled_textEditor.current.processer.displayTime=0;
     }
   } else {
-    if (startFrom==false||currentLedTime>=frameSliderLoop.valueE) {
-      currentLedTime=(int)frameSliderLoop.valueS;
+    if (startFrom==false||keyled_textEditor.current.processer.displayTime>=frameSliderLoop.valueE) {
+      keyled_textEditor.current.processer.displayTime=(int)frameSliderLoop.valueS;
     }
   }
 }
@@ -559,8 +551,8 @@ void autoRunRewind() {
   autorun_loopCount=0;
   autorun_playing=true;
   if (frameSliderLoop.bypass) {
-    currentLedTime=0;
+    keyled_textEditor.current.processer.displayTime=0;
   } else {
-    currentLedTime=(int)frameSliderLoop.valueS;
+    keyled_textEditor.current.processer.displayTime=(int)frameSliderLoop.valueS;
   }
 }

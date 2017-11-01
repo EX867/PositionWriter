@@ -4,11 +4,11 @@ public class LineError implements Comparable<LineError> {
   public static final int ERROR=1;
   public static final int WARNING=2;
   public int type;
-  int line;
-  int start;
-  int end;
-  String location;
-  String cause;
+  public int line;
+  public int start;
+  public int end;
+  public String location;
+  public String cause;
   public LineError(int type_, int line_, int start_, int end_, String location_, String cause_) {
     type=type_;
     line=line_;

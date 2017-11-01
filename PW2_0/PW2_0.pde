@@ -1,4 +1,5 @@
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 PFont fontRegular;
 PFont fontBold;
 boolean DEBUG=true;
@@ -184,7 +185,6 @@ void setup_main() {
   //load data and settings
   //...
   //setup data
-  Lines.clear();
   I_ResetKs();
   //setup ui
   fontBold=createFont("fonts/SourceCodePro-Bold.ttf", 30);
@@ -206,9 +206,8 @@ void setup_main() {
   }
   // === Load in start === // loadedOnce_xxx can't be true on start, but settings.xml can set it to true on start. if true, reload.
   if (loadedOnce_keySound) {
-    printLog("LoadInStart", title_keysoundfoldername);
     try {
-      analyzer.loadKeySoundGlobal(title_keysoundfoldername);
+      loadKeySoundGlobal(title_keysoundfoldername);
       title_keysoundedited="";
     }
     catch(Exception e) {
@@ -219,9 +218,8 @@ void setup_main() {
     title_keysoundfoldername=newFolder();
   }
   if (loadedOnce_led) {
-    printLog("LoadInStart", title_keyledfilename);
     try {
-      analyzer.loadKeyLedGlobal(title_keyledfilename);
+      keyled_textEditor.loadText(title_keyledfilename, readFile(title_keyledfilename));
       title_filename=title_keyledfilename;
       title_edited="";
     }
@@ -306,9 +304,9 @@ void editable_keyTyped() {
         autorun_paused=false;
         autoRunRewind();
       } else if (functionId==S_STOP) {
-        currentLedTime=autorun_backup;
-        setFrameByTime();
-        frameSlider.adjust(currentLedTime);
+        keyled_textEditor.current.processer.displayTime=autorun_backup;
+        keyled_textEditor.current.processer.setFrameByTime();
+        frameSlider.adjust(keyled_textEditor.current.processer.displayTime);
         frameSlider.render();
       } else if (functionId==S_LOOP) {
         ((Button)UI[getUIid("I_LOOP")]).onRelease();
@@ -335,12 +333,12 @@ void editable_keyTyped() {
       } else if (functionId==S_SAVE) {//save(Ctrl+S)
         saveWorkingFile();
       } else if (functionId==S_TRANSPORTL) {
-        currentLedFrame=max(0, currentLedFrame-1);
-        setTimeByFrame();
+        keyled_textEditor.current.processer.displayFrame=max(0, keyled_textEditor.current.processer.displayFrame-1);
+        keyled_textEditor.current.processer.setTimeByFrame();
         frameSlider.render();
       } else if (functionId==S_TRANSPORTR) {//>
-        currentLedFrame=min(DelayPoint.size()-1, currentLedFrame+1);
-        setTimeByFrame();
+        keyled_textEditor.current.processer.displayFrame=min(keyled_textEditor.current.processer.DelayPoint.size()-1, keyled_textEditor.current.processer.displayFrame+1);
+        keyled_textEditor.current.processer.setTimeByFrame();
         frameSlider.render();
       } else if (functionId==S_PRINTQ) {//asdf
         ((Button)UI[getUIid("I_NUMBER1")]).onRelease();

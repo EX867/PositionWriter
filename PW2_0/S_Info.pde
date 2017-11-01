@@ -30,27 +30,27 @@ class UnipackInfo {
     return ret;
   }
 }
-public UnipackInfo loadUnipackInfo(String text) {
+public UnipackInfo loadUnipackInfo(String filename, String text) {
   UnipackInfo ret=new UnipackInfo();
   String[] lines=split(text, "\n");
   for (int a=0; a<lines.length; a++) {
-    InfoLine result=AnalyzeInfo(a, filename, lines[a]);
+    InfoLine result=AnalyzeInfo(lines[a]);
     if (result==null)continue;
-    if (result.Type==InfoLine.TITLE) {
+    if (result.type==InfoLine.TITLE) {
       ret.title=result.value;
-    } else if (result.Type==InfoLine.PRODUCERNAME) {
+    } else if (result.type==InfoLine.PRODUCERNAME) {
       ret.producerName=result.value;
-    } else if (result.Type==InfoLine.BUTTONX) {
+    } else if (result.type==InfoLine.BUTTONX) {
       ret.buttonX=int(result.value);
-    } else if (result.Type==InfoLine.BUTTONY) {
+    } else if (result.type==InfoLine.BUTTONY) {
       ret.buttonY=int(result.value);
-    } else if (result.Type==InfoLine.CHAINNUMBER) {
+    } else if (result.type==InfoLine.CHAINNUMBER) {
       ret.chain=int(result.value);
-    } else if (result.Type==InfoLine.LANDSCAPE) {
+    } else if (result.type==InfoLine.LANDSCAPE) {
       ret.landscape=toBoolean(result.value);
-    } else if (result.Type==InfoLine.SQUAREBUTTON) {
+    } else if (result.type==InfoLine.SQUAREBUTTON) {
       ret.squareButton=toBoolean(result.value);
-    } else if (result.Type==InfoLine.UPDATED) {
+    } else if (result.type==InfoLine.UPDATED) {
       ret.updated=toBoolean(result.value);
     }
   }
@@ -108,4 +108,5 @@ InfoLine AnalyzeInfo(String text) {
       }
     }
   }
+  return null;
 }

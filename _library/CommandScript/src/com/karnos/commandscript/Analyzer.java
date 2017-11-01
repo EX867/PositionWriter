@@ -6,7 +6,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
   public ArrayList<Command> lines;
   private Parameter commands;//root of commands
   LineCommandType commandType;
-  LineCommandProcesser processer;
+  public LineCommandProcesser processer;
   LinkedList<LineChangeData> addList;
   public Multiset<LineError> errors;
   private LineError cacheError;
@@ -77,6 +77,12 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
     for (int a=errors.getBeforeIndex(cacheError); a < errors.size() && errors.get(a).line == line; ) {
       errors.remove(a);
     }
+  }
+  public LineError getFirstError(int line) {
+    cacheError.line=line - 1;
+    int index=errors.getBeforeIndex(cacheError);
+    if (index >= errors.size() || errors.get(index).line != line) return null;
+    return errors.get(index);
   }
   public void add(int line, String before, String after) {
     addList.add(new LineChangeData(line, before, after));
@@ -291,7 +297,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
   public static boolean isRange(String str) {
     if (isInt(str)) return true;
     String[] ints=str.split("~");
-    return ints.length==2&&isInt(ints[0]) && isInt(ints[1]);
+    return ints.length == 2 && isInt(ints[0]) && isInt(ints[1]);
   }
   public static boolean isHex(String in) {
     if (in.length() != 6) return false;

@@ -14,7 +14,11 @@ String ToUnipadLed(Script script) {
       UnipackCommand info=(UnipackCommand)cmd;
       if (info instanceof OnCommand) {
         OnCommand info2=(OnCommand)info;
-        first[info2.x-1][info2.y-1]=false;
+        for (int b=info2.y1; b<=info2.y2; b++) {
+          for (int a=info2.x1; a<=info2.x2; a++) {
+            first[a-1][b-1]=false;
+          }
+        }
       } else if (info instanceof OffCommand) {
         OffCommand info2=(OffCommand)info;
         for (int b=info2.y1; b<=info2.y2; b++) {
@@ -22,15 +26,15 @@ String ToUnipadLed(Script script) {
             if (first[a-1][b-1]) {
               builder.append("o "+b+" "+a+" auto 0\n");
             }
+            first[a-1][b-1]=false;
           }
         }
-        first[info2.x-1][info2.y-1]=false;
       } else if (info instanceof BpmCommand) {
         bpm=((BpmCommand)info).value;
       }
       if (info instanceof DelayCommand) {
         builder.append(((DelayCommand)info).toUnipadString(bpm)).append('\n');//includes multi line
-      }else if (info instanceof ChainCommand) {
+      } else if (info instanceof ChainCommand) {
       } else builder.append(info.toUnipadString()).append('\n');//includes multi line
     }
   }
@@ -47,14 +51,17 @@ String ImageToLed(PImage image) {
 }
 PImage LedToImage(Script script) {
   PImage image=createImage(ButtonX, ButtonY, ARGB);
-  ArrayList<UnipackLine> lines=new ArrayList<UnipackLine>();
   script.readAll();
   image.loadPixels();
   ArrayList<Command> commands=script.getCommands();
   for (Command cmd : commands) {
     if (cmd instanceof LightCommand) {
       LightCommand info=(LightCommand)cmd;
-      image.pixels[(info.y-1)*image.width+info.x-1]=info.htmlc;
+      for (int b=info.y1; b<=info.y2; b++) {
+        for (int a=info.x1; a<=info.x2; a++) {
+          image.pixels[(b-1)*image.width+a-1]=info.htmlc;
+        }
+      }
     } else if (cmd instanceof DelayCommand) {
       break;
     }

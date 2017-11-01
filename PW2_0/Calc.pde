@@ -587,7 +587,6 @@ class PatternMatcher {
       return false;
     }
     error=false;
-    printLog("PatternMatcher.register()", "regex : "+regex+" (frame : "+frameCount+")");
     patternFind = Pattern.compile(regex);
     findUpdated=false;
     //if error, there is internal error!
@@ -665,7 +664,7 @@ class PatternMatcher {
           b++;
         }
         calculator.setIdent(0, a);
-        calculator.setIdent("frame", analyzer.getFrame(Lines.getLineByIndex(result.startpoint)));
+        calculator.setIdent("frame", keyled_textEditor.current.processer.getFrame(keyled_textEditor.current.getLineByIndex(result.startpoint)));
         StringBuilder sb=new StringBuilder("");
         b=0;
         while (b<build.size()-1/*replacer.size()*/) {//WARNING!!!

@@ -78,7 +78,7 @@ public class FFmpegConverter {
     try {
       File file= new File(input);
       if (file.isFile()==false) {
-        printLog("convert()", "input file not exists");
+        println("convert()", "input file not exists");
         return false;
       }
       MultimediaInfo info=new it.sauronsoftware.jave.Encoder().getInfo(file);
@@ -197,7 +197,7 @@ public class FFmpegConverter {
             String filename=getNotDuplicatedFilename(localoutput, changeFormat(getFileName(localinput[a]), localoutputFormat));
             converter.convertWithEvent(localinput[a], filename, localoutputFormat, localoutputCodec, localoutputBitRate, localoutputChannels, localoutputSampleRate, localid);
           } else {
-            printLog("convert()", "cannot convert file : "+localinput[a]);
+            println("convert() - cannot convert file : "+localinput[a]);
           }
           a=a+1;
         }

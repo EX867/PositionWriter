@@ -93,7 +93,6 @@ void loadPaths(String customPath) {
   if (XmlData!=null)Data=XmlData.getChild("GlobalPath");//
   if (Data==null)GlobalPath=joinPath(getDocuments(), "PositionWriter");
   else GlobalPath=Data.getContent().replace("?", username);
-  printLog("GlobalPath", GlobalPath);
   if (XmlData!=null)Data=XmlData.getChild("autosaved");//
   if (Data==null)AutoSavePath="Autosaved";
   else AutoSavePath=Data.getContent().replace("?", username);
@@ -169,7 +168,7 @@ void External_setup() {
           if (filename==null)return;
           if (currentFrame==1) {//keyled
             if (de.file().isFile()&&isImageFile(de.file())) {
-              currentLedFrame=0;
+              keyled_textEditor.current.processer.displayFrame=0;
               PImage image=loadImage(filename);
               if (image.width>PAD_MAX||image.height>PAD_MAX)return;
               frameSlider.skip=true;
@@ -180,7 +179,7 @@ void External_setup() {
               ((TextBox)UI[getUIid("I_BUTTONY")]).value=image.height;
               ((TextBox)UI[getUIid("I_BUTTONY")]).text=str(image.height);
               L_ResizeData(1, image.width, image.height);
-              ((TextEditor)UI[textfieldId]).setText(analyzer.ImageToLed(image));
+              keyled_textEditor.loadText(filename, ImageToLed(image));
               frameSlider.skip=false;
               registerRender();
             } else {
@@ -188,7 +187,7 @@ void External_setup() {
                 String text=readFile(filename).replace("\r\n", "\n").replace("\r", "\n");
                 keyled_textEditor.loadText(filename, text);
                 registerRender();
-              } else if (file.isDirectory()) {
+              } else if (de.file().isDirectory()) {
                 throw new Exception("ignore");
               } else {
                 throw new Exception("file not exists : "+filename);
@@ -231,7 +230,7 @@ void External_setup() {
               surface.setTitle(title_filename+title_edited+title_suffix);
               registerRender();
             } else {
-              analyzer.loadKeySoundGlobal(filename);
+              loadKeySoundGlobal(filename);
               title_filename=filename;
               title_edited="";
               loadedOnce_keySound=true;
@@ -294,7 +293,6 @@ String[] listFileNames(String dir) {
   if (file==null)return new String [0];
   dir=dir.replace('\\', '/');
   if (file.isDirectory()==false)new File(dir).mkdirs();
-  printLog("listFileNames()", "input : "+dir);
   if (file.isDirectory()) {
     File[] view=file.listFiles();
     String[] ret=new String[view.length];
@@ -314,7 +312,6 @@ String[] listFilePaths_related(String dir) {
   dir=dir.replace('\\', '/');
   if (file==null)file=new File(GlobalPath);
   else if (file.isDirectory()==false)new File(dir).mkdirs();
-  printLog("listFileNames()", "input : "+dir);
   if (file.isDirectory()) {
     File[] view=file.listFiles();
     int directorynext=0;
@@ -352,7 +349,6 @@ String[] listFilePaths_related(String dir) {
 String[] listFilePaths(String dir) {
   if (new File(dir).isDirectory()==false)new File(dir).mkdirs();
   dir=dir.replace('\\', '/');
-  printLog("listFileNames()", "input : "+dir);
   File file = new File(dir);
   if (file.isDirectory()) {
     File[] view=file.listFiles();
@@ -533,6 +529,11 @@ String newFile() {
   SimpleDateFormat dayTime = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
   return joinPath(GlobalPath, joinPath(LedSavePath, dayTime.format(new java.util.Date(time))+".txt"));
 }
+String ext_createFileName() {
+  long time = System.currentTimeMillis(); 
+  SimpleDateFormat dayTime = new SimpleDateFormat("MMddhhmmss.led");
+  return joinPath(GlobalPath, joinPath(LedSavePath, dayTime.format(new java.util.Date(time))+".txt"));
+}
 String newFolder() {
   long time = System.currentTimeMillis(); 
   SimpleDateFormat dayTime = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
@@ -553,8 +554,8 @@ void autoSave() {
 void autoSaveWrite() {
   if (title_edited.equals("*")==false)return;
   String filename=getNotDuplicatedFilename(joinPath(GlobalPath, AutoSavePath), getFileName(title_filename));
-  writeFile(filename, Lines.toString());
-  printLog("autoSaveWrite()", "autoSaved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new java.util.Date(System.currentTimeMillis()))+" : "+filename);
+  writeFile(filename, keyled_textEditor.current.toString());
+  //printLog("autoSaveWrite()", "autoSaved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new java.util.Date(System.currentTimeMillis()))+" : "+filename);
   setStatusR("Autosaved : "+filename);
   //status=autosaved;
 }
@@ -577,16 +578,16 @@ void saveWorkingFile() {
   if (currentFrame==1) {
     String ext=getFileExtension(filename);
     if (ext.equals("png")||ext.equals("jpg")||ext.equals("tga")||ext.equals("gif")) {
-      analyzer.LedToImage(Lines.toString()).save(filename);
+      LedToImage(keyled_textEditor.current).save(filename);
     } else {
-      writeFile(filename, Lines.toString());
+      writeFile(filename, keyled_textEditor.current.toString());
     }
     loadedOnce_led=true;
   } else if (currentFrame==2) {//only save keysound in keysound_saved/keySound in absolute path
-    analyzer.writeKS(filename, false);
+    writeKS(filename, false);
     loadedOnce_keySound=true;
   }
-  printLog("saveWrite()", "saved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new java.util.Date(System.currentTimeMillis()))+" : "+filename);
+  //printLog("saveWrite()", "saved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new java.util.Date(System.currentTimeMillis()))+" : "+filename);
   setStatusR("Saved : "+filename);
   title_edited="";
   surface.setTitle(title_filename+title_edited+title_suffix);
@@ -594,7 +595,7 @@ void saveWorkingFile() {
 void saveWorkingFile_unipad() {
   String filename=title_filename;
   if (currentFrame==1) {
-    writeFile(getNotDuplicatedFilename(filename), "\n"+Lines.toUnipadString());
+    writeFile(getNotDuplicatedFilename(filename), "\n"+ToUnipadLed(keyled_textEditor.current));
   } else if (currentFrame==2) {//only save keysound in keysound_saved/keySound in absolute path
     if (((TextBox)UI[getUIid("I_PROJECTNAME")]).text.equals("")==false) {
       filename=joinPath(GlobalPath, ProjectsPath+"/"+filterString(((TextBox)UI[getUIid("I_PROJECTNAME")]).text, new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}));
@@ -602,9 +603,9 @@ void saveWorkingFile_unipad() {
       filename=joinPath(joinPath(GlobalPath, ProjectsPath), getFileName(title_filename));
       //filename=filename.replace("\\", "/").replace("/"+KeySoundSavePath+"/", "/"+ProjectsPath+"/");
     }
-    analyzer.writeKS(getNotDuplicatedFilename(filename), true);
+    writeKS(getNotDuplicatedFilename(filename), true);
   }
-  printLog("saveWrite_unipad()", "saved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new java.util.Date(System.currentTimeMillis()))+" : "+filename);
+  //printLog("saveWrite_unipad()", "saved : "+new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new java.util.Date(System.currentTimeMillis()))+" : "+filename);
   setStatusR("Exported : "+filename);
   surface.setTitle(title_filename+title_edited+title_suffix);
 }

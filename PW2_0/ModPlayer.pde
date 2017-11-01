@@ -102,7 +102,7 @@ public class ModPlayer implements StateReturner, SliderUpdater {
     ugens.add(index, ugen);
     parameters.add(index, createNewParameter(type, ugen));
     ((ScrollList)UI[getUIidRev("I_SIGNALCHAIN")]).addItem(type.toString());
-    printLog("ModPlayer.addUGen()", "added : "+index+" , ugen= "+type.toString());
+    //printLog("ModPlayer.addUGen()", "added : "+index+" , ugen= "+type.toString());
   }
   public void removeUGen(int index) {
     // linkedlist

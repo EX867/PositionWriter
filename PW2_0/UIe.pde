@@ -242,8 +242,8 @@ class Button extends UIelement implements ImageComponent {
       //Frames[getFrameid("F_UNCLOUD")].prepare(currentFrame);//#uncloud this is disabled in current version!!
     } else if (name.equals("I_RELOAD")) {
       L_ResizeData(((TextBox)UI[getUIid("I_CHAIN")]).value, ((TextBox)UI[getUIid("I_BUTTONX")]).value, ((TextBox)UI[getUIid("I_BUTTONY")]).value);
-      analyzer.clear();
-      Lines.readAll();
+      //analyzer.clear();
+      //keyled_textEditor.current.readAll();
       UI[getUIid("I_CHAIN")].render();
       UI[getUIid("I_BUTTONX")].render();
       UI[getUIid("I_BUTTONY")].render();
@@ -265,24 +265,8 @@ class Button extends UIelement implements ImageComponent {
       UI [getUIid("I_OLDINPUT")].render();
       UI [getUIidRev("I_RIGHTOFFMODE")].render();
       UI [getUIid("I_CYXMODE")].render();
-      Mode=AUTOINPUT;
-      removeErrorsWithCode(3, 5);
-      adderror=true;
-      int a=0;
-      while (a<analyzer.uLines.size()) {//WARNING!!! assert analyzer.uLines.size()==Lines.lines()
-        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.APON/*||analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN*/)printError(2/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use autoPlay command in led file.");
-        a=a+1;
-      }
-      a=0;
-      if (ignoreMc==false) {
-        while (a<analyzer.uLines.size()) {
-          if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.MAPPING)printError(4, a, "LedEditor", Lines.getLine(a), "mapping is unitor command. enable ignoreMc to disable unitor errors.");
-          else if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN)printError(4, a, "LedEditor", Lines.getLine(a), "chain is unitor command. enable ignoreMc to disable unitor errors.");
-          else if (analyzer.uLines.get(a).mc)printError(4/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc is unitor command. enable ignoreMc to disable unitor errors.");
-          a=a+1;
-        }
-      }
-      adderror=false;
+      //Mode=AUTOINPUT;
+      //readAll();
     } else if (name.equals("I_OLDINPUT")) {//Settings
       value=true;
       ((Button)UI [getUIid("I_DEFAULTINPUT")]).value=false;
@@ -292,24 +276,7 @@ class Button extends UIelement implements ImageComponent {
       UI [getUIid("I_OLDINPUT")].render();
       UI [getUIidRev("I_RIGHTOFFMODE")].render();
       UI [getUIid("I_CYXMODE")].render();
-      Mode=MANUALINPUT;
-      removeErrorsWithCode(3, 5);
-      adderror=true;
-      int a=0;
-      while (a<analyzer.uLines.size()) {
-        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.APON/*||analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN*/)printError(2/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use autoPlay command in led file.");
-        a=a+1;
-      }
-      a=0;
-      if (ignoreMc==false) {
-        while (a<analyzer.uLines.size()) {
-          if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.MAPPING)printError(4, a, "LedEditor", Lines.getLine(a), "mapping is unitor command. enable ignoreMc to disable unitor errors.");
-          else if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN)printError(4, a, "LedEditor", Lines.getLine(a), "chain is unitor command. enable ignoreMc to disable unitor errors.");
-          else if (analyzer.uLines.get(a).mc)printError(4/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc is unitor command. enable ignoreMc to disable unitor errors.");
-          a=a+1;
-        }
-      }
-      adderror=false;
+      //Mode=MANUALINPUT;
     } else if (name.equals("I_RIGHTOFFMODE")) {// duplication x3. make it to function!
       value=true;
       ((Button)UI [getUIid("I_DEFAULTINPUT")]).value=false;
@@ -319,67 +286,7 @@ class Button extends UIelement implements ImageComponent {
       UI [getUIid("I_OLDINPUT")].render();
       UI [getUIidRev("I_RIGHTOFFMODE")].render();
       UI [getUIid("I_CYXMODE")].render();
-      Mode=RIGHTOFFMODE;
-      removeErrorsWithCode(3, 5);
-      adderror=true;
-      int a=0;
-      while (a<analyzer.uLines.size()) {
-        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.APON/*||analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN*/)printError(2/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use autoPlay command in led file.");
-        a=a+1;
-      }
-      a=0;
-      if (ignoreMc==false) {
-        while (a<analyzer.uLines.size()) {
-          if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.MAPPING)printError(4, a, "LedEditor", Lines.getLine(a), "mapping is unitor command. enable ignoreMc to disable unitor errors.");
-          else if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN)printError(4, a, "LedEditor", Lines.getLine(a), "chain is unitor command. enable ignoreMc to disable unitor errors.");
-          else if (analyzer.uLines.get(a).mc)printError(4/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc is unitor command. enable ignoreMc to disable unitor errors.");
-          a=a+1;
-        }
-      }
-      adderror=false;
-    } else if (name.equals("I_CYXMODE")) {//Settings
-      value=true;
-      ((Button)UI [getUIid("I_DEFAULTINPUT")]).value=false;
-      ((Button)UI [getUIid("I_OLDINPUT")]).value=false;
-      ((Button)UI [getUIidRev("I_RIGHTOFFMODE")]).value=false;
-      UI [getUIid("I_DEFAULTINPUT")].render();
-      UI [getUIid("I_OLDINPUT")].render();
-      UI [getUIidRev("I_RIGHTOFFMODE")].render();
-      UI [getUIid("I_CYXMODE")].render();
-      Mode=CYXMODE;
-      removeErrorsWithCode(2, 4);
-      adderror=true;
-      int a=0;
-      while (a<analyzer.uLines.size()) {
-        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.ON)printError(3/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use led on command in autoPlay." );
-        if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.MAPPING) {
-          printError(3/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "can't use led on command in autoPlay." );
-          if (ignoreMc==false)printError(4, a, "LedEditor", Lines.getLine(a), "mapping is unitor command. enable ignoreMc to disable unitor errors.");
-        }
-        a=a+1;
-      }
-      adderror=false;
-    } else if (name.equals("I_IGNOREMC")) {//Settings
-      ignoreMc=value;
-      if (value)removeErrorsWithCode(4, 5);
-      else {
-        adderror=true;
-        int a=0;
-        if (Mode==CYXMODE) {
-          while (a<analyzer.uLines.size()) {
-            if (analyzer.uLines.get(a).mc)printError(5/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc is unitor command. enable ignoreMc to disable unitor errors.");
-            a=a+1;
-          }
-        } else {
-          while (a<analyzer.uLines.size()) {
-            if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.MAPPING)printError(4, a, "LedEditor", Lines.getLine(a), "mapping is unitor command. enable ignoreMc to disable unitor errors.");
-            else if (analyzer.uLines.get(a).Type==Analyzer.UnipackLine.CHAIN)printError(4, a, "LedEditor", Lines.getLine(a), "chain is unitor command. enable ignoreMc to disable unitor errors.");
-            else if (analyzer.uLines.get(a).mc)printError(4/*remove when changing mode!*/, a, "LedEditor", Lines.getLine(a), "mc is unitor command. enable ignoreMc to disable unitor errors.");
-            a=a+1;
-          }
-        }     
-        adderror=false;
-      }
+      //Mode=RIGHTOFFMODE;
     } else if (name.equals("T_FILEVIEW")) {
       currentTabWavList=1;
       UI[getUIidRev("I_FILEVIEW3")].disabled=false;
@@ -506,24 +413,24 @@ class Button extends UIelement implements ImageComponent {
     } else if (name.equals("I_EXIT")) {
       exit();
     } else if (name.equals("I_NUMBER1")) {
-      int before=LED.size();
-      int first=currentLedFrame;
-      writeDisplay(userMacro1);
-      if (LED.size()!=before) {//ap.size and led.size is equal.
-        currentLedFrame=min(first+(LED.size()-before), DelayPoint.size()-1);
-        setTimeByFrame();
-        frameSlider.render();
-      }
+      //int before=LED.size();
+      //int first=keyled_textEditor.current.processer.displayFrame;
+      //writeDisplay(userMacro1);
+      //if (LED.size()!=before) {//ap.size and led.size is equal.
+      //  keyled_textEditor.current.processer.displayFrame=min(first+(LED.size()-before), DelayPoint.size()-1);
+      //  setTimeByFrame();
+      //  frameSlider.render();
+      //}
     } else if (name.equals("I_NUMBER2")) {
-      int before=LED.size();
-      int first=currentLedFrame;
-      writeDisplay(userMacro2);
-      if (LED.size()!=before) {
-        currentLedFrame+=(LED.size()-before);
-        currentLedFrame=min(first+(LED.size()-before), DelayPoint.size()-1);
-        setTimeByFrame();
-        frameSlider.render();
-      }
+      //int before=LED.size();
+      //int first=keyled_textEditor.current.processer.displayFrame;
+      //writeDisplay(userMacro2);
+      //if (LED.size()!=before) {
+      //  keyled_textEditor.current.processer.displayFrame+=(LED.size()-before);
+      //  keyled_textEditor.current.processer.displayFrame=min(first+(LED.size()-before), DelayPoint.size()-1);
+      //  setTimeByFrame();
+      //  frameSlider.render();
+      //}
     } else if (name.equals("I_OPENFIND")) {
       if (currentTabKeyLed==3) {
         if (value) {
@@ -533,9 +440,9 @@ class Button extends UIelement implements ImageComponent {
           UI[getUIidRev("I_PREVIOUSFIND")].disabled=false;
           UI[getUIidRev("I_CALCULATE")].disabled=false;
           UI[getUIidRev("I_REPLACEALL")].disabled=false;
-          UI[textfieldId].position.y=((TextEditor)UI[textfieldId]).shortenY;
-          UI[textfieldId].size.y=((TextEditor)UI[textfieldId]).shortenSY;
-          ((TextEditor)UI[textfieldId]).resizeSlider();
+          keyled_textEditor.position.y=keyled_textEditor.shortenY;
+          keyled_textEditor.size.y=keyled_textEditor.shortenSY;
+          keyled_textEditor.updateSlider(keyled_textEditor.sliderPos);
           Frames[currentFrame].render();
         } else {
           UI[getUIidRev("I_FINDTEXTBOX")].disabled=true;
@@ -544,9 +451,9 @@ class Button extends UIelement implements ImageComponent {
           UI[getUIidRev("I_PREVIOUSFIND")].disabled=true;
           UI[getUIidRev("I_CALCULATE")].disabled=true;
           UI[getUIidRev("I_REPLACEALL")].disabled=true;
-          UI[textfieldId].position.y=((TextEditor)UI[textfieldId]).originalY;
-          UI[textfieldId].size.y=((TextEditor)UI[textfieldId]).originalSY;
-          ((TextEditor)UI[textfieldId]).resizeSlider();
+          keyled_textEditor.position.y=keyled_textEditor.originalY;
+          keyled_textEditor.size.y=keyled_textEditor.originalSY;
+          keyled_textEditor.updateSlider(keyled_textEditor.sliderPos);
           Frames[currentFrame].render();
         }
       } else {
@@ -554,43 +461,43 @@ class Button extends UIelement implements ImageComponent {
       }
     } else if (name.equals("I_NEXTFIND")) {
       if (findData.size()!=0) {
-        if (patternMatcher.findUpdated==false)findData=patternMatcher.findAll(Lines.toString());
+        if (patternMatcher.findUpdated==false)findData=patternMatcher.findAll( keyled_textEditor.current.toString());
         findIndex=findIndex+1;
         if (findIndex>=findData.size())findIndex=0;
         if (findData.size()>0) {
-          Lines.setCursorByIndex(findData.get(findIndex).startpoint);
-          Lines.selectFromCursor(findData.get(findIndex).text.length());
-          focus=textfieldId;
-          ((TextEditor)UI[textfieldId]).moveToCursor();
+          keyled_textEditor.current.setCursorByIndex(findData.get(findIndex).startpoint);
+          keyled_textEditor.current.selectFromCursor(findData.get(findIndex).text.length());
+          focus=keyled_textEditor.ID;
+          keyled_textEditor.moveToCursor();
         }
         UI[findId].render();
       }
     } else if (name.equals("I_PREVIOUSFIND")) {
       if (findData.size()!=0) {
-        if (patternMatcher.findUpdated==false)findData=patternMatcher.findAll(Lines.toString());
+        if (patternMatcher.findUpdated==false)findData=patternMatcher.findAll(keyled_textEditor.current.toString());
         findIndex=findIndex-1;
         if (findIndex<0)findIndex=findData.size()-1;
         if (findData.size()>0) {
-          Lines.setCursorByIndex(findData.get(findIndex).startpoint);
-          Lines.selectFromCursor(findData.get(findIndex).text.length());
-          focus=textfieldId;
-          ((TextEditor)UI[textfieldId]).moveToCursor();
+          keyled_textEditor.current.setCursorByIndex(findData.get(findIndex).startpoint);
+          keyled_textEditor.current.selectFromCursor(findData.get(findIndex).text.length());
+          focus=keyled_textEditor.ID;
+          keyled_textEditor.moveToCursor();
         }
         UI[findId].render();
       }
     } else if (name.equals("I_REPLACEALL")) {
       patternMatcher.registerFind(((TextBox)UI[getUIid("I_FINDTEXTBOX")]).text, value);
       patternMatcher.registerReplace(((TextBox)UI[getUIid("I_REPLACETEXTBOX")]).text, value);
-      findData=patternMatcher.findAll(Lines.toString());//WARNING!!!
+      findData=patternMatcher.findAll(keyled_textEditor.current.toString());//WARNING!!!
       RecordLog();
-      ((TextEditor)UI[textfieldId]).setText(patternMatcher.replaceAll(Lines.toString(), ((TextBox)UI[getUIid("I_REPLACETEXTBOX")]).text, findData));
+      keyled_textEditor.setText(patternMatcher.replaceAll(keyled_textEditor.current.toString(), ((TextBox)UI[getUIid("I_REPLACETEXTBOX")]).text, findData));
       RecordLog();
       title_edited="*";
       surface.setTitle(title_filename+title_edited+title_suffix);
     } else if (name.equals("I_CALCULATE")) {
       patternMatcher.registerFind(((TextBox)UI[getUIid("I_FINDTEXTBOX")]).text, value);
       patternMatcher.registerReplace(((TextBox)UI[getUIid("I_REPLACETEXTBOX")]).text, value);
-      findData=patternMatcher.findAll(Lines.toString());//WARNING!!!
+      findData=patternMatcher.findAll(keyled_textEditor.current.toString());//WARNING!!!
     } else if (name.equals("I_CLEARKEYSOUND")) {
       int a=0;
       while (a<ksDisplay.length) {
@@ -1038,7 +945,7 @@ class Slider extends UIelement {
   void adjust(int value) {
     valueI=max(0, min(maxI, value));
     if (name.equals("I_FRAMESLIDER")&&skip==false) {
-      if (UI[textfieldId].disabled==false)UI[textfieldId].render();
+      if (keyled_textEditor.disabled==false)keyled_textEditor.render();
     }
   }
   void setUpdater(SliderUpdater updater_) {
@@ -1065,22 +972,22 @@ class Slider extends UIelement {
         surface.setSize(floor(initialWidth*valueF), floor(initialHeight*valueF));
         setSize(floor(initialWidth*valueF), floor(initialHeight*valueF));
       } else if (name.equals("I_FRAMESLIDER")) {
-        currentLedTime=valueI;
-        timeLabel.text=currentLedTime+"/"+maxI;
+        keyled_textEditor.current.processer.displayTime=valueI;
+        timeLabel.text=keyled_textEditor.current.processer.displayTime+"/"+maxI;
         int sum=0;
         int a=0;
         valueI=sum;
-        currentLedFrame=0;
+        keyled_textEditor.current.processer.displayFrame=0;
         while (a<DelayValue.size()) {
           sum=sum+DelayValue.get(a);
-          if (currentLedTime<sum) break;
+          if (keyled_textEditor.current.processer.displayTime<sum) break;
           else valueI=sum;
-          currentLedFrame++;
+          keyled_textEditor.current.processer.displayFrame++;
           a=a+1;
         }
-        currentLedTime=valueI;
-        if (autorun_playing==false||autorun_paused)autorun_backup=currentLedTime;
-        if (UI[textfieldId].disabled==false)UI[textfieldId].render();
+        keyled_textEditor.current.processer.displayTime=valueI;
+        if (autorun_playing==false||autorun_paused)autorun_backup=keyled_textEditor.current.processer.displayTime;
+        if (keyled_textEditor.disabled==false)keyled_textEditor.render();
       }
       if (updater!=null)updater.setValue(valueF);//this is limit!!!
       render();
@@ -1198,7 +1105,7 @@ class DragSlider extends UIelement {//only int
       }
       render();
       if (name.equals("I_FRAMESLIDERLOOP")) {
-        UI[textfieldId].render();
+        keyled_textEditor.render();
       }
       sliderClicked=true;
     } else {
@@ -1603,7 +1510,7 @@ class TextBox extends UIelement {
     } else if (name.equals("I_FINDTEXTBOX")) {
       patternMatcher.findUpdated=false;
       patternMatcher.registerFind(text, ((Button)UI[getUIidRev("I_CALCULATE")]).value);
-      findData=patternMatcher.findAll(Lines.toString());//WARNING!!!
+      findData=patternMatcher.findAll(keyled_textEditor.current.toString());//WARNING!!!
     } else if (name.equals("I_REPLACETEXTBOX")) {
       patternMatcher.registerReplace(text, ((Button)UI[getUIidRev("I_CALCULATE")]).value);
     } else if (name.equals("KS_SOUNDMULTI")) {
@@ -2525,21 +2432,21 @@ class PadButton extends UIelement {
     if (name.equals("KEYLED_PAD")) {
       int a=0;
       if (Mode==AUTOINPUT||Mode==MANUALINPUT||Mode==RIGHTOFFMODE) {
-        if (currentLedFrame>=LED.size())return;//#remove
+        if (keyled_textEditor.current.processer.displayFrame>=LED.size())return;//#remove
         while (a<ButtonX) {
           int b=0;
           while (b<ButtonY) {
             color current=0;
-            if (LED.get(currentLedFrame)[a][b]==RNDCOLOR) {
+            if (LED.get(keyled_textEditor.current.processer.displayFrame)[a][b]==RNDCOLOR) {
               fill(UIcolors[I_PADFOREGROUND]);
               text("rnd", padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2);
               stroke(UIcolors[I_PADFOREGROUND]);
               noFill();
               rect(padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2, interval*2/5, interval*2/5);
               noStroke();
-            } else if (LED.get(currentLedFrame)[a][b]!=OFFCOLOR) {
-              current=inverseK(LED.get(currentLedFrame)[a][b]);
-              fill(LED.get(currentLedFrame)[a][b]);
+            } else if (LED.get(keyled_textEditor.current.processer.displayFrame)[a][b]!=OFFCOLOR) {
+              current=inverseK(LED.get(keyled_textEditor.current.processer.displayFrame)[a][b]);
+              fill(LED.get(keyled_textEditor.current.processer.displayFrame)[a][b]);
               rect(padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2, interval*2/5, interval*2/5);
             }
             if (before[a][b]!=current) {
@@ -2566,7 +2473,7 @@ class PadButton extends UIelement {
         while (a<ButtonX) {
           int b=0;
           while (b<ButtonY) {
-            if (apLED.get(currentLedFrame)[a][b]) {
+            if (apLED.get(keyled_textEditor.current.processer.displayFrame)[a][b]) {
               fill(255);
               rect(padX-ButtonX*interval/2+a*interval+interval/2, position.y-ButtonY*interval/2+b*interval+interval/2, interval*2/5, interval*2/5);
             }
@@ -2657,36 +2564,36 @@ class PadButton extends UIelement {
   synchronized void printLed(int X, int Y, boolean async, int option) {//option only used in specific mode
     if (X<0||Y<0||X>=ButtonX||Y>=ButtonY)return;
     if (Mode==AUTOINPUT) {
-      int line=Lines.lines();
+      int line=keyled_textEditor.current.keyled_textEditor.current();
       int frame=LED.size()-1;
       if (InFrameInput) {
-        if (currentLedFrame!=DelayPoint.size()-1)line=DelayPoint.get(currentLedFrame+1);
-        frame=currentLedFrame;
+        if (keyled_textEditor.current.processer.displayFrame!=DelayPoint.size()-1)line=DelayPoint.get(keyled_textEditor.current.processer.displayFrame+1);
+        frame=keyled_textEditor.current.processer.displayFrame;
       }
       int a=line-1;
       int aframe=analyzer.getFrame(line);
       boolean done=false;
       while (a>0&&a>DelayPoint.get(aframe)) {
-        Analyzer.UnipackLine info= analyzer.uLines.get(a);
+        Analyzer.UnipackLine info= analyzer.ukeyled_textEditor.current.get(a);
         if (info.Type==Analyzer.UnipackLine.ON) {
           if (info.x-1==X&&info.y-1==Y&&info.x==info.x2&&info.y==info.y2) {
             done=true;
-            Lines.deleteLine(a);
-            if (UI[textfieldId].disabled==false) {
-              if (async)UI[textfieldId].registerRender=true;
-              else UI[textfieldId].render();
+            keyled_textEditor.current.deleteLine(a);
+            if (keyled_textEditor.disabled==false) {
+              if (async)keyled_textEditor.registerRender=true;
+              else keyled_textEditor.render();
             }
             break;
           }
         } else if (info.Type==Analyzer.UnipackLine.OFF) {
           if (info.x-1==X&&info.y-1==Y&&info.x==info.x2&&info.y==info.y2) {
             done=true;
-            Lines.deleteLine(a);
+            keyled_textEditor.current.deleteLine(a);
             boolean notsame=k[((VelocityButton)UI[velnumId]).selectedVelocity]!=LED.get(frame)[X][Y];
             if (notsame)writeDisplayLine("on "+str(Y+1)+" "+str(X+1)+" auto "+((VelocityButton)UI[velnumId]).selectedVelocity);
-            else if (UI[textfieldId].disabled==false) {
-              if (async)UI[textfieldId].registerRender=true;
-              else UI[textfieldId].render();
+            else if (keyled_textEditor.disabled==false) {
+              if (async)keyled_textEditor.registerRender=true;
+              else keyled_textEditor.render();
             }
             break;
           }
@@ -2697,7 +2604,7 @@ class PadButton extends UIelement {
       if (done==false) {
         boolean on=false;
         while (a>0) {
-          Analyzer.UnipackLine info= analyzer.uLines.get(a);
+          Analyzer.UnipackLine info= analyzer.ukeyled_textEditor.current.get(a);
           if (info.Type==Analyzer.UnipackLine.ON) {
             if (info.x-1<=X&&X<=info.x2-1&&info.y-1<=Y&&Y<=info.y2-1) {
               on=true;
@@ -2728,14 +2635,14 @@ class PadButton extends UIelement {
         writeDisplayLine("off "+str(Y+1)+" "+str(X+1), true);
       }
     } else if (Mode==CYXMODE) {
-      int line=Lines.lines();
+      int line=keyled_textEditor.current.keyled_textEditor.current();
       if (InFrameInput) {
-        if (currentLedFrame!=DelayPoint.size()-1)line=DelayPoint.get(currentLedFrame+1);
+        if (keyled_textEditor.current.processer.displayFrame!=DelayPoint.size()-1)line=DelayPoint.get(keyled_textEditor.current.processer.displayFrame+1);
       }
       int a=line-1;
       boolean on=false;
       while (a>0) {
-        Analyzer.UnipackLine info= analyzer.uLines.get(a);
+        Analyzer.UnipackLine info= analyzer.ukeyled_textEditor.current.get(a);
         if (info.Type==Analyzer.UnipackLine.APON) {
           if (info.x-1==X&&info.y-1==Y) {
             on=true;

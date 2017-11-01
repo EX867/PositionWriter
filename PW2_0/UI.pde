@@ -1,4 +1,4 @@
-Frame[] Frames; //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
+Frame[] Frames; //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 String[] Framenames;
 int Description_current;
 boolean Description_enabled=false;
@@ -206,7 +206,7 @@ void UI_load() {
     } else if (Type==TYPE_SCROLLLIST) {
       UI[id]=new ScrollList(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getInt("textsize", 1), toBoolean(Datas[a].getString("reorderable")));
     } else if (Type==TYPE_TEXTEDITOR) { 
-      UI[id]=new TextEditor(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"));
+      UI[id]=new LedTextEditor(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"));
     } else if (Type==TYPE_COLORPICKER) {
       UI[id]=new ColorPicker(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"));
     } else if (Type==TYPE_PADBUTTON) {
@@ -268,7 +268,7 @@ void UI_setup() {
   currentFrame=getFrameid("F_KEYLED");
   velnumId=getUIid("I_VELNUM");
   htmlselId=getUIid("I_HTMLSEL");
-  textfieldId=getUIid("I_TEXTFIELD");
+  keyled_textEditor=(LedTextEditor)UI[getUIid("I_TEXTFIELD")];
   frameSlider=(Slider)UI[getUIid("I_FRAMESLIDER")];
   frameSliderLoop=(DragSlider)UI[getUIid("I_FRAMESLIDERLOOP")];
   timeLabel=(Label)UI[getUIid("I_TIME1")];
@@ -296,10 +296,10 @@ void UI_setup() {
   UI[getUIidRev("I_PREVIOUSFIND")].disabled=true;
   UI[getUIidRev("I_CALCULATE")].disabled=true;
   UI[getUIidRev("I_REPLACEALL")].disabled=true;
-  ((TextEditor)UI[textfieldId]).shortenY=UI[textfieldId].position.y-40;//WARNING!!!
-  ((TextEditor)UI[textfieldId]).shortenSY=UI[textfieldId].size.y-40;//WARNING!!!
-  ((TextEditor)UI[textfieldId]).originalY=UI[textfieldId].position.y;
-  ((TextEditor)UI[textfieldId]).originalSY=UI[textfieldId].size.y;
+  keyled_textEditor.shortenY=keyled_textEditor.position.y-40;//WARNING!!!
+  keyled_textEditor.shortenSY=keyled_textEditor.size.y-40;//WARNING!!!
+  keyled_textEditor.originalY=keyled_textEditor.position.y;
+  keyled_textEditor.originalSY=keyled_textEditor.size.y;
   // ========= hardcoded data ========== //
   ((ScrollList)UI[getUIid("I_SIGNALCHAIN")]).setItems(new String[]{"WAVE"});
   ((ScrollList)UI[getUIid("I_EFFECTORS")]).setItems(new String[]{"SIMPLE EDIT TOOL", "TIME STRETCHER"});
@@ -400,22 +400,19 @@ void loadCustomSettings(String customPath) {
   Data=XmlData.getChild("I_CYXMODE");
   if (Data!=null) {
     ((Button)UI[getUIid("I_CYXMODE")]).value=toBoolean(Data.getString("value"));
-    if (toBoolean(Data.getString("value"))==true) {
-      Mode=CYXMODE;
+    if (toBoolean(Data.getString("value"))==true) {//FIX!!!
     }
   }
   Data=XmlData.getChild("I_OLDINPUT");
   if (Data!=null) {
     ((Button)UI[getUIid("I_OLDINPUT")]).value=toBoolean(Data.getString("value"));
     if (toBoolean(Data.getString("value"))==true) {
-      Mode=MANUALINPUT;
     }
   }
   Data=XmlData.getChild("I_RIGHTOFFMODE");
   if (Data!=null) {
     ((Button)UI[getUIid("I_RIGHTOFFMODE")]).value=toBoolean(Data.getString("value"));
     if (toBoolean(Data.getString("value"))==true) {
-      Mode=RIGHTOFFMODE;
     }
   }
   Data=XmlData.getChild("I_DEFAULTINPUT");
@@ -612,30 +609,30 @@ void keyTyped_main() {
   pushMatrix();
   translate(Frames[currentFrame].position.x-Frames[currentFrame].size.x, Frames[currentFrame]. position.y-Frames[currentFrame].size.y);
   if (UI[focus].Type==TYPE_TEXTBOX)((TextBox)UI[focus]).keyTyped();
-  if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).keyTyped();
+  if (UI[focus].Type==TYPE_TEXTEDITOR)((LedTextEditor)UI[focus]).keyTyped();
   editable_keyTyped();
   keyState=false;
   popMatrix();
   popMatrix();
 }
 void mouseWheel_main(MouseEvent e) {
-  if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).mouseWheel(e);
+  if (UI[focus].Type==TYPE_TEXTEDITOR)((LedTextEditor)UI[focus]).mouseWheel(e);
   else if (UI[focus].Type==TYPE_SCROLLLIST)((ScrollList)UI[focus]).mouseWheel(e);
   if (UI[focus].Type==TYPE_LOGGER)((Logger)UI[focus]).mouseWheel(e);
 }
 void cursorLeft() {
   if (UI[focus].Type==TYPE_TEXTBOX)((TextBox)UI[focus]).cursorLeft();
-  else if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorLeft(ctrlPressed,shiftPressed);
+  else if (UI[focus].Type==TYPE_TEXTEDITOR)((LedTextEditor)UI[focus]).cursorLeft(ctrlPressed, shiftPressed);
 }
 void cursorRight() {
   if (UI[focus].Type==TYPE_TEXTBOX)((TextBox)UI[focus]).cursorRight();
-  else if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorRight(ctrlPressed,shiftPressed);
+  else if (UI[focus].Type==TYPE_TEXTEDITOR)((LedTextEditor)UI[focus]).cursorRight(ctrlPressed, shiftPressed);
 }
 void cursorUp() {
-  if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorUp(ctrlPressed,shiftPressed);
+  if (UI[focus].Type==TYPE_TEXTEDITOR)((LedTextEditor)UI[focus]).cursorUp(ctrlPressed, shiftPressed);
 }
 void cursorDown() {
-  if (UI[focus].Type==TYPE_TEXTEDITOR)((TextEditor)UI[focus]).cursorDown(ctrlPressed,shiftPressed);
+  if (UI[focus].Type==TYPE_TEXTEDITOR)((LedTextEditor)UI[focus]).cursorDown(ctrlPressed, shiftPressed);
 }
 boolean isMouseOn(float x, float y, float w, float h) {//RADIUS
   if (x-w<MouseX&&MouseX<x+w&&y-h<MouseY&&MouseY<y+h)return true;
@@ -1003,7 +1000,6 @@ class Shortcut {
       while (a<tempmodes.length) {
         if (tempmodes[a].equals("AutoInput"))modes[a]=AUTOINPUT;
         else if (tempmodes[a].equals("ManualInput"))modes[a]=MANUALINPUT;
-        else if (tempmodes[a].equals("CyxMode"))modes[a]=CYXMODE;
         else modes[a]=-1;
         a=a+1;
       }

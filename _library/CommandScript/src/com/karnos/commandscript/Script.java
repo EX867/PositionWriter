@@ -10,9 +10,9 @@ public class Script {
   public int selEndLine;
   public int selEndPoint;
   int maxpoint;
-  EditRecorder recorder;
-  Analyzer analyzer;
-  String name;
+  public EditRecorder recorder;
+  public Analyzer analyzer;
+  public String name;
   public Script(String name_, LineCommandType commandType, LineCommandProcesser processer_) {
     name=name_;
     l=new ArrayList<String>();
@@ -83,6 +83,9 @@ public class Script {
   }
   public void removeErrors(int line_) {
     analyzer.removeErrors(line_);
+  }
+  public LineError getFirstError(int line_) {
+    return analyzer.getFirstError(line_);
   }
   //===Edit===//
   public void addLine(String text) {
@@ -158,10 +161,10 @@ public class Script {
     l.set(line_, text);
   }
   //===Edit complicated===//
-  void insert(String text) {
+  public void insert(String text) {
     insert(line, point, text);
   }
-  void insert(int line_, int point_, String text) {
+  public void insert(int line_, int point_, String text) {
     if (text.equals("")) return;
     String[] lines=text.split("\n");
     boolean reread=false;
@@ -179,7 +182,7 @@ public class Script {
     if (reread) analyzer.readAll(l);
     else analyzer.read();
   }
-  void delete(int startLine, int startPoint, int endLine, int endPoint) {
+  public void delete(int startLine, int startPoint, int endLine, int endPoint) {
     if ((startLine < endLine || (startLine == endLine && startPoint < endPoint)) == false) return;
     boolean reread=false;
     if (endLine - startLine > READ_THRESHOLD) reread=true;
@@ -197,7 +200,7 @@ public class Script {
     else analyzer.read();
     maxpoint=point;
   }
-  void deleteBefore(boolean word) {//if word, ctrl. - fix needed
+  public void deleteBefore(boolean word) {//if word, ctrl. - fix needed
     maxpoint=point;
     if ((point == 0 && line == 0) || empty()) return;
     if (point == 0) {
@@ -225,7 +228,7 @@ public class Script {
     maxpoint=point;
     analyzer.read();
   }
-  void deleteAfter(boolean word) {// - fix needed
+  public void deleteAfter(boolean word) {// - fix needed
     maxpoint=point;
     if (empty()) return;
     if (point == l.get(line).length()) {
@@ -257,7 +260,7 @@ public class Script {
     if (point >= l.get(line).length()) point=l.get(line).length() - 1;
   }
   //currently, word is seperated by space.
-  void cursorLeft(boolean word, boolean select) {
+  public void cursorLeft(boolean word, boolean select) {
     if (word && point != 0) {
       if (l.get(line).length() > 0 && point > 0) {
         boolean isSpace=false;
@@ -282,7 +285,7 @@ public class Script {
     }
     maxpoint=point;
   }
-  void cursorRight(boolean word, boolean select) {
+  public void cursorRight(boolean word, boolean select) {
     if (word && point != l.get(line).length()) {
       if (l.get(line).length() > 0 && point < l.get(line).length()) {
         boolean isSpace=false;
@@ -307,7 +310,7 @@ public class Script {
     }
     maxpoint=point;
   }
-  void cursorUp(boolean select) {
+  public void cursorUp(boolean select) {
     if (line == 0) {
       point=0;
     } else {
@@ -316,7 +319,7 @@ public class Script {
       if (select == false) resetSelection();
     }
   }
-  void cursorDown(boolean select) {
+  public void cursorDown(boolean select) {
     if (line >= l.size() - 1) {
       point=l.get(l.size() - 1).length();
     } else {
@@ -325,7 +328,7 @@ public class Script {
       if (select == false) resetSelection();
     }
   }
-  void selectionLeft(boolean word) {
+  public void selectionLeft(boolean word) {
     if (hasSelection() == false) {
       resetSelection();
     }
@@ -339,7 +342,7 @@ public class Script {
     }
     fixSelection();
   }
-  void selectionRight(boolean word) {
+  public void selectionRight(boolean word) {
     if (hasSelection() == false) {
       resetSelection();
     }
@@ -353,7 +356,7 @@ public class Script {
     }
     fixSelection();
   }
-  void selectionUp() {
+  public void selectionUp() {
     if (hasSelection() == false) {
       resetSelection();
     }
@@ -369,7 +372,7 @@ public class Script {
     }
     fixSelection();
   }
-  void selectionDown() {
+  public void selectionDown() {
     if (hasSelection() == false) {
       resetSelection();
     }

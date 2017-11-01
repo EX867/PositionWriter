@@ -72,6 +72,9 @@ public class Multiset<Type extends Comparable<Type>> implements Iterable<Type> {
   synchronized public Type get(int index) {
     return list.get(index);
   }
+  synchronized public void set(int index, Type item) {
+    list.set(index, item);
+  }
   synchronized public void clear() {
     list.clear();
   }
