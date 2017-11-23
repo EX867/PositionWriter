@@ -5,6 +5,9 @@ KeySoundPlayer/Builds/VisualStudio2015/KeySoundPlayer.VC.db
 _library/libraries/bin
 _library/libraries/build/*.jar
 _library/libraries/build/doc
+_library/SDrop/bin
+_library/SDrop/lib
+_library/SDrop/build/*.jar
 _library/MidiMap/bin
 _library/MidiMap/build/*.jar
 _library/CommandScript/.idea
