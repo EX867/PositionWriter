@@ -1,6 +1,8 @@
 package com.karnos.commandscript;
+import kyui.util.EditorString;
+
 import java.util.ArrayList;
-public class Script {
+public class Script extends EditorString {
   public static final int READ_THRESHOLD=64;
   private ArrayList<String> l;//if modified, add difference.
   public int point=0;
@@ -13,10 +15,14 @@ public class Script {
   public EditRecorder recorder;
   public Analyzer analyzer;
   public String name;
-  public Script(String name_, LineCommandType commandType, LineCommandProcesser processer_) {
+  public Script(String name_) {
     name=name_;
     l=new ArrayList<String>();
     recorder=new EditRecorder();
+    //not set analyzer...
+    //FIX>>if analyzer is null, nullpointer exception!
+  }
+  public void setAnalyzer(LineCommandType commandType, LineCommandProcesser processer_) {
     analyzer=new Analyzer(commandType, processer_);
     analyzer.location=name;
   }
@@ -542,7 +548,7 @@ public class Script {
     if (in == ' ' || in == '\t' || in == '\n' || in == '\r') return true;
     return false;
   }
-  private void fixSelection() {//swap selection is wrong.
+  public void fixSelection() {//swap selection is wrong.
     if (selStartLine > selEndLine || (selStartLine == selEndLine && selStartPoint > selEndPoint)) {
       int temp=selEndLine;
       selEndLine=selStartLine;
