@@ -4,9 +4,15 @@ import java.util.LinkedList;
 public class Analyzer {//Analyzes specific Script and stores parsed commands.
   public static boolean debug=false;
   public ArrayList<Command> lines;
-  private Parameter commands;//root of commands
+  Parameter commands;//root of commands
   LineCommandType commandType;
-  public LineCommandProcesser processer;
+  LineCommandProcessor processor;
+  public LineCommandProcessor getProcessor() {
+    return processor;
+  }
+  public LineCommandType getCommandType() {
+    return commandType;
+  }
   LinkedList<LineChangeData> addList;
   public Multiset<LineError> errors;
   private LineError cacheError;
@@ -18,7 +24,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
   //these two vars are used in checking progress.
   int total=0;
   int progress=0;
-  public Analyzer(LineCommandType commandType_, LineCommandProcesser processer_) {
+  public Analyzer(LineCommandType commandType_, LineCommandProcessor processer_) {//NotNull all params
     errors=new Multiset<LineError>();
     cacheError=new LineError(LineError.PRIOR, 0, 0, 0, "", "");
     commandType=commandType_;
@@ -28,11 +34,13 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
     wrapper=commandType.wrapper;
     lines=new ArrayList<Command>();
     addList=new LinkedList<LineChangeData>();
-    processer=processer_;
+    processor=processer_;
     recordError=true;
   }
   public void clear() {
-    processer.clear();
+    if (processor != null) {
+      processor.clear(this);
+    }
     addList.clear();
     lines.clear();
     errors.clear();
@@ -49,7 +57,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
     addList.clear();
     total=0;
     progress=0;
-    processer.onReadFinished();
+    processor.onReadFinished(this);
   }
   public void readAll(ArrayList<String> lines) {
     clear();
@@ -57,6 +65,22 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
       add(a, null, lines.get(a));
     }
     read();
+  }
+  public void cursorUpWord(CommandScript script, boolean select) {
+    if (commandType != null) {
+      commandType.cursorUpWord(script, select);
+    }
+  }
+  public void cursorDownWord(CommandScript script, boolean select) {
+    if (commandType != null) {
+      commandType.cursorDownWord(script, select);
+    }
+  }
+  public int getTotal() {
+    return total;
+  }
+  public int getProgress() {
+    return progress;
   }
   @Override
   public String toString() {
@@ -88,6 +112,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
     addList.add(new LineChangeData(line, before, after));
   }
   public void analyzeLine(int line, String before_, String after_) {
+    cacheError.line=line + 1;
     if (before_ != null) {
       removeErrors(line);
       if (after_ == null) {
@@ -112,7 +137,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
     } else {
       lines.set(line, after);
     }
-    processer.processCommand(line, before, after);
+    processor.processCommand(this, line, before, after);
   }
   public Command parse(int line, String location_, String text) {
     if (text == null) return null;
@@ -251,7 +276,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
       if (debug) System.out.println("[matching : " + matches + "] ");
       if (matches == 0) {//no matching command in all available branches!
         if (availableParameters.size() == 0) {
-          addError(new LineError(LineError.ERROR, line, 0, text.length(), location_, " command is too long"));
+          addError(new LineError(LineError.ERROR, line, 0, text.length(), location_, "command is too long"));
         } else {
           StringBuilder builder=new StringBuilder("");
           int b=0;

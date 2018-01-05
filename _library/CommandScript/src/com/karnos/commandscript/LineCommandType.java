@@ -1,17 +1,38 @@
 package com.karnos.commandscript;
 import java.util.ArrayList;
 public abstract class LineCommandType {//processes commands.determinates analyzer's behavior...
+  public static LineCommandType DEFAULT_COMMAND_TYPE=new LineCommandType() {
+    @Override
+    public Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
+      return Command.DEFAULT_COMMAND;
+    }
+    @Override
+    public Command getErrorCommand() {
+      return Command.DEFAULT_COMMAND;
+    }
+    @Override
+    public Command getEmptyCommand() {
+      return Command.DEFAULT_COMMAND;
+    }
+    @Override
+    public void cursorUpWord(CommandScript script, boolean select) {
+    }
+    @Override
+    public void cursorDownWord(CommandScript script, boolean select) {
+    }
+  };
   public Parameter commands;//root of commands
   public char seperator=' ';
   public char range='~';
   public char wrapper='\"';
   public LineCommandType() {
-    commands=new Parameter(Parameter.STRING, "");//root not included in commands!!
+    commands=new Parameter(Parameter.FIXED, "");//root not included in commands!!
   }
   public abstract Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params);
   public abstract Command getErrorCommand();
   public abstract Command getEmptyCommand();
-  public void addCommand(ParamInfo... params) {//set seperator first. ex)on y(integer) x(integer) auto vel(integer) you not have to  write fixed explicitly.
+  public void addCommand(ParamInfo... params) {
+    //set seperator first. ex)on y(integer) x(integer) auto vel(integer) you not have to  write fixed explicitly.
     //all type names are same as Parameter's constants.
     Parameter parent=commands;
     int a=1;
@@ -34,4 +55,6 @@ public abstract class LineCommandType {//processes commands.determinates analyze
       a++;
     }
   }
+  public abstract void cursorUpWord(CommandScript script, boolean select);
+  public abstract void cursorDownWord(CommandScript script, boolean select);
 }

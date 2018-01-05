@@ -12,9 +12,8 @@ _library/MidiMap/bin
 _library/MidiMap/build/*.jar
 _library/CommandScript/.idea
 _library/CommandScript/bin
-_library/CommandScript/out
 _library/CommandScript/build/*.jar
-_library/CommandScript/CommandScript.iml
+_library/CommandScript/lib
 release/*.exe
 PW1_4/application.windows32
 PW1_4/application.windows64

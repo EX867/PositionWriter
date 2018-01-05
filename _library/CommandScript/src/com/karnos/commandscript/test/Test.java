@@ -1,10 +1,31 @@
 package com.karnos.commandscript.test;
 import com.karnos.commandscript.*;
+import kyui.core.KyUI;
+import kyui.util.Rect;
+import processing.core.PApplet;
+import processing.event.KeyEvent;
+import processing.event.MouseEvent;
 
 import java.util.ArrayList;
-public class Test {
+public class Test extends PApplet {
   public static void main(String[] args) {
+    PApplet.main("com.karnos.commandscript.test.Test");
+  }
+  public void settings() {
+    size(500, 500);
+  }
+  public void setup() {
+    //        Main.editorSetupFinishListener=() -> {
+    //          try {
+    //            ElementLoader.loadClass(CommandEdit.class);
+    //          } catch (Exception e) {
+    //            e.printStackTrace();
+    //          }
+    //        };
+    //        kyui.editor.Main.main(new String[0]);
     //variations are only assigned once.
+    KyUI.start(this);
+    //ElementLoader.loadOnStart();
     CommandType commandType=new CommandType();
     //unipad led commands
     //normal on
@@ -29,8 +50,13 @@ public class Test {
     //mapping
     commandType.addCommand(new ParamInfo("mapping", Parameter.FIXED, "m"), new ParamInfo("s"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("n", Parameter.INTEGER));
     commandType.addCommand(new ParamInfo("mapping"), new ParamInfo("l"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("n", Parameter.INTEGER));
-    Processer processer=new Processer();
-    Script script=new Script("LedEditor", commandType, processer);
+    //autoplay
+    //commandType.addCommand(new ParamInfo("t", Parameter.FIXED), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER));
+    Processor processor=new Processor();
+    CommandEdit edit=new CommandEdit("editor").setAnalyzer(commandType, processor);
+    edit.setPosition(new Rect(0, 0, 500, 500));
+    KyUI.add(edit);
+    CommandScript script=new CommandScript("LedEditor", null, null).setAnalyzer(commandType, processor);
     script.addLine("on 6 5 auto 2");
     script.addLine("o 6 5 auto 2");
     script.addLine("o 5 4 a 2");
@@ -55,58 +81,79 @@ public class Test {
       System.out.println(e.toString());
     }
   }
-}
-class CommandType extends LineCommandType {
-  @Override
-  public Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
-    System.out.println("[result] " + commandName);
-    if (commandName.equals("a x y")) {
+  public void draw() {
+    KyUI.render(g);
+  }
+  class CommandType extends LineCommandType {
+    @Override
+    public Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
+      System.out.println("[result] " + commandName);
+      if (commandName.equals("a x y")) {
+        return getEmptyCommand();
+      }
       return getEmptyCommand();
+      //return getErrorCommand();
     }
-    return getEmptyCommand();
-    //return getErrorCommand();
+    @Override
+    public Command getErrorCommand() {
+      return new ErrorCommand();
+    }
+    @Override
+    public Command getEmptyCommand() {
+      return new EmptyCommand();
+    }
+    @Override
+    public void cursorUpWord(CommandScript script, boolean select) {
+    }
+    @Override
+    public void cursorDownWord(CommandScript script, boolean select) {
+    }
+  }
+  class Processor extends LineCommandProcessor {
+    @Override
+    public void processCommand(Analyzer analyzer, int line, Command before, Command after) {
+      if (before == null) System.out.println("[out] " + line + " added " + after.toString());
+      else if (after == null) System.out.println("[out] " + line + " deleted " + before.toString());
+      else System.out.println("[out] " + line + " changed from " + before.toString() + " to " + after.toString());
+      getSurface().setTitle("editor - " + analyzer.getProgress() + "/" + analyzer.getTotal());
+    }
+    @Override
+    public void onReadFinished(Analyzer analyzer) {
+      getSurface().setTitle("editor");
+      //set title progress to 0 etc...
+    }
+    @Override
+    public void clear(Analyzer analyzer) {
+    }
+  }
+  class ErrorCommand implements Command {
+    @Override
+    public String toString() {
+      return "error";
+    }
+    @Override
+    public void execute(long time) {
+      System.out.println("error excuted!");
+    }
+  }
+  class EmptyCommand implements Command {
+    @Override
+    public String toString() {
+      return "empty";
+    }
+    @Override
+    public void execute(long time) {
+      System.out.println("empty excuted!");
+    }
   }
   @Override
-  public Command getErrorCommand() {
-    return new ErrorCommand();
+  protected void handleKeyEvent(KeyEvent event) {
+    super.handleKeyEvent(event);
+    KyUI.handleEvent(event);
   }
   @Override
-  public Command getEmptyCommand() {
-    return new EmptyCommand();
-  }
-}
-class Processer extends LineCommandProcesser {
-  @Override
-  public void processCommand(int line, Command before, Command after) {
-    //if (before == null) System.out.println("[out] " + line + " added " + after.toString());
-    //else if (after == null) System.out.println("[out] " + line + " deleted " + before.toString());
-    //else System.out.println("[out] " + line + " changed from " + before.toString() + " to " + after.toString());
-  }
-  @Override
-  public void onReadFinished() {
-    //set title progress to 0 etc...
-  }
-  @Override
-  public void clear() {
-  }
-}
-class ErrorCommand implements Command {
-  @Override
-  public String toString() {
-    return "error";
-  }
-  @Override
-  public void execute(int time) {
-    System.out.println("error excuted!");
-  }
-}
-class EmptyCommand implements Command {
-  @Override
-  public String toString() {
-    return "empty";
-  }
-  @Override
-  public void execute(int time) {
-    System.out.println("empty excuted!");
+  protected void handleMouseEvent(MouseEvent event) {
+    super.handleMouseEvent(event);
+    KyUI.handleEvent(event);
   }
 }

@@ -1,7 +1,7 @@
 package com.karnos.commandscript;
 import java.util.Iterator;
 //this is not perfect code for now because if executing command duration is long, process will be just delayed. add system.gettime() between time measurements and set time to real time.
-public class SequenceCommand implements Runnable, Iterable<SequenceCommand.TimeCommand> {
+class SequenceCommand implements Runnable, Iterable<SequenceCommand.TimeCommand> {
   protected TimeCommand progress;// stores time
   protected int start = 0;
   protected int end = 0;// end is not included.
