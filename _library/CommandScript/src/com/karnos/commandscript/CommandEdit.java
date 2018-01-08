@@ -6,6 +6,7 @@ import kyui.element.TextEdit;
 import kyui.util.ColorExt;
 import kyui.util.Rect;
 import processing.core.PGraphics;
+import processing.event.KeyEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +56,11 @@ public class CommandEdit extends TextEdit {
     //draw basic form
     g.fill(bgColor);
     pos.render(g);
+    //setup text
+    g.textAlign(KyUI.Ref.LEFT, KyUI.Ref.CENTER);
+    g.textFont(textFont);
+    g.textSize(Math.max(1, textSize));
+    g.textLeading(textSize / 2);
     int start=offsetToLine(offsetY - padding);
     int end=offsetToLine(offsetY + pos.bottom - pos.top - padding);
     g.fill(lineNumBgColor);
@@ -63,15 +69,10 @@ public class CommandEdit extends TextEdit {
     for (MarkRange range : markRanges) {
       if (range.isActive() && start < range.endLine && end >= range.startLine) {
         g.fill(range.color);
-        g.rect(pos.left, padding + range.startLine * textSize - offsetY, pos.left + lineNumSize, padding + range.endLine * textSize - offsetY);
+        g.rect(pos.left, pos.top + padding + range.startLine * textSize - offsetY, pos.left + lineNumSize, pos.top + padding + range.endLine * textSize - offsetY);
       }
     }
     cacheRect.set(pos.left, pos.top, pos.right, pos.bottom);
-    //setup text
-    g.textAlign(KyUI.Ref.LEFT, KyUI.Ref.CENTER);
-    g.textFont(textFont);
-    g.textSize(Math.max(1, textSize));
-    g.textLeading(textSize / 2);
     //iterate lines
     g.fill(selectionColor);
     if (content.hasSelection()) {
@@ -109,8 +110,7 @@ public class CommandEdit extends TextEdit {
         g.text(content.getLine(a).substring(index, content.getLine(a).length()), width + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
       }
     }
-    for (
-        int a=Math.max(0, start - 1); a < content.lines() && a < end + 1; a++) {
+    for (int a=Math.max(0, start - 1); a < content.lines() && a < end + 1; a++) {
       if (script.getFirstError(a) != null) {
         underlineError(g, a);
       }
@@ -132,9 +132,7 @@ public class CommandEdit extends TextEdit {
     g.textFont(KyUI.fontMain);
     g.textSize(Math.max(1, textSize));
     g.textLeading(textSize / 2);
-    for (
-        int a=Math.max(0, start - 1);
-        a < end + 1; a++) {
+    for (int a=Math.max(0, start - 1); a < end + 1; a++) {
       if (a < content.lines()) {
         g.fill(lineNumColor);
       } else {
@@ -164,6 +162,9 @@ public class CommandEdit extends TextEdit {
     public void render(PGraphics g) {
       super.render(g);
       g.strokeWeight(2);
+      for (LineError error : script.getErrors()) {
+        markLine(g, errorColor, error.line);
+      }
       for (MarkRange mark : markRanges) {
         markLine(g, mark);
       }
@@ -173,14 +174,26 @@ public class CommandEdit extends TextEdit {
       if (!m.isActive()) {
         return;
       }
-      g.stroke((m.color >> 16) & 0xFF, (m.color >> 8) & 0xFF, m.color & 0xFF, 255);
+      markLine(g, m.color, m.startLine);
+    }
+    protected void markLine(PGraphics g, int c, int line) {
+      g.stroke((c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF, 255);
       float total=Math.max(getTotalSize(), CommandEdit.this.pos.bottom - CommandEdit.this.pos.top);
-      int offset=CommandEdit.this.padding + CommandEdit.this.textSize * m.startLine;
+      int offset=CommandEdit.this.padding + CommandEdit.this.textSize * line;
       float p=0;
       slider.setOffset(getTotalSize(), offsetY);
       if (total != 0) p=(pos.bottom - pos.top) * offset / total;
       p+=sliderLength / 2;
       g.line(pos.left, pos.top + p, pos.right, pos.top + p);
     }
+  }
+  @Override
+  public boolean isRecordPoint(char c) {
+    return c == ' ' || c == '\n' || c == script.getAnalyzer().seperator;
+  }
+  @Override
+  public void recordHistory() {
+    //System.out.println("recorded : " + KyUI.frameCount);
+    script.recorder.recordLog();
   }
 }

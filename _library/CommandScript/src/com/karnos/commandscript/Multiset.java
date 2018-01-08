@@ -105,7 +105,7 @@ public class Multiset<Type extends Comparable<Type>> implements Iterable<Type> {
         }
       }
     }
-  }
+  }//is it right??
   synchronized public Type get(int index) {
     return list.get(index);
   }

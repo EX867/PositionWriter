@@ -236,7 +236,7 @@ public class CommandScript extends EditorString {
   }
   void setLineWithoutAnalyze(int line_, String text) {
     if (text == null) return;
-    int afterPoint=Math.min(point, l.get(line).length());
+    int afterPoint=Math.min(point, l.get(line_).length());
     recorder.add(new LineChange(line_, l.get(line_), line, point, text, line, afterPoint));
     l.set(line_, text);
   }
@@ -316,29 +316,34 @@ public class CommandScript extends EditorString {
     maxpoint=point;
   }
   @Override
-  public void deleteBefore(boolean word) {
-    maxpoint=point;
-    if ((point == 0 && line == 0) || empty()) return;
+  public String deleteBefore(boolean word) {
+    String ret;
+    if ((point == 0 && line == 0) || empty()) return "";
     if (point == 0) {
-      if (line == 0) return;
+      if (line == 0) return "";
       cursorLeft(false, false);
       setLine_(line, l.get(line) + l.get(line + 1));
       deleteLine_(line + 1);
+      ret="\n";
     } else if (word) {
       boolean isSpace=false;
       String before=l.get(line);
+      StringBuilder sb=new StringBuilder();
       if (isSpaceChar(l.get(line).charAt(point - 1))) isSpace=true;
       while (l.get(line).length() > 0 && point > 0) {
         if (((isSpace && isSpaceChar(l.get(line).charAt(point - 1)) == false)) || (!isSpace && isSpaceChar(l.get(line).charAt(point - 1)))) break;
-        l.set(line, l.get(line).substring(0, point - 1) + l.get(line).substring(Math.min(point, l.get(line).length()), l.get(line).length()));
+        sb.append(l.get(line).charAt(point - 1));
+        setLineWithoutAnalyze(line, l.get(line).substring(0, point - 1) + l.get(line).substring(Math.min(point, l.get(line).length()), l.get(line).length()));
         point--;
       }
       if (analyzer != null) {
         analyzer.add(line, before, l.get(line));
       }
+      ret=sb.reverse().toString();
     } else {
       String before=l.get(line);
-      l.set(line, l.get(line).substring(0, point - 1) + l.get(line).substring(point, l.get(line).length()));
+      ret="" + l.get(line).charAt(point - 1);
+      setLineWithoutAnalyze(line, l.get(line).substring(0, point - 1) + l.get(line).substring(point, l.get(line).length()));
       cursorLeft(false, false);
       maxpoint=point;
       if (analyzer != null) {
@@ -349,29 +354,35 @@ public class CommandScript extends EditorString {
     if (analyzer != null) {
       analyzer.read();
     }
+    return ret;
   }
   @Override
-  public void deleteAfter(boolean word) {
-    maxpoint=point;
-    if (empty()) return;
+  public String deleteAfter(boolean word) {
+    String ret;
+    if (empty()) return "";
     if (point == l.get(line).length()) {
-      if (line == lines() - 1) return;
+      if (line == lines() - 1) return "";
       setLine_(line, l.get(line) + l.get(line + 1));
       deleteLine_(line + 1);
+      ret="\n";
     } else if (word) {
       boolean isSpace=false;
       String before=l.get(line);
+      StringBuilder sb=new StringBuilder();
       if (isSpaceChar(l.get(line).charAt(point))) isSpace=true;
       while (l.get(line).length() > 0 && point < l.get(line).length()) {
         if (((isSpace && isSpaceChar(l.get(line).charAt(point)) == false)) || (!isSpace && isSpaceChar(l.get(line).charAt(point)))) break;
-        l.set(line, l.get(line).substring(0, point) + l.get(line).substring(Math.min(point + 1, l.get(line).length()), l.get(line).length()));
+        sb.append(l.get(line).charAt(point));
+        setLineWithoutAnalyze(line, l.get(line).substring(0, point) + l.get(line).substring(Math.min(point + 1, l.get(line).length()), l.get(line).length()));
       }
       if (analyzer != null) {
         analyzer.add(line, before, l.get(line));
       }
+      ret=sb.toString();
     } else {
       String before=l.get(line);
-      l.set(line, l.get(line).substring(0, point) + l.get(line).substring(Math.min(point + 1, l.get(line).length()), l.get(line).length()));
+      ret="" + l.get(line).charAt(point);
+      setLineWithoutAnalyze(line, l.get(line).substring(0, point) + l.get(line).substring(Math.min(point + 1, l.get(line).length()), l.get(line).length()));
       if (analyzer != null) {
         analyzer.add(line, before, l.get(line));
       }
@@ -380,6 +391,7 @@ public class CommandScript extends EditorString {
     if (analyzer != null) {
       analyzer.read();
     }
+    return ret;
   }
   //
   //===Cursor movements===// - script specific

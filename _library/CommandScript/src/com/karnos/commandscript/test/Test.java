@@ -1,9 +1,11 @@
 package com.karnos.commandscript.test;
 import com.karnos.commandscript.*;
 import kyui.core.Attributes;
+import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.element.DivisionLayout;
 import kyui.element.RangeSlider;
+import kyui.element.TextEdit;
 import kyui.util.Rect;
 import processing.core.PApplet;
 import processing.event.KeyEvent;
@@ -96,11 +98,12 @@ public class Test extends PApplet {
     commandType.addCommand(new ParamInfo("end1", Parameter.FIXED), new ParamInfo("line", Parameter.INTEGER));
     commandType.addCommand(new ParamInfo("start2", Parameter.FIXED), new ParamInfo("line", Parameter.INTEGER));
     commandType.addCommand(new ParamInfo("end2", Parameter.FIXED), new ParamInfo("line", Parameter.INTEGER));
-    int C_KWD=0xFF614793;
-    commandType.setKeyword("start1", C_KWD);
-    commandType.setKeyword("end1", C_KWD);
-    commandType.setKeyword("start2", C_KWD);
-    commandType.setKeyword("end2", C_KWD);
+    int C_KWD1=0xFF669900;
+    int C_KWD2=0xFF3294AA;
+    commandType.setKeyword("start1", C_KWD1);
+    commandType.setKeyword("end1", C_KWD1);
+    commandType.setKeyword("start2", C_KWD2);
+    commandType.setKeyword("end2", C_KWD2);
     //
     Processor processor=new Processor();
     edit=new CommandEdit("edit").setAnalyzer(commandType, processor);
@@ -137,6 +140,20 @@ public class Test extends PApplet {
     //    for (LineError e : script.getErrors()) {
     //      System.out.println(e.toString());
     //    }
+    KyUI.addShortcut(new KyUI.Shortcut("undo", true, false, false, 26, java.awt.event.KeyEvent.VK_Z, (Element e) -> {
+      if (e instanceof CommandEdit) {
+        CommandEdit t=(CommandEdit)e;
+        t.script.undo();
+        t.invalidate();
+      }
+    }));
+    KyUI.addShortcut(new KyUI.Shortcut("redo", true, false, false, 25, java.awt.event.KeyEvent.VK_Y, (Element e) -> {
+      if (e instanceof CommandEdit) {
+        CommandEdit t=(CommandEdit)e;
+        t.script.redo();
+        t.invalidate();
+      }
+    }));
   }
   public void draw() {
     KyUI.render(g);
@@ -175,9 +192,9 @@ public class Test extends PApplet {
   class Processor extends LineCommandProcessor {
     @Override
     public void processCommand(Analyzer analyzer, int line, Command before, Command after) {
-      if (before == null) System.out.println("[out] " + line + " added " + after.toString());
-      else if (after == null) System.out.println("[out] " + line + " deleted " + before.toString());
-      else System.out.println("[out] " + line + " changed from " + before.toString() + " to " + after.toString());
+      //if (before == null) System.out.println("[out] " + line + " added " + after.toString());
+      //else if (after == null) System.out.println("[out] " + line + " deleted " + before.toString());
+      //else System.out.println("[out] " + line + " changed from " + before.toString() + " to " + after.toString());
       getSurface().setTitle("editor - " + analyzer.getProgress() + "/" + analyzer.getTotal());
       if (after != null) {
         if (after instanceof StartCommand) {
@@ -252,6 +269,9 @@ public class Test extends PApplet {
   protected void handleKeyEvent(KeyEvent event) {
     super.handleKeyEvent(event);
     KyUI.handleEvent(event);
+    //    if (event.getAction() == 1) {
+    //      println((int)key + " " + keyCode);
+    //    }
   }
   @Override
   protected void handleMouseEvent(MouseEvent event) {
