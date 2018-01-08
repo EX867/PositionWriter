@@ -41,7 +41,8 @@ public class Multiset<Type extends Comparable<Type>> implements Iterable<Type> {
     }
   }
   private int changePoint(int index, Type item) {
-    // AA[A]CCC(->) item=B -> returns first C's index
+    // item=B
+    // AA[A]CCC(->) -> returns first C's index
     // AAA[C]CC(<-)
     // AAAB[B]BCCC(<-)->returns first C's index.
     // find change point near by index.
@@ -69,11 +70,48 @@ public class Multiset<Type extends Comparable<Type>> implements Iterable<Type> {
       }
     }
   }
+  synchronized public int getFirstIndex(Type item) {
+    if (list.size() == 0) {
+      return -1;
+    }
+    // returns place after items<=item.
+    int min=0;
+    int max=list.size() - 1;
+    int mid=(min + max) / 2;
+    while (true) {
+      int result=item.compareTo(list.get(mid));
+      if (min > max) {
+        return -1;
+      } else if (result > 0) {// bigger than mid
+        min=mid + 1;
+        mid=(min + max) / 2;
+      } else if (result < 0) {
+        max=mid - 1;
+        mid=(min + max) / 2;
+      } else {//if (result == 0) {
+        while (true) {
+          result=item.compareTo(list.get(mid));
+          if (result < 0) {
+            if (mid + 1 < list.size()) {
+              return -1;
+            } else {
+              return mid + 1;
+            }
+          }
+          mid--;
+          if (mid < 0) {
+            return 0;
+          }
+        }
+      }
+    }
+  }
   synchronized public Type get(int index) {
     return list.get(index);
   }
   synchronized public void set(int index, Type item) {
-    list.set(index, item);
+    remove(index);
+    add(item);
   }
   synchronized public void clear() {
     list.clear();

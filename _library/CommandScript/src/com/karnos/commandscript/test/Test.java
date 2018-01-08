@@ -1,6 +1,9 @@
 package com.karnos.commandscript.test;
 import com.karnos.commandscript.*;
+import kyui.core.Attributes;
 import kyui.core.KyUI;
+import kyui.element.DivisionLayout;
+import kyui.element.RangeSlider;
 import kyui.util.Rect;
 import processing.core.PApplet;
 import processing.event.KeyEvent;
@@ -8,6 +11,9 @@ import processing.event.MouseEvent;
 
 import java.util.ArrayList;
 public class Test extends PApplet {
+  CommandEdit.MarkRange range1;
+  CommandEdit.MarkRange range2;
+  CommandEdit edit;
   public static void main(String[] args) {
     PApplet.main("com.karnos.commandscript.test.Test");
   }
@@ -27,59 +33,110 @@ public class Test extends PApplet {
     KyUI.start(this);
     //ElementLoader.loadOnStart();
     CommandType commandType=new CommandType();
-    //unipad led commands
-    //normal on
-    commandType.addCommand(new ParamInfo("on", Parameter.FIXED, "o"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("auto", Parameter.FIXED, "a"), new ParamInfo("vel", Parameter.INTEGER));
-    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("vel", Parameter.INTEGER));
-    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("html", Parameter.HEX), new ParamInfo("vel", Parameter.INTEGER));
-    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("html", Parameter.HEX));
-    //mc on
-    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("auto", Parameter.FIXED, "a"), new ParamInfo("vel", Parameter.INTEGER));
-    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("vel", Parameter.INTEGER));
-    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("html", Parameter.HEX), new ParamInfo("vel", Parameter.INTEGER));
-    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("html", Parameter.HEX));
-    //normal off
-    commandType.addCommand(new ParamInfo("off", Parameter.FIXED, "f"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE));
-    //delay
-    commandType.addCommand(new ParamInfo("delay", Parameter.FIXED, "d"), new ParamInfo("value", Parameter.INTEGER));
-    commandType.addCommand(new ParamInfo("delay"), new ParamInfo("fraction", Parameter.STRING));
-    //bpm
-    commandType.addCommand(new ParamInfo("bpm", Parameter.FIXED, "b"), new ParamInfo("value", Parameter.FLOAT));
-    //chain
-    commandType.addCommand(new ParamInfo("chain", Parameter.FIXED, "c"), new ParamInfo("c", Parameter.INTEGER));
-    //mapping
-    commandType.addCommand(new ParamInfo("mapping", Parameter.FIXED, "m"), new ParamInfo("s"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("n", Parameter.INTEGER));
-    commandType.addCommand(new ParamInfo("mapping"), new ParamInfo("l"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("n", Parameter.INTEGER));
-    //autoplay
-    //commandType.addCommand(new ParamInfo("t", Parameter.FIXED), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER));
+    //    //> unipad led commands
+    //    //normal on
+    //    commandType.addCommand(new ParamInfo("on", Parameter.FIXED, "o"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("auto", Parameter.FIXED, "a"), new ParamInfo("vel", Parameter.INTEGER));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("vel", Parameter.INTEGER));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("html", Parameter.HEX), new ParamInfo("vel", Parameter.INTEGER));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("html", Parameter.HEX));
+    //    //mc on
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("auto", Parameter.FIXED, "a"), new ParamInfo("vel", Parameter.INTEGER));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("vel", Parameter.INTEGER));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("html", Parameter.HEX), new ParamInfo("vel", Parameter.INTEGER));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("html", Parameter.HEX));
+    //    //pulse
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("auto", Parameter.FIXED, "a"), new ParamInfo("vel", Parameter.INTEGER), new ParamInfo("p", Parameter.FIXED));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("vel", Parameter.INTEGER), new ParamInfo("p", Parameter.FIXED));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("html", Parameter.HEX), new ParamInfo("vel", Parameter.INTEGER), new ParamInfo("p", Parameter.FIXED));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE), new ParamInfo("html", Parameter.HEX), new ParamInfo("p", Parameter.FIXED));
+    //    //mc pulse
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("auto", Parameter.FIXED, "a"), new ParamInfo("vel", Parameter.INTEGER), new ParamInfo("p", Parameter.FIXED));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("vel", Parameter.INTEGER), new ParamInfo("p", Parameter.FIXED));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("html", Parameter.HEX), new ParamInfo("vel", Parameter.INTEGER), new ParamInfo("p", Parameter.FIXED));
+    //    commandType.addCommand(new ParamInfo("on"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER), new ParamInfo("html", Parameter.HEX), new ParamInfo("p", Parameter.FIXED));
+    //    //normal off
+    //    commandType.addCommand(new ParamInfo("off", Parameter.FIXED, "f"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE));
+    //    //mc off
+    //    commandType.addCommand(new ParamInfo("off"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER));
+    //    //delay
+    //    commandType.addCommand(new ParamInfo("delay", Parameter.FIXED, "d"), new ParamInfo("value", Parameter.INTEGER));
+    //    commandType.addCommand(new ParamInfo("delay"), new ParamInfo("fraction", Parameter.STRING));
+    //    //bpm
+    //    commandType.addCommand(new ParamInfo("bpm", Parameter.FIXED, "b"), new ParamInfo("value", Parameter.FLOAT));
+    //    //chain
+    //    commandType.addCommand(new ParamInfo("chain", Parameter.FIXED, "c"), new ParamInfo("c", Parameter.INTEGER));
+    //    //mapping
+    //    commandType.addCommand(new ParamInfo("mapping", Parameter.FIXED, "m"), new ParamInfo("s"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("n", Parameter.INTEGER));
+    //    commandType.addCommand(new ParamInfo("mapping"), new ParamInfo("l"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("n", Parameter.INTEGER));
+    //    //no autoplay in here because that is not led cmdset.
+    //    //> highlight keywords
+    //    int C_KEYWORD1=0xFF3294AA;
+    //    int C_UNITOR1=0xFF669900;
+    //    int C_UNITOR2=0xFF614793;
+    //    commandType.setKeyword("on", C_KEYWORD1);
+    //    commandType.setKeyword("o", C_KEYWORD1);
+    //    commandType.setKeyword("off", C_KEYWORD1);
+    //    commandType.setKeyword("f", C_KEYWORD1);
+    //    commandType.setKeyword("delay", C_KEYWORD1);
+    //    commandType.setKeyword("d", C_KEYWORD1);
+    //    commandType.setKeyword("auto", C_KEYWORD1);
+    //    commandType.setKeyword("a", C_KEYWORD1);
+    //    commandType.setKeyword("bpm", C_KEYWORD1);
+    //    commandType.setKeyword("b", C_KEYWORD1);
+    //    commandType.setKeyword("p", C_KEYWORD1);
+    //    commandType.setKeyword("chain", C_UNITOR1);
+    //    commandType.setKeyword("c", C_UNITOR1);
+    //    commandType.setKeyword("mapping", C_UNITOR1);
+    //    commandType.setKeyword("m", C_UNITOR1);
+    //    commandType.setKeyword("mc", C_UNITOR2);
+    //    commandType.setKeyword("s", C_UNITOR2);
+    //    commandType.setKeyword("l", C_UNITOR2);
+    //    commandType.setKeyword("rnd", C_UNITOR2);
+    commandType.addCommand(new ParamInfo("start1", Parameter.FIXED), new ParamInfo("line", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("end1", Parameter.FIXED), new ParamInfo("line", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("start2", Parameter.FIXED), new ParamInfo("line", Parameter.INTEGER));
+    commandType.addCommand(new ParamInfo("end2", Parameter.FIXED), new ParamInfo("line", Parameter.INTEGER));
+    int C_KWD=0xFF614793;
+    commandType.setKeyword("start1", C_KWD);
+    commandType.setKeyword("end1", C_KWD);
+    commandType.setKeyword("start2", C_KWD);
+    commandType.setKeyword("end2", C_KWD);
+    //
     Processor processor=new Processor();
-    CommandEdit edit=new CommandEdit("editor").setAnalyzer(commandType, processor);
-    edit.setPosition(new Rect(0, 0, 500, 500));
-    KyUI.add(edit);
-    CommandScript script=new CommandScript("LedEditor", null, null).setAnalyzer(commandType, processor);
-    script.addLine("on 6 5 auto 2");
-    script.addLine("o 6 5 auto 2");
-    script.addLine("o 5 4 a 2");
-    script.addLine("on 2 3 1");
-    script.addLine("on mc 4 3");
-    script.addLine("on mc 2 auto 2");
-    script.addLine("on 1~3 3~6 auto 2");
-    script.addLine("o 4~5 2~6 4");
-    script.addLine("off 2 4");
-    script.addLine("f 2 4");
-    script.addLine("delay 5");
-    script.addLine("delay 2/3");
-    script.addLine("bpm 2.5");
-    script.addLine("chain 2");
-    script.addLine("m s 2 4 6");
-    script.addLine("o 2 2 2 2");
-    script.addLine("off 2 s");
-    System.out.println("//===result===//");
-    System.out.println(script.toString());
-    //System.out.println(script.toCommandString());
-    for (LineError e : script.getErrors()) {
-      System.out.println(e.toString());
-    }
+    edit=new CommandEdit("edit").setAnalyzer(commandType, processor);
+    range1=edit.addMarkRange(0x3FFF0000);
+    range2=edit.addMarkRange(0x3F0000FF);
+    DivisionLayout layout=new DivisionLayout("layout");
+    layout.value=24;
+    layout.setPosition(new Rect(0, 0, 500, 500));
+    layout.rotation=Attributes.Rotation.RIGHT;
+    layout.addChild(edit);
+    layout.addChild(edit.getSlider());
+    KyUI.add(layout);
+    KyUI.changeLayout();
+    //    CommandScript script=new CommandScript("LedEditor", null, null).setAnalyzer(commandType, processor);
+    //    script.addLine("on 6 5 auto 2");
+    //    script.addLine("o 6 5 auto 2");
+    //    script.addLine("o 5 4 a 2");
+    //    script.addLine("on 2 3 1");
+    //    script.addLine("on mc 4 3");
+    //    script.addLine("on mc 2 auto 2");
+    //    script.addLine("on 1~3 3~6 auto 2");
+    //    script.addLine("o 4~5 2~6 4");
+    //    script.addLine("off 2 4");
+    //    script.addLine("f 2 4");
+    //    script.addLine("delay 5");
+    //    script.addLine("delay 2/3");
+    //    script.addLine("bpm 2.5");
+    //    script.addLine("chain 2");
+    //    script.addLine("m s 2 4 6");
+    //    script.addLine("o 2 2 2 2");
+    //    script.addLine("off 2 s");
+    //    System.out.println("//===result===//");
+    //    System.out.println(script.toString());
+    //    for (LineError e : script.getErrors()) {
+    //      System.out.println(e.toString());
+    //    }
   }
   public void draw() {
     KyUI.render(g);
@@ -88,8 +145,14 @@ public class Test extends PApplet {
     @Override
     public Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
       System.out.println("[result] " + commandName);
-      if (commandName.equals("a x y")) {
-        return getEmptyCommand();
+      if (commandName.equals("start1 line")) {
+        return new StartCommand(range1, Integer.parseInt(params.get(1)));
+      } else if (commandName.equals("end1 line")) {
+        return new EndCommand(range1, Integer.parseInt(params.get(1)));
+      } else if (commandName.equals("start2 line")) {
+        return new StartCommand(range2, Integer.parseInt(params.get(1)));
+      } else if (commandName.equals("end2 line")) {
+        return new EndCommand(range2, Integer.parseInt(params.get(1)));
       }
       return getEmptyCommand();
       //return getErrorCommand();
@@ -116,6 +179,13 @@ public class Test extends PApplet {
       else if (after == null) System.out.println("[out] " + line + " deleted " + before.toString());
       else System.out.println("[out] " + line + " changed from " + before.toString() + " to " + after.toString());
       getSurface().setTitle("editor - " + analyzer.getProgress() + "/" + analyzer.getTotal());
+      if (after != null) {
+        if (after instanceof StartCommand) {
+          after.execute(0);
+        } else if (after instanceof EndCommand) {
+          after.execute(0);
+        }
+      }
     }
     @Override
     public void onReadFinished(Analyzer analyzer) {
@@ -144,6 +214,38 @@ public class Test extends PApplet {
     @Override
     public void execute(long time) {
       System.out.println("empty excuted!");
+    }
+  }
+  class StartCommand implements Command {
+    CommandEdit.MarkRange r;
+    int val;
+    public StartCommand(CommandEdit.MarkRange r_, int val_) {
+      r=r_;
+      val=val_;
+    }
+    @Override
+    public void execute(long time) {
+      r.startLine=val;
+    }
+    @Override
+    public String toString() {
+      return "start - start from" + val;
+    }
+  }
+  class EndCommand implements Command {
+    CommandEdit.MarkRange r;
+    int val;
+    public EndCommand(CommandEdit.MarkRange r_, int val_) {
+      r=r_;
+      val=val_;
+    }
+    @Override
+    public void execute(long time) {
+      r.endLine=val;
+    }
+    @Override
+    public String toString() {
+      return "start - start from" + val;
     }
   }
   @Override

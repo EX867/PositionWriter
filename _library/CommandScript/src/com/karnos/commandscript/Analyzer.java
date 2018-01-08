@@ -141,7 +141,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
   }
   public Command parse(int line, String location_, String text) {
     if (text == null) return null;
-    text=text.split("//")[0];//remove comments
+    text=CommandScript.split(text, "//")[0].trim();//remove comments
     ArrayList<String> params=new ArrayList<String>();
     ArrayList<Integer> paramsPoint=new ArrayList<Integer>();
     int a=0;
@@ -334,7 +334,10 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
     return isInt(builder.toString());
   }
   public static boolean isFloat(String str) {//https://stackoverflow.com/questions/43156077/how-to-check-a-string-is-float-or-int
-    return str.matches("\\d*\\.?\\d*");
+    if (str.equals("")) return false;
+    if (str.length() > 9) return false;
+    if (str.equals("-")) return false;
+    return str.matches("[+-]?([0-9]*[.])?[0-9]+");
   }
   public static int getRangeFirst(String str) {
     if (isInt(str)) return Integer.parseInt(str);

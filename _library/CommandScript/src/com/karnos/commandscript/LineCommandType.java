@@ -1,6 +1,8 @@
 package com.karnos.commandscript;
 import java.util.ArrayList;
+import java.util.HashMap;
 public abstract class LineCommandType {//processes commands.determinates analyzer's behavior...
+  public HashMap<String, Integer> keywords;//keyword is fixed value.
   public static LineCommandType DEFAULT_COMMAND_TYPE=new LineCommandType() {
     @Override
     public Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
@@ -27,6 +29,11 @@ public abstract class LineCommandType {//processes commands.determinates analyze
   public char wrapper='\"';
   public LineCommandType() {
     commands=new Parameter(Parameter.FIXED, "");//root not included in commands!!
+    keywords=new HashMap<>(10000);
+  }
+  public LineCommandType(int keywordsSize) {
+    commands=new Parameter(Parameter.FIXED, "");//root not included in commands!!
+    keywords=new HashMap<>(keywordsSize);
   }
   public abstract Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params);
   public abstract Command getErrorCommand();
@@ -57,4 +64,10 @@ public abstract class LineCommandType {//processes commands.determinates analyze
   }
   public abstract void cursorUpWord(CommandScript script, boolean select);
   public abstract void cursorDownWord(CommandScript script, boolean select);
+  public void setKeyword(String text_, int color_) {
+    keywords.put(text_, color_);
+  }
+  public void removeKeyword(String text_) {
+    keywords.remove(text_);
+  }
 }
