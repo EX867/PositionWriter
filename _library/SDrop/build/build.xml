@@ -12,7 +12,7 @@
 		<mkdir dir="../bin" />
 		<javac srcdir="../src" destdir="../bin" classpath="" includeantruntime="false"  source="1.6"  target="1.6" >
 			<classpath>
-				<fileset dir="../lib" includes="*.jar" />
+				<fileset dir="../../processing" includes="core.jar" />
 			</classpath>
 		</javac>
 	</target>
@@ -42,6 +42,7 @@
 				<include name="**/*.java"/>
 			</fileset>
 		</jar>
+		<delete dir="../bin" />
 	</target>
 
 </project>

@@ -10,9 +10,11 @@
 	<!-- Compile the source files -->
 	<target name="compile" description="The compile task" >
 		<mkdir dir="../bin" />
-		<javac srcdir="../src" destdir="../bin" classpath="" includeantruntime="false"  source="1.6"  target="1.6" >
+		<javac srcdir="../src" destdir="../bin" classpath="" includeantruntime="false"  source="1.8"  target="1.8" >
 			<classpath>
-				<fileset dir="../lib" includes="*.jar" />
+				<fileset dir="../../processing" includes="core.jar"/>
+				<fileset dir="../../../PW2_0/code/" includes="KyUI.jar"/>
+				<fileset dir="../../../PW2_0/code/" includes="guava-21.0,jar"/>
 			</classpath>
 		</javac>
 	</target>
@@ -43,6 +45,7 @@
 				<include name="**/*.java"/>
 			</fileset>
 		</jar>
+		<delete dir="../bin"/>
 	</target>
 
 </project>

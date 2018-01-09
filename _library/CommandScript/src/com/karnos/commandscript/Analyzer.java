@@ -187,6 +187,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
     }
     return commandType.getCommand(this, line, location_, text, key.toString(), params);
   }
+  //FIX>>allocation optimization...?
   private LinkedList<Parameter> search(ArrayList<String> tokens, ArrayList<Integer> tokensPoint, int line, String location_, String text) {
     //end 4 parameters are harming this generalization...
     //this range problem has to solve later!

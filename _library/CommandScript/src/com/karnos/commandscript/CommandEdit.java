@@ -6,7 +6,6 @@ import kyui.element.TextEdit;
 import kyui.util.ColorExt;
 import kyui.util.Rect;
 import processing.core.PGraphics;
-import processing.event.KeyEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
