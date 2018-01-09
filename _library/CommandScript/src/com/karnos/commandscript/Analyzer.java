@@ -244,7 +244,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
                 }
               }
             } else if (next.type == Parameter.WRAPPED_STRING) {
-              if (isWrappedString(tokens.get(index))) {
+              if (isWrappedString(tokens.get(index), wrapper)) {
                 parents.add(next);
                 matches++;
               }
@@ -299,7 +299,7 @@ public class Analyzer {//Analyzes specific Script and stores parsed commands.
     return command.get(0);
   }
   //===Checkers===//
-  boolean isWrappedString(String in) {
+  public static boolean isWrappedString(String in, char wrapper) {
     if (in.length() < 2) return false;
     return in.charAt(0) == wrapper && in.charAt(in.length() - 1) == wrapper;
   }
