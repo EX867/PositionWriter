@@ -1,7 +1,6 @@
 //version utils.pde
 boolean DEBUG=true;
 boolean DEVELOPER_BUILD=false;//detect with processing.exe
-String DEVELOPER_PATH;
 String VERSION="{\"type\"=\"production\",\"major\"=0,\"minor\"=0,\"patch\"=0,\"build\"=0,\"build_date\"=\"\"}";//type=beta or production
 String startText="PositionWriter <major>.<minor> <type> [<build>] (<build_date> build)";//template for startText. see buildVersion() to get actual string.
 void vs_detectProcessing() {
@@ -14,9 +13,6 @@ void vs_detectProcessing() {
   if (new File(joinPath(file.getAbsolutePath(), "processing")).exists()) {//linux
     println("yes. this is processing build.");
     DEVELOPER_BUILD=true;
-  }
-  if (DEVELOPER_BUILD) {
-    DEVELOPER_PATH=dataPath("");
   }
 }
 void vs_loadBuildVersion() {
@@ -62,4 +58,5 @@ void vs_checkVersion() {
   }
 }
 void displayUpdatedScreen() {
+  //#ADD
 }

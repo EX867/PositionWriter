@@ -21,6 +21,17 @@ void setTitleProcessing(String content) {
   title_processing=" - "+content;
   surface.setTitle(title_prefix+title_path+title_edited+title_processing);
 }
+void drawIndicator(float x, float y, float w, float h, int thick) {
+  noFill();
+  stroke(255);
+  strokeWeight(thick*2);
+  rect(x, y, w, h);
+  stroke(0);
+  strokeWeight(2);
+  rect(x, y, w+thick, h+thick);
+  rect(x, y, w-thick, h-thick);
+  noStroke();
+}
 //
 //===other===//
 static boolean toBoolean (String in) {
@@ -60,6 +71,15 @@ void autoSave(String path, String text) {
 //  return color(red(a)*(255-na)/255+red(b)*na/255, green(a)*(255-na)/255+green(b)*na/255, blue(a)*(255-na)/255+blue(b)*na/255, oa*(255-na)/255+na);//res.r = dst.r * (1 - src.a) + src.r * src.a
 //}
 //
+void imageChangeColor(PImage image, int c) {
+  if (image!=null) {
+    image.loadPixels();
+    for (int a=0; a<image.pixels.length; a++) {
+      image.pixels[a]=color(red(c), green(c), blue(c), alpha(image.pixels[a]));
+    }
+    image.updatePixels();
+  }
+}
 class IntVector2 {
   int x;
   int y;
@@ -100,7 +120,7 @@ String getUsername() {
 }
 String getDataPath() {
   if (DEVELOPER_BUILD) {
-    return new File(joinPath(DEVELOPER_PATH, "data")).getAbsolutePath();
+    return dataPath("");
   } else {
     return new File("data").getAbsolutePath();
   }
@@ -449,6 +469,48 @@ color [] color_lp=new color[]{
   0xfff5d01d, //126
   0xffe37829, 
 };
+String ToUnipadLed(LedScript script) {
+  StringBuilder builder=new StringBuilder();
+  float bpm=120;
+  boolean[][] first=new boolean[info.buttonX][info.buttonY];
+  for (int a=0; a<info.buttonX; a++) {
+    for (int b=0; b<info.buttonY; b++) {
+      first[a][b]=true;
+    }
+  }
+  script.readAll();
+  ArrayList<Command> commands=script.getCommands();
+  for (Command cmd : commands) {
+    if (cmd instanceof UnipackCommand) {
+      UnipackCommand data1=(UnipackCommand)cmd;
+      if (data1 instanceof OnCommand) {
+        OnCommand data2=(OnCommand)data1;
+        for (int b=data2.y1; b<=data2.y2; b++) {
+          for (int a=data2.x1; a<=data2.x2; a++) {
+            first[a-1][b-1]=false;
+          }
+        }
+      } else if (data1 instanceof OffCommand) {
+        OffCommand data2=(OffCommand)data1;
+        for (int b=data2.y1; b<=data2.y2; b++) {
+          for (int a=data2.x1; a<=data2.x2; a++) {
+            if (first[a-1][b-1]) {
+              builder.append("o "+b+" "+a+" auto 0\n");
+            }
+            first[a-1][b-1]=false;
+          }
+        }
+      } else if (data1 instanceof BpmCommand) {
+        bpm=((BpmCommand)data1).value;
+      }
+      if (data1 instanceof DelayCommand) {
+        builder.append(((DelayCommand)data1).toUnipadString(bpm)).append('\n');//includes multi line
+      } else if (data1 instanceof ChainCommand) {
+      } else builder.append(data1.toUnipadString()).append('\n');//includes multi line
+    }
+  }
+  return builder.toString();
+}
 String PngToLed(PImage image) {
   image.loadPixels();
   StringBuilder str=new StringBuilder();
@@ -459,10 +521,10 @@ String PngToLed(PImage image) {
   return str.toString();
 }
 PImage LedToPng(LedScript script, int frame) {
-  PImage image=createImage(script.buttonX, script.buttonY, ARGB);
+  PImage image=createImage(info.buttonX, info.buttonY, ARGB);
   script.readAll();
   image.loadPixels();
-  ArrayList<Command> commands=script.script.getCommands();
+  ArrayList<Command> commands=script.getCommands();
   int cnt=0;
   for (Command cmd : commands) {
     if (cnt==frame) {
@@ -484,16 +546,26 @@ PImage LedToPng(LedScript script, int frame) {
   image.updatePixels();
   return image;
 }
-void GifToLed() {
+String GifToLed() {
+  //#ADD
+  return "";
 }
 void LedToGif(String path, LedScript script) {
   AnimatedGifEncoder e = new AnimatedGifEncoder();
   e.start(path);
   e.setQuality(1);
-  e.setSize(script.processor.buttonX, script.processor.buttonY);
+  e.setSize(info.buttonX, info.buttonY);
   //e.setDelay(1000);//#ADD set delay to lcd of every frame
   for (int a=0; a<script.getFrameLength(); a++) {
     e.addFrame((java.awt.image.BufferedImage)LedToPng(script, a).getNative());
   }
   e.finish();
+}
+String MidiToLed() {
+  //#ADD
+  return "";
+}
+File LedToMidi() {
+  //#ADD
+  return null;
 }
