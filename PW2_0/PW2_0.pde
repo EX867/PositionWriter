@@ -100,6 +100,7 @@ void main_setup() {
   surface.setIcon(loadImage("icon.png"));
   textTransfer=new TextTransfer();
   KyUI.start(this);
+  //
   //load elements
   //load layout
   //load shortcuts

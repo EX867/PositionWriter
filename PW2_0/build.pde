@@ -42,6 +42,36 @@ void loadDefaultImages() {
   skin_cover=loadImage("template/skin/phantom.png");
   skin_coverMiddle=loadImage("template/skin/phantom_.png");
 }
+class ThreadScanner implements Runnable {
+  InputStream input;
+  java.util.Scanner scanner;
+  ArrayList<String> logs;
+  boolean active;
+  ThreadScanner(InputStream input_, ArrayList<String> logs_) {
+    input=input_;
+    scanner=new java.util.Scanner(input);
+    active=true;
+    logs=logs_;
+  }
+  void close() throws IOException {
+    scanner.close();
+  }
+  @Override void run() {
+    String line="";
+    while (input!=null&&line!=null&&active) {
+      if (scanner.hasNextLine()) {
+        line= scanner.nextLine();
+        System.out.println(line);
+        logs.add(line);
+        try {
+          Thread.sleep(1);
+        }
+        catch(InterruptedException e) {
+        }
+      }
+    }
+  }
+}
 //void build_windows(String packageName, String appName, String author, String description, String themeName, String themeVersion, color text) {
 //  ((Logger)UI[getUIid("ERROR_LOG")]).logs.clear();
 //  if (new java.io.File(joinPath(joinPath(GlobalPath, ExternalPath), "android.jar")).isFile()==false) {

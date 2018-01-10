@@ -1,38 +1,7 @@
 
 
 
-class ThreadScanner implements Runnable {
-  InputStream input;
-  java.util.Scanner scanner;
-  Logger logger;
-  boolean active;
-  ThreadScanner(InputStream input_) {
-    input=input_;
-    scanner=new java.util.Scanner(input);
-    logger=(Logger)UI[getUIid("ERROR_LOG")];
-    active=true;
-  }
-  void close() throws IOException {
-    scanner.close();
-  }
-  @Override void run() {
-    String line="";
-    while (input!=null&&line!=null&&active) {
-      if (scanner.hasNextLine()) {
-        line= scanner.nextLine();
-        System.out.println(line);
-        logger.logs.add(line);
-        registerRender();
-        try {
-          Thread.sleep(1);
-        }
-        catch(Exception e) {
-          e.printStackTrace();
-        }
-      }
-    }
-  }
-}
+
 
 class SkinEditView extends UIelement {
   ArrayList<InnerDropArea> areas=new ArrayList<InnerDropArea>();

@@ -1,32 +1,4 @@
-//scale variables //<>// //<>//
-float scale=1;
-//image thing
-ArrayList<Integer> ImageMaskIds=new ArrayList<Integer>();//in I_BACKGROUND change, mask these id.images to background.(alpha is preserved.)
-void UI_load() {
-  a=0;
-  while (a<Datas.length) {
-    int id=Datas[a].getInt("id");
-    int Type=getTypeId (Datas [a].getString ("type"));
-    if (Type==TYPE_BUTTON) {
-      if (Datas[a].hasAttribute("value")) {
-        if (Datas[a].hasAttribute("image")) {
-          UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getString("image"), toBoolean (Datas[a].getString ("value")), toBoolean(Datas[a].getString("mask", "true")));
-        } else if (Datas[a].hasAttribute("text")) {
-          UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getString("text"), Datas[a].getInt("textsize", 1), toBoolean (Datas[a].getString ("value")));
-        }
-      } else {
-        if (Datas[a].hasAttribute("image")) {
-          UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getString("image"), toBoolean(Datas[a].getString("mask", "true")));
-        } else if (Datas[a].hasAttribute("color")) {
-          UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), unhex(Datas[a].getString("color")));
-        } else if (Datas[a].hasAttribute("text")) {
-          UI[id]=new Button(id, getTypeId (Datas [a].getString ("type")), Datas[a].getContent(), Datas[a].getString("description"), Datas[a].getInt("x"), Datas[a].getInt("y"), Datas[a].getInt("w"), Datas[a].getInt("h"), Datas[a].getString("text"), Datas[a].getInt("textsize", 1));
-        }
-      }
-    }  
-    a=a+1;
-  }
-}
+ //<>//
 void UI_setup() {
   UI_load();
   setShortcutData();
