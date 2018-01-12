@@ -106,7 +106,7 @@ public class Test extends PApplet {
     commandType.setKeyword("end2", C_KWD2);
     //
     Processor processor=new Processor();
-    edit=new CommandEdit("edit").setAnalyzer(commandType, processor);
+    edit=new CommandEdit("edit");//.setAnalyzer(commandType, processor);
     range1=edit.addMarkRange(0x3FFF0000);
     range2=edit.addMarkRange(0x3F0000FF);
     DivisionLayout layout=new DivisionLayout("layout");

@@ -4,6 +4,7 @@ import kyui.editor.Attribute;
 import kyui.element.RangeSlider;
 import kyui.element.TextEdit;
 import kyui.util.ColorExt;
+import kyui.util.HideInEditor;
 import kyui.util.Rect;
 import processing.core.PGraphics;
 
@@ -31,6 +32,7 @@ public class CommandEdit extends TextEdit {
   }
   public CommandEdit(String name) {
     super(name, new CommandScript(name, null, null));
+    keywords=LineCommandType.DEFAULT_COMMAND_TYPE.keywords;
     script=(CommandScript)content;
     markRanges=new ArrayList<>();
     errorColor=0xFF9E0A0A;
@@ -153,6 +155,7 @@ public class CommandEdit extends TextEdit {
     markRanges.add(m);
     return m;
   }
+  @HideInEditor
   class MarkingRangeSlider extends RangeSlider {
     public MarkingRangeSlider(String name) {
       super(name);
