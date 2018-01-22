@@ -90,25 +90,30 @@ public class CommandEdit extends TextEdit {
         }
       }
     }
-    for (int a=Math.max(0, start - 1); a < content.lines() && a < end + 1; a++) {
-      int index=content.getLine(a).indexOf("//");
-      boolean comment=true;
-      if (index == -1) {
-        comment=false;
-        index=content.getLine(a).length();
-      }
-      String[] tokens=CommandScript.split(content.getLine(a).substring(0, index), " ");
-      float width=0;
-      for (String token : tokens) {
-        g.fill(keywords.getOrDefault(token, textColor));
-        token=token + " ";
-        g.text(token, width + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
-        width=width + g.textWidth(token);
-      }
-      if (comment) {
-        width-=g.textWidth(" ");
-        g.fill(commentColor);
-        g.text(content.getLine(a).substring(index, content.getLine(a).length()), width + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
+    if (content.empty()) {
+      g.fill(hintColor);
+      g.text(hint, pos.left + lineNumSize + padding, pos.top + 0.5F * textSize - offsetY + padding);
+    }else{
+      for (int a=Math.max(0, start - 1); a < content.lines() && a < end + 1; a++) {
+        int index=content.getLine(a).indexOf("//");
+        boolean comment=true;
+        if (index == -1) {
+          comment=false;
+          index=content.getLine(a).length();
+        }
+        String[] tokens=CommandScript.split(content.getLine(a).substring(0, index), " ");
+        float width=0;
+        for (String token : tokens) {
+          g.fill(keywords.getOrDefault(token, textColor));
+          token=token + " ";
+          g.text(token, width + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
+          width=width + g.textWidth(token);
+        }
+        if (comment) {
+          width-=g.textWidth(" ");
+          g.fill(commentColor);
+          g.text(content.getLine(a).substring(index, content.getLine(a).length()), width + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
+        }
       }
     }
     for (int a=Math.max(0, start - 1); a < content.lines() && a < end + 1; a++) {
@@ -121,6 +126,7 @@ public class CommandEdit extends TextEdit {
     if (KyUI.focus == this) {
       if (cursorOn) {
         if (start <= content.line && content.line <= end) {
+          g.fill(textColor);
           float cursorOffsetX=g.textWidth("|") / 2;
           String line=content.getLine(content.line);
           if (line.length() >= content.point) {//FIX>>?????????????????
