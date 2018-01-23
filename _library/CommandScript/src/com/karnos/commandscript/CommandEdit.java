@@ -14,9 +14,11 @@ public class CommandEdit extends TextEdit {
   private Rect cacheRect=new Rect();
   public CommandScript script;//this == content;
   private HashMap<String, Integer> keywords;
-  @Attribute
+  @Attribute(type=Attribute.COLOR)
   public int errorColor;
-  @Attribute
+  @Attribute(type=Attribute.COLOR)
+  public int warningColor;
+  @Attribute(type=Attribute.COLOR)
   public int commentColor;
   protected ArrayList<MarkRange> markRanges;
   public static class MarkRange {// slider marker is startLine.
@@ -30,6 +32,22 @@ public class CommandEdit extends TextEdit {
       return startLine < endLine;
     }
   }
+  public static interface TextRenderer {
+    public void render(PGraphics g, String text, int line, CommandEdit cmd);
+  }
+  public TextRenderer textRenderer=new TextRenderer() {
+    @Override
+    public void render(PGraphics g, String text, int line, CommandEdit cmd) {
+      String[] tokens=CommandScript.split(text, " ");
+      float width=0;
+      for (String token : tokens) {
+        g.fill(keywords.getOrDefault(token, textColor));
+        token=token + " ";
+        g.text(token, width + pos.left + lineNumSize + padding, pos.top + (line + 0.5F) * textSize - offsetY + padding);
+        width=width + g.textWidth(token);
+      }
+    }
+  };
   public CommandEdit(String name) {
     super(name, new CommandScript(name, null, null));
     keywords=LineCommandType.DEFAULT_COMMAND_TYPE.keywords;
@@ -37,6 +55,7 @@ public class CommandEdit extends TextEdit {
     markRanges=new ArrayList<>();
     errorColor=0xFF9E0A0A;
     commentColor=0xFF828282;
+    warningColor=0xFFCABB12;
     super.setSlider(new MarkingRangeSlider(name + ":slider"));
   }
   @Override
@@ -50,6 +69,9 @@ public class CommandEdit extends TextEdit {
     script.setAnalyzer(commandType, processor);
     keywords=script.analyzer.getCommandType().keywords;
     return this;
+  }
+  public void drawLine(PGraphics g, String text, int line) {
+    textRenderer.render(g, text, line, this);
   }
   @Override
   public void render(PGraphics g) {
@@ -93,7 +115,7 @@ public class CommandEdit extends TextEdit {
     if (content.empty()) {
       g.fill(hintColor);
       g.text(hint, pos.left + lineNumSize + padding, pos.top + 0.5F * textSize - offsetY + padding);
-    }else{
+    } else {
       for (int a=Math.max(0, start - 1); a < content.lines() && a < end + 1; a++) {
         int index=content.getLine(a).indexOf("//");
         boolean comment=true;
@@ -101,24 +123,17 @@ public class CommandEdit extends TextEdit {
           comment=false;
           index=content.getLine(a).length();
         }
-        String[] tokens=CommandScript.split(content.getLine(a).substring(0, index), " ");
-        float width=0;
-        for (String token : tokens) {
-          g.fill(keywords.getOrDefault(token, textColor));
-          token=token + " ";
-          g.text(token, width + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
-          width=width + g.textWidth(token);
-        }
+        drawLine(g, content.getLine(a).substring(0, index), a);
         if (comment) {
-          width-=g.textWidth(" ");
           g.fill(commentColor);
-          g.text(content.getLine(a).substring(index, content.getLine(a).length()), width + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
+          g.text(content.getLine(a).substring(index, content.getLine(a).length()), g.textWidth(content.getLine(a).substring(0, index)) + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
         }
       }
     }
     for (int a=Math.max(0, start - 1); a < content.lines() && a < end + 1; a++) {
-      if (script.getFirstError(a) != null) {
-        underlineError(g, a);
+      LineError error=script.getFirstError(a);
+      if (error != null) {
+        underlineError(g, error, a);
       }
     }
     g.fill(textColor);
@@ -150,8 +165,12 @@ public class CommandEdit extends TextEdit {
     g.textAlign(KyUI.Ref.CENTER, KyUI.Ref.CENTER);
     g.noStroke();
   }
-  protected void underlineError(PGraphics g, int line) {
-    g.stroke(errorColor);
+  protected void underlineError(PGraphics g, LineError error, int line) {
+    if (error.type == LineError.ERROR) {
+      g.stroke(errorColor);
+    } else if (error.type == LineError.WARNING) {
+      g.stroke(warningColor);
+    }
     g.strokeWeight(2);
     g.line(pos.left + lineNumSize + padding, pos.top + padding + (line + 1.1F) * textSize - offsetY, pos.left + lineNumSize + padding + g.textWidth(content.getLine(line)), pos.top + padding + (line + 1.1F) * textSize - offsetY);
     g.noStroke();
