@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 public abstract class LineCommandType {//processes commands.determinates analyzer's behavior...
   public HashMap<String, Integer> keywords;//keyword is fixed value.
-  public static LineCommandType DEFAULT_COMMAND_TYPE=new LineCommandType() {
+  public static LineCommandType DEFAULT_TYPE=new LineCommandType() {
     @Override
     public Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
       return Command.DEFAULT_COMMAND;

@@ -49,8 +49,8 @@ public class CommandEdit extends TextEdit {
     }
   };
   public CommandEdit(String name) {
-    super(name, new CommandScript(name, null, null));
-    keywords=LineCommandType.DEFAULT_COMMAND_TYPE.keywords;
+    super(name, new CommandScript(name, null));
+    keywords=LineCommandType.DEFAULT_TYPE.keywords;
     script=(CommandScript)content;
     markRanges=new ArrayList<>();
     errorColor=0xFF9E0A0A;
@@ -65,8 +65,8 @@ public class CommandEdit extends TextEdit {
   public RangeSlider getSlider() {
     return slider;
   }
-  public CommandEdit setAnalyzer(LineCommandType commandType, LineCommandProcessor processor) {
-    script.setAnalyzer(commandType, processor);
+  public CommandEdit setAnalyzer(Analyzer analyzer) {
+    script.setAnalyzer(analyzer);
     keywords=script.analyzer.getCommandType().keywords;
     return this;
   }

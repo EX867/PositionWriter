@@ -55,26 +55,23 @@ public class CommandScript extends EditorString {
     super();
     name=name_;
     recorder=new EditRecorder();
-    setAnalyzer(null, null);
+    setAnalyzer(null);
     addLine(0, "");
   }
-  public CommandScript(String name_, LineCommandType commandType, LineCommandProcessor processor) {
+  public CommandScript(String name_, Analyzer analyzer_) {
     super();
     name=name_;
     recorder=new EditRecorder();
-    setAnalyzer(commandType, processor);
+    setAnalyzer(analyzer_);
     addLine(0, "");
   }
   //
   //==Analyzer==//
-  public CommandScript setAnalyzer(LineCommandType commandType, LineCommandProcessor processor) {
-    if (commandType == null) {
-      commandType=LineCommandType.DEFAULT_COMMAND_TYPE;
+  public CommandScript setAnalyzer(Analyzer analyzer_) {
+    if (analyzer_ == null) {
+      analyzer_=Analyzer.NO_COMMAND;
     }
-    if (processor == null) {
-      processor=LineCommandProcessor.DEFAULT_PROCESSOR;
-    }
-    analyzer=new Analyzer(commandType, processor);
+    analyzer=analyzer_;
     int count=0;
     for (String line : l) {
       analyzer.add(count, null, line);
