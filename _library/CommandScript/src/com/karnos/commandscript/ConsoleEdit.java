@@ -113,12 +113,22 @@ public class ConsoleEdit extends TextEdit {
   }
   public void setText(String text) {
     super.setText(text);
-    editingLine=content.lines();
-    content.addLine(editingLine, header);
+    if (content.getLine(content.lines() - 1).isEmpty()) {
+      editingLine=content.lines() - 1;
+      content.setLine(editingLine, header);
+    } else {
+      editingLine=content.lines();
+      content.addLine(editingLine, header);
+    }
   }
   public void clearScreen() {
     super.setText(header);
     editingLine=content.lines() - 1;
+  }
+  @Override
+  public String getText() {
+    return "";//ignore.
+    //return super.getText();
   }
   public RangeSlider getSlider() {
     return slider;

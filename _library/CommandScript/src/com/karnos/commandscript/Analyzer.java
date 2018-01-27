@@ -132,9 +132,15 @@ public abstract class Analyzer {//Analyzes specific Script and stores parsed com
       }
     }
     recordError=false;
-    Command before=parse(line, location, before_);//make this to queue and thread...
+    Command before=null;
+    if (before_ != null) {
+      parse(line, location, before_);//make this to queue and thread...
+    }
     recordError=true;
-    Command after=parse(line, location, after_);//make this to queue and thread...
+    Command after=null;
+    if (after_ != null) {
+      parse(line, location, after_);//make this to queue and thread...
+    }
     assert before != null || after != null;
     if (before == null) {
       lines.add(line, after);
