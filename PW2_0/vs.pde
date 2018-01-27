@@ -60,3 +60,31 @@ void vs_checkVersion() {
 void displayUpdatedScreen() {
   //#ADD
 }
+void registerFileType() {//associates .led and .pwm
+  //#platform_specific
+  if (DEVELOPER_BUILD) {
+    return;
+  }
+  if (platform==WINDOWS) {
+    try {
+      Process proc=new ProcessBuilder("cmd.exe", "/c", "ASSOC", ".led").start();
+      if (proc.waitFor()==1) {
+        new ProcessBuilder("cmd.exe", "/c", "ASSOC", ".led=UnipadLedFile").start();
+        new ProcessBuilder("cmd.exe", "/c", "FTYPE", "UnipadLedFile="+joinPath(new File("").getAbsolutePath(), "PW2_0.exe"), "%1", "%*").start();
+      }
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+    }
+    try {
+      Process proc=new ProcessBuilder("cmd.exe", "/c", "ASSOC", ".pwm").start();
+      if (proc.waitFor()==1) {
+        new ProcessBuilder("cmd.exe", "/c", "ASSOC", ".pwm=PositionWriterMacroFile").start();
+        new ProcessBuilder("cmd.exe", "/c", "FTYPE", "PositionWriterMacroFile="+joinPath(new File("").getAbsolutePath(), "PW2_0.exe"), "%1", "%*").start();
+      }
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+    }
+  }
+}

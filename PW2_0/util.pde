@@ -80,28 +80,6 @@ void imageChangeColor(PImage image, int c) {
     image.updatePixels();
   }
 }
-class IntVector2 {
-  int x;
-  int y;
-  IntVector2() {
-    x=0;
-    y=0;
-  }
-  IntVector2(int x_, int y_) {
-    x=x_;
-    y=y_;
-  }
-  boolean equals(IntVector2 other) {
-    return other.x==x&&other.y==y;
-  }
-  boolean equals(int x_, int y_) {
-    return x_==x&&y_==y;
-  }
-  void set(int x_, int y_) {
-    x=x_;
-    y=y_;
-  }
-}
 //===Directory utils===//
 String getDocuments() {
   return FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
