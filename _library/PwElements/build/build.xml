@@ -27,7 +27,7 @@
 	<target name="build_jar" depends="compile" description="Build the JAR">
 
 		<!-- With included source files -->
-		<jar destfile="../build/PwElements.jar" filesetmanifest="mergewithoutmain" duplicate="preserve">
+		<jar destfile="../../../PW2_0/code/PwElements.jar" filesetmanifest="mergewithoutmain" duplicate="add">
 			<manifest>
 				<attribute name="Main-Class" value="pw2.element.test.Test"/>
 				<attribute name="Implementation-Version" value="${version}-${DSTAMP}"/>

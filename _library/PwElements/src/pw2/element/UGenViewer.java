@@ -4,6 +4,7 @@ import processing.core.PGraphics;
 public class UGenViewer extends Element {
   public UGenViewer(String s) {
     super(s);
+    bgColor=0xFF323232;
   }
   @Override
   public void render(PGraphics g) {

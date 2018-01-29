@@ -16,19 +16,39 @@ public class PadButton extends Element {
   public static final int PRESS_R=4;
   public static final int DRAG_R=5;
   public static final int RELEASE_R=6;
-  public static final int DRAG=7;
+  public static final int MOVE=7;
   public BiConsumer<IntVector2, Integer> buttonListener=(IntVector2 v, Integer a) -> {//must not be null.
   };//position,action
   @Attribute(type=Attribute.COLOR)
   public int fgColor;
   @Attribute
   public boolean selectable=true;
+  @Attribute(setter="setX", getter="getX")
+  public int X=8;
+  @Attribute(setter="setY", getter="getY")
+  public int Y=8;
+  public void setX(int x) {
+    resizePad(Math.max(1, x), size.y);
+  }
+  public int getX() {
+    return size.x;
+  }
+  public void setY(int y) {
+    resizePad(size.x, Math.max(1, y));
+  }
+  public int getY() {
+    return size.y;
+  }
+  @Attribute
+  public boolean lDragVisible=true;
+  @Attribute
+  public boolean rDragVisible=true;
   //temp vars
-  public IntVector2 clickL=new IntVector2(-1, -1);
-  public IntVector2 clickR=new IntVector2(-1, -1);
-  public IntVector2 coord=new IntVector2(-1, -1);
+  public IntVector2 clickL=new IntVector2(0, 0);
+  public IntVector2 clickR=new IntVector2(0, 0);
+  public IntVector2 coord=new IntVector2(0, 0);
   public IntVector2 size=new IntVector2(1, 1);
-  public IntVector2 selected=new IntVector2(1, 1);
+  public IntVector2 selected=new IntVector2(0, 0);
   public int[][] display=null;
   public String[][] text=null;//readonly
   public PadButton(String s) {
@@ -60,8 +80,8 @@ public class PadButton extends Element {
   public void render(PGraphics g) {//use coord.
     float w=pos.right - pos.left;
     float h=pos.bottom - pos.top;
-    float offsetX=0;
-    float offsetY=0;
+    float offsetX=pos.left;
+    float offsetY=pos.top;
     float interval=1;
     float padding2=interval / 5;
     if (w * size.y > h * size.x) {//width is longer than height
@@ -77,23 +97,36 @@ public class PadButton extends Element {
     g.rect(offsetX, offsetY, offsetX + interval * size.x, offsetY + interval * size.y);
     //draw mouse rectx2
     if (entered && !(coord.x < 0 || coord.y < 0 || coord.x >= size.x || coord.y >= size.y)) {
-      fill(g, 0x32000000);//64...
-      g.rect(offsetX + selected.x * interval, pos.top, offsetX + selected.x * interval + interval, pos.bottom);
-      g.rect(pos.left, offsetY + selected.y * interval, pos.right, offsetY + selected.y * interval + interval);
+      if (size.x == 1 || size.y == 1) {
+        if (pressedL) {
+          g.fill(0, 192);
+        } else {
+          g.fill(0, 128);
+        }
+        g.rect(offsetX + coord.x * interval, offsetY + coord.y * interval, offsetX + coord.x * interval + interval, offsetY + coord.y * interval + interval);
+      } else {
+        if (pressedL) {
+          g.fill(0, 96);
+        } else {
+          g.fill(0, 64);
+        }
+        g.rect(offsetX + coord.x * interval, offsetY, offsetX + coord.x * interval + interval, pos.bottom + pos.top - offsetY);
+        g.rect(offsetX, offsetY + coord.y * interval, pos.right + pos.left - offsetX, offsetY + coord.y * interval + interval);
+      }
     }
     //draw selected x2
     if (selectable /*&& !coord.equals(selected)*/ && !(selected.x < 0 || selected.y < 0 || selected.x >= size.x || selected.y >= size.y)) {
-      fill(g, 0x32000000);
+      g.fill(0, 64);
       g.rect(offsetX + selected.x * interval, offsetY + selected.y * interval, offsetX + selected.x * interval + interval, offsetY + selected.y * interval + interval);
     }
     //draw lines
     g.stroke(fgColor);
     g.strokeWeight(1);
     for (int a=1; a < size.x; a++) {
-      g.line(offsetX + a * interval, pos.top, offsetX + a * interval, pos.bottom);
+      g.line(offsetX + a * interval, offsetY, offsetX + a * interval, pos.bottom + pos.top - offsetY);
     }
     for (int a=1; a <= size.y; a++) {
-      g.line(pos.left, offsetY + a * interval, pos.right, offsetY + a * interval);
+      g.line(offsetX, offsetY + a * interval, pos.right + pos.left - offsetX, offsetY + a * interval);
     }
     //draw pad color
     g.noStroke();
@@ -101,8 +134,8 @@ public class PadButton extends Element {
     synchronized (this) {
       for (int a=0; a < size.x; a++) {
         for (int b=0; b < size.y; b++) {
-          g.fill(display[a][b]);
-          g.rect(offsetX + coord.x * interval + padding2, offsetY + coord.y * interval + padding2, offsetX + coord.x * interval + interval - padding2, offsetY + coord.y * interval + interval - padding2);
+          fill(g, display[a][b]);
+          g.rect(offsetX + a * interval + padding2, offsetY + b * interval + padding2, offsetX + a * interval + interval - padding2, offsetY + b * interval + interval - padding2);
           if (!text[a][b].isEmpty()) {
             g.text(text[a][b], offsetX + (coord.x + 0.5F) * interval, offsetY + (coord.y + 0.5F) * interval);
           }
@@ -110,15 +143,27 @@ public class PadButton extends Element {
       }
     }
     if (selectable && !(selected.x < 0 || selected.y < 0 || selected.x >= size.x || selected.y >= size.y)) {
-      drawIndicator(g, offsetX + selected.x * interval, offsetY + selected.y * interval, offsetX + selected.x * interval + interval, offsetY + selected.y * interval + interval, 4);
+      drawIndicator(g, offsetX + selected.x * interval + 6, offsetY + selected.y * interval + 6, offsetX + selected.x * interval + interval - 6, offsetY + selected.y * interval + interval - 6, 4);
     }
+    g.noFill();
+    if (pressedL && lDragVisible && !coord.equals(clickL)) {
+      g.strokeWeight(4);
+      g.stroke(200, 0, 0);
+      g.rect(offsetX + interval * (clickL.x + 0.5F), offsetY + interval * (clickL.y + 0.5F), offsetX + interval * (coord.x + 0.5F), offsetY + interval * (coord.y + 0.5F));
+    }
+    if (pressedR && rDragVisible && !coord.equals(clickR)) {
+      g.strokeWeight(4);
+      g.stroke(0, 0, 200);
+      g.rect(offsetX + interval * (clickR.x + 0.5F), offsetY + interval * (clickR.y + 0.5F), offsetX + interval * (coord.x + 0.5F), offsetY + interval * (coord.y + 0.5F));
+    }
+    g.noStroke();
   }
   @Override
   public boolean mouseEvent(MouseEvent e, int index) {
     float w=pos.right - pos.left;
     float h=pos.bottom - pos.top;
-    float offsetX=0;
-    float offsetY=0;
+    float offsetX=pos.left;
+    float offsetY=pos.top;
     float interval=1;
     Vector2 mouse=KyUI.mouseGlobal.getLast();
     if (w * size.y > h * size.x) {//width is longer than height
@@ -159,11 +204,14 @@ public class PadButton extends Element {
       if (pressedR) {
         buttonListener.accept(coord, RELEASE_R);
       }
+      if (selectable) {
+        selected.set(coord);
+      }
       invalidate();
       return false;
     } else if (e.getAction() == MouseEvent.MOVE) {
       if (entered) {
-        buttonListener.accept(coord, RELEASE_L);
+        buttonListener.accept(coord, MOVE);
         invalidate();
         return true;
       }
@@ -177,8 +225,8 @@ public class PadButton extends Element {
     g.rect(x, y, w, h);
     g.stroke(0.0F);
     g.strokeWeight(thick);
-    g.rect(x, y, w + thick, h + thick);
-    g.rect(x, y, w - thick, h - thick);
+    g.rect(x - thick, y - thick, w + thick, h + thick);
+    g.rect(x + thick, y + thick, w - thick, h - thick);
     g.noStroke();
   }
 }

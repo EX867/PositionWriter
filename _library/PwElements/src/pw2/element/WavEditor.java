@@ -4,7 +4,7 @@ import processing.core.PGraphics;
 public class WavEditor extends Element {
   public WavEditor(String s) {
     super(s);
-    bgColor=0xFF7F7F7F;
+    bgColor=0xFF323232;
   }
   @Override
   public void render(PGraphics g) {
