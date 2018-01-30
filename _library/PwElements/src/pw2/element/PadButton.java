@@ -146,15 +146,15 @@ public class PadButton extends Element {
       drawIndicator(g, offsetX + selected.x * interval + 6, offsetY + selected.y * interval + 6, offsetX + selected.x * interval + interval - 6, offsetY + selected.y * interval + interval - 6, 4);
     }
     g.noFill();
-    if (pressedL && lDragVisible && !coord.equals(clickL)) {
-      g.strokeWeight(4);
-      g.stroke(200, 0, 0);
-      g.rect(offsetX + interval * (clickL.x + 0.5F), offsetY + interval * (clickL.y + 0.5F), offsetX + interval * (coord.x + 0.5F), offsetY + interval * (coord.y + 0.5F));
-    }
     if (pressedR && rDragVisible && !coord.equals(clickR)) {
       g.strokeWeight(4);
       g.stroke(0, 0, 200);
       g.rect(offsetX + interval * (clickR.x + 0.5F), offsetY + interval * (clickR.y + 0.5F), offsetX + interval * (coord.x + 0.5F), offsetY + interval * (coord.y + 0.5F));
+    }
+    if (pressedL && lDragVisible && !coord.equals(clickL)) {
+      g.strokeWeight(4);
+      g.stroke(200, 0, 0);
+      g.rect(offsetX + interval * (clickL.x + 0.5F) + 1, offsetY + interval * (clickL.y + 0.5F) + 1, offsetX + interval * (coord.x + 0.5F) + 1, offsetY + interval * (coord.y + 0.5F) + 1);
     }
     g.noStroke();
   }

@@ -8,6 +8,7 @@ public class WavEditor extends Element {
   }
   @Override
   public void render(PGraphics g) {
+    super.render(g);
     g.textSize(15);
     g.fill(0);
     g.text("(waveform is here, it's incompleted.)", (pos.left + pos.right) / 2, (pos.top + pos.bottom) / 2);
