@@ -30,7 +30,7 @@ public abstract class Analyzer {//Analyzes specific Script and stores parsed com
   //these two vars are used in checking progress.
   int total=0;
   int progress=0;
-  public Analyzer(LineCommandType commandType_, LineCommandProcessor processer_) {//NotNull all params
+  public Analyzer(LineCommandType commandType_, LineCommandProcessor processor_) {//NotNull all params
     errors=new Multiset<LineError>();
     cacheError=new LineError(LineError.PRIOR, 0, 0, 0, "", "");
     commandType=commandType_;
@@ -40,7 +40,7 @@ public abstract class Analyzer {//Analyzes specific Script and stores parsed com
     wrapper=commandType.wrapper;
     lines=new ArrayList<Command>();
     addList=new LinkedList<LineChangeData>();
-    processor=processer_;
+    processor=processor_;
     recordError=true;
   }
   public void clear() {
@@ -100,6 +100,9 @@ public abstract class Analyzer {//Analyzes specific Script and stores parsed com
   }
   public void addError(LineError error) {
     if (!recordError) return;
+    if (debug) {
+      System.out.println("add error : " + error.toString());
+    }
     errors.add(error);
   }
   public void removeErrors(int line) {
@@ -115,18 +118,23 @@ public abstract class Analyzer {//Analyzes specific Script and stores parsed com
     return errors.get(index);
   }
   public void add(int line, String before, String after) {
+    if (before == null && after == null) {
+      kyui.core.KyUI.err("before and after to Analyzer is null!");
+      return;
+    }
     addList.add(new LineChangeData(line, before, after));
   }
   public void analyzeLine(int line, String before_, String after_) {
-    cacheError.line=line + 1;
     if (before_ != null) {
       removeErrors(line);
       if (after_ == null) {
+        cacheError.line=line;
         for (int index=errors.getBeforeIndex(cacheError); index < errors.size(); index++) {
           errors.get(index).line-=1;
         }
       }
     } else {
+      cacheError.line=line - 1;
       for (int index=errors.getBeforeIndex(cacheError); index < errors.size(); index++) {
         errors.get(index).line+=1;
       }
@@ -134,14 +142,13 @@ public abstract class Analyzer {//Analyzes specific Script and stores parsed com
     recordError=false;
     Command before=null;
     if (before_ != null) {
-      parse(line, location, before_);//make this to queue and thread...
+      before=parse(line, location, before_);//make this to queue and thread...
     }
     recordError=true;
     Command after=null;
     if (after_ != null) {
-      parse(line, location, after_);//make this to queue and thread...
+      after=parse(line, location, after_);//make this to queue and thread...
     }
-    assert before != null || after != null;
     if (before == null) {
       lines.add(line, after);
     } else if (after == null) {

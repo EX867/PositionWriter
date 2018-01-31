@@ -68,13 +68,16 @@ public class PadButton extends Element {
       }
     }
   }
-  public void asyncDisplayControl(int[][] display_) {
+  public void displayControl(int[][] display_) {
     synchronized (this) {
       display=display_;
     }
   }
   public void textControl(String[][] text_) {
     text=text_;
+  }
+  public float getPadding(float interval) {
+    return interval / 10;
   }
   @Override
   public void render(PGraphics g) {//use coord.
@@ -83,7 +86,6 @@ public class PadButton extends Element {
     float offsetX=pos.left;
     float offsetY=pos.top;
     float interval=1;
-    float padding2=interval / 5;
     if (w * size.y > h * size.x) {//width is longer than height
       interval=h / size.y;
       offsetX=(pos.left + pos.right - interval * size.x) / 2;
@@ -91,6 +93,7 @@ public class PadButton extends Element {
       interval=w / size.x;
       offsetY=(pos.top + pos.bottom - interval * size.y) / 2;
     }
+    float padding2=getPadding(interval);
     //draw bg
     g.noStroke();
     fill(g, bgColor);

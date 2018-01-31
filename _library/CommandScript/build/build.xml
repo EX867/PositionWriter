@@ -28,7 +28,7 @@
 	<target name="build_jar" depends="compile" description="Build the JAR">
 
 		<!-- With included source files -->
-		<jar destfile="../build/CommandScript.jar" filesetmanifest="mergewithoutmain" duplicate="preserve">
+		<jar destfile="../../../PW2_0/code/CommandScript.jar" filesetmanifest="mergewithoutmain" duplicate="add">
 			<manifest>
 				<attribute name="Main-Class" value="com.karnos.commandscript.test.Test"/>
 				<attribute name="Implementation-Version" value="${version}-${DSTAMP}"/>

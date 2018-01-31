@@ -15,7 +15,7 @@ void setTitlePath(String path) {
   surface.setTitle(title_prefix+title_path+title_edited+title_processing);
 }
 void setTitleProcessing() {
-  setTitleProcessing("");
+  surface.setTitle(title_prefix+title_path+title_edited);
 }
 void setTitleProcessing(String content) {
   title_processing=" - "+content;
@@ -103,6 +103,13 @@ String getDataPath() {
     return new File("data").getAbsolutePath();
   }
 }
+String getCodePath() {
+  if (DEVELOPER_BUILD) {
+    return joinPath(new File(dataPath("")).getParentFile().getAbsolutePath(), "code");
+  } else {
+    return new File("code").getAbsolutePath();
+  }
+}
 File[] listFiles(String dir) {
   File file = new File(dir);
   if (file.isDirectory())return file.listFiles();
@@ -183,17 +190,49 @@ String getFormat(String path) {
 void copyFile(String source, String target) {//http://www.yunsobi.com/blog/406
   setTitleProcessing("copying "+source+" to "+target+"...");
   new File(target).getParentFile().mkdirs();
-  try (FileInputStream inputStream = new FileInputStream(source); 
-  FileOutputStream outputStream = new FileOutputStream(target);
-  FileChannel fcin = inputStream.getChannel(); 
-  FileChannel fcout = outputStream.getChannel();
-  ) {
+  FileInputStream inputStream=null;
+  FileOutputStream outputStream=null;
+  FileChannel fcin=null;
+  FileChannel fcout=null;
+  try {
+    inputStream = new FileInputStream(source); 
+    outputStream = new FileOutputStream(target);
+    fcin = inputStream.getChannel(); 
+    fcout = outputStream.getChannel();
     long size = fcin.size();
     fcin.transferTo(0, size, fcout);
   } 
   catch (Exception e) {
     displayError(e);
   } 
+  if (inputStream!=null) {
+    try {
+      inputStream.close();
+    }
+    catch(Exception e) {
+    }
+  } 
+  if (outputStream!=null) {
+    try {
+      outputStream.close();
+    }
+    catch(Exception e) {
+    }
+  } 
+  if (fcin!=null) {
+    try {
+      fcin.close();
+    }
+    catch(Exception e) {
+    }
+  } 
+  if (fcout!=null) {
+    try {
+      fcout.close();
+    }
+    catch(Exception e) {
+    }
+  }
   setTitleProcessing();
 }
 boolean isSoundFile(File file) {
@@ -223,14 +262,22 @@ String readFile(String path) throws Exception {
   return builder.toString();
 }
 String writeFile(String path, String text) {
-  try (PrintWriter write=createWriter(path);
-  ) {
+  PrintWriter write=null;
+  try {
+    write=createWriter(path);
     setTitleProcessing("writing "+path+"...");
     write.write(text);
     write.flush();
   }
   catch(Exception e) {
     displayError(e);
+  }
+  if (write!=null) {
+    try {
+      write.close();
+    }
+    catch(Exception e) {
+    }
   }
   setTitleProcessing();
   return text;

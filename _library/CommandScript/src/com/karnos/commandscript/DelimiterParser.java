@@ -1,12 +1,16 @@
 package com.karnos.commandscript;
 import java.util.ArrayList;
 import java.util.LinkedList;
-public class DelimiterParser extends Analyzer{
-  public DelimiterParser(LineCommandType commandType_, LineCommandProcessor processer_) {
-    super(commandType_, processer_);
+public class DelimiterParser extends Analyzer {
+  // public static boolean debug=false;
+  public DelimiterParser(LineCommandType commandType_, LineCommandProcessor processor_) {
+    super(commandType_, processor_);
   }
   //FIX>>allocation optimization...?
   public Command parse(int line, String location_, String text) {
+    if (debug) {
+      System.out.println("parsing line " + line + ", \"" + text + "\"...");
+    }
     if (text == null) return null;
     text=CommandScript.split(text, "//")[0].trim();//remove comments
     ArrayList<String> params=new ArrayList<String>();

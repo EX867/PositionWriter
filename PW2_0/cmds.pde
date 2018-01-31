@@ -5,8 +5,9 @@ UnipackCommands ledCommands;
 UnipackCommands ksCommands;
 UnipackCommands apCommands;//#ADD
 class UnipackCommands extends LineCommandType {
-  public Command getCommand(com.karnos.commandscript.Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
+  public Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
     //add additional errors to analyzer
+    //println("[line "+line+", result : "+commandName+"]");
     String[] tokens=split(commandName, " ");
     int x1=0, x2=0, y1=0, y2=0;
     for (int a=0; a<tokens.length; a++) {
@@ -224,7 +225,7 @@ class LightCommand extends UnipackCommand {
   int x1, x2, y1, y2;
   int vel;
   color htmlc;
-  public LightCommand(int x1_, int x2_, int y1_, int y2_, int vel_, color htmlc_) {
+  public LightCommand(int x1_, int x2_, int y1_, int y2_, color htmlc_, int vel_) {
     x1=x1_;
     x2=x2_;
     y1=y1_;
@@ -232,21 +233,33 @@ class LightCommand extends UnipackCommand {
     vel=vel_;
     htmlc=htmlc_;
   }
+  void sortPos() {
+    if (x1>x2) {
+      int t=x1;
+      x1=x2;
+      x2=t;
+    }
+    if (y1>y2) {
+      int t=y1;
+      y1=y2;
+      y2=t;
+    }
+  }
 }
 class OnCommand extends LightCommand {
   boolean pulse;
-  public OnCommand(int x1_, int x2_, int y1_, int y2_, int vel_, int htmlc_) {
-    super(x1_, x2_, y1_, y2_, vel_, htmlc_);
+  public OnCommand(int x1_, int x2_, int y1_, int y2_, int htmlc_, int vel_) {
+    super(x1_, x2_, y1_, y2_, htmlc_, vel_);
   }
-  public OnCommand(int x1_, int x2_, int y1_, int y2_, int vel_, int htmlc_, boolean pulse_) {//pw supports pulse...
-    super(x1_, x2_, y1_, y2_, vel_, htmlc_);
+  public OnCommand(int x1_, int x2_, int y1_, int y2_, int htmlc_, int vel_, boolean pulse_) {//pw supports pulse...
+    super(x1_, x2_, y1_, y2_, htmlc_, vel_);
     pulse=pulse_;
   }
   public String toString() {
     String ret="";
     ret="on "+((y1==y2)?y1+"":y1+"~"+y2)+" "+((x1==x2)?x1+"":x1+"~"+x2);
     if (htmlc==COLOR_RND)ret+=" auto rnd";
-    else if (color_lp[vel]!=htmlc)ret+=" "+hex(htmlc, 6)+" "+vel;
+    else if (vel<128&&vel>=0&&color_lp[vel]!=htmlc||vel<0||vel>=128)ret+=" "+hex(htmlc, 6)+" "+vel;
     else if (vel==0)ret+=hex(htmlc, 6);
     else ret+=" auto "+vel;
     if (pulse)ret+=" p";
@@ -270,12 +283,12 @@ class McOnCommand extends UnitorCommand {
   int vel;
   color htmlc;
   boolean pulse;
-  public McOnCommand(int n_, int vel_, int htmlc_) {
+  public McOnCommand(int n_, int htmlc_, int vel_) {
     n=n_;
     vel=vel_;
     htmlc=htmlc_;
   }
-  public McOnCommand(int n_, int vel_, int htmlc_, boolean pulse_) {//pw supports pulse...
+  public McOnCommand(int n_, int htmlc_, int vel_, boolean pulse_) {//pw supports pulse...
     n=n_;
     vel=vel_;
     htmlc=htmlc_;
@@ -285,7 +298,7 @@ class McOnCommand extends UnitorCommand {
     String ret="";
     ret="on mc "+n;
     if (htmlc==COLOR_RND)ret+=" auto rnd";
-    else if (color_lp[vel]!=htmlc)ret+=" "+hex(htmlc, 6)+" "+vel;
+    else if (vel<128&&vel>=0&&color_lp[vel]!=htmlc||vel<0||vel>=128)ret+=" "+hex(htmlc, 6)+" "+vel;
     else if (vel==0)ret+=hex(htmlc, 6);
     else ret+=" auto "+vel;
     if (pulse)ret+=" p";

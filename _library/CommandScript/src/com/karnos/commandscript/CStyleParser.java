@@ -1,7 +1,7 @@
 package com.karnos.commandscript;
-public class EndBlockStyleParser extends Analyzer {
+public class CStyleParser extends Analyzer {
   //ADD>>
-  public EndBlockStyleParser(LineCommandType commandType_, LineCommandProcessor processer_) {
+  public CStyleParser(LineCommandType commandType_, LineCommandProcessor processer_) {
     super(commandType_, processer_);
   }
   @Override

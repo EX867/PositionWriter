@@ -1,6 +1,6 @@
 
 public LedScript loadLedScript(String name_, String text) {//line ending have to be normalized.
-  LedScript ledScript=new LedScript(name_);
+  LedScript ledScript=new LedScript(name_, null, null);
   ledScript.insert(0, 0, text);
   return ledScript;
 }
@@ -11,13 +11,25 @@ class LedScript extends CommandScript {
   Multiset<Integer> BpmPoint;
   Multiset<Integer> ChainPoint;
   LineCommandType cmdset;
+  LedProcessor processor;
+  PadButton displayPad;
   boolean bypass=false;//used when speed is required.
   boolean ignoreUnitorCmd=false;
   int displayFrame=0;
   int displayTime=0;
-  public LedScript(String name_) {
-    super(name_, ledCommands, null);
-    setAnalyzer(ledCommands, new LedProcessor());
+  public LedScript(String name_, CommandEdit editor_, PadButton displayPad_) {
+    super(name_, null);
+    editor=editor_;
+    displayPad=displayPad_;
+    processor=new LedProcessor();
+    processor.clear(null);
+    cmdset=ledCommands;
+    if (editor==null) {
+      setAnalyzer(new DelimiterParser(cmdset, processor));
+    } else {
+      editor.setContent(this);
+      editor.setAnalyzer(new DelimiterParser(cmdset, processor));
+    }
   }
   void setCmdSet(LineCommandType cmdset_) {
     cmdset=cmdset_;
@@ -26,11 +38,13 @@ class LedScript extends CommandScript {
   LineCommandType getCmdSet() {
     return cmdset;
   }
-  void readAll() {
+  public void readAll() {
     bypass=true;
     super.readAll();
     bypass=false;
-    ((LedProcessor)analyzer.getProcessor()).readAll();//optimization...
+    if (processor!=null) {
+      processor.readAll();//optimization...
+    }
   }
   int getFrame(int line) {
     if (line<0)return 0;
@@ -95,13 +109,12 @@ class LedScript extends CommandScript {
     return frame;
   }
   class LedProcessor extends LineCommandProcessor {
-    LedScript script;
     public LedProcessor() {
       resize();
-      script=LedScript.this;
     }
     public void processCommand(Analyzer analyzer, int line, Command before, Command after) {
-      setTitleProcessing("reading...("+script.getProgress()+"/"+script.getTotal()+")");
+      //println(before+" to "+after);
+      setTitleProcessing("reading...("+getProgress()+"/"+getTotal()+")");
       if (bypass)return;
       int frame=getFrame(line);
       if (after==null) {
@@ -129,6 +142,7 @@ class LedScript extends CommandScript {
       if (before!=null) {
         if (before instanceof LightCommand) {//includes on and off.
           LightCommand info=(LightCommand)before;
+          info.sortPos();
           for (int a=info.x1; a<=info.x2; a++) {
             for (int b=info.y1; b<=info.y2; b++) {
               deleteLedPosition(frame, a, b);//line+(after==null?0:1)
@@ -153,13 +167,14 @@ class LedScript extends CommandScript {
       if (after!=null) {
         if (after instanceof UnitorCommand) {
           if (!ignoreUnitorCmd) {//int type_, int line_, int start_, int end_, String location_, String cause_
-            script.addError(new LineError(LineError.WARNING, line, 0, script.getLine(line).length(), script.name, "you can't use unitor command in normal led."));
+            addError(new LineError(LineError.WARNING, line, 0, getLine(line).length(), name, "you can't use unitor command in normal led."));
           }
         } else if (after instanceof LightCommand) {//includes on and off.
           LightCommand info=(LightCommand)after;
+          info.sortPos();
           for (int a=info.x1; a<=info.x2; a++) {
             for (int b=info.y1; b<=info.y2; b++) {
-              insertLedPosition(frame, line+(after==null?0:1), a, b, info.htmlc);
+              insertLedPosition(frame, line, a, b, info.htmlc);
             }
           }
         } else if (after instanceof DelayCommand) {
@@ -170,14 +185,18 @@ class LedScript extends CommandScript {
           BpmPoint.add(line);
         } else if (after instanceof ChainCommand) {
           if (!(cmdset==apCommands||!ignoreUnitorCmd)) {//chain is duplication so add error manually...
-            script.addError(new LineError(LineError.WARNING, line, 0, script.getLine(line).length(), script.name, "you can't use chain command in normal led."));
+            addError(new LineError(LineError.WARNING, line, 0, getLine(line).length(), name, "you can't use chain command in normal led."));
           }
           ChainPoint.add(line);
         }
       }
+      if (displayPad!=null) {
+        displayPad.displayControl(LED.get(displayFrame));
+        displayPad.invalidate();
+      }
     }
     void readAll() {
-      ArrayList<Command> commands=script.getCommands();
+      ArrayList<Command> commands=getCommands();
       //float bpm=DEFAULT_BPM;
       int line=0;
       for (Command cmd : commands) {
@@ -207,46 +226,44 @@ class LedScript extends CommandScript {
       setTimeByFrame(displayFrame);
     }
     void insertLedPosition(int frame, int line, int x, int y, color c) {
-      if (line>=script.lines())return;
+      if (line>=getCommands().size())return;
+      line=line+1;//skip that line.
       if (0<x&&x<=info.buttonX&&0<y&&y<=info.buttonY) {
-        ArrayList<Command> commands=script.getCommands();
-        boolean changed=false;
+        ArrayList<Command> commands=getCommands();
         color toSet=c;
-        for (; line<script.lines(); line++) {
+        for (; line<getCommands().size(); line++) {
           Command cmd=commands.get(line);
           if (cmd instanceof LightCommand) {
             LightCommand info=(LightCommand)cmd;
+            //println("insert : process "+info);
             if (info.x1<=x&&x<=info.x2&&info.y1<=y&&y<=info.y2) {
               toSet=info.htmlc;
-              changed=true;
+              return;
             }
           } else if (cmd instanceof DelayCommand) {
-            if (changed==false) {
-              LED.get(frame)[x-1][y-1]=toSet;
-            } else {
-              break;
-            }
+            LED.get(frame)[x-1][y-1]=toSet;
             frame++;
           }
         }
-        if (changed==false&&line==script.lines()) {
-          LED.get(frame)[x-1][y-1]=toSet;
-        }
+        LED.get(frame)[x-1][y-1]=toSet;
       }
     }
     void deleteLedPosition(int frame, int x, int y) {
       if (frame==0) {
         LED.get(frame)[x-1][y-1]=COLOR_OFF;
-      } else {
+      } else if (frame>0) {
         LED.get (frame)[x-1][y-1]=LED.get (frame-1)[x-1][y-1];
       }
-      int max=script.lines();
+      int max=getCommands().size();
       if (frame<DelayPoint.size()-1)max=DelayPoint.get(frame+1);
       for (int a=DelayPoint.get (frame)+1; a <max; a++) {
-        Command cmd=script.getCommands().get(a);
+        Command cmd=getCommands().get(a);
         if (cmd instanceof LightCommand) {
           LightCommand info=(LightCommand)cmd;
-          if (info.x1<=x&&x<=info.x2&&info.y1<=y&&y<=info.y2)LED.get(frame)[x-1][y-1]=info.htmlc;
+          //println("delete : process "+info);
+          if (info.x1<=x&&x<=info.x2&&info.y1<=y&&y<=info.y2) {
+            LED.get(frame)[x-1][y-1]=info.htmlc;
+          }
         }
       }
       insertLedPosition (frame+1, max, x, y, LED.get (frame)[x-1][y-1]);
@@ -267,8 +284,8 @@ class LedScript extends CommandScript {
       }
       int d=DelayPoint.get(frame)+1;
       count=frame+count;
-      ArrayList<Command> commands=script.getCommands();
-      for (; frame<=count&&d<script.lines(); d++) {//reset
+      ArrayList<Command> commands=getCommands();
+      for (; frame<=count&&d<getCommands().size(); d++) {//reset
         Command cmd=commands.get(d);//AnalyzeLine(a, "readFrame - read "+count+" frames", Lines.getLine(a));
         if (cmd instanceof LightCommand) {
           LightCommand info=(LightCommand)cmd;
@@ -292,7 +309,7 @@ class LedScript extends CommandScript {
       setTitleProcessing();
     }
 
-    public void clear(Analyzer analyzer) {
+    public void clear(Analyzer analyzer) {//analyzer can be null!!
       LED=null; 
       DelayPoint=null; 
       BpmPoint=null; 

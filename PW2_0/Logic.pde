@@ -7,8 +7,13 @@ StatusBar statusL;
 StatusBar statusR;
 //===Global finals===//
 static final int AUTOINPUT=1;
-static final int MANUALINPUT=2;
-static final int RIGHTOFFMODE=3;
+static final int RIGHTOFFMODE=2;
+static final int VEL=1;
+static final int HTML=2;
+//===States===//
+int InputMode=AUTOINPUT;
+int ColorMode=VEL;
+boolean InFrameInput=false;
 //===Paths===//
 String path_global=getDocuments();
 String path_projects="projects";

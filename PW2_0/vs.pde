@@ -1,5 +1,5 @@
 //version utils.pde
-boolean DEBUG=true;
+boolean TRY=true;
 boolean DEVELOPER_BUILD=false;//detect with processing.exe
 String VERSION="{\"type\"=\"production\",\"major\"=0,\"minor\"=0,\"patch\"=0,\"build\"=0,\"build_date\"=\"\"}";//type=beta or production
 String startText="PositionWriter <major>.<minor> <type> [<build>] (<build_date> build)";//template for startText. see buildVersion() to get actual string.
@@ -28,7 +28,7 @@ void vs_checkVersion() {
   JSONObject version=new JSONObject();
   version=parseJSONObject(VERSION);
   try {
-    String[] lines=loadStrings("https://EX867.github.io/PositionWriter/versionInfo");
+    String[] lines=loadStrings("https://ex867.github.io/PositionWriter/versionInfo");
     JSONObject beta=parseJSONObject(lines[2].replace("<p>", "").replace("</p>", ""));//fixed 3rd line
     JSONObject production=parseJSONObject(lines[3].replace("<p>", "").replace("</p>", ""));//fixed 4th line
     if (version.getString("type").equals("beta")) {//if production>=current->production, beta>=current->beta

@@ -58,6 +58,10 @@ public class CommandEdit extends TextEdit {
     warningColor=0xFFCABB12;
     super.setSlider(new MarkingRangeSlider(name + ":slider"));
   }
+  public void setContent(CommandScript sc) {
+    content=sc;
+    script=sc;
+  }
   @Override
   public void setSlider(RangeSlider slider_) {
     //do nothing
@@ -190,7 +194,11 @@ public class CommandEdit extends TextEdit {
       super.render(g);
       g.strokeWeight(2);
       for (LineError error : script.getErrors()) {
-        markLine(g, errorColor, error.line);
+        if (error.type == LineError.ERROR) {
+          markLine(g, errorColor, error.line);
+        } else if (error.type == LineError.WARNING) {
+          markLine(g, warningColor, error.line);
+        }
       }
       for (MarkRange mark : markRanges) {
         markLine(g, mark);
