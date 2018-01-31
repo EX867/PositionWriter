@@ -17,7 +17,10 @@ public class PadButton extends Element {
   public static final int DRAG_R=5;
   public static final int RELEASE_R=6;
   public static final int MOVE=7;
-  public BiConsumer<IntVector2, Integer> buttonListener=(IntVector2 v, Integer a) -> {//must not be null.
+  public static interface ButtonListener {
+    public void accept(IntVector2 click, IntVector2 coord, int action);
+  }
+  public ButtonListener buttonListener=(IntVector2 click, IntVector2 coord, int action) -> {//must not be null.
   };//position,action
   @Attribute(type=Attribute.COLOR)
   public int fgColor;
@@ -183,29 +186,29 @@ public class PadButton extends Element {
     if (e.getAction() == MouseEvent.PRESS) {
       if (e.getButton() == PApplet.LEFT) {
         clickL.set(coord);
-        buttonListener.accept(coord, PRESS_L);
+        buttonListener.accept(clickL, coord, PRESS_L);
       }
       if (e.getButton() == PApplet.RIGHT) {
         clickR.set(coord);
-        buttonListener.accept(coord, PRESS_R);
+        buttonListener.accept(clickR, coord, PRESS_R);
       }
       invalidate();
       return false;
     } else if (e.getAction() == MouseEvent.DRAG) {
       if (pressedL) {
-        buttonListener.accept(coord, DRAG_L);
+        buttonListener.accept(clickL, coord, DRAG_L);
       }
       if (pressedR) {
-        buttonListener.accept(coord, DRAG_R);
+        buttonListener.accept(clickR, coord, DRAG_R);
       }
       invalidate();
       return false;
     } else if (e.getAction() == MouseEvent.RELEASE) {
       if (pressedL) {
-        buttonListener.accept(coord, RELEASE_L);
+        buttonListener.accept(clickL, coord, RELEASE_L);
       }
       if (pressedR) {
-        buttonListener.accept(coord, RELEASE_R);
+        buttonListener.accept(clickR, coord, RELEASE_R);
       }
       if (selectable) {
         selected.set(coord);
@@ -214,7 +217,7 @@ public class PadButton extends Element {
       return false;
     } else if (e.getAction() == MouseEvent.MOVE) {
       if (entered) {
-        buttonListener.accept(coord, MOVE);
+        buttonListener.accept(coord, coord, MOVE);
         invalidate();
         return true;
       }

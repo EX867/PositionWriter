@@ -1,4 +1,3 @@
-
 public LedScript loadLedScript(String name_, String text) {//line ending have to be normalized.
   LedScript ledScript=new LedScript(name_, null, null);
   ledScript.insert(0, 0, text);
@@ -10,6 +9,7 @@ class LedScript extends CommandScript {
   Multiset<Integer> DelayPoint;
   Multiset<Integer> BpmPoint;
   Multiset<Integer> ChainPoint;
+  Multiset<Integer> delayValue=new Multiset<Integer>();//updated frequently.
   LineCommandType cmdset;
   LedProcessor processor;
   PadButton displayPad;
@@ -190,6 +190,9 @@ class LedScript extends CommandScript {
           ChainPoint.add(line);
         }
       }
+      if (after instanceof DelayCommand || before instanceof DelayCommand ||after instanceof BpmCommand ||before instanceof BpmCommand) {
+        delayValue=calculateDelayValue(LedScript.this, delayValue);
+      }
       if (displayPad!=null) {
         displayPad.displayControl(LED.get(displayFrame));
         displayPad.invalidate();
@@ -224,6 +227,7 @@ class LedScript extends CommandScript {
       }
       displayFrame=min(displayFrame, DelayPoint.size()-1); 
       setTimeByFrame(displayFrame);
+      delayValue=calculateDelayValue(LedScript.this, delayValue);
     }
     void insertLedPosition(int frame, int line, int x, int y, color c) {
       if (line>=getCommands().size())return;
@@ -321,6 +325,7 @@ class LedScript extends CommandScript {
       DelayPoint.add(-1); 
       BpmPoint.add(-1); 
       ChainPoint.add(-1);
+      delayValue=calculateDelayValue(LedScript.this, delayValue);
     }
   }
   //class KsProcessor extends LineCommandProcessor {

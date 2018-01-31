@@ -1,5 +1,6 @@
 package pw2.element;
 public class IntVector2 {
+  public static final IntVector2 zero=new IntVector2(0, 0);
   public int x;
   public int y;
   public IntVector2() {
@@ -25,5 +26,9 @@ public class IntVector2 {
       return v.x == x && v.y == y;
     }
     return false;
+  }
+  @Override
+  public int hashCode() {
+    return x * 40009 + y;//can overflow
   }
 }

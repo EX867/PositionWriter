@@ -145,117 +145,23 @@ void main_setup() {
   //setup commands
   script_setup();
   info=new UnipackInfo();
-  final LedScript currentLedEditor=new LedScript("LedFileName", (CommandEdit)KyUI.get("led_text"), (PadButton)KyUI.get("led_pad"));
+  currentLedEditor=new LedScript("LedFileName", (CommandEdit)KyUI.get("led_text"), (PadButton)KyUI.get("led_pad"));
   ((CommandEdit)KyUI.get("led_text")).setContent(currentLedEditor);
   ((CommandEdit)KyUI.get("led_text")).setTextChangeListener(new EventListener() {
     public void onEvent(Element e) {
     }
   }
   );
-  final java.util.function.Function<IntVector2, Boolean> on=new java.util.function.Function<IntVector2, Boolean>() {
-    public Boolean apply(IntVector2 coord) {//#ADD inframeinput and start cut
-      if (currentLedEditor.cmdset==ledCommands) {
-        if (ColorMode==VEL) {
-          currentLedEditor.addLine("on "+(coord.y+1)+" "+(coord.x+1)+" auto "+3);//#TEST
-        } else if (ColorMode==HTML) {
-          currentLedEditor.addLine("on "+(coord.y+1)+" "+(coord.x+1)+" "+hex(-1, 6));//#TEST
-        }
-      } else if (currentLedEditor.cmdset==apCommands) {
-        currentLedEditor.addLine("on "+(coord.y+1)+" "+(coord.x+1));
-      }
-      return true;
-    }
-  };
-  final java.util.function.Function<IntVector2, Boolean> off=new java.util.function.Function<IntVector2, Boolean>() {
-    public Boolean apply(IntVector2 coord) {
-      currentLedEditor.addLine("off "+(coord.y+1)+" "+(coord.x+1));
-      return true;
-    }
-  };
-  ((PadButton)KyUI.get("led_pad")).buttonListener=new java.util.function.BiConsumer<IntVector2, Integer>() {
-    public void accept(IntVector2 coord, Integer action) {//only sends in-range events.
-      boolean edited=false;
-      if (InputMode==AUTOINPUT) {
-        if (action==PadButton.RELEASE_L) {
-          int line=currentLedEditor.line;
-          int frame=currentLedEditor.LED.size()-1;
-          if (InFrameInput) {
-            if (currentLedEditor.displayFrame!=currentLedEditor.DelayPoint.size()-1)line=currentLedEditor.DelayPoint.get(currentLedEditor.displayFrame+1);
-            frame=currentLedEditor.displayFrame;
-          }
-          int a=line-1;
-          int aframe=currentLedEditor.getFrame(line);
-          boolean done=false;
-          while (a>0&&a>currentLedEditor.DelayPoint.get(aframe)) {
-            Command cmd= currentLedEditor.getCommands().get(a);
-            if (cmd instanceof OnCommand) {
-              LightCommand info=(LightCommand)cmd;
-              if (info.x1-1==X&&info.y1-1==Y&&info.x1==info.x2&&info.y1==info.y2) {//???range command
-                done=true;
-                currentLedEditor.deleteLine(a);
-                break;
-              }
-            } else if (cmd instanceof OffCommand) {
-              LightCommand info=(LightCommand)cmd;
-              if (info.x1-1==X&&info.y1-1==Y&&info.x1==info.x2&&info.y1==info.y2) {
-                done=true;
-                currentLedEditor.deleteLine(a);
-                boolean notsame=color_lp[3]!=currentLedEditor.LED.get(frame)[X][Y];//#TEST
-                if (notsame)edited=on.apply(coord);
-                break;
-              }
-            }
-            a--;
-          }
-          a--;
-          if (done==false) {
-            boolean onBefore=false;
-            while (a>0) {
-              Command cmd= currentLedEditor.getCommands().get(a);
-              if (cmd instanceof OnCommand) {
-                LightCommand info=(LightCommand)cmd;
-                if (info.x1-1<=X&&X<=info.x2-1&&info.y1-1<=Y&&Y<=info.y2-1) {
-                  onBefore=true;
-                  break;
-                }
-              } else if (cmd instanceof OffCommand) {
-                LightCommand info=(LightCommand)cmd;
-                if (info.x1-1<=X&&X<=info.x2-1&&info.y1-1<=Y&&Y<=info.y2-1) {
-                  onBefore=false;
-                  break;
-                }
-              }
-              a--;
-            }
-            if (onBefore) {
-              edited=off.apply(coord);
-            } else {
-              edited=on.apply(coord);
-            }
-          }
-        }
-      } else if (InputMode==RIGHTOFFMODE) {
-        if (action==PadButton.RELEASE_L) {
-          edited=on.apply(coord);
-        } else if (action==PadButton.RELEASE_R) {
-          edited=off.apply(coord);
-        }
-      }
-      if (edited) {
-        currentLedEditor.editor.updateSlider();
-        currentLedEditor.editor.invalidate();
-      }
-    }
-  };
+  led_setup();
   //load others
-  vs_loadBuildVersion();
-  vs_checkVersion();
+  vs_loadBuildVersion(); 
+  vs_checkVersion(); 
   //uncloud_setup();//later
 }
 void main_draw() {
-  KyUI.render(g);
-  pushMatrix();
-  scale(KyUI.scaleGlobal);
+  KyUI.render(g); 
+  pushMatrix(); 
+  scale(KyUI.scaleGlobal); 
   //draw other things
   popMatrix();
 }
