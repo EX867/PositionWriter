@@ -44,14 +44,20 @@ void led_setup() {
         if (cmd instanceof OnCommand) {
           LightCommand info=(LightCommand)cmd;
           if (info.x1<=coord.x+1&&coord.x+1<=info.x2&&info.y1<=coord.y+1&&coord.y+1<=info.y2) {
-            currentLedEditor.deleteLine(a);
+            if (info.x1==info.x2&&info.y1==info.y2) {
+              currentLedEditor.deleteLine(a);
+            } else {
+              off.accept(null, coord);
+            }
             return;
           }
         } else if (cmd instanceof OffCommand) {
           LightCommand info=(LightCommand)cmd;
           if (info.x1<=coord.x+1&&coord.x+1<=info.x2&&info.y1<=coord.y+1&&coord.y+1<=info.y2) {
-            currentLedEditor.deleteLine(a);
-            if (color_lp[3]!=currentLedEditor.LED.get(frame)[coord.x+1][coord.y+1])on.accept(null, coord);//not same #TEST
+            if (info.x1==info.x2&&info.y1==info.y2) {
+              currentLedEditor.deleteLine(a);
+            }
+            if (color_lp[3]!=currentLedEditor.LED.get(frame)[coord.x][coord.y])on.accept(null, coord);//not same #TEST
             return;
           }
         }

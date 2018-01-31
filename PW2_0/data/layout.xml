@@ -148,7 +148,7 @@
                   <kyui.element.TextBox active="true" bgColor="-8421505" blankLines="6" desc="" enabled="true" error="false" errorColor="-65536" fgColor="50" hint="3" hintColor="-1775095246" lineNumBgColor="40" lineNumColor="-1" lineNumSize="0" margin="0" name="set_chain" numberOnly="INTEGER" padding="20" pos="[(941.0, 495.0)~(1390.0, 570.0)]" rightText="" selectionColor="-13487411" text="3" textColor="50" textFont="processing.core.PFont@1cd8c6c0" textSize="25" title="chain" visible="true"/>
                   <kyui.element.ToggleButton active="true" bgColor="-13487566" desc="" enabled="true" margin="15" name="set_squarebuttons" padding="10" pos="[(956.0, 580.0)~(1375.0, 655.0)]" rotation="UP" text="squareButtons" textColor="-1" textSize="20" value="true" visible="true"/>
                 </kyui.element.LinearLayout>
-                <kyui.element.Button active="true" bgColor="-13487566" desc="open file explorer" enabled="true" margin="0" name="set_globalPath" padding="10" pos="[(941.0, 840.0)~(1390.0, 890.0)]" rotation="UP" text="C:/User/users/Documents/PositionWriter2" textColor="-1" textSize="15" visible="true"/>
+                <kyui.element.Button active="true" bgColor="-13487566" desc="open file explorer" enabled="true" margin="0" name="set_globalpath" padding="10" pos="[(941.0, 840.0)~(1390.0, 890.0)]" rotation="UP" text="C:/User/users/Documents/PositionWriter2" textColor="-1" textSize="15" visible="true"/>
               </kyui.element.DivisionLayout>
             </kyui.element.DivisionLayout>
           </kyui.element.DivisionLayout>

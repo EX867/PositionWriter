@@ -216,8 +216,6 @@ class UnipackCommand implements Command {
   String toUnipadString() {
     return toString();
   }
-  public void execute(long time) {
-  }
 }
 class UnitorCommand extends UnipackCommand {
 }
@@ -402,13 +400,9 @@ class ErrorCommand implements Command {
   public String toString() {
     return "";
   }
-  public void execute(long time) {
-  }
 }
 class EmptyCommand implements Command {
   public String toString() {
     return "";
-  }
-  public void execute(long time) {
   }
 }

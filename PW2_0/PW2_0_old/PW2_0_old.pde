@@ -61,17 +61,6 @@ void setup_main() {
   } else {
     title_keyledfilename=title_filename;
   }
-  //end things
-  surface.setTitle(title_filename+title_edited+title_suffix);
-  try {
-    VERSION=readFile("versionInfo.json");
-    buildVersion();
-    checkVersion();
-    statusR.text=startText;
-  }
-  catch(Exception e) {
-    displayLogError("can't load version.");
-  }
 }
 long drawStart=0;
 long drawEnd=0;
@@ -86,7 +75,6 @@ boolean autorun_playing=false;
 boolean autorun_paused=false;
 void draw_main() {
   //DEBUG
-  autoRun();
   autoSave();
 }
 void editable_keyTyped() {

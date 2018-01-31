@@ -4,8 +4,6 @@ import kyui.core.Attributes;
 import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.element.DivisionLayout;
-import kyui.element.RangeSlider;
-import kyui.element.TextEdit;
 import kyui.util.Rect;
 import processing.core.PApplet;
 import processing.event.KeyEvent;
@@ -202,13 +200,6 @@ public class Test extends PApplet {
       //else if (after == null) System.out.println("[out] " + line + " deleted " + before.toString());
       //else System.out.println("[out] " + line + " changed from " + before.toString() + " to " + after.toString());
       getSurface().setTitle("editor - " + analyzer.getProgress() + "/" + analyzer.getTotal());
-      if (after != null) {
-        if (after instanceof StartCommand) {
-          after.execute(0);
-        } else if (after instanceof EndCommand) {
-          after.execute(0);
-        }
-      }
     }
     @Override
     public void onReadFinished(Analyzer analyzer) {
@@ -227,10 +218,6 @@ public class Test extends PApplet {
       val=val_;
     }
     @Override
-    public void execute(long time) {
-      r.startLine=val;
-    }
-    @Override
     public String toString() {
       return "start - start from" + val;
     }
@@ -241,10 +228,6 @@ public class Test extends PApplet {
     public EndCommand(CommandEdit.MarkRange r_, int val_) {
       r=r_;
       val=val_;
-    }
-    @Override
-    public void execute(long time) {
-      r.endLine=val;
     }
     @Override
     public String toString() {
@@ -785,8 +768,6 @@ public class Test extends PApplet {
     String toUnipadString() {
       return toString();
     }
-    public void execute(long time) {
-    }
   }
   class UnitorCommand extends UnipackCommand {
   }
@@ -952,14 +933,10 @@ public class Test extends PApplet {
     public String toString() {
       return "";
     }
-    public void execute(long time) {
-    }
   }
   class EmptyCommand implements Command {
     public String toString() {
       return "";
-    }
-    public void execute(long time) {
     }
   }
   static int[] color_lp=new int[128];

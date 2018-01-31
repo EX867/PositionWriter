@@ -25,10 +25,6 @@ void midiOffAll() {
     a=a+1;
   }
 }
-void reloadMidiDevices() {
-  String path=joinPath(GlobalPath, MidiPath);
-  setStatusR(MidiCommand.reloadDevices(path));
-}
 public class PadPressCommand implements InputBehavior {
   @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
     if (msg instanceof ShortMessage) {

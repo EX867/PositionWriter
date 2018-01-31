@@ -94,44 +94,12 @@ void loadCustomSettings(String customPath) {
     ((Button)UI[getUIid("I_AUTOSTOP")]).value=toBoolean(Data.getString("value"));
     autoStop=toBoolean(Data.getString("value"));
   }
-  Data=XmlData.getChild("I_CYXMODE");
-  if (Data!=null) {
-    ((Button)UI[getUIid("I_CYXMODE")]).value=toBoolean(Data.getString("value"));
-    if (toBoolean(Data.getString("value"))==true) {//FIX!!!
-    }
-  }
-  Data=XmlData.getChild("I_OLDINPUT");
-  if (Data!=null) {
-    ((Button)UI[getUIid("I_OLDINPUT")]).value=toBoolean(Data.getString("value"));
-    if (toBoolean(Data.getString("value"))==true) {
-    }
-  }
-  Data=XmlData.getChild("I_RIGHTOFFMODE");
-  if (Data!=null) {
-    ((Button)UI[getUIid("I_RIGHTOFFMODE")]).value=toBoolean(Data.getString("value"));
-    if (toBoolean(Data.getString("value"))==true) {
-    }
-  }
   Data=XmlData.getChild("I_DEFAULTINPUT");
   if (Data!=null) {
     ((Button)UI[getUIid("I_DEFAULTINPUT")]).value=toBoolean(Data.getString("value"));//default
     if (toBoolean(Data.getString("value"))==true) {
       Mode=AUTOINPUT;
     }
-  }
-  Data=XmlData.getChild("I_LANGUAGE");
-  if (Data!=null) {
-    ((DropDown)UI[getUIid("I_LANGUAGE")]).selection=Data.getInt("value");
-  }
-  Data=XmlData.getChild("I_DESCRIPTIONTIME");
-  if (Data!=null) {
-    ((TextBox)UI[getUIid("I_DESCRIPTIONTIME")]).value=Data.getInt("value");
-    ((TextBox)UI[getUIid("I_DESCRIPTIONTIME")]).text=""+Data.getInt("value");
-  }
-  Data=XmlData.getChild("I_IGNOREMC");
-  if (Data!=null) {
-    ((Button)UI[getUIid("I_IGNOREMC")]).value=toBoolean(Data.getString("value"));
-    ignoreMc=toBoolean(Data.getString("value"));
   }
   Data=XmlData.getChild("keyLED");
   if (Data!=null) {
