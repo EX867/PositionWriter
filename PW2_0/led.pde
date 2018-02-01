@@ -9,7 +9,7 @@ void led_setup() {
       }
       if (currentLedEditor.cmdset==ledCommands) {
         if (ColorMode==VEL) {
-          currentLedEditor.addLine("on "+pos+" auto "+3);//#TEST
+          currentLedEditor.addLine("on "+pos+" auto "+SelectedColor);//#TEST
         } else if (ColorMode==HTML) {
           currentLedEditor.addLine("on "+pos+" "+hex(-1, 6));//#TEST
         }
@@ -57,7 +57,7 @@ void led_setup() {
             if (info.x1==info.x2&&info.y1==info.y2) {
               currentLedEditor.deleteLine(a);
             }
-            if (color_lp[3]!=currentLedEditor.LED.get(frame)[coord.x][coord.y])on.accept(null, coord);//not same #TEST
+            if (color_lp[SelectedColor]!=currentLedEditor.LED.get(frame)[coord.x][coord.y])on.accept(null, coord);//not same
             return;
           }
         }
@@ -113,6 +113,13 @@ void led_setup() {
         currentLedEditor.editor.updateSlider(); 
         currentLedEditor.editor.invalidate();
       }
+    }
+  };
+  ((VelocityButton)KyUI.get("led_lp")).colorSelectListener=new EventListener() {
+    public void onEvent(Element e) {
+      ColorMode=VEL;
+      ((VelocityButton)e).selectionVisible=true;
+      SelectedColor=((VelocityButton)e).selectedVelocity;
     }
   };
 }

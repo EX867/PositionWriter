@@ -2,6 +2,7 @@ package pw2.element;
 import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.editor.Attribute;
+import kyui.util.ColorExt;
 import kyui.util.Vector2;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -149,7 +150,7 @@ public class PadButton extends Element {
       }
     }
     if (selectable && !(selected.x < 0 || selected.y < 0 || selected.x >= size.x || selected.y >= size.y)) {
-      drawIndicator(g, offsetX + selected.x * interval + 6, offsetY + selected.y * interval + 6, offsetX + selected.x * interval + interval - 6, offsetY + selected.y * interval + interval - 6, 4);
+      ColorExt.drawIndicator(g, offsetX + selected.x * interval + 6, offsetY + selected.y * interval + 6, offsetX + selected.x * interval + interval - 6, offsetY + selected.y * interval + interval - 6, 4);
     }
     g.noFill();
     if (pressedR && rDragVisible && !coord.equals(clickR)) {
@@ -163,6 +164,32 @@ public class PadButton extends Element {
       g.rect(offsetX + interval * (clickL.x + 0.5F) + 1, offsetY + interval * (clickL.y + 0.5F) + 1, offsetX + interval * (coord.x + 0.5F) + 1, offsetY + interval * (coord.y + 0.5F) + 1);
     }
     g.noStroke();
+  }
+  public IntVector2 getCoord() {
+    IntVector2 coord=new IntVector2(-1, -1);
+    KyUI.checkOverlayCondition((Element e, Vector2 mouse) -> {
+      if (e == this) {
+        float w=PadButton.this.pos.right - PadButton.this.pos.left;
+        float h=pos.bottom - pos.top;
+        float offsetX=pos.left;
+        float offsetY=pos.top;
+        float interval=1;
+        if (w * size.y > h * size.x) {//width is longer than height
+          interval=h / size.y;
+          offsetX=(pos.left + pos.right - interval * size.x) / 2;
+        } else {
+          interval=w / size.x;
+          offsetY=(pos.top + pos.bottom - interval * size.y) / 2;
+        }
+        coord.set(PApplet.floor((mouse.x - offsetX) / interval), PApplet.floor((mouse.y - offsetY) / interval));
+        return true;
+      }
+      return false;
+    });
+    if (coord.x < 0 || coord.y < 0 || coord.x >= size.x || coord.y >= size.y) {
+      return null;
+    }
+    return coord;
   }
   @Override
   public boolean mouseEvent(MouseEvent e, int index) {
@@ -223,16 +250,5 @@ public class PadButton extends Element {
       }
     }
     return true;
-  }
-  void drawIndicator(PGraphics g, float x, float y, float w, float h, int thick) {
-    g.noFill();
-    g.stroke(255.0F);
-    g.strokeWeight(thick * 2);
-    g.rect(x, y, w, h);
-    g.stroke(0.0F);
-    g.strokeWeight(thick);
-    g.rect(x - thick, y - thick, w + thick, h + thick);
-    g.rect(x + thick, y + thick, w - thick, h - thick);
-    g.noStroke();
   }
 }

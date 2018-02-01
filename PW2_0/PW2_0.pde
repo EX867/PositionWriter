@@ -7,6 +7,7 @@ import pw2.element.*;
 //drag and print range commands
 //add custom velocity selector
 //loop statements?
+//vel 0->invisible
 //
 //===ADD list - not now===//
 //
@@ -120,6 +121,7 @@ void main_setup() {
   LayoutLoader.loadXML(KyUI.getRoot(), loadXML("layout.xml"));
   KyUI.taskManager.executeAll();//add all element
   //initialize
+  color_lp=VelocityButton.color_lp;
   ((TabLayout)KyUI.get("main_tabs")).setTabNames(new String[]{"KEYLED", "KEYSOUND", "SETTINGS", "WAVEDIT", "MACRO"});
   ((TabLayout)KyUI.get("led_edittabs")).setTabNames(new String[]{"HTML", "VEL", "TEXT"});
   ((TabLayout)KyUI.get("led_vellayout")).setTabNames(new String[]{"LAUNCHPAD", "MIDIFIGHTER"});
@@ -149,6 +151,7 @@ void main_setup() {
   }
   );
   ledTabs.add(new LedTab(currentLedEditor));
+  currentLed=ledTabs.get(0);
   led_setup();
   //load others
   vs_loadBuildVersion(); 

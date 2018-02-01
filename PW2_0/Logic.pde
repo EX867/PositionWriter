@@ -13,6 +13,7 @@ static final int HTML=2;
 //===States===//
 int InputMode=AUTOINPUT;
 int ColorMode=VEL;
+int SelectedColor=0;
 boolean InFrameInput=false;
 boolean StartFromCursor=true;
 boolean AutoStop=false;
@@ -27,6 +28,8 @@ String path_projects="Projects";
 String path_ledPath="Led_saved";
 String path_ksPath="KeySound_saved";
 String path_midi="Midi";
+color[] color_lp;
+color[] color_mf;
 //
 //
 interface TitleChangeTarget {

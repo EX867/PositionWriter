@@ -85,7 +85,7 @@ class LedScript extends CommandScript {
   }
   int getTimeByFrame(int frame) {
     int time=0;
-    for (int a=1; a<=frame; a++) {
+    for (int a=1; a<=frame/*&&a<DelayPoint.get(a)*/; a++) {
       time+=getDelayValue(DelayPoint.get(a));
     }
     return time;
