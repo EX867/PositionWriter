@@ -113,7 +113,7 @@ class LedScript extends CommandScript {
       resize();
     }
     public void processCommand(Analyzer analyzer, int line, Command before, Command after) {
-      //println(before+" to "+after);
+      //println(before+" to "+after+" line "+line);
       setTitleProcessing("reading...("+getProgress()+"/"+getTotal()+")");
       if (bypass)return;
       int frame=getFrame(line);
@@ -228,6 +228,10 @@ class LedScript extends CommandScript {
       displayFrame=min(displayFrame, DelayPoint.size()-1); 
       setTimeByFrame(displayFrame);
       delayValue=calculateDelayValue(LedScript.this, delayValue);
+      if (displayPad!=null) {
+        displayPad.displayControl(LED.get(displayFrame));
+        displayPad.invalidate();
+      }
     }
     void insertLedPosition(int frame, int line, int x, int y, color c) {
       if (line>=getCommands().size())return;

@@ -33,7 +33,7 @@ public class Test extends PApplet {
     //        };
     //        kyui.editor.Main.main(new String[0]);
     //variations are only assigned once.
-    script_setup();
+    //script_setup();
     KyUI.start(this);
     //ElementLoader.loadOnStart();
     CommandType commandType=new CommandType();
@@ -119,8 +119,9 @@ public class Test extends PApplet {
     layout.addChild(edit.getSlider());
     KyUI.add(layout);
     KyUI.changeLayout();
-    final LedScript currentLedEditor=new LedScript("LedFileName", edit);
-    edit.setContent(currentLedEditor);
+    CommandScript.READ_THRESHOLD=1;
+    //final LedScript currentLedEditor=new LedScript("LedFileName", edit);
+    //edit.setContent(currentLedEditor);
     //    CommandScript script=new CommandScript("LedEditor", null, null).setAnalyzer(commandType, processor);
     //    script.addLine_("on 6 5 auto 2");
     //    script.addLine_("o 6 5 auto 2");

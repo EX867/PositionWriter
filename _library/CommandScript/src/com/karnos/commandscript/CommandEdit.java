@@ -121,16 +121,17 @@ public class CommandEdit extends TextEdit {
       g.text(hint, pos.left + lineNumSize + padding, pos.top + 0.5F * textSize - offsetY + padding);
     } else {
       for (int a=Math.max(0, start - 1); a < content.lines() && a < end + 1; a++) {
-        int index=content.getLine(a).indexOf("//");
+        String line=content.getLine(a);
+        int index=line.indexOf("//");
         boolean comment=true;
         if (index == -1) {
           comment=false;
-          index=content.getLine(a).length();
+          index=line.length();
         }
-        drawLine(g, content.getLine(a).substring(0, index), a);
+        drawLine(g, line.substring(0, index), a);
         if (comment) {
           g.fill(commentColor);
-          g.text(content.getLine(a).substring(index, content.getLine(a).length()), g.textWidth(content.getLine(a).substring(0, index)) + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
+          g.text(line.substring(index, line.length()), g.textWidth(line.substring(0, index)) + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
         }
       }
     }
@@ -144,11 +145,11 @@ public class CommandEdit extends TextEdit {
     //draw text (no comment in normal textEditor implementation
     if (KyUI.focus == this) {
       if (cursorOn) {
-        if (start <= content.line && content.line <= end) {
+        if (start <= content.line && content.line <= end && content.line < content.lines()) {//???
           g.fill(textColor);
           float cursorOffsetX=g.textWidth("|") / 2;
           String line=content.getLine(content.line);
-          if (line.length() >= content.point) {//FIX>>?????????????????
+          if (line.length() >= content.point) {
             g.text("|", pos.left + g.textWidth(line.substring(0, content.point)) + lineNumSize + padding - cursorOffsetX, pos.top + (content.line + 0.5F) * textSize - offsetY + padding);
           }
         }

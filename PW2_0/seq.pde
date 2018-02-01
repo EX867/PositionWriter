@@ -1,6 +1,8 @@
 import java.util.LinkedList;
-class LedCounter {
+import java.util.TreeSet;
+class LedCounter implements Comparable<LedCounter> {
   boolean active=false;//if not active, it will removed from list.
+  //
   LedScript script;
   long offset;//start point of this script.
   //controls
@@ -12,11 +14,14 @@ class LedCounter {
     script=script_;
     offset=offset_;
   }
+  public int compareTo(LedCounter other) {
+    return script.displayTime-other.script.displayTime;
+  }
 }
 class LightThread implements Runnable {
   Thread thread;//must set!!
   HashMap<IntVector2, LedCounter> scripts=new HashMap<IntVector2, LedCounter>();
-  LinkedList<LedCounter> active=new LinkedList<LedCounter>();
+  TreeSet<LedCounter> queue=new TreeSet<LedCounter>();//new LinkedList<LedCounter>()
   MidiMapDevice deviceLink;
   //
   //syncs are needed when ui thread access this thread. and interrupt.
@@ -49,13 +54,25 @@ class LightThread implements Runnable {
       led.script.setFrameByTime();
       led.active=true;
       led.paused=false;
+      queue.add(led);
     }
     thread.interrupt();
   }
   void pause(LedCounter led) {
     synchronized(led.script) {
       led.paused=true;
+      int a=0;
+      for (LedCounter l : queue) {
+        if (l==led) {
+          break;
+        }
+        a++;
+      }
+      if (a!=queue.size()) {
+        queue.remove(a);
+      }
       led.script.displayTime=(int)(System.currentTimeMillis()-led.offset);
+      queue.add(led);
     }
     thread.interrupt();
   }
@@ -69,44 +86,47 @@ class LightThread implements Runnable {
 
   public void run() {
     while (true) {
-      long nextDelay=0;
-      int d=0;
-      while (d<active.size()) {
-        if (active.get(d).active) {
-          d++;
-        } else {
-          active.remove(d);
+      if (queue.size()==0) {
+      } else {
+        LedCounter led=queue.pollFirst();
+        if (led.active) {
+          int[][] display=led.script.displayPad.display;
+          synchronized(led.script) {
+            led.script.displayTime=(int)(System.currentTimeMillis()-led.offset);
+            led.script.setFrameByTime();
+            displayControl(led.script, display);//write script's displayFrame frame to display.
+          }
+          midiControl(display);
+          synchronized(led.script) {
+            if (led.script.displayFrame<led.script.DelayPoint.size()-1) {//not end
+              queue.add(led);
+            } else {
+              if (led.loop) {
+                led.script.displayTime=led.loopStart;
+                led.offset=System.currentTimeMillis()-led.loopStart;
+                queue.add(led);
+                led.script.setFrameByTime();
+              } else {
+                led.active=false;
+              }
+            }
+          }//synchronized
         }
       }
-      for (LedCounter led : active) {
-        synchronized(this) {
-          led.script.displayTime=(int)(System.currentTimeMillis()-led.offset);
-          led.script.setFrameByTime();
-          int[][] display=led.script.displayPad.display;
-          displayControl(led.script, display);//process script's displayFrame frame.
-          for (int b=1; b<=display[0].length; b++) {//assert display.length>0
-            for (int a=1; a<=display.length; a++) {
-              //MidiCommand.execute("led", line.vel, a-1, b-1);
-            }
-          }
-          if (led.script.displayFrame<led.script.DelayPoint.size()-1) {//not end
-            led.script.displayFrame++;
-            //nextDelay=
-          } else {
-            led.script.displayFrame=0;
-            if (led.loop) {
-              led.offset=System.currentTimeMillis()-led.loopStart;
-            } else {
-              led.offset=System.currentTimeMillis();
-              led.active=false;
-            }
-          }
-        }//synchronized
-      }//for counter
-      try {
-        Thread.sleep(nextDelay);
-      }
-      catch(InterruptedException e) {
+      if (queue.size()!=0) {
+        try {
+          int nextTime=queue.first().script.getTimeByFrame(queue.first().script.displayFrame+1);
+          println("["+frameCount+"]delay : "+(nextTime-System.currentTimeMillis()+queue.first().offset));
+          Thread.sleep(Math.max(1, nextTime-System.currentTimeMillis()+queue.first().offset));
+        }
+        catch(InterruptedException e) {
+        }
+      } else {
+        try {
+          Thread.sleep(10000);
+        }
+        catch(InterruptedException e) {
+        }
       }
     }
   }
@@ -116,7 +136,7 @@ class LightThread implements Runnable {
       last=min(last, script.DelayPoint.get(script.displayFrame+1));
     }
     synchronized(script.displayPad) {
-      for (int c=script.DelayPoint.get(script.displayFrame); c<last; c++) {
+      for (int c=script.DelayPoint.get(script.displayFrame)+1; c<last; c++) {
         Command cmd=script.getCommands().get(c);
         if (cmd instanceof OnCommand) {//#ADD midi command in here
           OnCommand info=(OnCommand)cmd;
@@ -159,7 +179,14 @@ class LightThread implements Runnable {
           //}
         }
       }
-      script.editor.invalidate();
+    }
+    script.displayPad.invalidate();
+  }
+  void midiControl(int[][] display) {
+    for (int b=1; b<=display[0].length; b++) {//assert display.length>0
+      for (int a=1; a<=display.length; a++) {
+        //MidiCommand.execute("led", line.vel, a-1, b-1);
+      }
     }
   }
 }

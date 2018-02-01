@@ -2,9 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8e9be9d5-d74c-49b3-8b4f-ea4822ab3658" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/cmds.pde" afterPath="$PROJECT_DIR$/../../PW2_0/cmds.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/PW2_0.pde" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar" afterPath="$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/Logic.pde" afterPath="$PROJECT_DIR$/../../PW2_0/Logic.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/cmdp.pde" afterPath="$PROJECT_DIR$/../../PW2_0/cmdp.pde" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/seq.pde" afterPath="$PROJECT_DIR$/../../PW2_0/seq.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/Command.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/Command.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -17,41 +22,22 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="CommandEdit.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2142">
-              <caret line="137" column="38" lean-forward="false" selection-start-line="137" selection-start-column="38" selection-end-line="137" selection-end-column="38" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="class#MarkRange#0;class#CommandEdit#0" expanded="false" />
-                <element signature="method#setSlider#0;class#CommandEdit#0" expanded="false" />
-                <element signature="method#addMarkRange#0;class#CommandEdit#0" expanded="false" />
-                <element signature="class#MarkingRangeSlider#0;class#CommandEdit#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Test.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Test.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="218" column="5" lean-forward="false" selection-start-line="218" selection-start-column="5" selection-end-line="218" selection-end-column="5" />
+            <state relative-caret-position="1926">
+              <caret line="121" column="35" lean-forward="false" selection-start-line="121" selection-start-column="35" selection-end-line="121" selection-end-column="35" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CommandScript.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CommandScript.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1602">
-              <caret line="113" column="26" lean-forward="false" selection-start-line="113" selection-start-column="26" selection-end-line="113" selection-end-column="26" />
-              <folding>
-                <element signature="e#3001#3002#0" expanded="true" />
-                <element signature="e#3047#3048#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="284">
+              <caret line="327" column="15" lean-forward="false" selection-start-line="327" selection-start-column="15" selection-end-line="327" selection-end-column="15" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -59,40 +45,24 @@
       <file leaf-file-name="Analyzer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="135" column="10" lean-forward="false" selection-start-line="135" selection-start-column="10" selection-end-line="135" selection-end-column="10" />
+            <state relative-caret-position="273">
+              <caret line="138" column="34" lean-forward="true" selection-start-line="138" selection-start-column="34" selection-end-line="138" selection-end-column="34" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Command.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/Command.java">
+      <file leaf-file-name="CommandEdit.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="54">
-              <caret line="3" column="4" lean-forward="false" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="4" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CStyleParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DelimiterParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="990">
-              <caret line="58" column="25" lean-forward="false" selection-start-line="58" selection-start-column="25" selection-end-line="58" selection-end-column="25" />
+            <state relative-caret-position="-106">
+              <caret line="147" column="98" lean-forward="false" selection-start-line="147" selection-start-column="98" selection-end-line="147" selection-end-column="98" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="class#MarkRange#0;class#CommandEdit#0" expanded="false" />
+                <element signature="method#setSlider#0;class#CommandEdit#0" expanded="false" />
+                <element signature="method#addMarkRange#0;class#CommandEdit#0" expanded="false" />
+                <element signature="class#MarkingRangeSlider#0;class#CommandEdit#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -134,6 +104,7 @@
       <find>color_lp</find>
       <find>info.buttonY</find>
       <find>lines()</find>
+      <find>readAll</find>
     </findStrings>
     <replaceStrings>
       <replace>End</replace>
@@ -193,11 +164,11 @@
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/EndBlockStyleParser.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java" />
         <option value="$PROJECT_DIR$/build/build.xml" />
-        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
-        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java" />
+        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java" />
+        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java" />
       </list>
     </option>
   </component>
@@ -304,7 +275,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -343,8 +315,7 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -559,11 +530,15 @@
       <workItem from="1517373924096" duration="256000" />
       <workItem from="1517374267070" duration="626000" />
       <workItem from="1517405502439" duration="92000" />
+      <workItem from="1517446099729" duration="1037000" />
+      <workItem from="1517447554465" duration="1136000" />
+      <workItem from="1517448769721" duration="1032000" />
+      <workItem from="1517450022894" duration="269000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="125554000" />
+    <option name="totallyTimeSpent" value="129028000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
@@ -579,7 +554,6 @@
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15989584" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32781458" sideWeight="0.49791667" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -590,6 +564,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32781458" sideWeight="0.49791667" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -819,33 +794,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="5" lean-forward="true" selection-start-line="15" selection-start-column="5" selection-end-line="15" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="990">
           <caret line="58" column="25" lean-forward="false" selection-start-line="58" selection-start-column="25" selection-end-line="58" selection-end-column="25" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2142">
-          <caret line="137" column="38" lean-forward="false" selection-start-line="137" selection-start-column="38" selection-end-line="137" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="class#MarkRange#0;class#CommandEdit#0" expanded="false" />
-            <element signature="method#setSlider#0;class#CommandEdit#0" expanded="false" />
-            <element signature="method#addMarkRange#0;class#CommandEdit#0" expanded="false" />
-            <element signature="class#MarkingRangeSlider#0;class#CommandEdit#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -858,21 +812,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java">
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1602">
-          <caret line="113" column="26" lean-forward="false" selection-start-line="113" selection-start-column="26" selection-end-line="113" selection-end-column="26" />
-          <folding>
-            <element signature="e#3001#3002#0" expanded="true" />
-            <element signature="e#3047#3048#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="135" column="10" lean-forward="false" selection-start-line="135" selection-start-column="10" selection-end-line="135" selection-end-column="10" />
+        <state relative-caret-position="144">
+          <caret line="15" column="5" lean-forward="true" selection-start-line="15" selection-start-column="5" selection-end-line="15" selection-end-column="5" />
           <folding />
         </state>
       </provider>
@@ -881,14 +824,46 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
           <caret line="3" column="4" lean-forward="false" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="4" />
-          <folding />
+          <folding>
+            <element signature="e#202#203#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="218" column="5" lean-forward="false" selection-start-line="218" selection-start-column="5" selection-end-line="218" selection-end-column="5" />
+        <state relative-caret-position="1926">
+          <caret line="121" column="35" lean-forward="false" selection-start-line="121" selection-start-column="35" selection-end-line="121" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-106">
+          <caret line="147" column="98" lean-forward="false" selection-start-line="147" selection-start-column="98" selection-end-line="147" selection-end-column="98" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="class#MarkRange#0;class#CommandEdit#0" expanded="false" />
+            <element signature="method#setSlider#0;class#CommandEdit#0" expanded="false" />
+            <element signature="method#addMarkRange#0;class#CommandEdit#0" expanded="false" />
+            <element signature="class#MarkingRangeSlider#0;class#CommandEdit#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="273">
+          <caret line="138" column="34" lean-forward="true" selection-start-line="138" selection-start-column="34" selection-end-line="138" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="284">
+          <caret line="327" column="15" lean-forward="false" selection-start-line="327" selection-start-column="15" selection-end-line="327" selection-end-column="15" />
           <folding />
         </state>
       </provider>

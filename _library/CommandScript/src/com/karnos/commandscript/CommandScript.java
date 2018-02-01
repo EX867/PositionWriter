@@ -47,7 +47,7 @@ public class CommandScript extends EditorString {
       cursorPoint=point_;
     }
   }//record unit.
-  public static final int READ_THRESHOLD=64;
+  public static int READ_THRESHOLD=64;
   public EditRecorder recorder;
   public Analyzer analyzer;
   public String name;
@@ -249,12 +249,11 @@ public class CommandScript extends EditorString {
     boolean reread=false;
     if (lines.length >= READ_THRESHOLD && analyzer != null) reread=true;
     String endText=l.get(line_).substring(point_, l.get(line_).length());
-    String temp=l.get(line_).substring(0, point_) + lines[0];
     if (reread) {
       analyzer.clear();
-      setLineWithoutAnalyze(line_, temp + lines[0]);
+      setLineWithoutAnalyze(line_, l.get(line_).substring(0, point_) + lines[0]);
     } else {
-      setLine_(line_, l.get(line_).substring(0, point) + lines[0]);
+      setLine_(line_, l.get(line_).substring(0, point_) + lines[0]);
     }
     for (int a=1; a < lines.length; a++) {
       line_++;
@@ -272,7 +271,7 @@ public class CommandScript extends EditorString {
       }
     }
     if (reread) {
-      analyzer.readAll(l);
+      readAll();
     } else {
       if (analyzer != null) {
         analyzer.read();
@@ -282,6 +281,11 @@ public class CommandScript extends EditorString {
   @Override
   public void delete(int startLine, int startPoint, int endLine, int endPoint) {
     if ((startLine < endLine || (startLine == endLine && startPoint < endPoint)) == false) return;
+    if (startLine > l.size() || endLine < 0) return;
+    endLine=Math.min(lines() - 1, endLine);
+    startPoint=Math.min(l.get(startLine).length(), startPoint);
+    endPoint=Math.min(l.get(endLine).length(), endPoint);
+    //
     boolean reread=false;
     if (endLine - startLine >= READ_THRESHOLD && analyzer != null) reread=true;
     String endText=l.get(endLine).substring(endPoint, l.get(endLine).length());
@@ -304,7 +308,7 @@ public class CommandScript extends EditorString {
       setLine_(startLine, l.get(startLine) + endText);
     }
     if (reread) {
-      analyzer.readAll(l);
+      readAll();
     } else {
       if (analyzer != null) {
         analyzer.read();

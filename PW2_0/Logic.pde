@@ -38,9 +38,10 @@ class LedTab {
   LightThread light;
   LedTab(LedScript script) {
     light=new LightThread();
-    light.addTrack(IntVector2.zero, script);
     Thread thread=new Thread(light);
     light.thread=thread;
+    light.addTrack(IntVector2.zero, script);
+    led=light.scripts.get(IntVector2.zero);
     thread.start();
   }
 }
