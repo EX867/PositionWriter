@@ -10,6 +10,10 @@ static final int AUTOINPUT=1;
 static final int RIGHTOFFMODE=2;
 static final int VEL=1;
 static final int HTML=2;
+static final int LED_EDITOR=1;//equals tab index
+static final int KS_EDITOR=2;
+//===Tabs===//
+int mainTabs_selected=LED_EDITOR;
 //===States===//
 int InputMode=AUTOINPUT;
 int ColorMode=VEL;
@@ -30,6 +34,9 @@ String path_ksPath="KeySound_saved";
 String path_midi="Midi";
 color[] color_lp;
 color[] color_mf;
+//===hashmap elements caching===//
+FrameSlider fs;
+Button fsTime;
 //
 //
 interface TitleChangeTarget {

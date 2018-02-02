@@ -1,218 +1,14 @@
 
 
 class Slider extends UIelement {
-  int VariableType;
-  static final int TYPE_SLIDER_INT=0;
-  static final int TYPE_SLIDER_FLOAT=1;
-  SliderUpdater updater;
-  int minI;
-  int maxI;
-  float minF;
-  float maxF;
-  //runtime
-  int valueI;
-  float valueF;
-  boolean sliderClicked=false;
-  public Slider( int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, int min_, int max_, int value_) {
-    super (ID_, Type_, name_, description_, x_, y_, w_, h_);
-    VariableType=TYPE_SLIDER_INT;
-    minI=min_;
-    maxI=max_;
-    valueI=value_;
-  }
-  public Slider( int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, float min_, float max_, float value_) {
-    super (ID_, Type_, name_, description_, x_, y_, w_, h_);
-    VariableType=TYPE_SLIDER_FLOAT;
-    minF=min_;
-    maxF=max_;
-    valueF=value_;
-  }
-  void adjust(int value) {
-    valueI=max(0, min(maxI, value));
-    if (name.equals("I_FRAMESLIDER")&&skip==false) {
-      if (keyled_textEditor.disabled==false)keyled_textEditor.render();
-    }
-  }
-  void setUpdater(SliderUpdater updater_) {
-    updater=updater_;
-  }
-  @Override
     boolean react() {
-    if (super.react()==false)return false;
-    if (focus!=ID)sliderClicked=false;
-    if (updater!=null) {
-      minF=updater.getMin();
-      maxF=updater.getMax();
-      valueF=min(maxF, max(minF, updater.getValue()));//this is limit!!!
-      render();
+    if (name.equals("I_RESOLUTION")) {
+      if (valueF<=0)valueF=1;
+      surface.setSize(floor(initialWidth*valueF), floor(initialHeight*valueF));
+      setSize(floor(initialWidth*valueF), floor(initialHeight*valueF));
     }
-    if (((isMousePressed(position.x, position.y, size.x, size.y)||(mousePressed&&sliderClicked)))&&pressed) {
-      if (VariableType==TYPE_SLIDER_INT) {
-        valueI=minI+floor(min(max(MouseX-position.x+size.x, 0), 2*size.x)*(maxI-minI)/(size.x*2));
-      } else if (VariableType==TYPE_SLIDER_FLOAT) {
-        valueF=minF+min(max(MouseX-position.x+size.x, 0), 2*size.x)*(maxF-minF)/(size.x*2);
-      }
-      if (name.equals("I_RESOLUTION")) {
-        if (valueF<=0)valueF=1;
-        surface.setSize(floor(initialWidth*valueF), floor(initialHeight*valueF));
-        setSize(floor(initialWidth*valueF), floor(initialHeight*valueF));
-      } else if (name.equals("I_FRAMESLIDER")) {
-        keyled_textEditor.current.processer.displayTime=valueI;
-        timeLabel.text=keyled_textEditor.current.processer.displayTime+"/"+maxI;
-        int sum=0;
-        int a=0;
-        valueI=sum;
-        keyled_textEditor.current.processer.displayFrame=0;
-        while (a<DelayValue.size()) {
-          sum=sum+DelayValue.get(a);
-          if (keyled_textEditor.current.processer.displayTime<sum) break;
-          else valueI=sum;
-          keyled_textEditor.current.processer.displayFrame++;
-          a=a+1;
-        }
-        keyled_textEditor.current.processer.displayTime=valueI;
-        if (autorun_playing==false||autorun_paused)autorun_backup=keyled_textEditor.current.processer.displayTime;
-        if (keyled_textEditor.disabled==false)keyled_textEditor.render();
-      }
-      if (updater!=null)updater.setValue(valueF);//this is limit!!!
-      render();
-      focus=ID;
-      sliderClicked=true;
-    } else if (name.equals("I_RESOLUTION")&&mouseState==AN_RELEASE&&pressed) {
-      scale=valueF;
-      popMatrix();
-      popMatrix();
-      pushMatrix();
-      scale(scale);
-      pushMatrix();
-      registerRender();
-      sliderClicked=false;
-    } else {
-      sliderClicked=false;
-    }
+    scale=valueF;
     return false;
-  }
-  @Override
-    void render() {
-    if (skip)return;
-    strokeWeight(5);
-    stroke(UIcolors[I_BACKGROUND]);
-    fill(UIcolors[I_BACKGROUND]);
-    rect(position.x, position.y, size.x+3, size.y);
-    stroke(UIcolors[I_FOREGROUND]);
-    line(position.x-size.x, position.y, position.x+size.x, position.y);
-    //line(position.x-size.x, position.y-size.y, position.x-size.x, position.y+size.y);
-    //line(position.x+size.x, position.y-size.y, position.x+size.x, position.y+size.y);
-    //noStroke();
-    if (name.equals("I_FRAMESLIDER")) {
-      stroke(brighter(UIcolors[I_FOREGROUND], -10));
-      strokeWeight(1);
-      //assert currentFrame==getFrameid("F_KEYLED")
-      int a=0;
-      int sum=0;
-      while (a<DelayValue.size()) {
-        sum=sum+DelayValue.get(a);
-        line(position.x-size.x+(2*size.x)*sum/(maxI-minI), position.y-size.y, position.x-size.x+(2*size.x)*sum/(maxI-minI), position.y+size.y);
-        a=a+1;
-      }
-      strokeWeight(2);
-      stroke(0, 255, 0);
-      if (startFrom) {
-        line(position.x-size.x+(2*size.x)*autorun_backup/(maxI-minI), position.y-size.y, position.x-size.x+(2*size.x)*autorun_backup/(maxI-minI), position.y);
-      }
-      if (autoStop) {
-        line(position.x-size.x+(2*size.x)*autorun_backup/(maxI-minI), position.y, position.x-size.x+(2*size.x)*autorun_backup/(maxI-minI), position.y+size.y);
-      }
-      noStroke();
-      UI[getUIid("KEYLED_PAD")].render();
-      UI[getUIid("I_TIME1")].render();
-      //render external
-      skip=true;
-      frameSliderLoop.render();
-      skip=false;
-    }
-    noFill();
-    strokeWeight(1);
-    stroke(brighter(UIcolors[I_FOREGROUND], 50));
-    if (VariableType==TYPE_SLIDER_INT) {
-      if (maxI<=minI)rect(position.x-size.x, position.y, 5, size.y);
-      else rect(position.x-size.x+(2*size.x)*valueI/(maxI-minI), position.y, 5, size.y);
-      line(position.x-size.x+(2*size.x)*(valueI-minI)/(maxI-minI), position.y-size.y, position.x-size.x+(2*size.x)*(valueI-minI)/(maxI-minI), position.y+size.y);
-    } else if (VariableType==TYPE_SLIDER_FLOAT) {
-      if (maxF<=minF)rect(position.x-size.x, position.y, 5, size.y);
-      else rect(position.x-size.x+(2*size.x)*(valueF-minF)/(maxF-minF), position.y, 5, size.y);
-      line(position.x-size.x+(2*size.x)*(valueF-minF)/(maxF-minF), position.y-size.y, position.x-size.x+(2*size.x)*(valueF-minF)/(maxF-minF), position.y+size.y);
-    }
-    noStroke();
-  }
-}
-class DragSlider extends UIelement {//only int
-  boolean sliderClicked=false;
-  float valueS;
-  float valueE;
-  boolean bypass=true;
-  Slider follow;
-  float direction=0;
-  public DragSlider( int ID_, int Type_, String name_, String description_, float x_, float y_, float w_, float h_, int follow_) {
-    super (ID_, Type_, name_, description_, x_, y_, w_, h_);
-    valueS=0;
-    valueE=0;
-    follow=(Slider)UI[follow_];//WARNING!!!
-  }
-  @Override
-    boolean react() {
-    int focusBackup=focus;
-    if (super.react()==false) {
-      focus=focusBackup;
-      return false;
-    }
-    if (((isMousePressedRight(position.x, position.y, size.x, size.y)||(mousePressed&&sliderClicked)))&&pressed) {
-      if (mouseState==AN_PRESS) {
-        valueS=(min(max(MouseX, position.x-size.x), position.x+size.x)-position.x+size.x)*(follow.maxI-follow.minI)/(size.x*2);
-        valueE=valueS;
-        direction=0;
-      }
-      if (direction==0) {
-        float mouse=(min(max(MouseX, position.x-size.x), position.x+size.x)-position.x+size.x)*(follow.maxI-follow.minI)/(size.x*2);
-        if (mouse!=valueS)direction=mouse-valueS;
-        if (abs(direction)<5)direction=0;
-      } else if (direction>0) {
-        valueE=(min(max(MouseX, position.x-size.x), position.x+size.x)-position.x+size.x)*(follow.maxI-follow.minI)/(size.x*2);
-      } else if (direction<0) {
-        valueS=(min(max(MouseX, position.x-size.x), position.x+size.x)-position.x+size.x)*(follow.maxI-follow.minI)/(size.x*2);
-      }
-      if (valueS>=valueE&&direction!=0) {
-        if (direction>0)valueE=valueS;
-        else if (direction<0)valueS=valueE;
-        bypass=true;
-      } else {
-        bypass=false;
-      }
-      render();
-      if (name.equals("I_FRAMESLIDERLOOP")) {
-        keyled_textEditor.render();
-      }
-      sliderClicked=true;
-    } else {
-      //direction=0;
-      sliderClicked=false;
-    }
-    focus=focusBackup;
-    return false;
-  }
-  @Override
-    void render() {
-    if (skip)return;
-    if (bypass&&(mousePressed==false||(mousePressed&&mouseButtonLast==LEFT)))return;
-    skip=true;
-    frameSlider.render();
-    skip=false;
-    strokeWeight(2);
-    stroke(255, 0, 0);
-    line(position.x-size.x+(2*size.x)*valueS/(follow.maxI-follow.minI), position.y-size.y, position.x-size.x+(2*size.x)*valueS/(follow.maxI-follow.minI), position.y+size.y);
-    stroke(0, 0, 255);
-    line(position.x-size.x+(2*size.x)*valueE/(follow.maxI-follow.minI), position.y-size.y, position.x-size.x+(2*size.x)*valueE/(follow.maxI-follow.minI), position.y+size.y);
-    noStroke();
   }
 }
 void a() {
@@ -470,14 +266,6 @@ class ScrollList extends UIelement {
         sliderClicked=false;
       }
     }
-    if (sliderClicked) {
-      sliderLength=size.y*size.y/max(size.y, max(View.length, size.y*2/ITEM_HEIGHT)*ITEM_HEIGHT/2);//half
-      sliderPos=position.y+min(max(MouseY-position.y, -size.y+sliderLength), size.y-sliderLength);
-      if (skipRendering==false)render();
-    }
-    if (needsScreenUpdate) {
-      disableDescription();
-    }
     return false;
   }
 }
@@ -492,25 +280,11 @@ class PadButton extends UIelement {
   //boolean onl=false;
   @Override
     boolean react() {
-    if (super.react()==false)return false;
-    if (focused==false)return false;
     float padX=position.x-(size.x-size.y);
     float interval=2*min(size.y/ButtonX, size.y/ButtonY);
     if (isMouseOn(padX, position.y, size.y, size.y)) {
       int X=floor((MouseX-padX+(ButtonX*interval/2))/interval);
       int Y=floor((MouseY-position.y+(ButtonY*interval/2))/interval);
-      if (name.equals("KEYLED_PAD")) {
-        if (jeonjehong&&mouseState==AN_PRESS) {
-          printLed(X, Y);
-        } else if ((jeonjehong==false&&mouseState==AN_RELEASE)&&pressed) {
-          if (Mode==RIGHTOFFMODE) {
-            if (mouseButtonLast==LEFT)printLed(X, Y, false, 0);
-            else printLed(X, Y, false, 1);
-          } else {
-            if (mouseButtonLast==LEFT)printLed(X, Y);
-          }
-        }
-      }
       if (name.equals("KEYSOUND_PAD")) {
         if (mouseState==AN_RELEASE) {
           noteOff(X, Y);
@@ -563,7 +337,6 @@ class PadButton extends UIelement {
           notePressing(X, Y);
         }
       }
-      render();
     } else if (isMouseOn(position.x, position.y, size.x, size.y)) {
       //onl=false;
       int Y=floor((MouseY-position.y+size.y)*4/size.y);

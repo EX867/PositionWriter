@@ -278,44 +278,6 @@ class KsButton {
     ksCurrentLedLoop=0;
     ksCurrentDelayIndex=0;
   }
-  boolean autorun_led() {
-    if (multiLed-1>=ksLed.size()) {
-      autorun_resetLed();
-      return false;//end
-    }
-    boolean endframe=true;
-    while (ksNextTime<=ksCurrentTime) {//change frame
-      //#refactor!!!
-      ksautorun_render=true;
-      while (multiLed>0&&ksCurrentIndex<ksLed.get(multiLed-1).size()) {
-        if ((ksLed.get(multiLed-1).get(ksCurrentIndex))) instanceof DelayCommand) {
-          endframe=false;
-          ksNextTime=ksNextTime+max(1, (int)ksDelayValue.get(multiLed-1).get(ksCurrentDelayIndex));
-          ksCurrentDelayIndex++;
-          ksCurrentIndex++;
-          break;
-        }
-        ksCurrentIndex++;
-        //bpm is translated to ms in readFrame.
-      }
-      if (endframe||ksCurrentIndex==ksLed.get(multiLed-1).size()) {//do end
-        ksCurrentTime=0;
-        ksNextTime=0;
-        ksCurrentIndex=0;
-        ksCurrentDelayIndex=0;
-        ksCurrentLedLoop++;
-        if (multiLed<=0)multiLed=1;
-        if (ksLedLoop.get(multiLed-1)==0||ksLedLoop.get(multiLed-1)>ksCurrentLedLoop) {
-          return true;//not end(loop)
-        } else {
-          ksCurrentLedLoop=0;
-          return false;//end
-        }
-      }
-    }
-    ksCurrentTime+=drawInterval;
-    return true;
-  }
   public void stopSound() {
     if (ksPlayer==null)return;
     if (ksPlayer.getSample()!=null)ksPlayer.setToEnd();

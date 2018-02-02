@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="CommandScript">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar!/" />
+    </SOURCES>
+  </library>
+</component>

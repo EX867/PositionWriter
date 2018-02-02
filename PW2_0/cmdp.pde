@@ -6,6 +6,7 @@ public LedScript loadLedScript(String name_, String text) {//line ending have to
 class LedScript extends CommandScript {
   CommandEdit editor;//linked editor
   ArrayList<color[][]> LED;
+  ArrayList<int[][]> velLED;
   Multiset<Integer> DelayPoint;
   Multiset<Integer> BpmPoint;
   Multiset<Integer> ChainPoint;
@@ -17,6 +18,7 @@ class LedScript extends CommandScript {
   boolean ignoreUnitorCmd=false;
   int displayFrame=0;
   int displayTime=0;
+  int FrameSliderBackup;//backup time.used in startfromcursor and autostop.
   public LedScript(String name_, CommandEdit editor_, PadButton displayPad_) {
     super(name_, null);
     editor=editor_;
@@ -153,6 +155,7 @@ class LedScript extends CommandScript {
           //assert DelayCommand.get(index)==line
           DelayPoint.remove(index);
           LED.remove(frame);//assert frame>=1
+          velLED.remove(frame);
           if (displayFrame>LED.size()-1)displayFrame--;
         } else if (before instanceof BpmCommand) {
           int index=BpmPoint.getBeforeIndex(line-1);
@@ -180,6 +183,7 @@ class LedScript extends CommandScript {
         } else if (after instanceof DelayCommand) {
           DelayPoint.add(line);
           LED.add(frame+1, new color[info.buttonX][info.buttonY]);
+          velLED.add(frame+1, new int[info.buttonX][info.buttonY]);
           readFramesLed(frame, 2);
         } else if (after instanceof BpmCommand) {
           BpmPoint.add(line);
@@ -191,7 +195,9 @@ class LedScript extends CommandScript {
         }
       }
       if (after instanceof DelayCommand || before instanceof DelayCommand ||after instanceof BpmCommand ||before instanceof BpmCommand) {
-        delayValue=calculateDelayValue(LedScript.this, delayValue);
+        //delayValue=calculateDelayValue(LedScript.this, delayValue);
+        fs.set(0, getTimeByFrame(DelayPoint.size()-1));
+        fs.invalidate();
       }
       if (displayPad!=null) {
         displayPad.displayControl(LED.get(displayFrame));
@@ -208,13 +214,16 @@ class LedScript extends CommandScript {
           for (int a=max(1, data.x1); a<=info.buttonX&&a<=data.x2; a++) {
             for (int b=max(1, data.y1); b<=info.buttonY&&b<=data.y2; b++) {
               LED.get(LED.size()-1)[a-1][b-1]=data.htmlc;
+              velLED.get(LED.size()-1)[a-1][b-1]=data.vel;
             }
           }
         } else if (cmd instanceof DelayCommand) {
           LED.add(new color[info.buttonX][info.buttonY]); 
+          velLED.add(new int[info.buttonX][info.buttonY]); 
           for (int a=0; a<info.buttonX; a++) {
             for (int b=0; b<info.buttonY; b++) {
               LED.get(LED.size()-1)[a][b]=LED.get(LED.size()-2)[a][b];
+              velLED.get(LED.size()-1)[a][b]=velLED.get(LED.size()-2)[a][b];
             }
           }
           DelayPoint.add(line);
@@ -250,17 +259,21 @@ class LedScript extends CommandScript {
             }
           } else if (cmd instanceof DelayCommand) {
             LED.get(frame)[x-1][y-1]=toSet;
+            velLED.get(frame)[x-1][y-1]=toSet;
             frame++;
           }
         }
         LED.get(frame)[x-1][y-1]=toSet;
+        velLED.get(frame)[x-1][y-1]=toSet;
       }
     }
     void deleteLedPosition(int frame, int x, int y) {
       if (frame==0) {
         LED.get(frame)[x-1][y-1]=COLOR_OFF;
+        velLED.get(frame)[x-1][y-1]=COLOR_OFF;
       } else if (frame>0) {
         LED.get (frame)[x-1][y-1]=LED.get (frame-1)[x-1][y-1];
+        velLED.get (frame)[x-1][y-1]=velLED.get (frame-1)[x-1][y-1];
       }
       int max=getCommands().size();
       if (frame<DelayPoint.size()-1)max=DelayPoint.get(frame+1);
@@ -271,6 +284,7 @@ class LedScript extends CommandScript {
           //println("delete : process "+info);
           if (info.x1<=x&&x<=info.x2&&info.y1<=y&&y<=info.y2) {
             LED.get(frame)[x-1][y-1]=info.htmlc;
+            velLED.get(frame)[x-1][y-1]=info.vel;
           }
         }
       }
@@ -281,12 +295,14 @@ class LedScript extends CommandScript {
         for (int a=0; a<info.buttonX; a++) {
           for (int b=0; b<info.buttonY; b++) {
             LED.get(frame)[a][b]=COLOR_OFF;
+            velLED.get(frame)[a][b]=COLOR_OFF;
           }
         }
       } else {
         for (int a=0; a<info.buttonX; a++) {
           for (int b=0; b<info.buttonY; b++) {
             LED.get(frame)[a][b]=LED.get(frame-1)[a][b];
+            velLED.get(frame)[a][b]=velLED.get(frame-1)[a][b];
           }
         }
       }
@@ -300,6 +316,7 @@ class LedScript extends CommandScript {
           for (int a=info.x1; a<=info.x2; a++) {
             for (int b=info.y1; b<=info.y2; b++) {
               LED.get(frame)[a-1][b-1]=info.htmlc;
+              velLED.get(frame)[a-1][b-1]=info.vel;
             }
           }
         } else if (cmd instanceof DelayCommand) {
@@ -307,6 +324,7 @@ class LedScript extends CommandScript {
           for (int a=0; a<info.buttonX; a++) {
             for (int b=0; b<info.buttonY; b++) {
               LED.get(frame)[a][b]=LED.get(frame-1)[a][b];
+              velLED.get(frame)[a][b]=velLED.get(frame-1)[a][b];
             }
           }
         }
@@ -319,13 +337,16 @@ class LedScript extends CommandScript {
 
     public void clear(Analyzer analyzer) {//analyzer can be null!!
       LED=null; 
+      velLED=null; 
       DelayPoint=null; 
       BpmPoint=null; 
       LED=new ArrayList<color[][]>(); 
+      velLED=new ArrayList<int[][]>(); 
       DelayPoint=new Multiset<Integer>(); 
       BpmPoint=new Multiset<Integer>(); 
       ChainPoint=new Multiset<Integer>(); 
       LED.add(new color[info.buttonX][info.buttonY]); 
+      velLED.add(new int[info.buttonX][info.buttonY]); 
       DelayPoint.add(-1); 
       BpmPoint.add(-1); 
       ChainPoint.add(-1);

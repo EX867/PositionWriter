@@ -85,7 +85,18 @@ void handleKeyEvent(KeyEvent e) {
   KyUI.handleEvent(e);
   if (e.getAction()==MouseEvent.PRESS) {
     if (key==' ') {
-      ledTabs.get(0).light.start(ledTabs.get(0).led, 0);//#TEST
+      if (currentLed.led.loopStart<currentLed.led.loopEnd) {
+        if (currentLedEditor.displayTime>=currentLed.led.loopEnd) {
+          currentLedEditor.displayTime=currentLed.led.loopEnd;
+          currentLedEditor.setFrameByTime();
+        }
+      } else {
+        if (currentLedEditor.displayFrame>=currentLedEditor.DelayPoint.size()-1) {
+          currentLedEditor.displayFrame=0;
+          currentLedEditor.setTimeByFrame();
+        }
+      }
+      ledTabs.get(0).light.start(ledTabs.get(0).led, currentLedEditor.displayTime);//#TEST
     }
     if (key=='a') {
       currentLedEditor.addLine("delay 50");
@@ -123,7 +134,7 @@ void main_setup() {
   //initialize
   color_lp=VelocityButton.color_lp;
   ((TabLayout)KyUI.get("main_tabs")).setTabNames(new String[]{"KEYLED", "KEYSOUND", "SETTINGS", "WAVEDIT", "MACRO"});
-  ((TabLayout)KyUI.get("led_edittabs")).setTabNames(new String[]{"HTML", "VEL", "TEXT"});
+  ((TabLayout)KyUI.get("led_edittabs")).setTabNames(new String[]{"VEL", "HTML", "TEXT"});
   ((TabLayout)KyUI.get("led_vellayout")).setTabNames(new String[]{"LAUNCHPAD", "MIDIFIGHTER"});
   ((TabLayout)KyUI.get("ks_filelist")).setTabNames(new String[]{"SOUND", "LED"});
   ((TabLayout)KyUI.get("set_lists")).setTabNames(new String[]{"SHORTCUTS", "COLORS"});
@@ -138,6 +149,11 @@ void main_setup() {
   ((DropDown)KyUI.get("set_mode")).addItem("RIGHT OFF MODE");
   //load shortcuts
   //add events
+  ((TabLayout)KyUI.get("main_tabs")).tabSelectListener=new ItemSelectListener() {
+    public void onEvent(int index) {
+      mainTabs_selected=index;
+    }
+  };
   setup_ev1();
   KyUI.changeLayout();
   //setup commands
@@ -152,11 +168,13 @@ void main_setup() {
   );
   ledTabs.add(new LedTab(currentLedEditor));
   currentLed=ledTabs.get(0);
+  midi_setup();
   led_setup();
   //load others
   vs_loadBuildVersion(); 
   vs_checkVersion(); 
   //uncloud_setup();//later
+  println("Setup finished");
 }
 void main_draw() {
   KyUI.render(g); 

@@ -1,63 +1,7 @@
 import beads.*;
 import it.sauronsoftware.jave.*;
-import com.karnos.midimap.MidiCommand;
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.ShortMessage;
-import com.karnos.midimap.InputBehavior;
 //ModPlayer wavplayer;
 Visualizer visualizer;
-void AU_setup() {
-  visualizer=(Visualizer)UI[getUIidRev("I_VISUALIZER")];
-  MidiCommand.setBase(this);
-  MidiCommand.addInput("press", new PadPressCommand());
-  MidiCommand.addInput("release", new PadReleaseCommand());
-  MidiCommand.addInput("chain", new PadChainCommand());
-  reloadMidiDevices();
-}
-void midiOffAll() {
-  int a=0;
-  while (a<ButtonX) {
-    int b=0;
-    while (b<ButtonY) {
-      MidiCommand.execute("led", 0, a, b);
-      b=b+1;
-    }
-    a=a+1;
-  }
-}
-public class PadPressCommand implements InputBehavior {
-  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
-    if (msg instanceof ShortMessage) {
-      ShortMessage info=(ShortMessage)msg;
-      if (info.getData2()!=0) {
-        if (params.length!=2)return;
-        if (currentFrame==1) {
-          keyLedPad.printLed(params[0], params[1], true, 0);
-        } else if (currentFrame==2) {
-          keySoundPad.triggerButton(params[0], params[1], true);
-        }
-      } else {
-        if (currentFrame==2) {
-          keySoundPad.noteOff(params[0], params[1]);
-        }
-      }
-    }
-  }
-}
-public class PadReleaseCommand implements InputBehavior {
-  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
-    if (currentFrame==2) {
-      keySoundPad.noteOff(params[0], params[1]);
-    }
-  }
-}
-public class PadChainCommand implements InputBehavior {
-  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
-    if (currentFrame==2) {
-      keySoundPad.triggerChain(params[0]);
-    }
-  }
-}
 FFmpegConverter converter=new FFmpegConverter();
 public class FFmpegConverter {
   //AudioContext converterContext;

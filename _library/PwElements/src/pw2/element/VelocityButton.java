@@ -76,24 +76,32 @@ public class VelocityButton extends Element {
     }
     return true;
   }
-  @Override
-  public void keyEvent(KeyEvent e) {
-    if (e.getAction() == KeyEvent.PRESS) {
-      if (e.getKey() == PApplet.CODED) {
-        if (e.getKeyCode() == PApplet.LEFT) {
-          selectedVelocity--;
-          if (selectedVelocity < 0) selectedVelocity=0;
-        } else if (e.getKeyCode() == PApplet.RIGHT) {
-          selectedVelocity++;
-          if (selectedVelocity >= cData.length) selectedVelocity=cData.length - 1;
-        } else if (e.getKeyCode() == PApplet.UP) {
-          selectedVelocity-=8;
-          if (selectedVelocity < 0) selectedVelocity=0;
-        } else if (e.getKeyCode() == PApplet.DOWN) {
-          selectedVelocity+=8;
-          if (selectedVelocity >= cData.length) selectedVelocity=cData.length - 1;
-        }
-      }
+  public void left() {
+    selectedVelocity--;
+    if (selectedVelocity < 0) selectedVelocity=0;
+    if (colorSelectListener != null) {
+      colorSelectListener.onEvent(this);
+    }
+  }
+  public void right() {
+    selectedVelocity++;
+    if (selectedVelocity >= cData.length) selectedVelocity=cData.length - 1;
+    if (colorSelectListener != null) {
+      colorSelectListener.onEvent(this);
+    }
+  }
+  public void up() {
+    selectedVelocity-=8;
+    if (selectedVelocity < 0) selectedVelocity=0;
+    if (colorSelectListener != null) {
+      colorSelectListener.onEvent(this);
+    }
+  }
+  public void down() {
+    selectedVelocity+=8;
+    if (selectedVelocity >= cData.length) selectedVelocity=cData.length - 1;
+    if (colorSelectListener != null) {
+      colorSelectListener.onEvent(this);
     }
   }
   @Override
