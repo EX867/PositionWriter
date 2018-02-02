@@ -23,11 +23,15 @@ boolean StartFromCursor=true;
 boolean AutoStop=false;
 boolean AutoSave=true;
 TitleChangeTarget titleChangeTarget;
+VelocityButton VelocityType;
+color[] color_vel;
+String userMacro1="\ndelay 20";
+String userMacro2="\ndelay 30";
 //===Current editors===//
 LedScript currentLedEditor;//equivalent to currentLed.led.script
 LedTab currentLed;
 //===Paths===//
-String path_global=getDocuments();
+String path_global=joinPath(getDocuments(), "PositionWriter");
 String path_projects="Projects";
 String path_ledPath="Led_saved";
 String path_ksPath="KeySound_saved";

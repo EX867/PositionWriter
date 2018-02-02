@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="core-reduced">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/core-reduced.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,8 +1,7 @@
 import pw2.element.*;
 //PositionWriter 2.0.pde
 //===ADD list===//
-//led=(undo,redo),save,export,play,rewind,stop
-//shortcuts = ,resetfocus,ksclear,delay value edit,macros
+//shortcuts = selectall,copy,cut,paste,(exists=undo,redo),registerq,registere,save,export,transportl,transportr,play,rewind,stop,loop,openfind,resetfocus,printq,printe,startfromcursor,autostop,autoinput vel controlx4,ksclear,delay value edit,macros
 //add ziploader
 //note on highlight
 //drag and print range commands
@@ -86,7 +85,7 @@ void handleKeyEvent(KeyEvent e) {
   super.handleKeyEvent(e);
   KyUI.handleEvent(e);
   if (e.getAction()==MouseEvent.PRESS) {
-    //println((int)key+" "+keyCode);
+    println((int)key);
     if (key==' ') {
       if (currentLed.led.loopStart<currentLed.led.loopEnd) {
         if (currentLedEditor.displayTime>=currentLed.led.loopEnd) {
@@ -179,19 +178,106 @@ void main_setup() {
   led_setup();
   //load custom settings
   midi_setup();
-  ((Button)KyUI.get("led_printq")).text=userMacro1.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
-  ((Button)KyUI.get("led_printe")).text=userMacro2.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
-  new Thread(new Runnable() {
-    public void run() {
-      vs_checkVersion();
-    }
-  }
-  ).start();
+  ((Button)KyUI.get("led_printq")).text=userMacro1;
+  ((Button)KyUI.get("led_printe")).text=userMacro2;
+  vs_loadBuildVersion(); 
+  vs_checkVersion(); 
   //uncloud_setup();//later
   //add newversion layer!
   KyUI.taskManager.executeAll();
   KyUI.getRoot().invalidate();//invalidate all!
   //add shortcuts
-  shortcuts_setup();
+  KyUI.addShortcut(new KyUI.Shortcut("selectAll", true, false, false, 1, java.awt.event.KeyEvent.VK_A, new EventListener() {//Ctrl-A
+    public void onEvent(Element e) {//focus
+      if (e instanceof TextEdit) {
+        TextEdit edit=(TextEdit)e;
+        edit.getContent().selectAll();
+        edit.setCursorLine(edit.getContent().lines()-1);
+        edit.setCursorPoint(edit.getLine(edit.getContent().lines()-1).length());
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("copy", true, false, false, 3, java.awt.event.KeyEvent.VK_C, new EventListener() {//Ctrl-C
+    public void onEvent(Element e) {//focus
+      if (e instanceof TextEdit) {
+        if (((TextEdit)e).getContent().hasSelection()) {
+          textTransfer.setClipboardContents(((TextEdit)e).getContent().getSelection());
+        }
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("cut", true, false, false, 24, java.awt.event.KeyEvent.VK_X, new EventListener() {//Ctrl-X
+    public void onEvent(Element e) {//focus
+      if (e instanceof TextEdit) {
+        EditorString edit=(EditorString)((TextEdit)e).getContent();
+        if (edit.hasSelection()) {
+          textTransfer.setClipboardContents(edit.getSelection());
+          edit.deleteSelection();
+          edit.resetSelection();
+          ((TextEdit)e).recordHistory();
+        }
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("paste", true, false, false, 22, java.awt.event.KeyEvent.VK_V, new EventListener() {//Ctrl-V
+    public void onEvent(Element e) {//focus
+      if (e instanceof TextEdit) {
+        EditorString edit=(EditorString)((TextEdit)e).getContent();
+        if (edit.hasSelection()) {
+          edit.deleteSelection();
+          edit.resetSelection();
+        }
+        String pasteString=textTransfer.getClipboardContents().replace("\r\n", "\n").replace("\r", "\n");
+        if (pasteString.length()>0) {
+          edit.insert(pasteString);
+        }
+        ((TextEdit)e).recordHistory();
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("registerQ", true, false, false, 17, java.awt.event.KeyEvent.VK_Q, new EventListener() {//Ctrl-Q
+    public void onEvent(Element e) {//focus
+      if (e instanceof TextEdit) {
+        EditorString edit=(EditorString)((TextEdit)e).getContent();
+        userMacro1=edit.getSelection();
+        Button btn=((Button)KyUI.get("led_printq"));
+        btn.text=userMacro1.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
+        btn.invalidate();
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("registerE", true, false, false, 5, java.awt.event.KeyEvent.VK_E, new EventListener() {//Ctrl-E
+    public void onEvent(Element e) {//focus
+      if (e instanceof TextEdit) {
+        EditorString edit=(EditorString)((TextEdit)e).getContent();
+        userMacro2=edit.getSelection();
+        Button btn=((Button)KyUI.get("led_printe"));
+        btn.text=userMacro2.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
+        btn.invalidate();
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("printQ", true, false, false, 'q', java.awt.event.KeyEvent.VK_Q, new EventListener() {//Q
+    public void onEvent(Element e) {//focus
+      if (!(e instanceof TextEdit)) {
+        ((Button)KyUI.get("led_printq")).getPressListener().onEvent(null, 0);
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("printE", true, false, false, 'e', java.awt.event.KeyEvent.VK_E, new EventListener() {//E
+    public void onEvent(Element e) {//focus
+      if (!(e instanceof TextEdit)) {
+        ((Button)KyUI.get("led_printe")).getPressListener().onEvent(null, 0);
+      }
+    }
+  }
+  ));
   println("Setup finished");
 }

@@ -110,12 +110,30 @@ class LedScript extends CommandScript {
     }
     return frame;
   }
+  void updateSlider() {
+    if (currentLedEditor==this) {
+      fs.set(0, getTimeByFrame(DelayPoint.size()-1));
+      fs.invalidate();
+      fs.set(displayTime);
+      fsTime.text=displayTime+"/"+fs.maxI;
+      fsTime.invalidate();
+    }
+  }
+  void displayControl() {
+    if (currentLedEditor==this) {
+      if (displayPad!=null) {
+        displayPad.displayControl(LED.get(displayFrame));
+        displayPad.invalidate();
+      }
+      midiControl(velLED.get(displayFrame));
+    }
+  }
   class LedProcessor extends LineCommandProcessor {
     public LedProcessor() {
       resize();
     }
     public void processCommand(Analyzer analyzer, int line, Command before, Command after) {
-      //println(before+" to "+after+" line "+line);
+      //println("\""+before+"\" to \""+after+"\" line "+line);
       setTitleProcessing("reading...("+getProgress()+"/"+getTotal()+")");
       if (bypass)return;
       int frame=getFrame(line);
@@ -169,15 +187,15 @@ class LedScript extends CommandScript {
       }
       if (after!=null) {
         if (after instanceof UnitorCommand) {
-          if (!ignoreUnitorCmd) {//int type_, int line_, int start_, int end_, String location_, String cause_
-            addError(new LineError(LineError.WARNING, line, 0, getLine(line).length(), name, "you can't use unitor command in normal led."));
-          }
+          //if (cmdset==ledCommands) {
+          //  addError(new LineError(LineError.WARNING, line, 0, getLine(line).length(), name, "you can't use unitor command in normal led."));
+          //}
         } else if (after instanceof LightCommand) {//includes on and off.
           LightCommand info=(LightCommand)after;
           info.sortPos();
           for (int a=info.x1; a<=info.x2; a++) {
             for (int b=info.y1; b<=info.y2; b++) {
-              insertLedPosition(frame, line, a, b, info.htmlc);
+              insertLedPosition(frame, line, a, b, info.htmlc, info.vel);
             }
           }
         } else if (after instanceof DelayCommand) {
@@ -194,15 +212,15 @@ class LedScript extends CommandScript {
           ChainPoint.add(line);
         }
       }
+      if (displayFrame> DelayPoint.size()) {
+        displayFrame=DelayPoint.size()-1;
+        setTimeByFrame(displayFrame);
+      }
       if (after instanceof DelayCommand || before instanceof DelayCommand ||after instanceof BpmCommand ||before instanceof BpmCommand) {
         //delayValue=calculateDelayValue(LedScript.this, delayValue);
-        fs.set(0, getTimeByFrame(DelayPoint.size()-1));
-        fs.invalidate();
+        updateSlider();
       }
-      if (displayPad!=null) {
-        displayPad.displayControl(LED.get(displayFrame));
-        displayPad.invalidate();
-      }
+      displayControl();
     }
     void readAll() {
       ArrayList<Command> commands=getCommands();
@@ -214,7 +232,7 @@ class LedScript extends CommandScript {
           for (int a=max(1, data.x1); a<=info.buttonX&&a<=data.x2; a++) {
             for (int b=max(1, data.y1); b<=info.buttonY&&b<=data.y2; b++) {
               LED.get(LED.size()-1)[a-1][b-1]=data.htmlc;
-              velLED.get(LED.size()-1)[a-1][b-1]=data.vel;
+              velLED.get(velLED.size()-1)[a-1][b-1]=data.vel;
             }
           }
         } else if (cmd instanceof DelayCommand) {
@@ -223,7 +241,7 @@ class LedScript extends CommandScript {
           for (int a=0; a<info.buttonX; a++) {
             for (int b=0; b<info.buttonY; b++) {
               LED.get(LED.size()-1)[a][b]=LED.get(LED.size()-2)[a][b];
-              velLED.get(LED.size()-1)[a][b]=velLED.get(LED.size()-2)[a][b];
+              velLED.get(velLED.size()-1)[a][b]=velLED.get(velLED.size()-2)[a][b];
             }
           }
           DelayPoint.add(line);
@@ -236,18 +254,17 @@ class LedScript extends CommandScript {
       }
       displayFrame=min(displayFrame, DelayPoint.size()-1); 
       setTimeByFrame(displayFrame);
-      delayValue=calculateDelayValue(LedScript.this, delayValue);
-      if (displayPad!=null) {
-        displayPad.displayControl(LED.get(displayFrame));
-        displayPad.invalidate();
-      }
+      //delayValue=calculateDelayValue(LedScript.this, delayValue);
+      updateSlider();
+      displayControl();
     }
-    void insertLedPosition(int frame, int line, int x, int y, color c) {
+    void insertLedPosition(int frame, int line, int x, int y, color c, int vel) {
       if (line>=getCommands().size())return;
       line=line+1;//skip that line.
       if (0<x&&x<=info.buttonX&&0<y&&y<=info.buttonY) {
         ArrayList<Command> commands=getCommands();
         color toSet=c;
+        color toSetVel=vel;
         for (; line<getCommands().size(); line++) {
           Command cmd=commands.get(line);
           if (cmd instanceof LightCommand) {
@@ -255,16 +272,17 @@ class LedScript extends CommandScript {
             //println("insert : process "+info);
             if (info.x1<=x&&x<=info.x2&&info.y1<=y&&y<=info.y2) {
               toSet=info.htmlc;
+              toSet=info.vel;
               return;
             }
           } else if (cmd instanceof DelayCommand) {
             LED.get(frame)[x-1][y-1]=toSet;
-            velLED.get(frame)[x-1][y-1]=toSet;
+            velLED.get(frame)[x-1][y-1]=toSetVel;
             frame++;
           }
         }
         LED.get(frame)[x-1][y-1]=toSet;
-        velLED.get(frame)[x-1][y-1]=toSet;
+        velLED.get(frame)[x-1][y-1]=toSetVel;
       }
     }
     void deleteLedPosition(int frame, int x, int y) {
@@ -288,7 +306,7 @@ class LedScript extends CommandScript {
           }
         }
       }
-      insertLedPosition (frame+1, max, x, y, LED.get (frame)[x-1][y-1]);
+      insertLedPosition (frame+1, max, x, y, LED.get (frame)[x-1][y-1], velLED.get (frame)[x-1][y-1]);
     }
     void readFramesLed(int frame, int count) {
       if (frame==0) {
@@ -350,7 +368,7 @@ class LedScript extends CommandScript {
       DelayPoint.add(-1); 
       BpmPoint.add(-1); 
       ChainPoint.add(-1);
-      delayValue=calculateDelayValue(LedScript.this, delayValue);
+      //delayValue=calculateDelayValue(LedScript.this, delayValue);
     }
   }
   //class KsProcessor extends LineCommandProcessor {

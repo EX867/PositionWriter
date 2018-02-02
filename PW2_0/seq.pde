@@ -24,6 +24,7 @@ class LightThread implements Runnable {
   TreeSet<LedCounter> queue=new TreeSet<LedCounter>();//new LinkedList<LedCounter>()
   MidiMapDevice deviceLink;
   int[][] display;//used to not change LED array values...
+  int[][] velDisplay;
   //
   //syncs are needed when ui thread access this thread. and interrupt.
   //use these when load/remove led.
@@ -59,7 +60,7 @@ class LightThread implements Runnable {
       led.script.setTimeByFrame();
       checkDisplay(led.script.displayPad);
       if (mainTabs_selected==LED_EDITOR) {
-        copyFrame(led.script.LED.get(led.script.displayFrame));
+        copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
       }
       queue.add(led);
     }
@@ -95,26 +96,30 @@ class LightThread implements Runnable {
     if (display==null||display.length!=pad.size.x||display[0].length!=pad.size.y) {
       display=new int[pad.size.x][pad.size.y];
     }
+    if (velDisplay==null||velDisplay.length!=pad.size.x||velDisplay[0].length!=pad.size.y) {
+      velDisplay=new int[pad.size.x][pad.size.y];
+    }
   }
-  void copyFrame(int[][] display_) {
+  void copyFrame(int[][] display_, int[][] velDisplay_) {
     for (int b=0; b<display[0].length; b++) {
       for (int a=0; a<display.length; a++) {
         display[a][b]=display_[a][b];
+        velDisplay[a][b]=velDisplay_[a][b];
       }
     }
   }
   void unhold() {
     if (queue.size()>0) {
       LedCounter led=queue.first();  
-      copyFrame(led.script.LED.get(led.script.displayFrame));
+      copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
       led.offset=System.currentTimeMillis()-led.script.displayTime;
       thread.interrupt();
     }
   }
   void updateFs(int time) {
     fs.set(time);
-    fsTime.text=time+"/"+fs.maxI;
     fs.invalidate();
+    fsTime.text=time+"/"+fs.maxI;
     fsTime.invalidate();
   }
   public void run() {
@@ -128,7 +133,7 @@ class LightThread implements Runnable {
             synchronized(led.script) {
               pad.displayControl(display);
               displayControlSequence(led.script, display);//write script's displayFrame frame to display.
-              midiControl(display);
+              midiControl(velDisplay);
               //#ADD>>loopEnd cut
               if (led.script.displayFrame<led.script.DelayPoint.size()-1) {//not end
                 //led.script.displayTime=(int)(System.currentTimeMillis()-led.offset);led.script.setFrameByTime();
@@ -148,7 +153,7 @@ class LightThread implements Runnable {
                   led.script.setTimeByFrame();
                   //led.script.displayTime=(int)(System.currentTimeMillis()-led.offset);led.script.setFrameByTime();
                   if (mainTabs_selected==LED_EDITOR) {
-                    copyFrame(led.script.LED.get(led.script.displayFrame));
+                    copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
                     updateFs(currentLedEditor.displayTime);
                   }
                   queue.add(led);
@@ -191,12 +196,14 @@ class LightThread implements Runnable {
           OnCommand info=(OnCommand)cmd;
           for (int b=max(1, info.y1); b<=info.y2&&b<=display[0].length; b++) {
             for (int a=max(1, info.x1); a<=info.x2&&a<=display.length; a++) {
-              if (info.htmlc==COLOR_OFF) {//velocity
+              if (info.vel!=0) {//velocity
                 if (info.vel>=0&&info.vel<128) {
-                  display[a-1][b-1]=color_lp[info.vel];
+                  display[a-1][b-1]=color_vel[info.vel];
+                  velDisplay[a-1][b-1]=info.vel;
                 }
               } else if (info.htmlc==COLOR_RND) {//random
-                display[a-1][b-1]=floor(random(0, 128));
+                velDisplay[a-1][b-1]=floor(random(0, 128));
+                display[a-1][b-1]=color_vel[velDisplay[a-1][b-1]];
               } else {
                 display[a-1][b-1]=info.htmlc;
               }
@@ -208,6 +215,7 @@ class LightThread implements Runnable {
             for (int a=max(1, info.x1); a<=info.x2&&a<=display.length; a++) {
               if (a>0&&b>0&&a<=display.length&&b<=display[0].length) {
                 display[a-1][b-1]=COLOR_OFF;
+                velDisplay[a-1][b-1]=COLOR_OFF;
               }
             }
           }
@@ -232,10 +240,11 @@ class LightThread implements Runnable {
     script.displayPad.invalidate();
   }
 }
-void midiControl(int[][] display) {
-  for (int b=1; b<=display[0].length; b++) {//assert display.length>0
-    for (int a=1; a<=display.length; a++) {
-      //MidiCommand.execute("led", line.vel, a-1, b-1);
+void midiControl(int[][] velDisplay) {
+  for (int b=0; b<velDisplay[0].length; b++) {//assert display.length>0
+    for (int a=0; a<velDisplay.length; a++) {
+      //println(a+" "+b+" : "+velDisplay[a][b]);
+      MidiCommand.execute("led", velDisplay[a][b], a, b);
     }
   }
 }

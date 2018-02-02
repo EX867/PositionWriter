@@ -33,11 +33,11 @@ class UnipackCommands extends LineCommandType {
     }
     //assert x1!=0 if x,y exists.
     if (commandName.equals("on y x auto vel")) {
-      return new OnCommand(x1, x2, y1, y2, color_lp[int(params.get(4))], int(params.get(4)));
+      return new OnCommand(x1, x2, y1, y2, color_vel[int(params.get(4))], int(params.get(4)));
     } else if (commandName.equals("on y x auto vel p")) {
-      return new OnCommand(x1, x2, y1, y2, color_lp[int(params.get(4))], int(params.get(4)), true);
+      return new OnCommand(x1, x2, y1, y2, color_vel[int(params.get(4))], int(params.get(4)), true);
     } else if (commandName.equals("on y x vel")) {
-      return new OnCommand(x1, x2, y1, y2, color_lp[int(params.get(3))], int(params.get(3)));
+      return new OnCommand(x1, x2, y1, y2, color_vel[int(params.get(3))], int(params.get(3)));
     } else if (commandName.equals("on y x html vel")) {
       return new OnCommand(x1, x2, y1, y2, color(unhex("FF"+params.get(3))), int(params.get(4)));
     } else if (commandName.equals("on y x html")) {
@@ -47,11 +47,11 @@ class UnipackCommands extends LineCommandType {
     } else if (commandName.equals("on y x rnd")) {
       return new OnCommand(x1, x2, y1, y2, COLOR_RND, COLOR_OFF);
     } else if (commandName.equals("on mc n auto vel")) {
-      return new McOnCommand(int(params.get(2)), color_lp[int(params.get(4))], int(params.get(4)));
+      return new McOnCommand(int(params.get(2)), color_vel[int(params.get(4))], int(params.get(4)));
     } else if (commandName.equals("on mc n auto vel p")) {
-      return new McOnCommand(int(params.get(2)), color_lp[int(params.get(4))], int(params.get(4)), true);
+      return new McOnCommand(int(params.get(2)), color_vel[int(params.get(4))], int(params.get(4)), true);
     } else if (commandName.equals("on mc n vel")) {
-      return new McOnCommand(int(params.get(2)), color_lp[int(params.get(4))], int(params.get(3)));
+      return new McOnCommand(int(params.get(2)), color_vel[int(params.get(4))], int(params.get(3)));
     } else if (commandName.equals("on mc n html vel")) {
       return new McOnCommand(int(params.get(2)), color(unhex("FF"+params.get(3))), int(params.get(4)));
     } else if (commandName.equals("on mc n html")) {
@@ -255,10 +255,10 @@ class OnCommand extends LightCommand {
   }
   public String toString() {
     String ret="";
-    ret="on "+((y1==y2)?y1+"":y1+"~"+y2)+" "+((x1==x2)?x1+"":x1+"~"+x2);
+    ret="on "+((y1==y2)?y1+"":(y1+"~"+y2))+" "+((x1==x2)?x1+"":(x1+"~"+x2));
     if (htmlc==COLOR_RND)ret+=" auto rnd";
-    else if (vel<128&&vel>=0&&color_lp[vel]!=htmlc||vel<0||vel>=128)ret+=" "+hex(htmlc, 6)+" "+vel;
-    else if (vel==0)ret+=hex(htmlc, 6);
+    else if (vel<128&&vel>=0&&color_vel[vel]!=htmlc||vel<0||vel>=128)ret+=" "+hex(htmlc, 6)+" "+vel;
+    else if (vel==0)ret+=" "+hex(htmlc, 6);
     else ret+=" auto "+vel;
     if (pulse)ret+=" p";
     return ret;
@@ -296,7 +296,7 @@ class McOnCommand extends UnitorCommand {
     String ret="";
     ret="on mc "+n;
     if (htmlc==COLOR_RND)ret+=" auto rnd";
-    else if (vel<128&&vel>=0&&color_lp[vel]!=htmlc||vel<0||vel>=128)ret+=" "+hex(htmlc, 6)+" "+vel;
+    else if (vel<128&&vel>=0&&color_vel[vel]!=htmlc||vel<0||vel>=128)ret+=" "+hex(htmlc, 6)+" "+vel;
     else if (vel==0)ret+=hex(htmlc, 6);
     else ret+=" auto "+vel;
     if (pulse)ret+=" p";

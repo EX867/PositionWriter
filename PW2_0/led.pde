@@ -1,6 +1,29 @@
+java.util.function.Consumer<String> action_print;
 java.util.function.BiConsumer<IntVector2, IntVector2> action_on;
 java.util.function.BiConsumer<IntVector2, IntVector2> action_off;
 void led_setup() {
+  action_print=new java.util.function.Consumer<String>() {
+    public void accept(String in) {
+      int line=currentLedEditor.lines()-1;
+      int point=0;
+      if (InFrameInput&&currentLedEditor.displayFrame<currentLedEditor.DelayPoint.size()-1) {
+        line=currentLedEditor.DelayPoint.get(currentLedEditor.displayFrame+1)-1;
+      }
+      if (line<0) {
+        line=0;
+        point=0;
+        if (in.length()>0&&in.charAt(0)=='\n') {
+          in=in.substring(1, in.length())+"\n";
+        }
+      } else {
+        point=currentLedEditor.getLine(line).length();
+      }
+      if (line==0&&point==0) {
+        in=in.substring(1, in.length());
+      }
+      currentLedEditor.insert(line, point, in);
+    }
+  };
   action_on=new java.util.function.BiConsumer<IntVector2, IntVector2>() {
     public void accept(IntVector2 click, IntVector2 coord) {//#ADD inframeinput and start cut
       String pos;
@@ -11,12 +34,12 @@ void led_setup() {
       }
       if (currentLedEditor.cmdset==ledCommands) {
         if (ColorMode==VEL) {
-          currentLedEditor.addLine("on "+pos+" auto "+SelectedColor);
+          action_print.accept("\non "+pos+" auto "+SelectedColor);
         } else if (ColorMode==HTML) {
-          currentLedEditor.addLine("on "+pos+" "+hex(SelectedColor, 6));
+          action_print.accept("\non "+pos+" "+hex(SelectedColor, 6));
         }
       } else if (currentLedEditor.cmdset==apCommands) {
-        currentLedEditor.addLine("on "+pos);
+        action_print.accept("\non "+pos);
       }
     }
   };
@@ -28,7 +51,7 @@ void led_setup() {
       } else {//range commands
         pos=(min(click.y, coord.y)+1)+"~"+(max(click.y, coord.y)+1)+" "+(min(click.x, coord.x)+1)+"~"+(max(click.x, coord.x)+1);
       }
-      currentLedEditor.addLine("off "+pos);
+      action_print.accept("\noff "+pos);
     }
   };
   final java.util.function.Consumer<IntVector2> autoInput=new java.util.function.Consumer<IntVector2>() {
@@ -36,18 +59,21 @@ void led_setup() {
       int line=currentLedEditor.getCommands().size();
       int frame=currentLedEditor.LED.size()-1;
       if (InFrameInput) {
-        if (currentLedEditor.displayFrame!=currentLedEditor.DelayPoint.size()-1)line=currentLedEditor.DelayPoint.get(currentLedEditor.displayFrame+1);
-        frame=currentLedEditor.displayFrame;
+        if (currentLedEditor.displayFrame<currentLedEditor.DelayPoint.size()-1)line=currentLedEditor.DelayPoint.get(currentLedEditor.displayFrame+1);
       }
       int aframe=currentLedEditor.getFrame(line);
       int a;
-      for (a=line-1; a>0&&a>currentLedEditor.DelayPoint.get(aframe); a--) {
+      for (a=line-1; a>=0&&a>currentLedEditor.DelayPoint.get(aframe); a--) {
         Command cmd= currentLedEditor.getCommands().get(a);
         if (cmd instanceof OnCommand) {
           LightCommand info=(LightCommand)cmd;
           if (info.x1<=coord.x+1&&coord.x+1<=info.x2&&info.y1<=coord.y+1&&coord.y+1<=info.y2) {
             if (info.x1==info.x2&&info.y1==info.y2) {
-              currentLedEditor.deleteLine(a);
+              if (a==0&&currentLedEditor.lines()==1) {
+                currentLedEditor.setLine(0, "");
+              } else {
+                currentLedEditor.deleteLine(a);
+              }
             } else {
               action_off.accept(null, coord);
             }
@@ -57,14 +83,18 @@ void led_setup() {
           LightCommand info=(LightCommand)cmd;
           if (info.x1<=coord.x+1&&coord.x+1<=info.x2&&info.y1<=coord.y+1&&coord.y+1<=info.y2) {
             if (info.x1==info.x2&&info.y1==info.y2) {
-              currentLedEditor.deleteLine(a);
+              if (a==0&&currentLedEditor.lines()==1) {
+                currentLedEditor.setLine(0, "");
+              } else {
+                currentLedEditor.deleteLine(a);
+              }
             }
-            if (color_lp[SelectedColor]!=currentLedEditor.LED.get(frame)[coord.x][coord.y])action_on.accept(null, coord);//not same
+            if (color_vel[SelectedColor]!=currentLedEditor.LED.get(frame)[coord.x][coord.y])action_on.accept(null, coord);//not same
             return;
           }
         }
       }
-      for (a--; a>0; a--) {
+      for (a--; a>=0; a--) {
         Command cmd= currentLedEditor.getCommands().get(a);
         if (cmd instanceof OnCommand) {
           LightCommand info=(LightCommand)cmd;
@@ -117,14 +147,17 @@ void led_setup() {
       }
     }
   };
-  ((VelocityButton)KyUI.get("led_lp")).colorSelectListener=new EventListener() {
+  VelocityType=((VelocityButton)KyUI.get("led_lp"));
+  VelocityType.colorSelectListener=new EventListener() {
     public void onEvent(Element e) {
       ColorMode=VEL;
       ((ColorPickerFull)KyUI.get("led_cp")).setSelectable(false);
       ((VelocityButton)e).selectionVisible=true;
       SelectedColor=((VelocityButton)e).selectedVelocity;
+      VelocityType=(VelocityButton)e;
     }
   };
+  ((VelocityButton)KyUI.get("led_mf")).colorSelectListener=VelocityType.colorSelectListener;
   ((ColorPickerFull)KyUI.get("led_cp")).colorSelectListener=new EventListener() {
     public void onEvent(Element e) {
       ColorMode=HTML;
@@ -144,7 +177,7 @@ void led_setup() {
         fs.set(currentLedEditor.getTimeByFrame(currentLedEditor.displayFrame));
         currentLedEditor.FrameSliderBackup=currentLedEditor.displayTime;//user input
         currentLedEditor.displayPad.displayControl(currentLedEditor.LED.get(currentLedEditor.displayFrame));
-        midiControl(currentLedEditor.displayPad.display);
+        midiControl(currentLedEditor.velLED.get(currentLedEditor.displayFrame));
       }
       currentLedEditor.displayPad.invalidate();
       fsTime.invalidate();

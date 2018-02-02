@@ -74,6 +74,7 @@ void setup_ev1() {//setup small listeners
   );
   ((ImageButton)KyUI.get("set_info")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
+      midiOffAll();//#TEST
       //KyUI.addLayer(infoLayer);
       return false;
     }
@@ -129,14 +130,16 @@ void setup_ev1() {//setup small listeners
   );
   ((Button)KyUI.get("led_printq")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      //
+      action_print.accept(userMacro1.replace("\\r", "\r").replace("\\t", "\t").replace("\\n", "\n").replace("\\\\", "\\"));
+      currentLedEditor.editor.invalidate();
       return false;
     }
   }
   );
   ((Button)KyUI.get("led_printe")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      //
+      action_print.accept(userMacro2);
+      currentLedEditor.editor.invalidate();
       return false;
     }
   }

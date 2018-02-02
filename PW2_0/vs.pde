@@ -15,19 +15,16 @@ void vs_detectProcessing() {
     DEVELOPER_BUILD=true;
   }
 }
-void vs_loadBuildVersion() {
-  JSONObject version=new JSONObject();
-  version=parseJSONObject(VERSION);
-  startText="PositionWriter "+version.getInt("major")+"."+version.getInt("minor")+" "+version.getString("type");
-  if (version.getString("type").equals("beta")) {
-    startText=startText+" "+version.getInt("build");
-  }
-  startText=startText+" ("+version.getString("build_date")+" build)";
-}
 void vs_checkVersion() {
-  JSONObject version=new JSONObject();
-  version=parseJSONObject(VERSION);
   try {
+    JSONObject version=new JSONObject();
+    version=parseJSONObject(VERSION=readFile("versionInfo.json"));
+    startText="PositionWriter "+version.getInt("major")+"."+version.getInt("minor")+" "+version.getString("type");
+    if (version.getString("type").equals("beta")) {
+      startText=startText+" "+version.getInt("build");
+    }
+    startText=startText+" ("+version.getString("build_date")+" build)";
+    println(startText);
     String[] lines=loadStrings("https://ex867.github.io/PositionWriter/versionInfo");
     JSONObject beta=parseJSONObject(lines[2].replace("<p>", "").replace("</p>", ""));//fixed 3rd line
     JSONObject production=parseJSONObject(lines[3].replace("<p>", "").replace("</p>", ""));//fixed 4th line

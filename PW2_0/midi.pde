@@ -9,7 +9,7 @@ void midi_setup() {
   MidiCommand.addInput("chain", new PadChainCommand());
   MidiCommand.reloadDevices(joinPath(path_global, path_midi));
 }
-void midiOffAll() {
+void midiOffAll() {//only for lp...
   int a=0;
   while (a<8) {
     int b=0;
