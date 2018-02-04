@@ -187,10 +187,8 @@ void led_setup() {
   fs.loopAdjustListener=new EventListener() {
     public void onEvent(Element e) {
       //synchronized(currentLedEditor) {
-      if (fs.valueS<fs.valueE) {
-        currentLed.led.loopStart=fs.valueS;
-        currentLed.led.loopEnd=fs.valueE;
-      }
+      currentLed.led.loopStart=fs.valueS;
+      currentLed.led.loopEnd=fs.valueE;
       //}
     }
   };
@@ -217,4 +215,24 @@ void led_setup() {
       ledTabs.get(0).light.unhold();
     }
   };
+}
+void saveCurrentLed() {
+  String filename=currentLedEditor.file.getAbsolutePath();
+  String rename="";
+  if (currentLedEditor.file.isFile()) {
+    int count=0;
+    rename=filename+".tmp";
+    while (!currentLedEditor.file.renameTo(new File(rename))) {
+      rename=filename+".tmp"+count;
+      count++;
+    }
+  }
+  PrintWriter write=createWriter(filename);
+  write.write(currentLedEditor.toString());
+  write.flush();
+  write.close();
+  File tempfile=new File(rename);
+  if (tempfile.isFile()) {
+    tempfile.delete();
+  }
 }

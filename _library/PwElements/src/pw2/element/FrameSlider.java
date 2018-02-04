@@ -32,19 +32,19 @@ public class FrameSlider extends IntSlider {//direction is always horizontal.
       }
       if (loopDir == 0) {
         float mouse=getValueByMouse(KyUI.mouseGlobal.getLast().x);
-        if (mouse != valueS) loopDir=mouse - valueS;
+        loopDir=mouse - valueS;
         if (Math.abs(KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x) < 10) loopDir=0;
       } else if (loopDir > 0) {
         valueE=getValueByMouse(KyUI.mouseGlobal.getLast().x);
       } else if (loopDir < 0) {
         valueS=getValueByMouse(KyUI.mouseGlobal.getLast().x);
       }
-      if (valueS >= valueE && loopDir != 0) {
-        if (loopDir > 0) valueE=valueS;
-        else if (loopDir < 0) valueS=valueE;
-      }
       valueE=Math.max(minI, Math.min(maxI, valueE));
       valueS=Math.max(minI, Math.min(maxI, valueS));
+//      if (valueS >= valueE && loopDir != 0) {
+      //        valueS=minI;
+      //        valueE=minI;
+      //      }
       if (loopAdjustListener != null) {
         loopAdjustListener.onEvent(this);
       }

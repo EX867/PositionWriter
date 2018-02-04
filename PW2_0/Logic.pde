@@ -25,7 +25,7 @@ boolean AutoSave=true;
 TitleChangeTarget titleChangeTarget;
 VelocityButton VelocityType;
 color[] color_vel;
-String userMacro1="\ndelay 20";
+String userMacro1="\ndelay 50";//#TEST 20
 String userMacro2="\ndelay 30";
 //===Current editors===//
 LedScript currentLedEditor;//equivalent to currentLed.led.script

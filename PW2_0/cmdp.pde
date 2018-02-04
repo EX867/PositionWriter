@@ -5,6 +5,7 @@ public LedScript loadLedScript(String name_, String text) {//line ending have to
 }
 class LedScript extends CommandScript {
   CommandEdit editor;//linked editor
+  File file;
   ArrayList<color[][]> LED;
   ArrayList<int[][]> velLED;
   Multiset<Integer> DelayPoint;
@@ -21,6 +22,7 @@ class LedScript extends CommandScript {
   int FrameSliderBackup;//backup time.used in startfromcursor and autostop.
   public LedScript(String name_, CommandEdit editor_, PadButton displayPad_) {
     super(name_, null);
+    file=new File(name);
     editor=editor_;
     displayPad=displayPad_;
     processor=new LedProcessor();
@@ -87,7 +89,7 @@ class LedScript extends CommandScript {
   }
   int getTimeByFrame(int frame) {
     int time=0;
-    for (int a=1; a<=frame/*&&a<DelayPoint.get(a)*/; a++) {
+    for (int a=1; a<=frame&&a<DelayPoint.size(); a++) {//a<DelayPoint... is just for error handling.
       time+=getDelayValue(DelayPoint.get(a));
     }
     return time;

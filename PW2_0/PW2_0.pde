@@ -1,14 +1,15 @@
 import pw2.element.*;
 //PositionWriter 2.0.pde
 //===ADD list===//
-//led=(undo,redo),save,export,play,rewind,stop
+//led=(undo,redo),export,stop
 //shortcuts = ,resetfocus,ksclear,delay value edit,macros
 //add ziploader
 //note on highlight
-//drag and print range commands
 //add custom velocity selector
 //loop statements?
 //vel 0->invisible
+//auto download android.jar
+//script updater and file downloader(and midi preset) frame
 //
 //===ADD list - not now===//
 //
@@ -87,20 +88,6 @@ void handleKeyEvent(KeyEvent e) {
   KyUI.handleEvent(e);
   if (e.getAction()==MouseEvent.PRESS) {
     //println((int)key+" "+keyCode);
-    if (key==' ') {
-      if (currentLed.led.loopStart<currentLed.led.loopEnd) {
-        if (currentLedEditor.displayTime>=currentLed.led.loopEnd) {
-          currentLedEditor.displayTime=currentLed.led.loopEnd;
-          currentLedEditor.setFrameByTime();
-        }
-      } else {
-        if (currentLedEditor.displayFrame>=currentLedEditor.DelayPoint.size()-1) {
-          currentLedEditor.displayFrame=0;
-          currentLedEditor.setTimeByFrame();
-        }
-      }
-      ledTabs.get(0).light.start(ledTabs.get(0).led, currentLedEditor.displayTime);//#TEST
-    }
   }
 }
 void handleMouseEvent(MouseEvent e) {
@@ -167,14 +154,14 @@ void main_setup() {
   //setup commands
   script_setup();
   info=new UnipackInfo();
-  currentLedEditor=new LedScript("LedFileName", (CommandEdit)KyUI.get("led_text"), (PadButton)KyUI.get("led_pad"));
+  currentLedEditor=new LedScript(joinPath(getDocuments(), "PWTest/testled.led"), (CommandEdit)KyUI.get("led_text"), (PadButton)KyUI.get("led_pad"));
   ((CommandEdit)KyUI.get("led_text")).setContent(currentLedEditor);
   ((CommandEdit)KyUI.get("led_text")).setTextChangeListener(new EventListener() {
     public void onEvent(Element e) {
     }
   }
   );
-  ledTabs.add(new LedTab(currentLedEditor));
+  ledTabs.add(new LedTab(currentLedEditor));//#TEST
   currentLed=ledTabs.get(0);
   led_setup();
   //load custom settings
@@ -192,6 +179,7 @@ void main_setup() {
   KyUI.taskManager.executeAll();
   KyUI.getRoot().invalidate();//invalidate all!
   //add shortcuts
+  registerFileType();
   shortcuts_setup();
   println("Setup finished");
 }

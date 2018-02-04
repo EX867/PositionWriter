@@ -195,10 +195,42 @@ void shortcuts_setup() {
   KyUI.addShortcut(new KyUI.Shortcut("loop", false, false, false, 'l', 'L', new EventListener() {//l
     public void onEvent(Element e) {
       if (!(e instanceof TextEdit)) {
-        ImageButton btn=((ImageButton)KyUI.get("led_loop"));
+        ImageToggleButton btn=((ImageToggleButton)KyUI.get("led_loop"));
         btn.onPress();
         btn.getPressListener().onEvent(null, 0);
         btn.invalidate();
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("rewind", false, false, false, 'r', 'R', new EventListener() {//r
+    public void onEvent(Element e) {
+      if (!(e instanceof TextEdit)) {
+        if (currentLed.led.loopStart<currentLed.led.loopEnd) {
+          currentLedEditor.displayTime=currentLed.led.loopStart;
+          currentLedEditor.setFrameByTime();
+        } else {
+          currentLedEditor.displayFrame=0;
+          currentLedEditor.setTimeByFrame();
+        }
+        ledTabs.get(0).light.start(ledTabs.get(0).led, currentLedEditor.displayTime);
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("play", false, false, false, ' ', ' ', new EventListener() {//" "
+    public void onEvent(Element e) {
+      if (!(e instanceof TextEdit)) {
+        ImageButton btn=((ImageButton)KyUI.get("led_playstop"));
+        btn.getPressListener().onEvent(null, 0);
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("save", true, false, false, 19, java.awt.event.KeyEvent.VK_S, new EventListener() {//Ctrl+S
+    public void onEvent(Element e) {
+      if (mainTabs_selected==LED_EDITOR) {
+        saveCurrentLed();
       }
     }
   }

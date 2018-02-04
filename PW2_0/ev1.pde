@@ -116,7 +116,27 @@ void setup_ev1() {//setup small listeners
   );
   ((ImageButton)KyUI.get("led_playstop")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      //start or pause led thread.
+      if (currentLed.led.loopStart<currentLed.led.loopEnd) {
+        if (currentLedEditor.displayTime>=currentLed.led.loopEnd) {
+          currentLedEditor.displayTime=currentLed.led.loopStart;
+          currentLedEditor.setFrameByTime();
+        }
+      } else {
+        if (currentLedEditor.displayFrame>=currentLedEditor.DelayPoint.size()-1) {
+          currentLedEditor.displayFrame=0;
+          currentLedEditor.setTimeByFrame();
+        }
+      }
+      LedTab tab=ledTabs.get(0);
+      if (tab.led.active) {
+        if (tab.led.paused) {
+          tab.light.unPause(tab.led);
+        } else {
+          tab.light.pause(tab.led);
+        }
+      } else {
+        tab.light.start(tab.led, currentLedEditor.displayTime);
+      }
       return false;
     }
   }
