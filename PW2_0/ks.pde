@@ -1,2 +1,4 @@
-class KsSession{//
+class KsSession {//
+  String projectName;
+  UnipackInfo info;
 }

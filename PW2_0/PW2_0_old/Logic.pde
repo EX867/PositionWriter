@@ -1,50 +1,4 @@
-//
-String GlobalPath="";//PositionWriter
-String KeySoundPath="";//ADD load from file! make file in setup.
-String WavEditPath="";
-//
-String AutoSavePath="";//GlobalPath+(Autosaved)
-String LedSavePath="";//GlobalPath+(Led_saved)
-String KeySoundSavePath="";//GlobalPath+(KeySound_saved)
-String ProjectsPath="";//GlobalPath+(Projects)
-String TempPath="";//GlobalPath+(Temp)
-String ExternalPath="";//GlobalPath+(External)
-String MidiPath="";//GlobalPath+(Midi)
-//
-int ButtonX=8;//global value!!!
-int ButtonY=8;
-int Chain=8;
-float Bpm=DEFAULT_BPM;
-//
-int selectedColorType;
-int velnumId;//shortcut
-int htmlselId;//
-LedTextEditor keyled_textEditor;
-Slider frameSlider;//shortcut
-DragSlider frameSliderLoop;//
-Label timeLabel;
-int autoSaveId;
-int findId;
-int replaceId;
-Label statusL;
-Label statusR;
-PadButton keyLedPad;
-PadButton keySoundPad;
-SkinEditView skinEditor;
 
-int ksChain=0;
-int ksX=0;
-int ksY=0;
-//
-String userMacro1="";
-String userMacro2="";
-//option
-boolean autoSave=true;
-boolean ignoreMc=false;
-int Mode=AUTOINPUT;
-boolean InFrameInput=false;
-boolean autoStop=false;
-boolean startFrom=true;
 //led
 //keydsound
 ArrayList<KsButton[][]> KS;
@@ -271,13 +225,6 @@ class KsButton {
     if (isInStack==false)ledstack.add(this);
     isInStack=true;
   }
-  void autorun_resetLed() {
-    ksCurrentTime=0;
-    ksNextTime=0;
-    ksCurrentIndex=0;
-    ksCurrentLedLoop=0;
-    ksCurrentDelayIndex=0;
-  }
   public void stopSound() {
     if (ksPlayer==null)return;
     if (ksPlayer.getSample()!=null)ksPlayer.setToEnd();
@@ -380,91 +327,4 @@ synchronized void L_ResizeData(int Chain_, int ButtonX_, int ButtonY_) {//ADD KS
   keyLedPad.before=new color[ButtonX][ButtonY];
   keySoundPad.before=new color[ButtonX][ButtonY];
   setStatusR("resized to "+Chain+":("+ButtonX+", "+ButtonY+")");
-}
-void updateFrameSlider() {
-  //int a=0;
-  //frameSlider.maxI=0;
-  //while (a<DelayPoint.size()) {
-  //  frameSlider.maxI+=analyzer.getDelayValue(DelayPoint.get(a+1));
-  //  a=a+1;
-  //}
-  frameSlider.adjust(min(frameSlider.maxI, max(frameSlider.minI, frameSlider.valueI)));
-  keyled_textEditor.current.processer.displayTime=frameSlider.valueI;
-  timeLabel.text=keyled_textEditor.current.processer.displayTime+"/"+frameSlider.maxI;
-  keyled_textEditor.current.processer.setFrameByTime();
-  frameSlider.render();
-}
-void autoRun() {
-  if (currentFrame==1) {//keyled
-    if (autorun_playing&&autorun_paused==false) {
-      int sum=0;
-      int a=1;
-      timeLabel.text=keyled_textEditor.current.processer.displayTime+"/"+frameSlider.maxI;
-      keyled_textEditor.current.processer.setFrameByTime();
-      frameSlider.adjust(keyled_textEditor.current.processer.displayTime);
-      keyled_textEditor.current.processer.displayTime+=drawInterval;
-      if (frameSliderLoop.bypass&&keyled_textEditor.current.processer.displayTime>=frameSlider.maxI) {
-        if (frameSlider.maxI!=0&&(autorun_loopCount>=autorun_loopCountTotal||autorun_infinite))keyled_textEditor.current.processer.displayTime=keyled_textEditor.current.processer.displayTime%frameSlider.maxI;
-        else {
-          if (autoStop) {
-            keyled_textEditor.current.processer.displayTime=min(frameSlider.maxI, autorun_backup);
-          } else {
-            keyled_textEditor.current.processer.displayTime=frameSlider.maxI;
-          }
-          keyled_textEditor.current.processer.setFrameByTime();
-          frameSlider.adjust(keyled_textEditor.current.processer.displayTime);
-          timeLabel.text=keyled_textEditor.current.processer.displayTime+"/"+frameSlider.maxI;
-          autorun_playing=false;
-        }
-      } else if (frameSliderLoop.bypass==false&&keyled_textEditor.current.processer.displayTime>=frameSliderLoop.valueE) {
-        if (autorun_loopCount>=autorun_loopCountTotal||autorun_infinite)keyled_textEditor.current.processer.displayTime=int(frameSliderLoop.valueS+(keyled_textEditor.current.processer.displayTime-frameSliderLoop.valueS)%(frameSliderLoop.valueE-frameSliderLoop.valueS));
-        else {
-          if (autoStop) {
-            keyled_textEditor.current.processer.displayTime=ceil(min(frameSliderLoop.valueE, autorun_backup));
-          } else {
-            keyled_textEditor.current.processer.displayTime=ceil(frameSliderLoop.valueE);
-          }
-          keyled_textEditor.current.processer.setFrameByTime();
-          autorun_playing=false;
-        }
-      }
-      frameSlider.render();
-    }
-  } else if (currentFrame==2) {
-    ksautorun_render=false;
-    int c=0;
-    while (c<ledstack.size()) {//pointer
-      if (ledstack.get(c).autorun_led()) {
-        c=c+1;
-      } else {
-        ledstack.get(c).isInStack=false;
-        ledstack.remove(c);
-      }
-    }
-    if (ksautorun_render)UI[getUIid("KEYSOUND_PAD")].render();
-  }
-}
-void autoRunReset() {
-  autorun_paused=false;
-  autorun_loopCount=0;
-  autorun_playing=true;
-  if (autorun_playing==false)autorun_backup=keyled_textEditor.current.processer.displayTime;
-  if (frameSliderLoop.bypass) {
-    if (startFrom==false||keyled_textEditor.current.processer.displayTime==frameSlider.maxI) {
-      keyled_textEditor.current.processer.displayTime=0;
-    }
-  } else {
-    if (startFrom==false||keyled_textEditor.current.processer.displayTime>=frameSliderLoop.valueE) {
-      keyled_textEditor.current.processer.displayTime=(int)frameSliderLoop.valueS;
-    }
-  }
-}
-void autoRunRewind() {
-  autorun_loopCount=0;
-  autorun_playing=true;
-  if (frameSliderLoop.bypass) {
-    keyled_textEditor.current.processer.displayTime=0;
-  } else {
-    keyled_textEditor.current.processer.displayTime=(int)frameSliderLoop.valueS;
-  }
 }

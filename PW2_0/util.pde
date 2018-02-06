@@ -8,29 +8,17 @@ TextTransfer textTransfer;
 //===processing utils===//
 String title_prefix="PositionWriter 2.0 | ";
 String title_path="";
-String title_edited="";
 String title_processing="";
 void setTitlePath(String path) {
   title_path=path;
-  surface.setTitle(title_prefix+title_path+title_edited+title_processing);
+  surface.setTitle(title_prefix+title_path+title_processing);
 }
 void setTitleProcessing() {
-  surface.setTitle(title_prefix+title_path+title_edited);
+  surface.setTitle(title_prefix+title_path);
 }
 void setTitleProcessing(String content) {
   title_processing=" - "+content;
-  surface.setTitle(title_prefix+title_path+title_edited+title_processing);
-}
-void drawIndicator(float x, float y, float w, float h, int thick) {
-  noFill();
-  stroke(255);
-  strokeWeight(thick*2);
-  rect(x, y, w, h);
-  stroke(0);
-  strokeWeight(2);
-  rect(x, y, w+thick, h+thick);
-  rect(x, y, w-thick, h-thick);
-  noStroke();
+  surface.setTitle(title_prefix+title_path+title_processing);
 }
 //
 //===other===//
@@ -59,9 +47,33 @@ boolean isValidPackageName(String content) {
 }
 //
 //===PW saving files===//
-void autoSave(String path, String text) {
-  if (!title_edited.equals("*"))return;
-  writeFile(getNotDuplicatedFilename(path), text);
+String createNewLed() {
+  long time = System.currentTimeMillis(); 
+  java.text.SimpleDateFormat dayTime = new java.text.SimpleDateFormat("yyyy_MM_dd_");
+  return joinPath(path_global, joinPath(path_ledPath, dayTime.format(new java.util.Date(time))+hex((int)(time%86400000))+".led"));
+}
+String createNewFolder() {
+  long time = System.currentTimeMillis();
+  java.text.SimpleDateFormat dayTime = new java.text.SimpleDateFormat("yyyy_MM_dd_");
+  return joinPath(path_global, joinPath(path_projects, dayTime.format(new java.util.Date(time))+hex((int)(time%86400000))));
+}
+void saveFileTo(String path, Runnable r) {
+  String rename="";
+  File file=new File(path);
+  if (file.isFile()) {
+    int count=0;
+    rename=path+".tmp";
+    while (!file.renameTo(new File(rename))) {
+      rename=path+".tmp"+count;
+      count++;
+    }
+  }
+  r.run();
+  File tempfile=new File(rename);
+  if (tempfile.isFile()) {
+    tempfile.delete();//you have no chance to restore it? if I get request, then implement it.
+  }
+  setStatusR("Saved : "+path);
 }
 //
 //===Color utils===//
@@ -117,17 +129,16 @@ File[] listFiles(String dir) {
 }
 String[] listFileNames(String dir) {
   File file=new File(dir);
-  dir=dir.replace('\\', '/');
-  if (file.isDirectory()==false)new File(dir).mkdirs();
   if (file.isDirectory()) {
     File[] view=file.listFiles();
-    String[] ret=new String[view.length];
-    for (int a=0; a<ret.length; a++) {
-      ret[a]=getFileName(view[a].getAbsolutePath());
+    String[] ret=new String[view.length+1];
+    ret[0]="/..";
+    for (int a=1; a<=view.length; a++) {
+      ret[a]=getFileName(view[a-1].getAbsolutePath());
     }
     return ret;
   }
-  return new String[0];
+  return new String[]{"/.."};
 }
 String joinPath(String path1, String path2) {
   path1 = path1.trim();
@@ -247,17 +258,27 @@ boolean isImageFile(File file) {//.gif, .jpg, .tga, .png
   if (ext.equals("gif")||ext.equals("jpg")||ext.equals("tga")||ext.equals("png"))return true;
   return false;
 }
-String readFile(String path) throws Exception {
+String readFile(String path) {
   setTitleProcessing("reading "+path+"...");
   BufferedReader read=createReader(path);
   StringBuilder builder = new StringBuilder();
-  String line=read.readLine();
-  while (line!=null) {
-    builder.append("\n").append(line);
-    line=read.readLine();
+  try {
+    String line=read.readLine();
+    while (line!=null) {
+      builder.append("\n").append(line);
+      line=read.readLine();
+    }
+    builder.delete(0, 1);
   }
-  builder.delete(0, 1);
-  read.close();
+  catch(Exception e) {
+  }
+  try {
+    if (read!=null) {
+      read.close();
+    }
+  }
+  catch(Exception e) {
+  }
   setTitleProcessing();
   return builder.toString();
 }
@@ -265,7 +286,7 @@ String writeFile(String path, String text) {
   PrintWriter write=null;
   try {
     write=createWriter(path);
-    setTitleProcessing("writing "+path+"...");
+    setTitleProcessing("Writing... "+path);
     write.write(text);
     write.flush();
   }
@@ -426,7 +447,7 @@ PImage LedToPng(LedScript script, int frame) {
   image.updatePixels();
   return image;
 }
-String GifToLed() {
+String GifToLed(String path) {
   //#ADD
   return "";
 }
@@ -436,16 +457,15 @@ void LedToGif(String path, LedScript script) {
   e.setQuality(1);
   e.setSize(info.buttonX, info.buttonY);
   //e.setDelay(1000);//#ADD set delay to lcd of every frame
-  for (int a=0; a<script.getFrameLength(); a++) {
+  for (int a=0; a<script.getFrameCount(); a+=1) {
     e.addFrame((java.awt.image.BufferedImage)LedToPng(script, a).getNative());
   }
   e.finish();
 }
-String MidiToLed() {
+String MidiToLed(String path) {
   //#ADD
   return "";
 }
-File LedToMidi() {
+void LedToMidi(String path, LedScript script) {
   //#ADD
-  return null;
 }

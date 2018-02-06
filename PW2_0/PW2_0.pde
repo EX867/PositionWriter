@@ -10,6 +10,7 @@ import pw2.element.*;
 //vel 0->invisible
 //auto download android.jar
 //script updater and file downloader(and midi preset) frame
+//add rnd view
 //
 //===ADD list - not now===//
 //
@@ -34,12 +35,11 @@ static final int PAD_MAX=200;
 static final float DEFAULT_BPM=120; 
 static final color COLOR_OFF=0x00000000;
 static final color COLOR_RND=0x00000001;
-static final int DS_VEL=1;
-static final int DS_HTML=2;
 //static final int LINE_MAX_LENGTH=200;//text editor...
 final float Width=1460;
 final float Height=960;//scaled, not vary.
 //
+boolean jeonjehong;
 //===structure===//
 void settings() {
   //smooth(8);
@@ -79,7 +79,7 @@ void textSize(float size) {
   textLeading(size*3/4);
 }
 void exit() {
-  //#ADD autoSave();
+  KyUI.shortcutsByName.get("saveAll").event.onEvent(null);
   midiOffAll();
   super.exit();
 }
@@ -98,10 +98,11 @@ void handleMouseEvent(MouseEvent e) {
 //===program logic===//
 void main_draw() {
   KyUI.render(g); 
-  pushMatrix(); 
-  scale(KyUI.scaleGlobal); 
-  //draw other things
-  popMatrix();
+  //pushMatrix(); 
+  //scale(KyUI.scaleGlobal); 
+  ////draw other things
+  //popMatrix();
+  autoSave();
 }
 void main_setup() {
   //debug switches
@@ -116,9 +117,16 @@ void main_setup() {
   noStroke();
   frameRate(50);
   vs_detectProcessing();
+  String dataPath=getDataPath();
+  if (new File(joinPath(dataPath, "jeonjehong")).isFile()) {
+    jeonjehong=true;
+    println("jeonjehong=true");
+  }
   //orientation (LANDSCAPE);
   surface.setIcon(loadImage("icon.png"));
   textTransfer=new TextTransfer();
+  //load default data
+  layout_led_frame_xml=loadXML("layout_led_frame.xml");
   KyUI.start(this, 30, true);//mono is secure...only multi when needs high performance.
   ElementLoader.loadOnStart();
   ElementLoader.loadExternal(joinPath(getCodePath(), "PwElements.jar"));
@@ -126,6 +134,8 @@ void main_setup() {
   LayoutLoader.loadXML(KyUI.getRoot(), loadXML("layout.xml"));
   KyUI.taskManager.executeAll();//add all element
   //initialize
+  statusL=(StatusBar)KyUI.get("main_statusL");
+  statusR=(StatusBar)KyUI.get("main_statusR");
   color_lp=VelocityButton.color_lp;
   color_vel=color_lp;
   ((TabLayout)KyUI.get("main_tabs")).setTabNames(new String[]{"KEYLED", "KEYSOUND", "SETTINGS", "WAVEDIT", "MACRO"});
@@ -136,9 +146,9 @@ void main_setup() {
   ((TabLayout)KyUI.get("wv_list")).setTabNames(new String[]{"LIBS", "POINTS"});
   ((TabLayout)KyUI.get("main_tabs")).selectTab(1);
   ((TabLayout)KyUI.get("led_vellayout")).selectTab(1);
+  ((TabLayout)KyUI.get("led_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("led_frame"));
   KyUI.get("led_consolelayout").setEnabled(false);
   KyUI.get("led_findlr").setEnabled(false);
-  ui_attachSlider((CommandEdit)KyUI.get("led_text"));
   ui_attachSlider((ConsoleEdit)KyUI.get("led_console"));
   ((DropDown)KyUI.get("set_mode")).addItem("AUTOINPUT");
   ((DropDown)KyUI.get("set_mode")).addItem("RIGHT OFF MODE");
@@ -154,20 +164,27 @@ void main_setup() {
   //setup commands
   script_setup();
   info=new UnipackInfo();
-  currentLedEditor=new LedScript(joinPath(getDocuments(), "PWTest/testled.led"), (CommandEdit)KyUI.get("led_text"), (PadButton)KyUI.get("led_pad"));
-  ((CommandEdit)KyUI.get("led_text")).setContent(currentLedEditor);
-  ((CommandEdit)KyUI.get("led_text")).setTextChangeListener(new EventListener() {
-    public void onEvent(Element e) {
-    }
-  }
-  );
-  ledTabs.add(new LedTab(currentLedEditor));//#TEST
-  currentLed=ledTabs.get(0);
   led_setup();
+  addLedTab(createNewLed());
   //load custom settings
+  //load path data
+  load_settings();
   midi_setup();
+  AutoSave=((ToggleButton)KyUI.get("set_autosave")).value;
+  AutoSaveTime=((TextBox)KyUI.get("set_autosavedelay")).valueI;
+  ((ToggleButton)KyUI.get("set_startfromcursor")).getPressListener().onEvent(null, 0);
+  ((ToggleButton)KyUI.get("set_autostop")).getPressListener().onEvent(null, 0);
+  //#ADD <<InputMode=((DropDown)KyUI.get("set_mode")).selected;
   ((Button)KyUI.get("led_printq")).text=userMacro1.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
   ((Button)KyUI.get("led_printe")).text=userMacro2.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
+  //load reload data
+  //
+  if (!DEVELOPER_BUILD&&new File(joinPath(dataPath, "Initial")).isFile()) {//detect first time use.
+    println("initial open");
+    //KyUI.addLayer(initialLayer);
+    registerFileType();
+    new File(joinPath(dataPath, "Initial")).delete();
+  }
   new Thread(new Runnable() {
     public void run() {
       vs_checkVersion();
@@ -175,11 +192,9 @@ void main_setup() {
   }
   ).start();
   //uncloud_setup();//later
-  //add newversion layer!
   KyUI.taskManager.executeAll();
   KyUI.getRoot().invalidate();//invalidate all!
   //add shortcuts
-  registerFileType();
   shortcuts_setup();
   println("Setup finished");
 }

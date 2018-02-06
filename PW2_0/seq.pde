@@ -5,6 +5,7 @@ class LedCounter implements Comparable<LedCounter> {
   //
   LedScript script;
   long offset;//start point of this script.
+  int loopCount=0;//count by 1 until it reach LedScript's loop count!
   //controls
   boolean paused=true;//if paused,counter will not increase.
   boolean loop=false;
@@ -20,6 +21,7 @@ class LedCounter implements Comparable<LedCounter> {
 }
 class LightThread implements Runnable {
   Thread thread;//must set!!
+  boolean active=true;//set inactive to exit.
   HashMap<IntVector2, LedCounter> scripts=new HashMap<IntVector2, LedCounter>();
   TreeSet<LedCounter> queue=new TreeSet<LedCounter>();//new LinkedList<LedCounter>()
   MidiMapDevice deviceLink;
@@ -56,6 +58,7 @@ class LightThread implements Runnable {
       //led.script.setFrameByTime();
       led.active=true;
       led.paused=false;
+      led.loopCount=0;
       led.script.displayFrame=led.script.getFrameByTime(displayTime);
       led.script.setTimeByFrame();
       checkDisplay(led.script.displayPad);
@@ -115,7 +118,7 @@ class LightThread implements Runnable {
     fsTime.invalidate();
   }
   public void run() {
-    while (true) {
+    while (active) {
       if (queue.size()>0) {
         if (!(mainTabs_selected==LED_EDITOR&&fs.hold())) {
           LedCounter led=queue.pollFirst();
@@ -123,18 +126,23 @@ class LightThread implements Runnable {
             PadButton pad=led.script.displayPad;
             checkDisplay(pad);
             synchronized(led.script) {
-              pad.displayControl(display);
+              if (mainTabs_selected!=LED_EDITOR||led==currentLed.led) {
+                pad.displayControl(display);
+              }
               displayControlSequence(led.script, display, velDisplay);//write script's displayFrame frame to display.
               midiControl(velDisplay);
               boolean notEnd=led.script.displayFrame<led.script.DelayPoint.size()-1;
               if (led.loopStart<led.loopEnd) {
-                notEnd=notEnd&&led.script.getTimeByFrame(led.script.displayFrame+1)<led.loopEnd;
+                notEnd=notEnd&&led.script.displayTime<led.loopEnd;//led.script.getTimeByFrame(led.script.displayFrame+1)
               }
               if (notEnd) {//not end
-                //led.script.displayTime=(int)(System.currentTimeMillis()-led.offset);led.script.setFrameByTime();
-                led.script.displayFrame++;
-                led.script.setTimeByFrame();
-                if (mainTabs_selected==LED_EDITOR) {
+                //led.script.displayTime=(int)(System.currentTimeMillis()-led.offset);//led.script.displayFrame++;
+                led.script.displayTime=led.script.getTimeByFrame(led.script.displayFrame+1);
+                if (led.loopStart<led.loopEnd) {
+                  led.script.displayTime=Math.min(led.script.displayTime, led.loopEnd);
+                }
+                led.script.setFrameByTime();
+                if (mainTabs_selected==LED_EDITOR&&led==currentLed.led) {
                   updateFs(currentLedEditor.displayTime);//led.script.displayTime
                 }
                 queue.add(led);
@@ -145,8 +153,8 @@ class LightThread implements Runnable {
                     led.script.displayTime=led.loopStart;
                   }
                   led.offset=System.currentTimeMillis()-led.script.displayTime;
-                  led.script.setFrameByTime();
-                  //led.script.displayTime=(int)(System.currentTimeMillis()-led.offset);
+                  led.script.displayFrame=led.script.getFrameByTime(led.script.displayTime)+1;
+                  led.script.setTimeByFrame();
                   queue.add(led);
                 } else {
                   if (led.loopStart<led.loopEnd) {
@@ -157,7 +165,9 @@ class LightThread implements Runnable {
                 }
                 if (mainTabs_selected==LED_EDITOR) {
                   copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
-                  updateFs(currentLedEditor.displayTime);
+                  if (led==currentLed.led) {
+                    updateFs(currentLedEditor.displayTime);
+                  }
                 }
               }
             }//synchronized
@@ -168,7 +178,7 @@ class LightThread implements Runnable {
         try {
           LedCounter led=queue.first();
           LedScript scr=led.script;
-          long nextTime=scr.getTimeByFrame(scr.displayFrame)-System.currentTimeMillis()+led.offset;
+          long nextTime=scr.displayTime-System.currentTimeMillis()+led.offset;
           if (led.loopStart<led.loopEnd) {
             nextTime=Math.min(nextTime, led.loopEnd+led.offset-System.currentTimeMillis());
           }

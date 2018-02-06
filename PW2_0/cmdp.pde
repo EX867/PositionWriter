@@ -5,7 +5,12 @@ public LedScript loadLedScript(String name_, String text) {//line ending have to
 }
 class LedScript extends CommandScript {
   CommandEdit editor;//linked editor
+  //file management
   File file;
+  boolean changed=false;
+  long lastSaveTime;
+  LedTab tab;//if this is led editor, linke to this! then change name will work.
+  //
   ArrayList<color[][]> LED;
   ArrayList<int[][]> velLED;
   Multiset<Integer> DelayPoint;
@@ -23,6 +28,7 @@ class LedScript extends CommandScript {
   public LedScript(String name_, CommandEdit editor_, PadButton displayPad_) {
     super(name_, null);
     file=new File(name);
+    lastSaveTime=file.lastModified();
     editor=editor_;
     displayPad=displayPad_;
     processor=new LedProcessor();
@@ -68,7 +74,7 @@ class LedScript extends CommandScript {
       return floor((info.up*2400/(getBpm(line)*info.down))*100);
     } else return info.up;
   }
-  int getFrameLength() {
+  int getFrameCount() {
     return DelayPoint.size();
   }
   int getDelayValueByFrame(int frame) {//last frame returns 0.
@@ -130,11 +136,35 @@ class LedScript extends CommandScript {
       midiControl(velLED.get(displayFrame));
     }
   }
+  void setChanged(boolean v) {
+    if (v) {
+      if (changed==false) {
+        if (tab!=null) {
+          int index=ledTabs.indexOf(tab);
+          if (index>=0) {
+            ((TabLayout)KyUI.get("led_filetabs")).setTabName(index, getFileName(file.getAbsolutePath())+"*");
+          }
+        }
+        changed=true;
+      }
+    } else {
+      if (changed) {
+        if (tab!=null) {
+          int index=ledTabs.indexOf(tab);
+          if (index>=0) {
+            ((TabLayout)KyUI.get("led_filetabs")).setTabName(index, getFileName(file.getAbsolutePath()));
+          }
+        }
+        changed=false;
+      }
+    }
+  }
   class LedProcessor extends LineCommandProcessor {
     public LedProcessor() {
       resize();
     }
     public void processCommand(Analyzer analyzer, int line, Command before, Command after) {
+      setChanged(true);
       //println("\""+before+"\" to \""+after+"\" line "+line);
       setTitleProcessing("reading...("+getProgress()+"/"+getTotal()+")");
       if (bypass)return;

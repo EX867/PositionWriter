@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+  <layout>
+    <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="FIXED" name="led_tabItem" padding="0" pos="[(902.0, 152.0)~(1398.0, 520.0)]" rotation="RIGHT" value="24.0" visible="true">
+      <com.karnos.commandscript.CommandEdit active="true" bgColor="50" blankLines="6" commentColor="-8224126" desc="" enabled="true" errorColor="-6419958" hint="" hintColor="-1932998456" lineNumBgColor="40" lineNumColor="-1" lineNumSize="56" margin="0" name="led_text" padding="8" pos="[(902.0, 152.0)~(1398.0, 520.0)]" selectionColor="-13487411" text="//command" textColor="-3618616" textFont="processing.core.PFont@4fb430be" textSize="20" visible="true" warningColor="-3491054"/>
+    </kyui.element.DivisionLayout>
+  </layout>
+  <color/>
+</Data>

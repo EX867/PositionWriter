@@ -230,19 +230,54 @@ void shortcuts_setup() {
   KyUI.addShortcut(new KyUI.Shortcut("save", true, false, false, 19, java.awt.event.KeyEvent.VK_S, new EventListener() {//Ctrl+S
     public void onEvent(Element e) {
       if (mainTabs_selected==LED_EDITOR) {
-        saveCurrentLed();
+        saveLed(currentLedEditor);
       }
     }
   }
   ));
+  KyUI.addShortcut(new KyUI.Shortcut("saveAll", true, false, true, 19, java.awt.event.KeyEvent.VK_S, new EventListener() {//Ctrl+Shift+S
+    public void onEvent(Element e) {
+      if (mainTabs_selected==LED_EDITOR) {
+        for (LedTab tab : ledTabs) {
+          saveLed(tab.led.script);
+        }
+      }
+    }
+  }
+  ));
+  //and...finally drag and drop!
+  KyUI.addDragAndDrop(KyUI.get("led_layout"), new FileDropEventListener() {
+    public void onEvent(DropEvent de) {
+      String filename=de.file().getAbsolutePath().replace("\\", "/");
+      LedTab tab=addLedTab(filename);
+      tab.led.script.insert(0, 0, readFile(filename));
+      tab.led.script.tab=tab;
+    }
+  }
+  );
+  ((TabLayout)KyUI.get("led_filetabs")).tabSelectListener=new ItemSelectListener() {
+    public void onEvent(int index) {
+      selectLedTab(index-1);
+      KyUI.get("led_frame").invalidate();
+    }
+  };
+  ((TabLayout)KyUI.get("led_filetabs")).tabRemoveListener=new ItemSelectListener() {
+    public void onEvent(int index) {
+      ledTabs.get(index).light.active=false;
+      ledTabs.remove(index);
+      if (ledTabs.size()==0) {
+        addLedTab(createNewLed());
+      }
+    }
+  };
+  ((TabLayout)KyUI.get("led_filetabs")).addTabListener=new EventListener() {
+    public void onEvent(Element e) {
+      LedTab tab=addLedTab(createNewLed());
+      tab.led.script.tab=tab;
+    }
+  };
 }
 
-//void editable_keyTyped() {
-//  if (functionId==S_PLAY){
-//    ((Button)UI[getUIid("I_PLAYSTOP")]).onRelease();
-//  }else if (functionId==S_REWIND) {
-//    autorun_paused=false;
-//    autoRunRewind();
 //  } else if (functionId==S_STOP) {
 //    currentLedEditor.displayTime=autorun_backup;
 //    currentLedEditor.setFrameByTime();
@@ -258,14 +293,3 @@ void shortcuts_setup() {
 //  } else if (functionId==S_REDO) {
 //    RedoLog();
 //    setStatusR("redo");
-//  } else if (functionId==S_RESETFOCUS) {//lost focus(Ctrl+T)
-//    UI[focus].resetFocus();
-//    focus=DEFAULT;
-//  } else if (functionId==S_EXPORT) {//save in unipad command(Ctrl+S)
-//    saveWorkingFile_unipad();
-//  } else if (functionId==S_SAVE) {//save(Ctrl+S)
-//    saveWorkingFile();
-//  } else if (functionId==S_EXTERNAL) {
-//    writeDisplay(Shortcuts[a].text);
-//  }
-//}

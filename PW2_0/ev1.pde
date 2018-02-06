@@ -127,15 +127,14 @@ void setup_ev1() {//setup small listeners
           currentLedEditor.setTimeByFrame();
         }
       }
-      LedTab tab=ledTabs.get(0);
-      if (tab.led.active) {
-        if (tab.led.paused) {
-          tab.light.unPause(tab.led);
+      if (currentLed.led.active) {
+        if (currentLed.led.paused) {
+          currentLed.light.unPause(currentLed.led);
         } else {
-          tab.light.pause(tab.led);
+          currentLed.light.pause(currentLed.led);
         }
       } else {
-        tab.light.start(tab.led, currentLedEditor.displayTime);
+        currentLed.light.start(currentLed.led, currentLedEditor.displayTime);
       }
       return false;
     }

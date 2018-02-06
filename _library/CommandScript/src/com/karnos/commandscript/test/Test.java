@@ -239,9 +239,12 @@ public class Test extends PApplet {
   protected void handleKeyEvent(KeyEvent event) {
     super.handleKeyEvent(event);
     KyUI.handleEvent(event);
-    //    if (event.getAction() == 1) {
-    //      println((int)key + " " + keyCode);
-    //    }
+    if (event.getAction() == 1) {
+      // println((int)key + " " + keyCode);
+      if (event.getKey() == 19&&event.getKeyCode()==java.awt.event.KeyEvent.VK_S) {
+        edit.addLine(0, "asfd");
+      }
+    }
   }
   @Override
   protected void handleMouseEvent(MouseEvent event) {

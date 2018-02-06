@@ -1,3 +1,4 @@
+XML layout_led_frame_xml;
 void ui_attachSlider(CommandEdit e) {
   e.parents.get(0).addChild(e.getSlider());
   e.parents.get(0).onLayout();

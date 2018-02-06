@@ -22,6 +22,7 @@ void led_setup() {
         in=in.substring(1, in.length());
       }
       currentLedEditor.insert(line, point, in);
+      currentLedEditor.editor.recordHistory();
     }
   };
   action_on=new java.util.function.BiConsumer<IntVector2, IntVector2>() {
@@ -174,7 +175,7 @@ void led_setup() {
         currentLedEditor.displayTime=fs.valueI;
         fsTime.text=currentLedEditor.displayTime+"/"+fs.maxI;
         currentLedEditor.setFrameByTime();
-        fs.set(currentLedEditor.getTimeByFrame(currentLedEditor.displayFrame));
+        // fs.set(currentLedEditor.getTimeByFrame(currentLedEditor.displayFrame));
         currentLedEditor.FrameSliderBackup=currentLedEditor.displayTime;//user input
         currentLedEditor.displayPad.displayControl(currentLedEditor.LED.get(currentLedEditor.displayFrame));
         midiControl(currentLedEditor.velLED.get(currentLedEditor.displayFrame));
@@ -216,23 +217,71 @@ void led_setup() {
     }
   };
 }
-void saveCurrentLed() {
-  String filename=currentLedEditor.file.getAbsolutePath();
-  String rename="";
-  if (currentLedEditor.file.isFile()) {
-    int count=0;
-    rename=filename+".tmp";
-    while (!currentLedEditor.file.renameTo(new File(rename))) {
-      rename=filename+".tmp"+count;
-      count++;
+void saveLed(final LedScript led) { 
+  if (led.changed) {
+    final String filename=led.file.getAbsolutePath();
+    saveFileTo(filename, new Runnable() {
+      public void run() {
+        writeFile(filename, led.toString());
+      }
+    }
+    );
+    led.setChanged(false);
+    led.lastSaveTime=new File(filename).lastModified();
+  }
+}
+void exportLed(final LedScript led) {
+  final String filename=getNotDuplicatedFilename(joinPath(joinPath(path_global, path_ledPath), getFileName(led.file.getAbsolutePath())));
+  final String ext=getFileExtension(filename);
+  saveFileTo(filename, new Runnable() {
+    public void run() {
+      if (ext.equals("png")) {
+        LedToPng(led, led.displayFrame).save(filename);
+      } else if (ext.equals("gif")) {
+        LedToGif(filename, led);
+      } else if (ext.equals("mid")) {
+        LedToMidi(filename, led);
+      } else {
+        writeFile(filename, led.toString());
+      }
     }
   }
-  PrintWriter write=createWriter(filename);
-  write.write(currentLedEditor.toString());
-  write.flush();
-  write.close();
-  File tempfile=new File(rename);
-  if (tempfile.isFile()) {
-    tempfile.delete();
+  );
+}
+void saveKs(KsSession ks) {
+  String filename=joinPath(path_global, path_projects+"/"+filterString(ks.projectName, new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}));
+}
+LedTab addLedTab(String filename) {
+  TabLayout tabs=((TabLayout)KyUI.get("led_filetabs"));
+  Element e=tabs.addTabFromXmlPath(getFileName(filename), layout_led_frame_xml, "layout_led_frame.xml", null);
+  KyUI.taskManager.executeAll();//add elements
+  CommandEdit edit=(CommandEdit)e.children.get(0).children.get(0);
+  ui_attachSlider(edit);
+  LedScript script=new LedScript(filename, edit, (PadButton)KyUI.get("led_pad"));
+  edit.setContent(script);
+  LedTab tab=new LedTab(script);
+  ledTabs.add(tab);
+  edit.setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+    }
   }
+  );
+  tabs.onLayout();
+  tabs.onLayout();//???????????
+  KyUI.get("led_frame").onLayout();
+  tabs.selectTab(ledTabs.size());
+  selectLedTab(ledTabs.size()-1);
+  return tab;
+}
+void selectLedTab(int index) {
+  currentLed=ledTabs.get(index);
+  currentLedEditor=currentLed.led.script;
+  currentLedEditor.updateSlider();
+  midiOffAll(currentLed.light.deviceLink);
+  currentLedEditor.displayControl();
+  KyUI.get("led_frame").invalidate();
+  ((ImageToggleButton)KyUI.get("led_loop")).value=currentLed.led.loop;
+  KyUI.get("led_loop").invalidate();
+  fs.valueS=currentLed.led.loopStart;
+  fs.valueE=currentLed.led.loopEnd;
 }

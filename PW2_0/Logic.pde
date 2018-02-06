@@ -22,6 +22,7 @@ boolean InFrameInput=false;
 boolean StartFromCursor=true;
 boolean AutoStop=false;
 boolean AutoSave=true;
+int AutoSaveTime=30;
 TitleChangeTarget titleChangeTarget;
 VelocityButton VelocityType;
 color[] color_vel;
@@ -32,10 +33,10 @@ LedScript currentLedEditor;//equivalent to currentLed.led.script
 LedTab currentLed;
 //===Paths===//
 String path_global=joinPath(getDocuments(), "PositionWriter");
-String path_projects="Projects";
-String path_ledPath="Led_saved";
-String path_ksPath="KeySound_saved";
-String path_midi="Midi";
+String path_projects="projects";
+String path_ledPath="led";
+String path_export="export";
+String path_midi="midi";
 color[] color_lp;
 color[] color_mf;
 //===hashmap elements caching===//
@@ -60,7 +61,26 @@ class LedTab {
   }
 }
 ArrayList<LedTab> ledTabs=new ArrayList<LedTab>();//tab order.
-
-void exportSettings() {//call when setting element is changed.
-  //write settings file.
+long lastAutoSaved=System.currentTimeMillis();
+void autoSave() {
+  if (AutoSave) {
+    if (System.currentTimeMillis()>lastAutoSaved+AutoSaveTime*1000) {
+      new Thread(new Runnable() {
+        public void run() {
+          KyUI.shortcutsByName.get("saveAll").event.onEvent(null);
+        }
+      }
+      ).start();
+      lastAutoSaved=System.currentTimeMillis();
+    }
+  }
+}
+void load_settings() {
+  //LayoutLoader.loadProps(getDataPath());
+}
+void export_settings() {//call when setting element is changed.
+  String[] exportData=new String[]{"set_autosave.value", "set_autosavedelay.valueI", "set_resolution.value", "set_reloaeinstart.value", "set_textsize", "set_startfromcursor", "set_autostop", "set_mode"};
+  //float scale=Data.getFloat("value");//if negative or too big, error will occur.
+  //surface.setSize(floor(initialWidth*scale), floor(initialHeight*scale));
+  //setSize(floor(initialWidth*scale), floor(initialHeight*scale));
 }
