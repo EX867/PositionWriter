@@ -14,6 +14,7 @@ _library/CommandScript/build/*.jar
 _library/PwElements/bin
 _library/PwElements/build/*.jar
 release/*.exe
+release/*.zip
 PW1_4/application.windows32
 PW1_4/application.windows64
 PW2_0/application.windows32
