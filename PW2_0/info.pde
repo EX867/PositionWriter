@@ -7,6 +7,12 @@ static class UnipackInfo {
   //no landscape anymore...!
   boolean squareButton=true;
   boolean updated=false;
+  UnipackInfo() {
+  }
+  UnipackInfo(int bx, int by) {
+    buttonX=bx;
+    buttonY=by;
+  }
   @Override
     public String toString() {
     String ret="";

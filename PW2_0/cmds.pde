@@ -24,10 +24,8 @@ class UnipackCommands extends LineCommandType {
         x2=com.karnos.commandscript.Analyzer.getRangeSecond(params.get(a));
         if (y1<=0||y1>info.buttonY||x1<=0||x1>info.buttonX||y2<=0||y2>info.buttonY||x2<=0||x2>info.buttonX) {
           analyzer.addError(new LineError(LineError.WARNING, line, 0, text.length(), location, "position is out of range."));
-          x1=min(max(1, x1), info.buttonX);
-          x2=min(max(1, x2), info.buttonX);
-          y1=min(max(1, y1), info.buttonY);
-          y2=min(max(1, y2), info.buttonY);
+          //it is okay to throw error on here.
+          return getErrorCommand();
         }
       }
     }

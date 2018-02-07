@@ -117,7 +117,7 @@ void led_setup() {
     public void accept(IntVector2 click, IntVector2 coord, int action) {//only sends in-range events.
       boolean edited=false;
       if (InputMode==AUTOINPUT) {
-        if (action==PadButton.RELEASE_L) {
+        if ((!PrintOnPress&&action==PadButton.RELEASE_L)||(PrintOnPress&&action==PadButton.PRESS_L)) {
           edited=true;
           for (int b=min(coord.y, click.y); b<=max(coord.y, click.y); b++) {
             for (int a=min(coord.x, click.x); a<=max(coord.x, click.x); a++) {
@@ -126,14 +126,14 @@ void led_setup() {
           }
         }
       } else if (InputMode==RIGHTOFFMODE) {
-        if (action==PadButton.RELEASE_L) {
+        if ((!PrintOnPress&&action==PadButton.RELEASE_L)||(PrintOnPress&&action==PadButton.PRESS_L)) {
           edited=true;
           if (click.equals(coord)) {
             action_on.accept(null, coord);
           } else {
             action_on.accept(click, coord);
           }
-        } else if (action==PadButton.RELEASE_R) {
+        } else if ((!PrintOnPress&&action==PadButton.RELEASE_R)||(PrintOnPress&&action==PadButton.PRESS_R)) {
           edited=true;
           if (click.equals(coord)) {
             action_off.accept(null, coord);
@@ -203,17 +203,36 @@ void led_setup() {
       }
       g.strokeWeight(2);
       g.stroke(0, 255, 0);
-      if (StartFromCursor) {
-        g.line(fs.pos.left + fs.padding+size * currentLedEditor.FrameSliderBackup / (fs.maxI - fs.minI), fs.pos.top+fs.padding+2, fs.pos.left +  fs.padding+size * currentLedEditor.FrameSliderBackup / (fs.maxI - fs.minI), (fs.pos.top+fs.pos.bottom)/2);
-      }
-      if (AutoStop) {
-        g.line(fs.pos.left + fs.padding+size* currentLedEditor.FrameSliderBackup / (fs.maxI - fs.minI), (fs.pos.top+fs.pos.bottom)/2, fs.pos.left + fs.padding+size * currentLedEditor.FrameSliderBackup / (fs.maxI - fs.minI), fs.pos.bottom-fs.padding-2);
-      }
+      g.line(fs.pos.left + fs.padding+size * currentLedEditor.FrameSliderBackup / (fs.maxI - fs.minI), fs.pos.top+fs.padding+2, fs.pos.left +  fs.padding+size * currentLedEditor.FrameSliderBackup / (fs.maxI - fs.minI), (fs.pos.top+fs.pos.bottom)/2);
+      //if(StartFromCursor)g.line(fs.pos.left + fs.padding+size * currentLedEditor.FrameSliderBackup / (fs.maxI - fs.minI), fs.pos.top+fs.padding+2, fs.pos.left +  fs.padding+size * currentLedEditor.FrameSliderBackup / (fs.maxI - fs.minI), (fs.pos.top+fs.pos.bottom)/2);
+      //if(AutoStop)g.line(fs.pos.left + fs.padding+size* currentLedEditor.FrameSliderBackup / (fs.maxI - fs.minI), (fs.pos.top+fs.pos.bottom)/2, fs.pos.left + fs.padding+size * currentLedEditor.FrameSliderBackup / (fs.maxI - fs.minI), fs.pos.bottom-fs.padding-2);
     }
   };
   fs.unholdListener=new EventListener() {
     public void onEvent(Element e) {
       ledTabs.get(0).light.unhold();
+    }
+  };
+  ((TabLayout)KyUI.get("led_filetabs")).tabSelectListener=new ItemSelectListener() {
+    public void onEvent(int index) {
+      selectLedTab(index-1);
+      KyUI.get("led_frame").invalidate();
+    }
+  };
+  ((TabLayout)KyUI.get("led_filetabs")).tabRemoveListener=new ItemSelectListener() {
+    public void onEvent(int index) {
+      println(index+" "+ledTabs.size());//#TEST
+      ledTabs.get(index).light.active=false;
+      ledTabs.remove(index);
+      if (ledTabs.size()==0) {
+        addLedTab(createNewLed());
+      }
+      led_filetabs.onLayout();
+    }
+  };
+  ((TabLayout)KyUI.get("led_filetabs")).addTabListener=new EventListener() {
+    public void onEvent(Element e) {
+      addLedTab(createNewLed());
     }
   };
 }
@@ -251,27 +270,57 @@ void exportLed(final LedScript led) {
 void saveKs(KsSession ks) {
   String filename=joinPath(path_global, path_projects+"/"+filterString(ks.projectName, new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}));
 }
+LineError cacheError=new LineError(LineError.ERROR, 0, 0, 0, "", "");
 LedTab addLedTab(String filename) {
   TabLayout tabs=((TabLayout)KyUI.get("led_filetabs"));
   Element e=tabs.addTabFromXmlPath(getFileName(filename), layout_led_frame_xml, "layout_led_frame.xml", null);
   KyUI.taskManager.executeAll();//add elements
-  CommandEdit edit=(CommandEdit)e.children.get(0).children.get(0);
+  final CommandEdit edit=(CommandEdit)e.children.get(0).children.get(0);
+  edit.textSize=((TextBox)KyUI.get("set_textsize")).valueI;
   ui_attachSlider(edit);
-  LedScript script=new LedScript(filename, edit, (PadButton)KyUI.get("led_pad"));
+  final LedScript script=new LedScript(filename, edit, (PadButton)KyUI.get("led_pad"));
   edit.setContent(script);
   LedTab tab=new LedTab(script);
   ledTabs.add(tab);
-  edit.setTextChangeListener(new EventListener() {
+  EventListener ev=new EventListener() {
     public void onEvent(Element e) {
+      cacheError.line=edit.getCursorLine()-1;
+      int index=script.getErrors().getBeforeIndex(cacheError);
+      if (index>=0&&index<script.getErrors().size()&&script.getErrors().get(index).line==edit.getCursorLine()) {
+        statusR.tabColor2=(script.getErrors().get(index).type==LineError.ERROR)?edit.errorColor:edit.warningColor;
+        statusR.setError(true);
+        setStatusR(script.getErrors().get(index).toString());
+      } else if (script.getErrors().size()>0) {
+        statusR.tabColor2=(script.getErrors().get(index).type==LineError.ERROR)?edit.errorColor:edit.warningColor;
+        statusR.setError(true);
+        setStatusR(script.getErrors().get(0).toString());
+      } else {
+        statusR.setError(false);
+        setStatusR("no errors.");
+      }
     }
-  }
-  );
+  };
+  edit.setTextChangeListener(ev);
+  edit.onCursorChangeListener=ev;
   tabs.onLayout();
   tabs.onLayout();//???????????
   KyUI.get("led_frame").onLayout();
   tabs.selectTab(ledTabs.size());
-  selectLedTab(ledTabs.size()-1);
   return tab;
+}
+void addLedFileTab(String filename) {
+  for (int a=0; a<ledTabs.size(); a++) {//anti duplication
+    LedTab t=ledTabs.get(a);
+    if (t.led.script.file.getAbsolutePath().replace("\\", "/").equals(filename)) {
+      led_filetabs.selectTab(a+1);
+      return;
+    }
+  }
+  //
+  LedTab tab=addLedTab(filename);
+  tab.led.script.insert(0, 0, readFile(filename));
+  tab.led.script.tab=tab;
+  tab.led.script.setChanged(false);
 }
 void selectLedTab(int index) {
   currentLed=ledTabs.get(index);
@@ -284,4 +333,7 @@ void selectLedTab(int index) {
   KyUI.get("led_loop").invalidate();
   fs.valueS=currentLed.led.loopStart;
   fs.valueE=currentLed.led.loopEnd;
+  setInfoLed(currentLedEditor.info);
+  currentLedEditor.displayPad.size.set(info.buttonX, info.buttonY);
+  currentLedEditor.displayPad.invalidate();
 }

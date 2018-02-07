@@ -9,18 +9,14 @@ cd %PROJECTPATH%\PW%1\application.windows64
 del PW%1.exe
 ren PW%1_res.exe PW%1.exe
 cd data
-del Colors.xml
-del Shortcuts.xml
-del Path.xml
-del Settings.xml
+del reload.xml
+del settings.xml
 cd %PROJECTPATH%\PW%1\application.windows32
 del PW%1.exe
 ren PW%1_res.exe PW%1.exe
 cd data
-del Colors.xml
-del Shortcuts.xml
-del Path.xml
-del Settings.xml
+del reload.xml
+del settings.xml
 cd %PROJECTPATH%\release\CmdFileCreator\
 CmdFileCreator.exe %PROJECTPATH%\PW%1\application.windows32\data\Initial "First opened after update"
 CmdFileCreator.exe %PROJECTPATH%\PW%1\application.windows64\data\Initial "First opened after update"

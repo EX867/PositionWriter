@@ -10,7 +10,9 @@ class LedScript extends CommandScript {
   boolean changed=false;
   long lastSaveTime;
   LedTab tab;//if this is led editor, linke to this! then change name will work.
+  private boolean tabchanged=false;
   //
+  UnipackInfo info=new UnipackInfo(((TextBox)KyUI.get("set_dbuttony")).valueI, ((TextBox)KyUI.get("set_dbuttonx")).valueI);
   ArrayList<color[][]> LED;
   ArrayList<int[][]> velLED;
   Multiset<Integer> DelayPoint;
@@ -25,9 +27,9 @@ class LedScript extends CommandScript {
   int displayFrame=0;
   int displayTime=0;
   int FrameSliderBackup;//backup time.used in startfromcursor and autostop.
-  public LedScript(String name_, CommandEdit editor_, PadButton displayPad_) {
-    super(name_, null);
-    file=new File(name);
+  public LedScript(String name_, CommandEdit editor_, PadButton displayPad_) {//editor,displayPad is nullable.
+    super(getFileName(name_), null);
+    file=new File(name_);
     lastSaveTime=file.lastModified();
     editor=editor_;
     displayPad=displayPad_;
@@ -40,6 +42,7 @@ class LedScript extends CommandScript {
       editor.setContent(this);
       editor.setAnalyzer(new DelimiterParser(cmdset, processor));
     }
+    setChanged(false);
   }
   void setCmdSet(LineCommandType cmdset_) {
     cmdset=cmdset_;
@@ -47,6 +50,13 @@ class LedScript extends CommandScript {
   }
   LineCommandType getCmdSet() {
     return cmdset;
+  }
+  public void reload() {
+    if (file!=null) {
+      setText(readFile(file.getAbsolutePath()));
+      editor.invalidate();
+      setChanged(false);
+    }
   }
   public void readAll() {
     bypass=true;
@@ -83,7 +93,9 @@ class LedScript extends CommandScript {
     }
     return getDelayValue(DelayPoint.get(frame+1));
   }
-  void resize() {//resize to ButtonX,ButtonY.
+  void resize(int x, int y) {//resize to ButtonX,ButtonY.
+    info.buttonX=x;
+    info.buttonY=y;
     analyzer.clear();
     readAll();
   }
@@ -138,30 +150,30 @@ class LedScript extends CommandScript {
   }
   void setChanged(boolean v) {
     if (v) {
-      if (changed==false) {
-        if (tab!=null) {
-          int index=ledTabs.indexOf(tab);
-          if (index>=0) {
-            ((TabLayout)KyUI.get("led_filetabs")).setTabName(index, getFileName(file.getAbsolutePath())+"*");
-          }
+      if (tab!=null&&!tabchanged) {
+        int index=ledTabs.indexOf(tab);
+        if (index>=0) {
+          led_filetabs.setTabName(index, getFileName(file.getAbsolutePath())+"*");
         }
-        changed=true;
+        tabchanged=true;
+        led_filetabs.invalidate();
       }
+      changed=true;
     } else {
-      if (changed) {
-        if (tab!=null) {
-          int index=ledTabs.indexOf(tab);
-          if (index>=0) {
-            ((TabLayout)KyUI.get("led_filetabs")).setTabName(index, getFileName(file.getAbsolutePath()));
-          }
+      if (tab!=null&&tabchanged) {
+        int index=ledTabs.indexOf(tab);
+        if (index>=0) {
+          led_filetabs.setTabName(index, getFileName(file.getAbsolutePath()));
         }
-        changed=false;
+        tabchanged=false;
+        led_filetabs.invalidate();
       }
+      changed=false;
     }
   }
   class LedProcessor extends LineCommandProcessor {
     public LedProcessor() {
-      resize();
+      resize(info.buttonX, info.buttonY);
     }
     public void processCommand(Analyzer analyzer, int line, Command before, Command after) {
       setChanged(true);

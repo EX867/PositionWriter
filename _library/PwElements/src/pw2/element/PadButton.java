@@ -25,6 +25,8 @@ public class PadButton extends Element {
   };//position,action
   @Attribute(type=Attribute.COLOR)
   public int fgColor;
+  @Attribute(type=Attribute.COLOR)
+  public int bgColor2;
   @Attribute
   public boolean selectable=true;
   @Attribute(setter="setX", getter="getX")
@@ -57,6 +59,7 @@ public class PadButton extends Element {
   public String[][] text=null;//readonly
   public PadButton(String s) {
     super(s);
+    bgColor2=KyUI.Ref.color(127);
     bgColor=KyUI.Ref.color(50);
     fgColor=KyUI.Ref.color(127);
     resizePad(8, 8);
@@ -99,11 +102,14 @@ public class PadButton extends Element {
     }
     float padding2=getPadding(interval);
     //draw bg
+    g.fill(bgColor2);
+    pos.render(g);
     g.noStroke();
     fill(g, bgColor);
     g.rect(offsetX, offsetY, offsetX + interval * size.x, offsetY + interval * size.y);
     //draw mouse rectx2
-    if (entered && !(coord.x < 0 || coord.y < 0 || coord.x >= size.x || coord.y >= size.y)) {
+    boolean coordInRange=!(coord.x < 0 || coord.y < 0 || coord.x >= size.x || coord.y >= size.y);
+    if (entered && coordInRange) {
       if (size.x == 1 || size.y == 1) {
         if (pressedL) {
           g.fill(0, 192);
@@ -153,12 +159,12 @@ public class PadButton extends Element {
       ColorExt.drawIndicator(g, offsetX + selected.x * interval + 6, offsetY + selected.y * interval + 6, offsetX + selected.x * interval + interval - 6, offsetY + selected.y * interval + interval - 6, 4);
     }
     g.noFill();
-    if (pressedR && rDragVisible && !coord.equals(clickR)) {
+    if (pressedR && rDragVisible && !coord.equals(clickR) && coordInRange && !(clickR.x < 0 || clickR.y < 0 || clickR.x >= size.x || clickR.y >= size.y)) {
       g.strokeWeight(4);
       g.stroke(0, 0, 200);
       g.rect(offsetX + interval * (clickR.x + 0.5F), offsetY + interval * (clickR.y + 0.5F), offsetX + interval * (coord.x + 0.5F), offsetY + interval * (coord.y + 0.5F));
     }
-    if (pressedL && lDragVisible && !coord.equals(clickL)) {
+    if (pressedL && lDragVisible && !coord.equals(clickL) && coordInRange && !(clickL.x < 0 || clickL.y < 0 || clickL.x >= size.x || clickL.y >= size.y)) {
       g.strokeWeight(4);
       g.stroke(200, 0, 0);
       g.rect(offsetX + interval * (clickL.x + 0.5F) + 1, offsetY + interval * (clickL.y + 0.5F) + 1, offsetX + interval * (coord.x + 0.5F) + 1, offsetY + interval * (coord.y + 0.5F) + 1);
@@ -206,17 +212,23 @@ public class PadButton extends Element {
       interval=w / size.x;
       offsetY=(pos.top + pos.bottom - interval * size.y) / 2;
     }
+    if (e.getAction() == MouseEvent.PRESS) {
+      if (e.getButton() == PApplet.LEFT) {
+        clickL.set(coord);
+      }
+      if (e.getButton() == PApplet.RIGHT) {
+        clickR.set(coord);
+      }
+    }
     coord.set(PApplet.floor((mouse.x - offsetX) / interval), PApplet.floor((mouse.y - offsetY) / interval));
     if (coord.x < 0 || coord.y < 0 || coord.x >= size.x || coord.y >= size.y) {
       return true;
     }
     if (e.getAction() == MouseEvent.PRESS) {
       if (e.getButton() == PApplet.LEFT) {
-        clickL.set(coord);
         buttonListener.accept(clickL, coord, PRESS_L);
       }
       if (e.getButton() == PApplet.RIGHT) {
-        clickR.set(coord);
         buttonListener.accept(clickR, coord, PRESS_R);
       }
       invalidate();

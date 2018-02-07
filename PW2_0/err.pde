@@ -23,8 +23,15 @@ LineError displayingError=null;
 void setStatusL(String text) {
   if (statusL.text.equals(text)==false)statusLchanged=true;
   statusL.text=text;
+  statusL.invalidate();
 }
 void setStatusR(String text) {
+  int thr=30;
+  if (text.length()>thr) {
+    int index=text.indexOf(":");
+    text=text.substring(0, index+1)+"\n"+text.substring(index+1, text.length());
+  }
   statusR.text=text;
   statusRchanged=true;
+  statusR.invalidate();
 }

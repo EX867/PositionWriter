@@ -19,4 +19,6 @@ PW1_4/application.windows64
 PW2_0/application.windows32
 PW2_0/application.windows64
 PW2_0/data/KyUILauncher.jar
+PW2_0/settings.xml
+PW2_0/reload.xml
 release/PositionWriter

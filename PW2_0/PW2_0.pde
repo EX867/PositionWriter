@@ -38,8 +38,7 @@ static final color COLOR_RND=0x00000001;
 //static final int LINE_MAX_LENGTH=200;//text editor...
 final float Width=1460;
 final float Height=960;//scaled, not vary.
-//
-boolean jeonjehong;
+boolean setupFinished=false;
 //===structure===//
 void settings() {
   //smooth(8);
@@ -80,6 +79,7 @@ void textSize(float size) {
 }
 void exit() {
   KyUI.shortcutsByName.get("saveAll").event.onEvent(null);
+  export_reload();
   midiOffAll();
   super.exit();
 }
@@ -97,6 +97,18 @@ void handleMouseEvent(MouseEvent e) {
 //
 //===program logic===//
 void main_draw() {
+  if (focused&&!pfocused) {//on focus
+    //check file lastModifiedTime.
+    //led
+    for (LedTab t : ledTabs) {
+      LedScript script=t.led.script;
+      if (script.lastSaveTime<script.file.lastModified()) {
+        script.lastSaveTime=script.file.lastModified();
+        script.reload();
+        println(script.name+" reloaded");
+      }
+    }
+  }
   KyUI.render(g); 
   //pushMatrix(); 
   //scale(KyUI.scaleGlobal); 
@@ -105,6 +117,7 @@ void main_draw() {
   autoSave();
 }
 void main_setup() {
+  surface.setResizable(true);
   //debug switches
   //Analyzer.debug=true;
   //
@@ -118,10 +131,6 @@ void main_setup() {
   frameRate(50);
   vs_detectProcessing();
   String dataPath=getDataPath();
-  if (new File(joinPath(dataPath, "jeonjehong")).isFile()) {
-    jeonjehong=true;
-    println("jeonjehong=true");
-  }
   //orientation (LANDSCAPE);
   surface.setIcon(loadImage("icon.png"));
   textTransfer=new TextTransfer();
@@ -136,6 +145,7 @@ void main_setup() {
   //initialize
   statusL=(StatusBar)KyUI.get("main_statusL");
   statusR=(StatusBar)KyUI.get("main_statusR");
+  led_filetabs=((TabLayout)KyUI.get("led_filetabs"));
   color_lp=VelocityButton.color_lp;
   color_vel=color_lp;
   ((TabLayout)KyUI.get("main_tabs")).setTabNames(new String[]{"KEYLED", "KEYSOUND", "SETTINGS", "WAVEDIT", "MACRO"});
@@ -159,30 +169,40 @@ void main_setup() {
       mainTabs_selected=index;
     }
   };
-  setup_ev1();
   KyUI.changeLayout();//layout all!
-  //setup commands
-  script_setup();
+  final Element mainFrame=KyUI.get("main_layout");
+  if (platform==WINDOWS) {
+    KyUI.addResizeListener(new ResizeListener() {
+      public void onEvent(final int w, final int h) {
+        if (!((frame.getExtendedState() & java.awt.Frame.ICONIFIED) == java.awt.Frame.ICONIFIED||(frame.getExtendedState() & java.awt.Frame.NORMAL) == java.awt.Frame.NORMAL)) {
+          frame.setExtendedState((frame.getExtendedState() & java.awt.Frame.NORMAL));
+          surface.setSize((int)(mainFrame.pos.right-mainFrame.pos.left), (int)(mainFrame.pos.bottom-mainFrame.pos.top));
+          return;
+        }
+        KyUI.scaleGlobal=(float)h/initialHeight;
+        mainFrame.invalidate();//??????!?!?!??
+        surface.setSize((int)(h*initialWidth/initialHeight), h);
+      }
+    }
+    );
+  }
   info=new UnipackInfo();
-  led_setup();
-  addLedTab(createNewLed());
-  //load custom settings
-  //load path data
+  //setup
+  setup_ev1();
+  script_setup();
   load_settings();
+  led_setup();
   midi_setup();
-  AutoSave=((ToggleButton)KyUI.get("set_autosave")).value;
-  AutoSaveTime=((TextBox)KyUI.get("set_autosavedelay")).valueI;
-  ((ToggleButton)KyUI.get("set_startfromcursor")).getPressListener().onEvent(null, 0);
-  ((ToggleButton)KyUI.get("set_autostop")).getPressListener().onEvent(null, 0);
-  //#ADD <<InputMode=((DropDown)KyUI.get("set_mode")).selected;
-  ((Button)KyUI.get("led_printq")).text=userMacro1.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
-  ((Button)KyUI.get("led_printe")).text=userMacro2.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
-  //load reload data
-  //
+  //load path data
+  if (((ToggleButton)KyUI.get("set_reload")).value) {//reload
+    load_reload();
+  } else {
+    addLedTab(createNewLed());
+  }
   if (!DEVELOPER_BUILD&&new File(joinPath(dataPath, "Initial")).isFile()) {//detect first time use.
     println("initial open");
     //KyUI.addLayer(initialLayer);
-    registerFileType();
+    //registerFileType();
     new File(joinPath(dataPath, "Initial")).delete();
   }
   new Thread(new Runnable() {
@@ -195,6 +215,7 @@ void main_setup() {
   KyUI.taskManager.executeAll();
   KyUI.getRoot().invalidate();//invalidate all!
   //add shortcuts
-  shortcuts_setup();
+  setup_ev2();
   println("Setup finished");
+  setupFinished=true;
 }

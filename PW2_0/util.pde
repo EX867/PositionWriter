@@ -373,9 +373,9 @@ public final class TextTransfer implements java.awt.datatransfer.ClipboardOwner 
 String ToUnipadLed(LedScript script) {
   StringBuilder builder=new StringBuilder();
   float bpm=120;
-  boolean[][] first=new boolean[info.buttonX][info.buttonY];
-  for (int a=0; a<info.buttonX; a++) {
-    for (int b=0; b<info.buttonY; b++) {
+  boolean[][] first=new boolean[script.info.buttonX][script.info.buttonY];
+  for (int a=0; a<script.info.buttonX; a++) {
+    for (int b=0; b<script.info.buttonY; b++) {
       first[a][b]=true;
     }
   }
@@ -422,7 +422,7 @@ String PngToLed(PImage image) {
   return str.toString();
 }
 PImage LedToPng(LedScript script, int frame) {
-  PImage image=createImage(info.buttonX, info.buttonY, ARGB);
+  PImage image=createImage(script.info.buttonX, script.info.buttonY, ARGB);
   script.readAll();
   image.loadPixels();
   ArrayList<Command> commands=script.getCommands();
@@ -455,7 +455,7 @@ void LedToGif(String path, LedScript script) {
   AnimatedGifEncoder e = new AnimatedGifEncoder();
   e.start(path);
   e.setQuality(1);
-  e.setSize(info.buttonX, info.buttonY);
+  e.setSize(script.info.buttonX, script.info.buttonY);
   //e.setDelay(1000);//#ADD set delay to lcd of every frame
   for (int a=0; a<script.getFrameCount(); a+=1) {
     e.addFrame((java.awt.image.BufferedImage)LedToPng(script, a).getNative());

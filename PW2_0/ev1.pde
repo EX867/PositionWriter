@@ -46,14 +46,19 @@ void setup_ev1() {//setup small listeners
   //);
   ((ImageButton)KyUI.get("set_apply")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      //resize();
+      currentLedEditor.resize(((TextBox)KyUI.get("set_buttony")).valueI, ((TextBox)KyUI.get("set_buttonx")).valueI);
+      setInfoLed(currentLedEditor.info);
+      currentLedEditor.displayPad.size.set(info.buttonX, info.buttonY);
+      currentLedEditor.displayPad.invalidate();
+      ((TextBox)KyUI.get("set_buttony")).onTextChangeListener.onEvent(((TextBox)KyUI.get("set_buttony")));
+      ((TextBox)KyUI.get("set_buttonx")).onTextChangeListener.onEvent(((TextBox)KyUI.get("set_buttonx")));
       return false;
     }
   }
   );
   ((ImageButton)KyUI.get("set_midi")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      MidiCommand.reloadDevices(joinPath(path_global, path_midi));
+      MidiCommand.reloadDevices(joinPath(path_global, path_midi));//#Change
       return false;
     }
   }
@@ -83,6 +88,7 @@ void setup_ev1() {//setup small listeners
   ((DropDown)KyUI.get("set_mode")).setSelectListener(new ItemSelectListener() {
     public void onEvent(int index) {
       InputMode=index+1;//index is 0 to 2
+      export_settings();
     }
   }
   );
@@ -93,23 +99,10 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
-  ((ToggleButton)KyUI.get("set_startfromcursor")).setPressListener(new MouseEventListener() {
-    public boolean onEvent(MouseEvent e, int index) {
-      StartFromCursor=((ToggleButton)KyUI.get("set_startfromcursor")).value;
-      return false;
-    }
-  }
-  );
-  ((ToggleButton)KyUI.get("set_autostop")).setPressListener(new MouseEventListener() {
-    public boolean onEvent(MouseEvent e, int index) {
-      AutoStop=((ToggleButton)KyUI.get("set_autostop")).value;
-      return false;
-    }
-  }
-  );
   ((ToggleButton)KyUI.get("set_autosave")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       AutoSave=((ToggleButton)KyUI.get("set_autosave")).value;
+      export_settings();
       return false;
     }
   }
@@ -218,6 +211,105 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
+  ((TextBox)KyUI.get("set_buttonx")).setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      TextBox t=(TextBox)e;
+      ui_textValueRange(t, 1, PAD_MAX);
+      if (t.valueI!=currentLedEditor.info.buttonY) {
+        t.rightText="*";
+      } else {
+        t.rightText="";
+      }
+    }
+  }
+  );
+  ((TextBox)KyUI.get("set_buttony")).setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      TextBox t=(TextBox)e;
+      ui_textValueRange(t, 1, PAD_MAX);
+      if (t.valueI!=currentLedEditor.info.buttonX) {
+        t.rightText="*";
+      } else {
+        t.rightText="";
+      }
+    }
+  }
+  );
+  ((TextBox)KyUI.get("set_autosavedelay")).setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      ui_textValueRange((TextBox)e, 10, 86000);
+      AutoSaveTime=((TextBox)e).valueI;
+      export_settings();
+    }
+  }
+  );
+  ((TextBox)KyUI.get("set_textsize")).setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      ui_textValueRange((TextBox)e, 1, 150);
+      for (LedTab t : ledTabs) {
+        t.led.script.editor.textSize=((TextBox)e).valueI;
+        t.led.script.editor.updateSlider();
+      }
+      export_settings();
+    }
+  }
+  );
+  ((TextBox)KyUI.get("set_dbuttonx")).setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      ui_textValueRange((TextBox)e, 1, PAD_MAX);
+      export_settings();
+    }
+  }
+  );
+  ((TextBox)KyUI.get("set_dbuttony")).setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      ui_textValueRange((TextBox)e, 1, PAD_MAX);
+      export_settings();
+    }
+  }
+  );
+  //((Slider)KyUI.get("set_resolution")).setAdjustListener(new EventListener() {//no use
+  //  public void onEvent(Element e) {
+  //  }
+  //});
+  ((ToggleButton)KyUI.get("set_reload")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      export_settings();
+      return false;
+    }
+  }
+  );
+  ((ToggleButton)KyUI.get("set_printonpress")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      PrintOnPress=((ToggleButton)KyUI.get("set_printonpress")).value;
+      export_settings();
+      return false;
+    }
+  }
+  );
+  //if () {
+  //} else if (name.equals("I_FINDTEXTBOX")) {
+  //  patternMatcher.findUpdated=false;
+  //  patternMatcher.registerFind(text, ((Button)UI[getUIidRev("I_CALCULATE")]).value);
+  //  findData=patternMatcher.findAll(keyled_textEditor.current.toString());//WARNING!!!
+  //} else if (name.equals("I_REPLACETEXTBOX")) {
+  //  patternMatcher.registerReplace(text, ((Button)UI[getUIidRev("I_CALCULATE")]).value);
+  //} else if (name.equals("KS_SOUNDMULTI")) {
+  //  KS.get(ksChain)[ksX][ksY].multiSound=min(max(1, value), KS.get(ksChain)[ksX][ksY].ksSound.size())-1;
+  //} else if (name.equals("KS_LEDMULTI")) {
+  //  KS.get(ksChain)[ksX][ksY].multiLed=min(max(1, value), KS.get(ksChain)[ksX][ksY].ksLedFile.size())-1;
+  //  KS.get(ksChain)[ksX][ksY].multiLedBackup=KS.get(ksChain)[ksX][ksY].multiLed;
+  //} else if (name.equals("KS_LOOP")) {
+  //  if (soundLoopEdit) {
+  //    if (((ScrollList)UI[getUIid("I_SOUNDVIEW")]).selected==-1)return;
+  //    KS.get(ksChain)[ksX][ksY].ksSoundLoop.set(((ScrollList)UI[getUIid("I_SOUNDVIEW")]).selected, value);
+  //  } else {
+  //    if (((ScrollList)UI[getUIid("I_LEDVIEW")]).selected==-1)return;
+  //    KS.get(ksChain)[ksX][ksY].ksLedLoop.set(((ScrollList)UI[getUIid("I_LEDVIEW")]).selected, value);
+  //  }
+  //} else if (name.equals("SKIN_PACKAGE")) {
+  //  description.content="com.kimjisub.launchpad.theme."+text;
+  //}
   //if () {
   //} else if (name.equals("I_CLEARKEYSOUND")) {
   //  int a=0;

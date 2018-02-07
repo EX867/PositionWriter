@@ -3,7 +3,6 @@ void UI_setup() {
   ((Button)UI[getUIid("I_PATH")]).text=GlobalPath;
   //
   converter.converterPlayer.assign((Slider)UI[getUIid("MP3_PROGRESSBAR")], (Label)UI[getUIid("MP3_TIME")]);
-  UI[getUIidRev("KS_LOOP")].disabled=true;
   //
   ((ScrollList)UI[getUIid("I_FILEVIEW1")]).setItems(listFilePaths_related(KeySoundPath));
   //
@@ -19,8 +18,5 @@ void UI_setup() {
   skinEditor=(SkinEditView)UI[getUIidRev("SKIN_EDIT")];
   skinEditor.setComponents((TextBox)UI[getUIidRev("SKIN_PACKAGE")], (TextBox)UI[getUIidRev("SKIN_TITLE")], (TextBox)UI[getUIidRev("SKIN_AUTHOR")], (TextBox)UI[getUIidRev("SKIN_DESCRIPTION")], (TextBox)UI[getUIidRev("SKIN_APPNAME")], (Button)UI[getUIidRev("SKIN_TEXT1")]);
   // === Custom settings load === //
-  loadCustomSettings("");
   maskImages(UIcolors[I_BACKGROUND]);
-  //---
-  Frames[currentFrame].prepare();
 }

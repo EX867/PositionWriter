@@ -1,4 +1,4 @@
-void shortcuts_setup() {
+void setup_ev2() {
   KyUI.addShortcut(new KyUI.Shortcut("selectAll", true, false, false, 1, java.awt.event.KeyEvent.VK_A, new EventListener() {//Ctrl-A
     public void onEvent(Element e) {
       if (e instanceof TextEdit) {
@@ -70,6 +70,7 @@ void shortcuts_setup() {
         Button btn=((Button)KyUI.get("led_printq"));
         btn.text=userMacro1.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
         btn.invalidate();
+        export_settings();
       }
     }
   }
@@ -82,6 +83,7 @@ void shortcuts_setup() {
         Button btn=((Button)KyUI.get("led_printe"));
         btn.text=userMacro2.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
         btn.invalidate();
+        export_settings();
       }
     }
   }
@@ -249,33 +251,10 @@ void shortcuts_setup() {
   KyUI.addDragAndDrop(KyUI.get("led_layout"), new FileDropEventListener() {
     public void onEvent(DropEvent de) {
       String filename=de.file().getAbsolutePath().replace("\\", "/");
-      LedTab tab=addLedTab(filename);
-      tab.led.script.insert(0, 0, readFile(filename));
-      tab.led.script.tab=tab;
+      addLedFileTab(filename);
     }
   }
   );
-  ((TabLayout)KyUI.get("led_filetabs")).tabSelectListener=new ItemSelectListener() {
-    public void onEvent(int index) {
-      selectLedTab(index-1);
-      KyUI.get("led_frame").invalidate();
-    }
-  };
-  ((TabLayout)KyUI.get("led_filetabs")).tabRemoveListener=new ItemSelectListener() {
-    public void onEvent(int index) {
-      ledTabs.get(index).light.active=false;
-      ledTabs.remove(index);
-      if (ledTabs.size()==0) {
-        addLedTab(createNewLed());
-      }
-    }
-  };
-  ((TabLayout)KyUI.get("led_filetabs")).addTabListener=new EventListener() {
-    public void onEvent(Element e) {
-      LedTab tab=addLedTab(createNewLed());
-      tab.led.script.tab=tab;
-    }
-  };
 }
 
 //  } else if (functionId==S_STOP) {

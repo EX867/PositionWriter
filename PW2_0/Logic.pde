@@ -19,9 +19,8 @@ int InputMode=AUTOINPUT;
 int ColorMode=VEL;
 int SelectedColor=0;
 boolean InFrameInput=false;
-boolean StartFromCursor=true;
-boolean AutoStop=false;
 boolean AutoSave=true;
+boolean PrintOnPress=false;
 int AutoSaveTime=30;
 TitleChangeTarget titleChangeTarget;
 VelocityButton VelocityType;
@@ -42,6 +41,7 @@ color[] color_mf;
 //===hashmap elements caching===//
 FrameSlider fs;
 Button fsTime;
+TabLayout led_filetabs;
 //
 //
 interface TitleChangeTarget {
@@ -57,6 +57,7 @@ class LedTab {
     light.thread=thread;
     light.addTrack(IntVector2.zero, script);
     led=light.scripts.get(IntVector2.zero);
+    script.tab=this;
     thread.start();
   }
 }
@@ -76,11 +77,63 @@ void autoSave() {
   }
 }
 void load_settings() {
-  //LayoutLoader.loadProps(getDataPath());
+  String path=joinPath(getDataPath(), "settings.xml");
+  if (DEVELOPER_BUILD) {
+    ((Button)KyUI.get("led_printq")).text=userMacro1.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
+    ((Button)KyUI.get("led_printe")).text=userMacro2.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
+    return;
+  }
+  if (!new File(path).isFile()) {
+    return;
+  }
+  LayoutLoader.loadElementProperties(loadXML(path));
+  //load resolution
+  AutoSave=((ToggleButton)KyUI.get("set_autosave")).value;
+  AutoSaveTime=((TextBox)KyUI.get("set_autosavedelay")).valueI;
+  PrintOnPress=((ToggleButton)KyUI.get("set_printonpress")).value;
+  String mode=((DropDown)KyUI.get("set_mode")).text;
+  if (mode.equals("AUTOINPUT")) {
+    InputMode=AUTOINPUT;
+  } else if (mode.equals("RIGHTOFFMODE")) {
+    InputMode=RIGHTOFFMODE;
+  }
+  ui_textValueRange((TextBox)KyUI.get("set_dbuttonx"), 1, PAD_MAX);
+  ui_textValueRange((TextBox)KyUI.get("set_dbuttony"), 1, PAD_MAX);
+  ((Button)KyUI.get("led_printq")).text=userMacro1.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
+  ((Button)KyUI.get("led_printe")).text=userMacro2.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
 }
 void export_settings() {//call when setting element is changed.
-  String[] exportData=new String[]{"set_autosave.value", "set_autosavedelay.valueI", "set_resolution.value", "set_reloaeinstart.value", "set_textsize", "set_startfromcursor", "set_autostop", "set_mode"};
-  //float scale=Data.getFloat("value");//if negative or too big, error will occur.
-  //surface.setSize(floor(initialWidth*scale), floor(initialHeight*scale));
-  //setSize(floor(initialWidth*scale), floor(initialHeight*scale));
+  if (DEVELOPER_BUILD) {
+    println("settings store ignored");
+    return;
+  }
+  //"set_resolution.value",
+  String[] exportData=new String[]{"set_autosave.value", "set_autosavedelay.text", "set_reload.value", "set_textsize.text", "set_mode.text", "set_dbuttonx.text", "set_dbuttony.text", "set_printonpress.value", "led_printq.text", "led_printe.text"};
+  writeFile(joinPath(getDataPath(), "settings.xml"), LayoutLoader.saveElementProperties(exportData).format(2));
+  println("settings stored");
+}
+void load_reload() {
+  String path=joinPath(getDataPath(), "reload.xml");
+  if (!new File(path).isFile()) {
+    return;
+  }//no reload in developer mode
+  XML xml=loadXML(path);
+  XML[] led=xml.getChildren("led");
+  for (XML dat : led) {
+    if (new File(dat.getContent()).isFile()) {
+      println("loading : "+dat.getContent());
+      addLedFileTab(dat.getContent());
+    }
+  }
+}
+void export_reload() {
+  if (DEVELOPER_BUILD) {
+    println("reload store ignored");
+    return;
+  }
+  XML xml=new XML("Data");
+  for (LedTab tab : ledTabs) {
+    xml.addChild("led").setContent(tab.led.script.file.getAbsolutePath());
+  }
+  writeFile(joinPath(getDataPath(), "reload.xml"), xml.format(2));
 }

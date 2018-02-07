@@ -9,7 +9,7 @@ void midi_setup() {
   MidiCommand.addInput("chain", new PadChainCommand());
   MidiCommand.reloadDevices(joinPath(path_global, path_midi));
 }
-void midiOffAll(MidiMapDevice linkDevice){
+void midiOffAll(MidiMapDevice linkDevice) {
 }
 void midiOffAll() {//only for lp...
   int a=0;
@@ -29,7 +29,7 @@ public class PadPressCommand implements InputBehavior {
       if (info.getData2()!=0) {
         if (params.length!=2)return;
         if (mainTabs_selected==LED_EDITOR) {
-            action_on.accept(null, new IntVector2());
+          action_on.accept(null, new IntVector2());
           //currentLed.printLed(params[0], params[1], true, 0);
         } else if (mainTabs_selected==KS_EDITOR) {
           //keySoundPad.triggerButton(params[0], params[1], true);

@@ -207,26 +207,26 @@ class LightThread implements Runnable {
       for (int c=script.DelayPoint.get(script.displayFrame)+1; c<last; c++) {
         Command cmd=script.getCommands().get(c);
         if (cmd instanceof OnCommand) {//#ADD midi command in here
-          OnCommand info=(OnCommand)cmd;
-          for (int b=max(1, info.y1); b<=info.y2&&b<=display[0].length; b++) {
-            for (int a=max(1, info.x1); a<=info.x2&&a<=display.length; a++) {
-              if (info.vel!=0) {//velocity
-                if (info.vel>=0&&info.vel<128) {
-                  display[a-1][b-1]=color_vel[info.vel];
-                  velDisplay[a-1][b-1]=info.vel;
+          OnCommand onCmd=(OnCommand)cmd;
+          for (int b=max(1, onCmd.y1); b<=onCmd.y2&&b<=display[0].length; b++) {
+            for (int a=max(1, onCmd.x1); a<=onCmd.x2&&a<=display.length; a++) {
+              if (onCmd.vel!=0) {//velocity
+                if (onCmd.vel>=0&&onCmd.vel<128) {
+                  display[a-1][b-1]=color_vel[onCmd.vel];
+                  velDisplay[a-1][b-1]=onCmd.vel;
                 }
-              } else if (info.htmlc==COLOR_RND) {//random
+              } else if (onCmd.htmlc==COLOR_RND) {//random
                 velDisplay[a-1][b-1]=floor(random(0, 128));
                 display[a-1][b-1]=color_vel[velDisplay[a-1][b-1]];
               } else {
-                display[a-1][b-1]=info.htmlc;
+                display[a-1][b-1]=onCmd.htmlc;
               }
             }
           }
         } else if (cmd instanceof OffCommand) {
-          OffCommand info=(OffCommand)cmd;
-          for (int b=max(1, info.y1); b<=info.y2&&b<=display[0].length; b++) {
-            for (int a=max(1, info.x1); a<=info.x2&&a<=display.length; a++) {
+          OffCommand offCmd=(OffCommand)cmd;
+          for (int b=max(1, offCmd.y1); b<=offCmd.y2&&b<=display[0].length; b++) {
+            for (int a=max(1, offCmd.x1); a<=offCmd.x2&&a<=display.length; a++) {
               if (a>0&&b>0&&a<=display.length&&b<=display[0].length) {
                 display[a-1][b-1]=COLOR_OFF;
                 velDisplay[a-1][b-1]=COLOR_OFF;
