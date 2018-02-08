@@ -30,6 +30,7 @@ String userMacro2="\ndelay 30";
 //===Current editors===//
 LedScript currentLedEditor;//equivalent to currentLed.led.script
 LedTab currentLed;
+KsSession currentKs;
 //===Paths===//
 String path_global=joinPath(getDocuments(), "PositionWriter");
 String path_projects="projects";
@@ -43,6 +44,7 @@ FrameSlider fs;
 Button fsTime;
 TabLayout led_filetabs;
 //==Additional frames===//
+CachingFrame frame_main;
 CachingFrame frame_changetitle;
 //
 interface TitleChangeTarget {
@@ -56,13 +58,13 @@ class LedTab {
     light=new LightThread();
     Thread thread=new Thread(light);
     light.thread=thread;
-    light.addTrack(IntVector2.zero, script);
-    led=light.scripts.get(IntVector2.zero);
+    led=light.addTrack(IntVector2.zero, script);
     script.tab=this;
     thread.start();
   }
 }
 ArrayList<LedTab> ledTabs=new ArrayList<LedTab>();//tab order.
+ArrayList<KsSession> ksTabs=new ArrayList<KsSession>();
 long lastAutoSaved=System.currentTimeMillis();
 void autoSave() {
   if (AutoSave) {

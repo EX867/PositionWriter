@@ -18,6 +18,9 @@ import pw2.element.*;
 // : remove #platform_specific
 // : KeySoundPlayer and midi->autoPlay
 //
+//===FIX list - you should not do that!!===//
+//remove KsButton link in SampleState and LedCounter.
+//
 // skinedit : change theme to appcompat-material(later...)
 // uncloud : wait uncloud update!!
 // uncloud : customize list : display date and upload state inside list.
@@ -144,8 +147,8 @@ void main_setup() {
   ElementLoader.loadOnStart();
   ElementLoader.loadExternal(joinPath(getCodePath(), "PwElements.jar"));
   ElementLoader.loadExternal(joinPath(getCodePath(), "CommandScript.jar"));
-  LayoutLoader.loadXML(KyUI.getRoot(), loadXML("layout.xml"));
-  LayoutLoader.loadXML(frame_changetitle=KyUI.getNewLayer(), loadXML("changetitle.xml"));
+  LayoutLoader.loadXML(frame_main=KyUI.getRoot(), loadXML("layout.xml"));
+  LayoutLoader.loadXML(frame_changetitle=KyUI.getNewLayer().setAlpha(100), loadXML("changetitle.xml"));
   KyUI.taskManager.executeAll();//add all element
   //initialize
   statusL=(StatusBar)KyUI.get("main_statusL");
@@ -156,11 +159,13 @@ void main_setup() {
   ((TabLayout)KyUI.get("main_tabs")).setTabNames(new String[]{"KEYLED", "KEYSOUND", "SETTINGS", "WAVEDIT", "MACRO"});
   ((TabLayout)KyUI.get("led_edittabs")).setTabNames(new String[]{"VEL", "HTML", "TEXT"});
   ((TabLayout)KyUI.get("led_vellayout")).setTabNames(new String[]{"LAUNCHPAD", "MIDIFIGHTER"});
+  ((TabLayout)KyUI.get("ks_control")).setTabNames(new String[]{"CT", "AP"});
   ((TabLayout)KyUI.get("ks_filelist")).setTabNames(new String[]{"SOUND", "LED"});
   ((TabLayout)KyUI.get("set_lists")).setTabNames(new String[]{"SHORTCUTS", "COLORS"});
   ((TabLayout)KyUI.get("wv_list")).setTabNames(new String[]{"LIBS", "POINTS"});
   ((TabLayout)KyUI.get("main_tabs")).selectTab(1);
   ((TabLayout)KyUI.get("led_vellayout")).selectTab(1);
+  ((TabLayout)KyUI.get("ks_control")).selectTab(1);
   ((TabLayout)KyUI.get("led_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("led_frame"));
   KyUI.get("led_consolelayout").setEnabled(false);
   KyUI.get("led_findlr").setEnabled(false);
@@ -197,12 +202,14 @@ void main_setup() {
   script_setup();
   load_settings();
   led_setup();
+  ks_setup();
   midi_setup();
   //load path data
   if (((ToggleButton)KyUI.get("set_reload")).value) {//reload
     load_reload();
   } else {
     addLedTab(createNewLed());
+    addKsTab(createNewKs());
   }
   if (!DEVELOPER_BUILD&&new File(joinPath(dataPath, "Initial")).isFile()) {//detect first time use.
     println("initial open");

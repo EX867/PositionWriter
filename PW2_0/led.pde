@@ -221,7 +221,6 @@ void led_setup() {
   };
   ((TabLayout)KyUI.get("led_filetabs")).tabRemoveListener=new ItemSelectListener() {
     public void onEvent(int index) {
-      println(index+" "+ledTabs.size());//#TEST
       ledTabs.get(index).light.active=false;
       ledTabs.remove(index);
       if (ledTabs.size()==0) {
@@ -278,9 +277,6 @@ void exportLed(final LedScript led) {
     }
   }
   );
-}
-void saveKs(KsSession ks) {
-  String filename=joinPath(path_global, path_projects+"/"+filterString(ks.projectName, new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}));
 }
 LineError cacheError=new LineError(LineError.ERROR, 0, 0, 0, "", "");
 LedTab addLedTab(String filename) {

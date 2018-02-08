@@ -1,11 +1,13 @@
 import java.util.LinkedList;
 import java.util.TreeSet;
+import java.util.Collections;
 class LedCounter implements Comparable<LedCounter> {
   boolean active=false;//if not active, it will removed from list.
   //
   LedScript script;
   long offset;//start point of this script.
   int loopCount=0;//count by 1 until it reach LedScript's loop count!
+  KsButton link;//oh I had to find that led is assigned to what button
   //controls
   boolean paused=true;//if paused,counter will not increase.
   boolean loop=false;
@@ -21,6 +23,7 @@ class LedCounter implements Comparable<LedCounter> {
 }
 class LightThread implements Runnable {
   Thread thread;//must set!!
+  Predicate<LedCounter> onEnd;
   boolean active=true;//set inactive to exit.
   HashMap<IntVector2, LedCounter> scripts=new HashMap<IntVector2, LedCounter>();
   TreeSet<LedCounter> queue=new TreeSet<LedCounter>();//new LinkedList<LedCounter>()
@@ -30,11 +33,13 @@ class LightThread implements Runnable {
   //
   //syncs are needed when ui thread access this thread. and interrupt.
   //use these when load/remove led.
-  void addTrack(IntVector2 coord, LedScript script) {
+  LedCounter addTrack(IntVector2 coord, LedScript script) {
+    LedCounter counter=new LedCounter(script, System.currentTimeMillis());
     synchronized(this) {
-      scripts.put(coord, new LedCounter(script, System.currentTimeMillis()));
+      scripts.put(coord, counter);
     }
     thread.interrupt();
+    return counter;
   }
   void removeTrack(IntVector2 coord) {
     synchronized(this) {
@@ -157,11 +162,13 @@ class LightThread implements Runnable {
                   led.script.setTimeByFrame();
                   queue.add(led);
                 } else {
-                  if (led.loopStart<led.loopEnd) {
-                    led.script.displayTime=led.loopEnd;
-                    led.script.setFrameByTime();
+                  if (onEnd==null||onEnd.test(led)) {
+                    if (led.loopStart<led.loopEnd) {
+                      led.script.displayTime=led.loopEnd;
+                      led.script.setFrameByTime();
+                    }
+                    led.active=false;
                   }
-                  led.active=false;
                 }
                 if (mainTabs_selected==LED_EDITOR) {
                   copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
@@ -195,6 +202,9 @@ class LightThread implements Runnable {
         }
         catch(InterruptedException e) {
         }
+      }
+      if(mainTabs_selected==LED_EDITOR){
+        frame_main.invalidated=true;
       }
     }
   }
