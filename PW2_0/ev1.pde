@@ -29,48 +29,6 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
-  final TextBox changetitle_edit=((TextBox)KyUI.get("changetitle_edit"));
-  final ImageButton changetitle_exit=((ImageButton)KyUI.get("changetitle_exit"));
-  changetitle_edit.onTextChangeListener=new EventListener() {
-    public void onEvent(Element e) {
-      String text=changetitle_edit.getText().replace("\\", "/");
-      boolean er=!isValidFileName(text);
-      for (LedTab t : ledTabs) {//anti duplication
-        if (t!=currentLed&&t.led.script.file.getAbsolutePath().replace("\\", "/").equals(text)) {
-          er=true;
-          break;
-        }
-      }
-      changetitle_edit.error=er;
-    }
-  };
-  ((Button)KyUI.get("led_changetitle")).setPressListener(new MouseEventListener() {
-    public boolean onEvent(MouseEvent e, int index) {
-      KyUI.addLayer(frame_changetitle);
-      changetitle_edit.setText(currentLedEditor.file.getAbsolutePath().replace("\\", "/"));
-      final String before=currentLedEditor.file.getAbsolutePath();
-      changetitle_exit.setPressListener(new MouseEventListener() {
-        public boolean onEvent(MouseEvent e, int index) {
-          if (!changetitle_edit.error) {
-            currentLedEditor.file=new File(changetitle_edit.getText());
-            String after=currentLedEditor.file.getAbsolutePath();
-            if (!before.equals(after)) {
-              if (!currentLedEditor.file.isFile()&&currentLedEditor.empty()) {
-                currentLedEditor.setChanged(false, true);
-              } else {
-                currentLedEditor.setChanged(true, true);
-              }
-            }
-            KyUI.removeLayer();
-          }
-          return false;
-        }
-      }
-      );
-      return false;
-    }
-  }
-  );
   //((Button)KyUI.get("layer_exit")).setPressListener(new MouseEventListener() {//use one exit button all time...
   //  public boolean onEvent(MouseEvent e, int index) {
   //    KyUI.removeLayer();
@@ -170,6 +128,13 @@ void setup_ev1() {//setup small listeners
   ((ImageToggleButton)KyUI.get("led_loop")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       currentLed.led.loop=((ImageToggleButton)KyUI.get("led_loop")).value;
+      return false;
+    }
+  }
+  );
+  ((ImageToggleButton)KyUI.get("ks_loop")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      currentKs.loop=((ImageToggleButton)KyUI.get("ks_loop")).value;
       return false;
     }
   }

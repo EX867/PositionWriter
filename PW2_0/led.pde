@@ -2,6 +2,48 @@ java.util.function.Consumer<String> action_print;
 java.util.function.BiConsumer<IntVector2, IntVector2> action_on;
 java.util.function.BiConsumer<IntVector2, IntVector2> action_off;
 void led_setup() {
+  final TextBox changetitle_edit=((TextBox)KyUI.get("changetitle_edit"));
+  final ImageButton changetitle_exit=((ImageButton)KyUI.get("changetitle_exit"));
+  ((Button)KyUI.get("led_changetitle")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.addLayer(frame_changetitle);
+      changetitle_edit.setText(currentLedEditor.file.getAbsolutePath().replace("\\", "/"));
+      final String before=currentLedEditor.file.getAbsolutePath();
+      changetitle_edit.onTextChangeListener=new EventListener() {
+        public void onEvent(Element e) {
+          String text=changetitle_edit.getText().replace("\\", "/");
+          boolean er=!isValidFileName(text);
+          for (LedTab t : ledTabs) {//anti duplication
+            if (t!=currentLed&&t.led.script.file.getAbsolutePath().replace("\\", "/").equals(text)) {
+              er=true;
+              break;
+            }
+          }
+          changetitle_edit.error=er;
+        }
+      };
+      changetitle_exit.setPressListener(new MouseEventListener() {
+        public boolean onEvent(MouseEvent e, int index) {
+          if (!changetitle_edit.error) {
+            currentLedEditor.file=new File(changetitle_edit.getText());
+            String after=currentLedEditor.file.getAbsolutePath();
+            if (!before.equals(after)) {
+              if (!currentLedEditor.file.isFile()&&currentLedEditor.empty()) {
+                currentLedEditor.setChanged(false, true);
+              } else {
+                currentLedEditor.setChanged(true, true);
+              }
+            }
+            KyUI.removeLayer();
+          }
+          return false;
+        }
+      }
+      );
+      return false;
+    }
+  }
+  );
   action_print=new java.util.function.Consumer<String>() {
     public void accept(String in) {
       int line=currentLedEditor.lines()-1;

@@ -8,7 +8,8 @@ import java.util.function.Predicate;
 static class MultiSamplePlayer {
   PlayerState[] players;
   AudioContext ac;
-  final HashMap<Sample, SampleState> samples;
+  //final HashMap<Sample, SampleState> samples;
+  ArrayList<SampleState> samples;
   Predicate<SampleState> onEnd;
 
   public MultiSamplePlayer(AudioContext ac_, int size) {
@@ -22,17 +23,19 @@ static class MultiSamplePlayer {
       players[a].player.pause(true);
       players[a].player.setKillOnEnd(false);
     }
-    samples = new HashMap<Sample, SampleState>(1000);
+    //samples = new HashMap<Sample, SampleState>(1000);
   }
 
-  public Sample load(String path) {
+  public SampleState load(String path) {
     Sample sample = SampleManager.sample(path);
     println("[sem] sample loaded : " + path + " " + (sample != null));
-    samples.put(sample, new SampleState(sample));
-    return sample;
+    //samples.put(sample, new SampleState(sample));
+    SampleState state=new SampleState(sample);
+    samples.add(state);
+    return state;
   }
 
-  public void pause(Sample sample, boolean pause) {
+  public void pause(SampleState sample, boolean pause) {
     if (pause) {
       pause(sample);
     } else {
@@ -40,10 +43,9 @@ static class MultiSamplePlayer {
     }
   }
 
-  public void play(Sample sample) {
+  public void play(SampleState state) {
     //unpause the sample.
     synchronized (this) {
-      SampleState state = samples.get(sample);
       if (!state.active) {
         if (!state.allocated) {
           allocate(state);
@@ -60,10 +62,9 @@ static class MultiSamplePlayer {
     }
   }
 
-  public void pause(Sample sample) {
+  public void pause(SampleState state) {
     //pause the sample.
     synchronized (this) {
-      SampleState state = samples.get(sample);
       if (state.active) {
         //assert state.ref != null
         state.ref.player.pause(true);
@@ -74,9 +75,8 @@ static class MultiSamplePlayer {
     }
   }
 
-  public void stop(Sample sample) {
+  public void stop(SampleState state) {
     synchronized(this) {
-      SampleState state = samples.get(sample);
       if (state.active) {
         //assert state.ref != null
         state.ref.player.pause(true);
@@ -88,13 +88,11 @@ static class MultiSamplePlayer {
     }
   }
 
-  public boolean isActive(Sample sample) {
-    SampleState state = samples.get(sample);
+  public boolean isActive(SampleState state) {
     return state.active;
   }
 
-  public void togglePause(Sample sample) {
-    SampleState state = samples.get(sample);
+  public void togglePause(SampleState state) {
     // (duplicated)
     synchronized (this) {
       if (state.active) {//pause
@@ -112,8 +110,7 @@ static class MultiSamplePlayer {
     }
   }
 
-  public void rewind(Sample sample) {
-    SampleState state = samples.get(sample);
+  public void rewind(SampleState state) {
     if (state.allocated) {
       state.ref.player.setPosition(0);
     } else {
@@ -121,8 +118,7 @@ static class MultiSamplePlayer {
     }
   }
 
-  public void setLoopCount(Sample sample, int loopCount) {
-    SampleState state = samples.get(sample);
+  public void setLoopCount(SampleState state, int loopCount) {
     state.loopCount=loopCount;
   }
 
@@ -138,7 +134,8 @@ static class MultiSamplePlayer {
             attach(state, ps);
             return;
           }
-          SampleState s = samples.get(p.getSample());
+          //SampleState s = samples.get(p.getSample());
+          SampleState s=ps.state;
           if (!s.active) {
             println("[sem] inactive sampleplayer attached.");
             s.allocated = false;
@@ -152,8 +149,10 @@ static class MultiSamplePlayer {
         }
       }     //no player is available. then force min to stop playing.
       println("[sem] player is force stopped. " + min.player.getSample().getFileName());
-      samples.get(min.player.getSample()).allocated = false;
-      samples.get(min.player.getSample()).active = false;
+      min.state.allocated=false;
+      min.state.active=false;
+      //samples.get(min.player.getSample()).allocated = false;
+      //samples.get(min.player.getSample()).active = false;
       //min.player.pause(true);
       attach(state, min);
     }
@@ -161,12 +160,13 @@ static class MultiSamplePlayer {
 
   void attach(SampleState state, PlayerState ps) {
     state.allocated = true;
+    ps.state=state;
     ps.player.setSample(state.sample);
     state.ref = ps;
     ps.player.setPosition(state.pausePoint);
   }
 
-  class SampleState {
+  static class SampleState {
     Sample sample;
     double pausePoint = 0;
     boolean active = false;
@@ -182,6 +182,7 @@ static class MultiSamplePlayer {
 
   class PlayerState {
     SamplePlayer player;
+    SampleState state;
     double left;//temp var
     boolean added = false;
 
@@ -189,7 +190,7 @@ static class MultiSamplePlayer {
       player = player_;
       player.setEndListener(new Bead() {
         public void messageReceived(Bead message) {
-          SampleState sample=samples.get(player.getSample());
+          SampleState sample=state;//samples.get(player.getSample());
           if (sample.loopCount==0||sample.loopIndex<sample.loopCount) {
             player.reTrigger();
             sample.loopIndex++;//started.

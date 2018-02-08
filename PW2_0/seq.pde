@@ -25,7 +25,7 @@ class LightThread implements Runnable {
   Thread thread;//must set!!
   Predicate<LedCounter> onEnd;
   boolean active=true;//set inactive to exit.
-  HashMap<IntVector2, LedCounter> scripts=new HashMap<IntVector2, LedCounter>();
+  HashMap<IntVector3, LedCounter> scripts=new HashMap<IntVector3, LedCounter>();
   TreeSet<LedCounter> queue=new TreeSet<LedCounter>();//new LinkedList<LedCounter>()
   MidiMapDevice deviceLink;
   int[][] display;//used to not change LED array values...
@@ -33,7 +33,7 @@ class LightThread implements Runnable {
   //
   //syncs are needed when ui thread access this thread. and interrupt.
   //use these when load/remove led.
-  LedCounter addTrack(IntVector2 coord, LedScript script) {
+  LedCounter addTrack(IntVector3 coord, LedScript script) {
     LedCounter counter=new LedCounter(script, System.currentTimeMillis());
     synchronized(this) {
       scripts.put(coord, counter);
@@ -41,7 +41,7 @@ class LightThread implements Runnable {
     thread.interrupt();
     return counter;
   }
-  void removeTrack(IntVector2 coord) {
+  void removeTrack(IntVector3 coord) {
     synchronized(this) {
       scripts.get(coord).active=false;//auto remove
       scripts.remove(coord);
@@ -49,7 +49,7 @@ class LightThread implements Runnable {
     thread.interrupt();
   }
   //use this when user pressed keySound button
-  void start(IntVector2 coord) {
+  void start(IntVector3 coord) {
     LedCounter led=scripts.get(coord);
     if (led!=null) {
       start(led, 0);
@@ -73,6 +73,12 @@ class LightThread implements Runnable {
       queue.add(led);
     }
     thread.interrupt();
+  }
+  void stop(LedCounter led) {
+    synchronized(led.script) {
+      led.active=false;
+      queue.remove(led);
+    }
   }
   void pause(LedCounter led) {
     synchronized(led.script) {
@@ -203,7 +209,7 @@ class LightThread implements Runnable {
         catch(InterruptedException e) {
         }
       }
-      if(mainTabs_selected==LED_EDITOR){
+      if (mainTabs_selected==LED_EDITOR) {
         frame_main.invalidated=true;
       }
     }
