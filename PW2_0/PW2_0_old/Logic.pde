@@ -5,48 +5,13 @@ ArrayList<KsButton[][]> KS;
 color[][] ksDisplay;
 ArrayList<String> ksLoadedSamples=new ArrayList<String>();
 ArrayList<Integer> ksLoadedSamplesCount=new ArrayList<Integer>();
-AudioContext ksac=new AudioContext();
-ArrayList<KsButton> ledstack=new ArrayList<KsButton>();//really, this is not a stack. it works more like queue, but I can't rename this!!
-boolean ksautorun_render=false;
-ArrayList<IntVector2> CurrentNoteOn=new ArrayList<IntVector2>();
-//temp save variables
-boolean soundLoopEdit=true;//keysound loop edit
-boolean isNoteOn(int x, int y) {
-  int a=0;
-  while (a<CurrentNoteOn.size()) {
-    if (CurrentNoteOn.get(a).equals(x, y))return true;
-    a=a+1;
-  }
-  return false;
-}
-class KsButton {
-  int bC=0, bX=0, bY=0;
-  ArrayList<ArrayList> ksLed;//multi,<UnipackLine>
-  ArrayList<String> ksLedFile;
-  int ksCurrentTime=0;
-  int ksCurrentIndex=0;
-  int ksNextTime=0;
-  int ksCurrentDelayIndex=0;
-  ArrayList<Integer> ksLedLoop;
-  int ksCurrentLedLoop=0;
-  ArrayList<String> ksSound;
-  ArrayList<Sample> ksSample;
-  ArrayList<Integer> ksSoundLoop;
+ArrayList<IntVector2> CurrentNoteOn=new Array
   int ksCurrentSoundLoop=0;
   //int ksLedPointer=0;//???? DELETE
   SamplePlayer ksPlayer;
   int multiLed=0;
   int multiSound=0;
   public KsButton(int c, int x, int y) {
-    bC=c;
-    bX=x;
-    bY=y;
-    ksLedFile=new ArrayList<String>();
-    ksLed=new ArrayList<ArrayList>();
-    ksLedLoop=new ArrayList<Integer>();
-    ksSound=new ArrayList<String>();
-    ksSample=new ArrayList<Sample>();
-    ksSoundLoop=new ArrayList<Integer>();
     if (c==0) {
       ksPlayer=new SamplePlayer(ksac, 2);
       ksac.out.addInput(ksPlayer);

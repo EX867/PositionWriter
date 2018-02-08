@@ -236,6 +236,18 @@ void led_setup() {
     }
   };
 }
+String readLed(String filename) {//must file exists.
+  final String ext=getFileExtension(filename);
+  if (ext.equals("png")) {
+    return PngToLed(loadImage(filename));
+  } else if (ext.equals("gif")) {
+    return GifToLed(filename);
+  } else if (ext.equals("mid")) {
+    return MidiToLed(filename);
+  } else {
+    return readFile(filename);
+  }
+}
 void saveLed(final LedScript led) { 
   if (led.changed) {
     final String filename=led.file.getAbsolutePath();
@@ -245,7 +257,7 @@ void saveLed(final LedScript led) {
       }
     }
     );
-    led.setChanged(false);
+    led.setChanged(false, false);
     led.lastSaveTime=new File(filename).lastModified();
   }
 }
@@ -318,9 +330,9 @@ void addLedFileTab(String filename) {
   }
   //
   LedTab tab=addLedTab(filename);
-  tab.led.script.insert(0, 0, readFile(filename));
+  tab.led.script.insert(0, 0, readLed(filename));
   tab.led.script.tab=tab;
-  tab.led.script.setChanged(false);
+  tab.led.script.setChanged(false, false);
 }
 void selectLedTab(int index) {
   currentLed=ledTabs.get(index);

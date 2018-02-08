@@ -42,7 +42,8 @@ color[] color_mf;
 FrameSlider fs;
 Button fsTime;
 TabLayout led_filetabs;
-//
+//==Additional frames===//
+CachingFrame frame_changetitle;
 //
 interface TitleChangeTarget {
   String getTitle();

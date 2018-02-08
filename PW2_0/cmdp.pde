@@ -42,7 +42,7 @@ class LedScript extends CommandScript {
       editor.setContent(this);
       editor.setAnalyzer(new DelimiterParser(cmdset, processor));
     }
-    setChanged(false);
+    setChanged(false, false);
   }
   void setCmdSet(LineCommandType cmdset_) {
     cmdset=cmdset_;
@@ -55,7 +55,7 @@ class LedScript extends CommandScript {
     if (file!=null) {
       setText(readFile(file.getAbsolutePath()));
       editor.invalidate();
-      setChanged(false);
+      setChanged(false, false);
     }
   }
   public void readAll() {
@@ -148,9 +148,9 @@ class LedScript extends CommandScript {
       midiControl(velLED.get(displayFrame));
     }
   }
-  void setChanged(boolean v) {
+  void setChanged(boolean v, boolean force) {
     if (v) {
-      if (tab!=null&&!tabchanged) {
+      if (tab!=null&&(!tabchanged||force)) {
         int index=ledTabs.indexOf(tab);
         if (index>=0) {
           led_filetabs.setTabName(index, getFileName(file.getAbsolutePath())+"*");
@@ -160,7 +160,7 @@ class LedScript extends CommandScript {
       }
       changed=true;
     } else {
-      if (tab!=null&&tabchanged) {
+      if (tab!=null&&(tabchanged||force)) {
         int index=ledTabs.indexOf(tab);
         if (index>=0) {
           led_filetabs.setTabName(index, getFileName(file.getAbsolutePath()));
@@ -176,7 +176,7 @@ class LedScript extends CommandScript {
       resize(info.buttonX, info.buttonY);
     }
     public void processCommand(Analyzer analyzer, int line, Command before, Command after) {
-      setChanged(true);
+      setChanged(true, false);
       //println("\""+before+"\" to \""+after+"\" line "+line);
       setTitleProcessing("reading...("+getProgress()+"/"+getTotal()+")");
       if (bypass)return;

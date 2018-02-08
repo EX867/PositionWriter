@@ -3,6 +3,8 @@ import java.nio.channels.FileChannel;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import com.karnos.commandscript.Analyzer;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 TextTransfer textTransfer;
 //
 //===processing utils===//
@@ -121,6 +123,15 @@ String getCodePath() {
   } else {
     return new File("code").getAbsolutePath();
   }
+}
+public static boolean isValidFileName(String name) {
+  try {
+    java.nio.file.Paths.get(name);
+  }
+  catch(java.nio.file.InvalidPathException e) {
+    return false;
+  }
+  return true;
 }
 File[] listFiles(String dir) {
   File file = new File(dir);

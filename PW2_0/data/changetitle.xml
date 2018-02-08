@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+  <layout>
+    <kyui.element.CenterFrameLayout active="true" bgColor="0" desc="" enabled="true" margin="0" name="changetitle_layout" padding="0" pos="[(0.0, 0.0)~(1460.0, 960.0)]" visible="true">
+      <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="FIXED" name="changetitle_dv1" padding="0" pos="[(0.0, 415.0)~(1460.0, 545.0)]" rotation="UP" value="50.0" visible="true">
+        <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="3.0" inverse="false" margin="0" mode="FIXED" name="changetitle_dv2" padding="5" pos="[(0.0, 415.0)~(1460.0, 465.0)]" rotation="RIGHT" value="50.0" visible="true">
+          <kyui.core.Element active="true" bgColor="0" desc="" enabled="true" margin="0" name="changetitle_el1" padding="0" pos="[(5.0, 420.0)~(1408.0, 460.0)]" visible="true"/>
+          <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" margin="0" name="changetitle_exit" padding="7" path="exit.png" pos="[(1415.0, 420.0)~(1455.0, 460.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+        </kyui.element.DivisionLayout>
+        <kyui.element.TextBox active="true" bgColor="-8421505" blankLines="6" desc="" enabled="true" error="false" errorColor="-65536" fgColor="50" hint="ex) C:/Users/user/Documennts/PositionWriter/led/new_led_file_name.led" hintColor="-1775095246" lineNumBgColor="40" lineNumColor="-1" lineNumSize="0" margin="0" name="changetitle_edit" numberOnly="NONE" padding="20" pos="[(0.0, 465.0)~(1460.0, 545.0)]" rightText="" rightTextSize="15" selectionColor="-13487411" text="" textColor="50" textSize="20" title=" Enter new path to file " visible="true"/>
+      </kyui.element.DivisionLayout>
+    </kyui.element.CenterFrameLayout>
+  </layout>
+  <color/>
+  <shortcut/>
+</Data>

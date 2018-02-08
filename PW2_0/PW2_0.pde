@@ -102,7 +102,11 @@ void main_draw() {
     //led
     for (LedTab t : ledTabs) {
       LedScript script=t.led.script;
-      if (script.lastSaveTime<script.file.lastModified()) {
+      if (!script.file.isFile()) {
+        if (!script.empty()) {
+          script.setChanged(true, false);
+        }
+      } else if (script.lastSaveTime<script.file.lastModified()) {
         script.lastSaveTime=script.file.lastModified();
         script.reload();
         println(script.name+" reloaded");
@@ -141,6 +145,7 @@ void main_setup() {
   ElementLoader.loadExternal(joinPath(getCodePath(), "PwElements.jar"));
   ElementLoader.loadExternal(joinPath(getCodePath(), "CommandScript.jar"));
   LayoutLoader.loadXML(KyUI.getRoot(), loadXML("layout.xml"));
+  LayoutLoader.loadXML(frame_changetitle=KyUI.getNewLayer(), loadXML("changetitle.xml"));
   KyUI.taskManager.executeAll();//add all element
   //initialize
   statusL=(StatusBar)KyUI.get("main_statusL");
