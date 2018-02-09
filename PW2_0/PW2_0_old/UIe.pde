@@ -28,9 +28,6 @@ class ScrollList extends UIelement {
         UI[getUIidRev("KS_LOOP")].disabled=false;
         UI[getUIidRev("KS_LOOP")].registerRender=true;
       }
-    } else if (name.equals("UN_LIST")) {
-      uncloud_select(selected);
-    }
   }
   @Override
     boolean react() {
@@ -69,7 +66,6 @@ class ScrollList extends UIelement {
               } else if (name.equals("I_SOUNDVIEW")) {
                 KS.get(ksChain)[ksX][ksY].autorun_startSoundIndex(selected);
               } else if (name.equals("I_FILEVIEW1")) {
-                if (fileList[selected].isDirectory())setItems(listFilePaths_related(fileList[selected].getAbsolutePath()));
                 else if (isSoundFile(fileList[selected])) {
                   UI[getUIid("MP3_TIME")].disabled=true;
                   //from converter play button
@@ -86,19 +82,6 @@ class ScrollList extends UIelement {
                 removeItem(selected);
               }
             }
-          }
-        }
-      } else if (mouseState==AN_PRESSED) {
-        focus=ID;
-        if (reorderable&&selected!=-1&&itemClicked) {
-          reordering=(int)(MouseY-(position.y-size.y-ITEM_HEIGHT/2-(sliderPos-(position.y-size.y+sliderLength))*(max(1, View.length*ITEM_HEIGHT-size.y*2)/max(1, size.y*2-sliderLength*2))))/ITEM_HEIGHT;
-          if (selected==reordering||selected+1==reordering||reordering<0||reordering>View.length)reordering=-1;
-        } else if (draggedListId!=-1) {
-          //update drag and drop thing in here(cannot occur in same time with reordering)
-          if (((ScrollList)UI[draggedListId]).dragging&&((ScrollList)UI[draggedListId]).selected!=-1&&((ScrollList)UI[draggedListId]).itemClicked) {
-            adding=(int)(MouseY-(position.y-size.y-ITEM_HEIGHT/2-(sliderPos-(position.y-size.y+sliderLength))*(max(1, View.length*ITEM_HEIGHT-size.y*2)/max(1, size.y*2-sliderLength*2))))/ITEM_HEIGHT;
-            if (adding<0)adding=-1;
-            if (adding>View.length)adding=View.length;
           }
         }
       } else if (mouseState==AN_RELEASE) {
@@ -192,35 +175,6 @@ class ScrollList extends UIelement {
             }
           }
         }
-        sliderClicked=false;
-        itemClicked=false;
-        reordering=-1;
-        adding=-1;
-      } else {
-        sliderClicked=false;
-        itemClicked=false;
-        reordering=-1;
-        adding=-1;
-      }
-      if (skipRendering==false)render();
-    } else {
-      reordering=-1;
-      if (mouseState==AN_PRESSED||mouseState==AN_RELEASE) {
-        if (pressed&&sliderClicked==false/*&&dragging==false*/) {//?????
-          draggedListId=ID;
-          dragging=true;
-        }
-      } else {
-        if (dragging&&selected!=-1) {
-          Frames[currentFrame].render();
-          skipRendering=true;
-          dragging=false;
-        }
-        itemClicked=false;
-        sliderClicked=false;
-      }
-    }
-    return false;
   }
 }
 
@@ -311,12 +265,6 @@ class PadButton extends UIelement {
     }
     return false;
   }
-  void printLed(int X, int Y) {
-    printLed(X, Y, false, 0);
-  }
-  void triggerButton(int X, int Y) {
-    triggerButton(X, Y, false);
-  }
   synchronized void triggerButton(int X, int Y, boolean async) {
     if (X<0||Y<0||X>=ButtonX||Y>=ButtonY)return;
     KS.get(ksChain)[X][Y].autorun();
@@ -331,17 +279,6 @@ class PadButton extends UIelement {
     if (async)UI[id].registerRender=true;
     else UI[id].render();
     noteOn(X, Y);
-  }
-  synchronized void noteOn(int x, int y) {//uses in midi section too.
-    if (isNoteOn(x, y)==false)CurrentNoteOn.add(new IntVector2(x, y));
-  }
-  private void notePressing(int x, int y) {//using local variable! don't use this in else.
-    if (padClickX==-2)return;//resets on noteOn in padbutton.
-    if (padClickX!=x||padClickY!=y) {//mouse moved.
-      noteOff(x, y);
-      padClickX=-2;
-      padClickY=-2;
-    }
   }
   synchronized void noteOff(int x, int y) {//if note is not in list, ignore.
     if (x<0||y<0||x>=ButtonX||y>=ButtonY)return;

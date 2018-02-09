@@ -3,10 +3,10 @@ import kyui.element.IntSlider;
 import kyui.core.KyUI;
 import kyui.util.ColorExt;
 import kyui.event.EventListener;
+import kyui.event.ExtendedRenderer;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.event.MouseEvent;
-import pw2.event.ExtendedRenderer;
 
 import java.util.ArrayList;
 public class FrameSlider extends IntSlider {//direction is always horizontal.
@@ -41,7 +41,7 @@ public class FrameSlider extends IntSlider {//direction is always horizontal.
       }
       valueE=Math.max(minI, Math.min(maxI, valueE));
       valueS=Math.max(minI, Math.min(maxI, valueS));
-//      if (valueS >= valueE && loopDir != 0) {
+      //      if (valueS >= valueE && loopDir != 0) {
       //        valueS=minI;
       //        valueE=minI;
       //      }
