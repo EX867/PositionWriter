@@ -143,6 +143,9 @@ class KsButton {
     loadSound(sound.size(), path, loop);
   } 
   void loadSound(int index, String path, int loop) {//must path exists!
+    if (!new File(path).isFile()) {
+      return;
+    }
     MultiSamplePlayer.SampleState sample=session.player.load(path);
     if (samples.containsKey(sample.sample)) {
       samples.get(sample.sample).add(this);
@@ -175,6 +178,9 @@ class KsButton {
     loadLed(led.size(), path, loop);
   }
   void loadLed(int index, String path, int loop) {
+    if (!new File(path).isFile()) {
+      return;
+    }
     LedScript script=loadLedScript(path, readFile(path));
     script.displayPad=ks_pad;
     led.add(index, session.light.addTrack(pos, script));

@@ -1,4 +1,14 @@
 void setup_ev1() {//setup small listeners
+  ((ImageButton)KyUI.get("ks_stop")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      currentKs.light.stopAll();
+      midiOffAll();
+      ks_pad.displayControl(currentKs.light.display);
+      ks_pad.invalidate();
+      return false;
+    }
+  }
+  );
   ((ImageToggleButton)KyUI.get("led_commands")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       KyUI.get("led_consolelayout").setEnabled(((ImageToggleButton)KyUI.get("led_commands")).value);

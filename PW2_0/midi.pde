@@ -33,13 +33,13 @@ public class PadPressCommand implements InputBehavior {
           //currentLed.printLed(params[0], params[1], true, 0);
         } else if (mainTabs_selected==KS_EDITOR) {
           IntVector2 vec=new IntVector2(params[0], params[1]);
-          println("midi on : ("+vec.x+", "+vec.y+")");
+          //println("midi on : ("+vec.x+", "+vec.y+")");
           ks_pad.buttonListener.accept(vec, vec, PadButton.PRESS_L);
         }
       } else {
         if (mainTabs_selected==KS_EDITOR) {
           IntVector2 vec=new IntVector2(params[0], params[1]);
-          println("midi off : ("+vec.x+", "+vec.y+")");
+          //println("midi off : ("+vec.x+", "+vec.y+")");
           ks_pad.buttonListener.accept(vec, vec, PadButton.RELEASE_L);
         }
       }
@@ -54,9 +54,12 @@ public class PadReleaseCommand implements InputBehavior {
   }
 }
 public class PadChainCommand implements InputBehavior {
-  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
+  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {
     if (mainTabs_selected==KS_EDITOR) {
-      //keySoundPad.triggerChain(params[0]);
+      currentKs.chain=params[0];
+      currentKs.resetIndex(currentKs.chain);
+      ((PadButton)KyUI.get("ks_chain")).selected.set(0, currentKs.chain);
+      KyUI.get("ks_chain").invalidate();
     }
   }
 }

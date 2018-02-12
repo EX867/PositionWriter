@@ -6,6 +6,7 @@ import beads.SampleManager;
 import beads.SamplePlayer;
 import java.util.function.Predicate;
 static class MultiSamplePlayer {
+  static boolean debug=false;
   PlayerState[] players;
   AudioContext ac;
   //final HashMap<Sample, SampleState> samples;
@@ -30,7 +31,7 @@ static class MultiSamplePlayer {
 
   public SampleState load(String path) {
     Sample sample = SampleManager.sample(path);
-    println("[sem] sample loaded : " + path + " " + (sample != null));
+    if (debug)println("[sem] sample loaded : " + path + " " + (sample != null));
     //samples.put(sample, new SampleState(sample));
     SampleState state=new SampleState(sample);
     samples.add(state);
@@ -60,7 +61,7 @@ static class MultiSamplePlayer {
         }
         state.ref.player.pause(false);
         //state.ref.player.start();
-        println("[sem] sample play start " + state.sample.getFileName());
+        if (debug)println("[sem] sample play start " + state.sample.getFileName());
       }
     }
   }
@@ -73,7 +74,7 @@ static class MultiSamplePlayer {
         state.ref.player.pause(true);
         state.pausePoint = state.ref.player.getPosition();
         state.active = false;
-        println("[sem] sample pause " + state.sample.getFileName());
+        if (debug)println("[sem] sample pause " + state.sample.getFileName());
       }
     }
   }
@@ -86,7 +87,7 @@ static class MultiSamplePlayer {
         state.pausePoint = 0;
         state.active = false;
         state.loopIndex=1;
-        println("[sem] sample stop " + state.sample.getFileName());
+        if (debug)println("[sem] sample stop " + state.sample.getFileName());
       }
     }
   }
@@ -133,14 +134,14 @@ static class MultiSamplePlayer {
         for (PlayerState ps : players) {
           SamplePlayer p = ps.player;
           if (p.getSample() == null) {
-            println("[sem] new sampleplayer attached.");
+            if (debug)println("[sem] new sampleplayer attached.");
             attach(state, ps);
             return;
           }
           //SampleState s = samples.get(p.getSample());
           SampleState s=ps.state;
           if (!s.active) {
-            println("[sem] inactive sampleplayer attached.");
+            if (debug)println("[sem] inactive sampleplayer attached.");
             s.allocated = false;
             attach(state, ps);
             return;
@@ -151,7 +152,7 @@ static class MultiSamplePlayer {
           }
         }
       }     //no player is available. then force min to stop playing.
-      println("[sem] player is force stopped. " + min.player.getSample().getFileName());
+      if (debug)println("[sem] player is force stopped. " + min.player.getSample().getFileName());
       min.state.allocated=false;
       min.state.active=false;
       //samples.get(min.player.getSample()).allocated = false;
