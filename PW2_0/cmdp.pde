@@ -3,6 +3,12 @@ public LedScript loadLedScript(String name_, String text) {//line ending have to
   ledScript.insert(0, 0, text);
   return ledScript;
 }
+public LedScript loadApScript(String name_, String text) {
+  LedScript ledScript=new LedScript(name_, null, null);
+  ledScript.setCmdSet(apCommands);
+  ledScript.insert(0, 0, text);
+  return ledScript;
+}
 class LedScript extends CommandScript {
   CommandEdit editor;//linked editor
   //file management

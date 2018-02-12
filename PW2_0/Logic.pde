@@ -2,7 +2,6 @@
 UnipackInfo info;//buttonX, chain and global things...
 CommandEdit editor;//led editor
 KsSession ks;//ks editor
-int ksChain;//current ks chain
 StatusBar statusL;
 StatusBar statusR;
 //===Global finals===//
@@ -12,8 +11,12 @@ static final int VEL=1;
 static final int HTML=2;
 static final int LED_EDITOR=1;//equals tab index
 static final int KS_EDITOR=2;
+static final int NONE=0;
+static final int LED_CHANGETITLE=1;
+static final int KS_INFO=2;
 //===Tabs===//
 int mainTabs_selected=LED_EDITOR;
+int externalFrame=NONE;
 //===States===//
 int InputMode=AUTOINPUT;
 int ColorMode=VEL;

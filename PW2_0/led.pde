@@ -6,6 +6,7 @@ void led_setup() {
   final ImageButton changetitle_exit=((ImageButton)KyUI.get("changetitle_exit"));
   ((Button)KyUI.get("led_changetitle")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
+      externalFrame=LED_CHANGETITLE;
       KyUI.addLayer(frame_changetitle);
       changetitle_edit.setText(currentLedEditor.file.getAbsolutePath().replace("\\", "/"));
       final String before=currentLedEditor.file.getAbsolutePath();
@@ -35,6 +36,7 @@ void led_setup() {
               }
             }
             KyUI.removeLayer();
+            externalFrame=NONE;
           }
           return false;
         }
@@ -313,7 +315,6 @@ void saveLed(final LedScript led) {
 }
 void exportLed(final LedScript led) {
   final String filename=getNotDuplicatedFilename(joinPath(joinPath(path_global, path_ledPath), getFileName(led.file.getAbsolutePath())));
-  final String ext=getFileExtension(filename);
   saveFileTo(filename, new Runnable() {
     public void run() {
       writeFile(filename, ToUnipadLed(led));

@@ -13,6 +13,14 @@ static class UnipackInfo {
     buttonX=bx;
     buttonY=by;
   }
+  void set(String title_, String producerName_, int buttonX_, int buttonY_, int chain_, boolean squareButtons_) {
+    title=title_;
+    producerName=producerName_;
+    buttonX=buttonX_;
+    buttonY=buttonY_;
+    chain=chain_;
+    squareButtons=squareButtons_;
+  }
   @Override
     public String toString() {
     String ret="";

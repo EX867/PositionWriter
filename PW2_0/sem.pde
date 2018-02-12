@@ -23,7 +23,9 @@ static class MultiSamplePlayer {
       players[a].player.pause(true);
       players[a].player.setKillOnEnd(false);
     }
+    samples=new ArrayList<SampleState>();
     //samples = new HashMap<Sample, SampleState>(1000);
+    ac.start();
   }
 
   public SampleState load(String path) {
@@ -57,7 +59,8 @@ static class MultiSamplePlayer {
           state.ref.added = true;
         }
         state.ref.player.pause(false);
-        println("[sem] sample play start" + state.sample.getFileName());
+        //state.ref.player.start();
+        println("[sem] sample play start " + state.sample.getFileName());
       }
     }
   }

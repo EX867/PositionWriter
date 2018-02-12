@@ -99,6 +99,10 @@ class LightThread implements Runnable {
     thread.interrupt();
   }
   void checkDisplay(PadButton pad) {
+    if(pad==null){
+      System.err.println("seq : pad is null!");
+      return;
+    }
     if (display==null||display.length!=pad.size.x||display[0].length!=pad.size.y) {
       display=new int[pad.size.x][pad.size.y];
     }

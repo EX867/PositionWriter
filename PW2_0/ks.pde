@@ -57,7 +57,10 @@ class KsSession {//
   KsButton getSelected() {
     return KS.get(chain)[selection.x][selection.y];
   }
-  void resize(int x, int y, int c) {
+  KsButton get(int c, int x, int y) {
+    return KS.get(c)[x][y];
+  }
+  void resize(int x, int y, int c) {//parameter order...fix
     info.buttonX=x;
     info.buttonY=y;
     info.chain=c;
@@ -69,6 +72,17 @@ class KsSession {//
         for (int b=0; b<info.buttonY; b++) {
           KS.get(ch)[a][b]=new KsButton(this, new IntVector3(a, b, ch));
         }
+      }
+    }
+  }
+  void resetIndex(int chain) {
+    if (chain<0||chain>KS.size()) {
+      return;
+    }
+    KsButton[][] btns=KS.get(chain);
+    for (int a=0; a<btns.length; a++) {
+      for (int b=0; b<btns[a].length; b++) {
+        btns[a][b].resetIndex();
       }
     }
   }
@@ -125,10 +139,10 @@ class KsButton {
   void setLedIndex(int index) {
     ledIndex=max(0, min(index, led.size()-1));
   }
-  void loadSound(String path) {
-    loadSound(sound.size(), path);
+  void loadSound(String path, int loop) {
+    loadSound(sound.size(), path, loop);
   } 
-  void loadSound(int index, String path) {//must path exists!
+  void loadSound(int index, String path, int loop) {//must path exists!
     MultiSamplePlayer.SampleState sample=session.player.load(path);
     if (samples.containsKey(sample.sample)) {
       samples.get(sample.sample).add(this);
@@ -138,6 +152,7 @@ class KsButton {
       samples.put(sample.sample, list);
     }
     sound.add(index, sample);
+    setSoundLoop(index, loop);
   }
   void reorderSound(int a, int b) {//must in range!
     Collections.swap(sound, a, b);
@@ -153,12 +168,17 @@ class KsButton {
     session.player.stop(sample);
     sound.remove(index);
   }
-  void loadLed(String path) {
-    loadLed(led.size(), path);
+  void setSoundLoop(int index, int loop) {
+    sound.get(index).loopCount=loop;
   }
-  void loadLed(int index, String path) {
+  void loadLed(String path, int loop) {
+    loadLed(led.size(), path, loop);
+  }
+  void loadLed(int index, String path, int loop) {
     LedScript script=loadLedScript(path, readFile(path));
+    script.displayPad=ks_pad;
     led.add(index, session.light.addTrack(pos, script));
+    setLedLoop(index, loop);
   }
   void reorderLed(int a, int b) {
     Collections.swap(led, a, b);
@@ -167,29 +187,34 @@ class KsButton {
     session.light.removeTrack(pos);
     led.remove(index);
   }
+  void setLedLoop(int index, int loop) {
+    led.get(index).loopCount=loop;
+  }
   void resetIndex() {
     ledIndex=0;
     soundIndex=0;
   }
   void noteOn() {
-    if (!session.notePress[pos.x][pos.y]) {
-      if (sound.size()>0) {
-        if (soundIndex>=sound.size()) {
-          soundIndex=0;
-        }
-        session.player.play(sound.get(soundIndex));
-        soundIndex++;
+    noteOff();
+    //if (!session.notePress[pos.x][pos.y]) {
+    if (sound.size()>0) {
+      if (soundIndex>=sound.size()) {
+        soundIndex=0;
       }
-      if (led.size()>0) {
-        if (ledIndex>=led.size()) {
-          ledIndex=0;
-        }
-        session.light.start(pos);
-        ledIndex++;
-      }
-      session.notePress[pos.x][pos.y]=true;
-      println("chain "+pos.z+", ("+pos.x+", "+pos.y+") note on");
+      session.player.rewind(sound.get(soundIndex));
+      session.player.play(sound.get(soundIndex));
+      soundIndex++;
     }
+    if (led.size()>0) {
+      if (ledIndex>=led.size()) {
+        ledIndex=0;
+      }
+      session.light.start(pos);
+      ledIndex++;
+    }
+    session.notePress[pos.x][pos.y]=true;
+    println("chain "+pos.z+", ("+pos.x+", "+pos.y+") note on");
+    //}
   }
   void noteOff() {
     if (session.notePress[pos.x][pos.y]) {
@@ -233,6 +258,7 @@ void ks_setup() {
   );
   ((Button)KyUI.get("ks_info")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
+      externalFrame=KS_INFO;
       KyUI.addLayer(frame_ksinfo);
       final String beforeEdit=currentKs.file.getAbsolutePath();
       final String beforeTitle=currentKs.info.title;
@@ -258,12 +284,7 @@ void ks_setup() {
         public boolean onEvent(MouseEvent e, int index) {
           if (!ksinfo_edit.error&&!ksinfo_buttonx.error&&!ksinfo_buttony.error&&!ksinfo_chain.error) {
             currentKs.file=new File(ksinfo_edit.getText());
-            currentKs.info.title=ksinfo_title.getText();
-            currentKs.info.producerName=ksinfo_producername.getText();
-            currentKs.info.buttonX=ksinfo_buttony.valueI;
-            currentKs.info.buttonY=ksinfo_buttonx.valueI;
-            currentKs.info.chain=ksinfo_chain.valueI;
-            currentKs.info.squareButtons=ksinfo_squarebuttons.value;
+            currentKs.info.set(ksinfo_title.getText(), ksinfo_producername.getText(), ksinfo_buttony.valueI, ksinfo_buttonx.valueI, ksinfo_chain.valueI, ksinfo_squarebuttons.value);
             if (!beforeTitle.equals(currentKs.info.title)||!beforeProducerName.equals(currentKs.info.producerName)||beforeButtonY!=currentKs.info.buttonY||beforeButtonX!=currentKs.info.buttonX||beforeChain!=currentKs.info.chain||beforeSquareButtons!=currentKs.info.squareButtons) {
               currentKs.setChanged(true, true);
             } else if (!beforeEdit.equals(currentKs.file.getAbsolutePath())) {
@@ -274,6 +295,7 @@ void ks_setup() {
             ((PadButton)KyUI.get("ks_chain")).size.set(1, currentKs.info.chain);
             ks_pad.invalidate();
             KyUI.removeLayer();
+            externalFrame=NONE;
           }
           return false;
         }
@@ -301,6 +323,14 @@ void ks_setup() {
         currentKs.getSelected().noteOff();
       } else if (action==PadButton.RELEASE_L) {
         currentKs.getSelected().noteOff();
+      }
+    }
+  };
+  ((PadButton)KyUI.get("ks_chain")).buttonListener=new PadButton.ButtonListener() {
+    public void accept(IntVector2 click, IntVector2 coord, int action) {
+      if (action==PadButton.PRESS_L) {
+        currentKs.chain=coord.y;
+        currentKs.resetIndex(currentKs.chain);
       }
     }
   };
@@ -371,7 +401,89 @@ void ks_setup() {
     }
   };
 }
-void loadKs() {
+KsSession loadKs(String filename) {
+  File file=new File(filename);
+  println("load ks : "+filename);
+  if (file.isDirectory()) {//and exists
+    File infof=new File(joinPath(filename, "info"));
+    File keySoundf=new File(joinPath(filename, "keySound"));
+    File soundsf=new File(joinPath(filename, "sounds"));
+    File keyLEDf=new File(joinPath(filename, "keyLED"));
+    File autoPlayf=new File(joinPath(filename, "autoPlay"));
+    KsSession session=new KsSession(filename);
+    UnipackInfo infoBackup=info;
+    if (infof.isFile()) {
+      println("load info "+infof.getAbsolutePath());
+      session.info=UnipackInfo.loadUnipackInfo(filename, readFile(infof.getAbsolutePath()));
+      session.resize( session.info.buttonX, session.info.buttonY, session.info.chain);
+      info=session.info;
+    } else {
+      System.err.println("info is not a file : "+infof.getAbsolutePath());
+    }
+    if (keySoundf.isFile()) {
+      println("load sound "+soundsf.getAbsolutePath());
+      CommandScript script=new CommandScript(keySoundf.getAbsolutePath().replace("\\", "/")).setAnalyzer(new DelimiterParser(ksCommands, LineCommandProcessor.DEFAULT_PROCESSOR));
+      script.insert(readFile(keySoundf.getAbsolutePath()));
+      ArrayList<Command> commands=script.getCommands();
+      for (Command cmd_ : commands) {
+        if (cmd_ instanceof KsCommand) {
+          KsCommand cmd=(KsCommand)cmd_;
+          println("load : "+cmd.filename);
+          if (cmd.relative) {
+            session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadSound(joinPath(soundsf.getAbsolutePath(), cmd.filename), cmd.loop);
+          } else {
+            session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadSound(cmd.filename, cmd.loop);
+          }
+        }
+      }
+    } else {
+      System.err.println("keySound is not a file : "+keySoundf.getAbsolutePath());
+    }
+    if (keyLEDf.isDirectory()) {
+      println("load led "+keyLEDf.getAbsolutePath());
+      File[] files=keyLEDf.listFiles();
+      for (int a=0; a<files.length; a++) {
+        String[] tokens=split(getExtensionElse(getFileName(files[a].getAbsolutePath())), " ");
+        if (tokens.length>3) {
+          if (Analyzer.isInt(tokens[0])&&Analyzer.isInt(tokens[1])&&Analyzer.isInt(tokens[2])&&Analyzer.isInt(tokens[3])) {
+            int c=int(tokens[0]);
+            int x=int(tokens[2]);
+            int y=int(tokens[1]);
+            int loop=int(tokens[3]);
+            if (0<x&&x<=session.info.buttonX&&0<y&&y<=session.info.buttonY&&0<c&&c<=session.info.chain) {
+              println("load : "+files[a].getAbsolutePath());
+              session.get(c-1, x-1, y-1).loadLed(files[a].getAbsolutePath().replace("\\", "/"), loop);
+            }
+          }
+        }
+      }
+    } else if (keyLEDf.isFile()) {
+      println("load led(file) "+keyLEDf.getAbsolutePath());
+      CommandScript script=new CommandScript(keyLEDf.getAbsolutePath().replace("\\", "/")).setAnalyzer(new DelimiterParser(ksCommands, LineCommandProcessor.DEFAULT_PROCESSOR));
+      script.insert(readFile(keyLEDf.getAbsolutePath()));
+      ArrayList<Command> commands=script.getCommands();
+      for (Command cmd_ : commands) {
+        if (cmd_ instanceof KsCommand) {
+          KsCommand cmd=(KsCommand)cmd_;
+          if (cmd.relative) {
+            System.err.println("relative path found in keyLED file! loading ignored");
+            //session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadLed(joinPath(file.getAbsolutePath(), cmd.filename),cmd.loop);
+          } else {
+            session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadLed(cmd.filename, cmd.loop);
+          }
+        }
+      }
+    }//else just ignore.
+    if (autoPlayf.isFile()) {
+      String autoPlayPath=autoPlayf.getAbsolutePath();
+      session.autoPlay=loadApScript(autoPlayPath, readFile(autoPlayPath));
+    }
+    info=infoBackup;
+    return session;
+  } else {
+    System.err.println("folder not exists : "+filename);
+  }
+  return null;
 }
 void saveKs(KsSession ks) {
   String filename=joinPath(path_global, path_projects+"/"+filterString(ks.file.getAbsolutePath(), new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}));
@@ -387,11 +499,23 @@ KsSession addKsTab(String filename) {
   tabs.selectTab(ksTabs.size());
   return tab;
 }
+KsSession addKsFileTab(String filename) {
+  TabLayout tabs=((TabLayout)KyUI.get("ks_filetabs"));
+  tabs.addTab(getFileName(filename), new Element("ks_"+filename));
+  KyUI.taskManager.executeAll();
+  KsSession tab=loadKs(filename);
+  ksTabs.add(tab);
+  tabs.onLayout();
+  tabs.onLayout();//????
+  tabs.selectTab(ksTabs.size());
+  return tab;
+}
 void selectKsTab(int index) {
   currentKs=ksTabs.get(index);
   ((ImageToggleButton)KyUI.get("ks_loop")).value=currentKs.loop;
   ((FrameSlider)KyUI.get("ks_frameslider")).valueS=currentKs.loopStart;
   ((FrameSlider)KyUI.get("ks_frameslider")).valueE=currentKs.loopEnd;
   ((PadButton)KyUI.get("ks_pad")).size.set(info.buttonX, info.buttonY);
+  ((PadButton)KyUI.get("ks_chain")).size.set(1, info.chain);
   KyUI.get("ks_pad").invalidate();
 }

@@ -120,10 +120,14 @@ class UnipackCommands extends LineCommandType {
       }
       return new MappingCommand(MappingCommand.LED, int(params.get(2)), int(params.get(1)), n);//sound
     }
-    if (commandName.equals("kschain y x relative")) {//#ADD
+    if (commandName.equals("kschain y x relative")) {
+      return new KsCommand(int(params.get(0)), int(params.get(2)), int(params.get(1)), params.get(3), true, 1);
     } else if (commandName.equals("kschain y x relative loop")) {
+      return new KsCommand(int(params.get(0)), int(params.get(2)), int(params.get(1)), params.get(3), true, int(params.get(4)));
     } else if (commandName.equals("kschain y x absolute")) {
+      return new KsCommand(int(params.get(0)), int(params.get(2)), int(params.get(1)), params.get(3), false, 1);
     } else if (commandName.equals("kschain y x absolute loop")) {
+      return new KsCommand(int(params.get(0)), int(params.get(2)), int(params.get(1)), params.get(3), false, int(params.get(4)));
     }
     return getErrorCommand();
   }
@@ -202,7 +206,26 @@ void script_setup() {
   ledCommands.setKeyword("s", C_UNITOR2);
   ledCommands.setKeyword("l", C_UNITOR2);
   ledCommands.setKeyword("rnd", C_UNITOR2);
-  //#ADD
+  //
+  apCommands=new UnipackCommands();
+  apCommands.addCommand(new ParamInfo("on", Parameter.FIXED, "o"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER));
+  apCommands.addCommand(new ParamInfo("on"), new ParamInfo("mc", Parameter.FIXED), new ParamInfo("n", Parameter.INTEGER));
+  apCommands.addCommand(new ParamInfo("off", Parameter.FIXED, "f"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE));
+  apCommands.addCommand(new ParamInfo("off"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER));
+  apCommands.addCommand(new ParamInfo("delay", Parameter.FIXED, "d"), new ParamInfo("value", Parameter.INTEGER));
+  apCommands.addCommand(new ParamInfo("delay"), new ParamInfo("fraction", Parameter.STRING));
+  apCommands.addCommand(new ParamInfo("bpm", Parameter.FIXED, "b"), new ParamInfo("value", Parameter.FLOAT));
+  apCommands.addCommand(new ParamInfo("chain", Parameter.FIXED, "c"), new ParamInfo("c", Parameter.INTEGER));
+  apCommands.setKeyword("on", C_KEYWORD1);
+  apCommands.setKeyword("o", C_KEYWORD1);
+  apCommands.setKeyword("off", C_KEYWORD1);
+  apCommands.setKeyword("f", C_KEYWORD1);
+  apCommands.setKeyword("delay", C_KEYWORD1);
+  apCommands.setKeyword("d", C_KEYWORD1);
+  apCommands.setKeyword("bpm", C_KEYWORD1);
+  apCommands.setKeyword("b", C_KEYWORD1);
+  apCommands.setKeyword("chain", C_KEYWORD1);
+  apCommands.setKeyword("c", C_KEYWORD1);
   //
   ksCommands=new UnipackCommands();
   ksCommands.addCommand(new ParamInfo("kschain", Parameter.INTEGER), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER), new ParamInfo("relative", Parameter.STRING));
@@ -392,6 +415,22 @@ class MappingCommand extends UnitorCommand {
   }
   String toUnipadString() {
     return "";
+  }
+}
+class KsCommand extends UnipackCommand {
+  int c;
+  int x;
+  int y;
+  String filename;
+  int loop;
+  boolean relative;
+  public KsCommand(int c_, int x_, int y_, String filename_, boolean relative_, int loop_) {
+    c=c_;
+    x=x_;
+    y=y_;
+    filename=filename_;
+    relative=relative_;
+    loop=loop_;
   }
 }
 class ErrorCommand implements Command {

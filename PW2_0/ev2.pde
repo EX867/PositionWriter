@@ -251,7 +251,18 @@ void setup_ev2() {
   KyUI.addDragAndDrop(KyUI.get("led_layout"), new FileDropEventListener() {
     public void onEvent(DropEvent de) {
       String filename=de.file().getAbsolutePath().replace("\\", "/");
-      addLedFileTab(filename);
+      if (de.file().isFile()) {
+        addLedFileTab(filename);
+      }
+    }
+  }
+  );
+  KyUI.addDragAndDrop(KyUI.get("ks_layout"), new FileDropEventListener() {
+    public void onEvent(DropEvent de) {
+      String filename=de.file().getAbsolutePath().replace("\\", "/");
+      if (de.file().isDirectory()) {
+        addKsFileTab(filename);
+      }
     }
   }
   );

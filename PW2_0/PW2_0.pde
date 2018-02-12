@@ -1,8 +1,8 @@
 import pw2.element.*;
 //PositionWriter 2.0.pde
 //===ADD list===//
-//led=(undo,redo),export,stop
-//shortcuts = ,resetfocus,ksclear,delay value edit,macros
+//led=(undo,redo),stop
+//shortcuts = ,ksclear,delay value edit,macros
 //add ziploader
 //note on highlight
 //add custom velocity selector

@@ -32,11 +32,15 @@ public class PadPressCommand implements InputBehavior {
           action_on.accept(null, new IntVector2());
           //currentLed.printLed(params[0], params[1], true, 0);
         } else if (mainTabs_selected==KS_EDITOR) {
-          //keySoundPad.triggerButton(params[0], params[1], true);
+          IntVector2 vec=new IntVector2(params[0], params[1]);
+          println("midi on : ("+vec.x+", "+vec.y+")");
+          ks_pad.buttonListener.accept(vec, vec, PadButton.PRESS_L);
         }
       } else {
         if (mainTabs_selected==KS_EDITOR) {
-          //keySoundPad.noteOff(params[0], params[1]);
+          IntVector2 vec=new IntVector2(params[0], params[1]);
+          println("midi off : ("+vec.x+", "+vec.y+")");
+          ks_pad.buttonListener.accept(vec, vec, PadButton.RELEASE_L);
         }
       }
     }
