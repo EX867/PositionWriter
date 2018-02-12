@@ -49,6 +49,8 @@ public class PadButton extends Element {
   public boolean lDragVisible=true;
   @Attribute
   public boolean rDragVisible=true;
+  @Attribute
+  public boolean alignTop=false;//for pw chain
   //temp vars
   public IntVector2 clickL=new IntVector2(0, 0);
   public IntVector2 clickR=new IntVector2(0, 0);
@@ -99,6 +101,9 @@ public class PadButton extends Element {
     } else {
       interval=w / size.x;
       offsetY=(pos.top + pos.bottom - interval * size.y) / 2;
+    }
+    if (alignTop) {
+      offsetY=pos.top;
     }
     float padding2=getPadding(interval);
     //draw bg
@@ -187,6 +192,9 @@ public class PadButton extends Element {
           interval=w / size.x;
           offsetY=(pos.top + pos.bottom - interval * size.y) / 2;
         }
+        if (alignTop) {
+          offsetY=pos.top;
+        }
         coord.set(PApplet.floor((mouse.x - offsetX) / interval), PApplet.floor((mouse.y - offsetY) / interval));
         return true;
       }
@@ -211,6 +219,9 @@ public class PadButton extends Element {
     } else {
       interval=w / size.x;
       offsetY=(pos.top + pos.bottom - interval * size.y) / 2;
+    }
+    if (alignTop) {
+      offsetY=pos.top;
     }
     if (e.getAction() == MouseEvent.PRESS) {
       if (e.getButton() == PApplet.LEFT) {

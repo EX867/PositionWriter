@@ -43,9 +43,12 @@ color[] color_mf;
 FrameSlider fs;
 Button fsTime;
 TabLayout led_filetabs;
+TabLayout ks_filetabs;
+PadButton ks_pad;
 //==Additional frames===//
 CachingFrame frame_main;
 CachingFrame frame_changetitle;
+CachingFrame frame_ksinfo;
 //
 interface TitleChangeTarget {
   String getTitle();

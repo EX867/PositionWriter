@@ -5,7 +5,7 @@ static class UnipackInfo {
   int buttonY=8;
   int chain=8;
   //no landscape anymore...!
-  boolean squareButton=true;
+  boolean squareButtons=true;
   boolean updated=false;
   UnipackInfo() {
   }
@@ -21,7 +21,7 @@ static class UnipackInfo {
     ret+="buttonX="+buttonX+"\n";
     ret+="buttonY="+buttonY+"\n";
     ret+="chain="+chain+"\n";
-    ret+="squareButton="+str(squareButton)+"\n";
+    ret+="squareButton="+str(squareButtons)+"\n";
     ret+="landscape=true\n";
     ret+="updated"+str(updated);
     return ret;
@@ -52,7 +52,7 @@ static class UnipackInfo {
       } else if (result.type==InfoLine.CHAINNUMBER) {
         ret.chain=int(result.value);
       } else if (result.type==InfoLine.SQUAREBUTTON) {
-        ret.squareButton=toBoolean(result.value);
+        ret.squareButtons=toBoolean(result.value);
       } else if (result.type==InfoLine.UPDATED) {
         ret.updated=toBoolean(result.value);
       }

@@ -292,9 +292,18 @@ String readLed(String filename) {//must file exists.
 void saveLed(final LedScript led) { 
   if (led.changed) {
     final String filename=led.file.getAbsolutePath();
+    final String ext=getFileExtension(filename);
     saveFileTo(filename, new Runnable() {
       public void run() {
-        writeFile(filename, led.toString());
+        if (ext.equals("png")) {
+          LedToPng(led, led.displayFrame).save(filename);
+        } else if (ext.equals("gif")) {
+          LedToGif(filename, led);
+        } else if (ext.equals("mid")) {
+          LedToMidi(filename, led);
+        } else {
+          writeFile(filename, led.toString());
+        }
       }
     }
     );
@@ -307,15 +316,7 @@ void exportLed(final LedScript led) {
   final String ext=getFileExtension(filename);
   saveFileTo(filename, new Runnable() {
     public void run() {
-      if (ext.equals("png")) {
-        LedToPng(led, led.displayFrame).save(filename);
-      } else if (ext.equals("gif")) {
-        LedToGif(filename, led);
-      } else if (ext.equals("mid")) {
-        LedToMidi(filename, led);
-      } else {
-        writeFile(filename, led.toString());
-      }
+      writeFile(filename, ToUnipadLed(led));
     }
   }
   );

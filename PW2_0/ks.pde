@@ -22,6 +22,7 @@ class KsSession {//
   boolean[][] notePress;//
   File file;//project name
   UnipackInfo info=new UnipackInfo(((TextBox)KyUI.get("set_dbuttony")).valueI, ((TextBox)KyUI.get("set_dbuttonx")).valueI);
+  boolean changed=false;
   //ap
   LedScript autoPlay;//#ADD
   boolean loop=false;
@@ -75,6 +76,27 @@ class KsSession {//
     light.active=false;
     ksac.stop();
     player.close();
+  }
+  void setChanged(boolean v, boolean force) {
+    if (v) {
+      if ((!changed||force)) {
+        int index=ksTabs.indexOf(this);
+        if (index>=0) {
+          ks_filetabs.setTabName(index, getFileName(file.getAbsolutePath())+"*");
+        }
+        ks_filetabs.invalidate();
+      }
+      changed=true;
+    } else {
+      if ((changed||force)) {
+        int index=ksTabs.indexOf(this);
+        if (index>=0) {
+          ks_filetabs.setTabName(index, getFileName(file.getAbsolutePath()));
+        }
+        ks_filetabs.invalidate();
+      }
+      changed=false;
+    }
   }
 }
 class KsButton {
@@ -183,6 +205,91 @@ class KsButton {
   }
 }
 void ks_setup() {
+  final TextBox ksinfo_edit=((TextBox)KyUI.get("ksinfo_edit"));
+  final TextBox ksinfo_title=((TextBox)KyUI.get("ksinfo_title"));
+  final TextBox ksinfo_producername=((TextBox)KyUI.get("ksinfo_producername"));
+  final TextBox ksinfo_buttony=((TextBox)KyUI.get("ksinfo_buttony"));
+  final TextBox ksinfo_buttonx=((TextBox)KyUI.get("ksinfo_buttonx"));
+  final TextBox ksinfo_chain=((TextBox)KyUI.get("ksinfo_chain"));
+  final ToggleButton ksinfo_squarebuttons=((ToggleButton)KyUI.get("ksinfo_squarebuttons"));
+  final ImageButton ksinfo_exit=((ImageButton)KyUI.get("ksinfo_exit"));
+  ksinfo_buttony.setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      ui_textValueRange((TextBox)e, 1, PAD_MAX);
+    }
+  }
+  );
+  ksinfo_buttonx.setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      ui_textValueRange((TextBox)e, 1, PAD_MAX);
+    }
+  }
+  );
+  ksinfo_chain.setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      ui_textValueRange((TextBox)e, 1, 8);
+    }
+  }
+  );
+  ((Button)KyUI.get("ks_info")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.addLayer(frame_ksinfo);
+      final String beforeEdit=currentKs.file.getAbsolutePath();
+      final String beforeTitle=currentKs.info.title;
+      final String beforeProducerName=currentKs.info.producerName;
+      final int beforeButtonX=currentKs.info.buttonX;
+      final int beforeButtonY=currentKs.info.buttonY;
+      final int beforeChain=currentKs.info.chain;
+      final boolean beforeSquareButtons=currentKs.info.squareButtons;
+      ksinfo_edit.onTextChangeListener=new EventListener() {
+        public void onEvent(Element e) {
+          String text=ksinfo_edit.getText().replace("\\", "/");
+          boolean er=!isValidFileName(text);
+          for (KsSession t : ksTabs) {//anti duplication
+            if (t!=currentKs&&t.file.getAbsolutePath().replace("\\", "/").equals(text)) {
+              er=true;
+              break;
+            }
+          }
+          ksinfo_edit.error=er;
+        }
+      };
+      ksinfo_exit.setPressListener(new MouseEventListener() {
+        public boolean onEvent(MouseEvent e, int index) {
+          if (!ksinfo_edit.error&&!ksinfo_buttonx.error&&!ksinfo_buttony.error&&!ksinfo_chain.error) {
+            currentKs.file=new File(ksinfo_edit.getText());
+            currentKs.info.title=ksinfo_title.getText();
+            currentKs.info.producerName=ksinfo_producername.getText();
+            currentKs.info.buttonX=ksinfo_buttony.valueI;
+            currentKs.info.buttonY=ksinfo_buttonx.valueI;
+            currentKs.info.chain=ksinfo_chain.valueI;
+            currentKs.info.squareButtons=ksinfo_squarebuttons.value;
+            if (!beforeTitle.equals(currentKs.info.title)||!beforeProducerName.equals(currentKs.info.producerName)||beforeButtonY!=currentKs.info.buttonY||beforeButtonX!=currentKs.info.buttonX||beforeChain!=currentKs.info.chain||beforeSquareButtons!=currentKs.info.squareButtons) {
+              currentKs.setChanged(true, true);
+            } else if (!beforeEdit.equals(currentKs.file.getAbsolutePath())) {
+              currentKs.setChanged(true, true);
+            }
+            currentKs.resize( currentKs.info.buttonX, currentKs.info.buttonY, currentKs.info.chain);
+            ks_pad.size.set(currentKs.info.buttonX, currentKs.info.buttonY);
+            ((PadButton)KyUI.get("ks_chain")).size.set(1, currentKs.info.chain);
+            ks_pad.invalidate();
+            KyUI.removeLayer();
+          }
+          return false;
+        }
+      }
+      );
+      ksinfo_edit.setText(currentKs.file.getAbsolutePath().replace("\\", "/"));
+      ksinfo_title.setText(currentKs.info.title);
+      ksinfo_producername.setText(currentKs.info.producerName);
+      ksinfo_buttony.setText(""+currentKs.info.buttonX);
+      ksinfo_buttonx.setText(""+currentKs.info.buttonY);
+      ksinfo_chain.setText(""+currentKs.info.chain);
+      ksinfo_squarebuttons.value=currentKs.info.squareButtons;
+      return false;
+    }
+  }
+  );
   ((PadButton)KyUI.get("ks_pad")).buttonListener=new PadButton.ButtonListener() {
     public void accept(IntVector2 click, IntVector2 coord, int action) {//only sends in-range events.
       if (action==PadButton.PRESS_L) {

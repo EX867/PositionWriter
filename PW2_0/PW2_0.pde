@@ -22,9 +22,6 @@ import pw2.element.*;
 //remove KsButton link in SampleState and LedCounter.
 //
 // skinedit : change theme to appcompat-material(later...)
-// uncloud : wait uncloud update!!
-// uncloud : customize list : display date and upload state inside list.
-// uncloud : infoviewer design upgrade.
 //===initialVars===//
 String initialText="// === PW 2.0 === //";
 float initialWidth=1420;
@@ -149,11 +146,14 @@ void main_setup() {
   ElementLoader.loadExternal(joinPath(getCodePath(), "CommandScript.jar"));
   LayoutLoader.loadXML(frame_main=KyUI.getRoot(), loadXML("layout.xml"));
   LayoutLoader.loadXML(frame_changetitle=KyUI.getNewLayer().setAlpha(100), loadXML("changetitle.xml"));
+  LayoutLoader.loadXML(frame_ksinfo=KyUI.getNewLayer().setAlpha(100), loadXML("ksinfo.xml"));
   KyUI.taskManager.executeAll();//add all element
   //initialize
   statusL=(StatusBar)KyUI.get("main_statusL");
   statusR=(StatusBar)KyUI.get("main_statusR");
   led_filetabs=((TabLayout)KyUI.get("led_filetabs"));
+  ks_filetabs=((TabLayout)KyUI.get("ks_filetabs"));
+  ks_pad=((PadButton)KyUI.get("ks_pad"));
   color_lp=VelocityButton.color_lp;
   color_vel=color_lp;
   ((TabLayout)KyUI.get("main_tabs")).setTabNames(new String[]{"KEYLED", "KEYSOUND", "SETTINGS", "WAVEDIT", "MACRO"});
@@ -211,6 +211,13 @@ void main_setup() {
     addLedTab(createNewLed());
     addKsTab(createNewKs());
   }
+  ((LinearList)KyUI.get("ks_fileview")).setFixedSize(30);
+  FileSelectorButton.listDirectory(((LinearList)KyUI.get("ks_fileview")), new File(path_global), new java.util.function.Consumer<File>() {
+    public void accept(File file) {
+      println("file accept : "+file.getAbsolutePath());
+    }
+  }
+  );
   if (!DEVELOPER_BUILD&&new File(joinPath(dataPath, "Initial")).isFile()) {//detect first time use.
     println("initial open");
     //KyUI.addLayer(initialLayer);
@@ -223,7 +230,6 @@ void main_setup() {
     }
   }
   ).start();
-  //uncloud_setup();//later
   KyUI.taskManager.executeAll();
   KyUI.getRoot().invalidate();//invalidate all!
   //add shortcuts
