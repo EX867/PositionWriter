@@ -87,7 +87,7 @@ class LedScript extends CommandScript {
     //assert script.getCommands().get(index) instanceof DelayCommand
     DelayCommand info=(DelayCommand)getCommands().get(line);
     if (info.isFraction) {
-      return floor((info.up*2400/(getBpm(line)*info.down))*100);
+      return round((info.up*2400/(getBpm(line)*info.down))*100);
     } else return info.up;
   }
   int getFrameCount() {

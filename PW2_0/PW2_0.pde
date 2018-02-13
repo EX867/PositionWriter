@@ -154,6 +154,9 @@ void main_setup() {
   led_filetabs=((TabLayout)KyUI.get("led_filetabs"));
   ks_filetabs=((TabLayout)KyUI.get("ks_filetabs"));
   ks_pad=((PadButton)KyUI.get("ks_pad"));
+  ks_chain=((PadButton)KyUI.get("ks_chain"));
+  ks_soundindex=((TextBox)KyUI.get("ks_soundindex"));
+  ks_ledindex=((TextBox)KyUI.get("ks_ledindex"));
   color_lp=VelocityButton.color_lp;
   color_vel=color_lp;
   ((TabLayout)KyUI.get("main_tabs")).setTabNames(new String[]{"KEYLED", "KEYSOUND", "SETTINGS", "WAVEDIT", "MACRO"});

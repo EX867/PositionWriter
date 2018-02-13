@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import com.karnos.commandscript.Analyzer;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import javax.sound.midi.*;
 TextTransfer textTransfer;
 //
 //===processing utils===//
@@ -473,10 +474,107 @@ void LedToGif(String path, LedScript script) {
   }
   e.finish();
 }
-String MidiToLed(String path) {
-  //#ADD
-  return "";
+class TimeMidiMessage implements Comparable<TimeMidiMessage> {
+  MidiMessage msg=null;
+  long time;
+  TimeMidiMessage(MidiMessage msg_, long time_) {
+    msg=msg_;
+    time=time_;
+  }
+  @Override public int compareTo(TimeMidiMessage other) {
+    int ret=(int)(time-other.time);
+    if (ret==0) {
+      return 1;
+    }
+    return ret;
+  }
+}
+String MidiToLed(String path) {//default changed to 10x10...
+  //String ret="//"+getFileName(path);
+  Sequence sequence=null;
+  try {
+    sequence= MidiSystem.getSequence(new File(path));
+  }
+  catch(Exception e) {
+    e.printStackTrace();
+  }
+  if (sequence==null) {
+    return "";
+  }
+  Track[] tracks=sequence.getTracks();
+  TreeSet<TimeMidiMessage> set=new TreeSet<TimeMidiMessage>();
+  for (int t=0; t<tracks.length; t++) {
+    for (int i=0; i < tracks[t].size(); i++) {//order messages
+      MidiEvent event = tracks[t].get(i);
+      set.add(new TimeMidiMessage(event.getMessage(), event.getTick()));
+    }
+  }
+  ArrayList<Command> cmds=new ArrayList<Command>();
+  cmds.ensureCapacity(set.size());
+  int bpm=120;
+  while (!set.isEmpty()) {
+    TimeMidiMessage m=set.pollFirst();
+    if (m.msg instanceof ShortMessage) {
+      ShortMessage msg=(ShortMessage)m.msg;//no note on with velocity 0 in here...
+      int x=lpMidiToLedPosX(msg.getData1());
+      int y=lpMidiToLedPosY(msg.getData1());
+      if (msg.getCommand()==ShortMessage.NOTE_ON) {
+        cmds.add(new OnCommand(x, x, y, y, color_lp[msg.getData2()], msg.getData2()));
+      } else if (msg.getCommand()==ShortMessage.NOTE_OFF) {
+        cmds.add(new OffCommand(x, x, y, y));
+      }
+    } else if (m.msg instanceof MetaMessage) {
+      MetaMessage message=(MetaMessage)m.msg;
+      if (message.getType()==0x58) {//Time Signature
+        //int numerator=message.getData()[0], denominator=round(pow(2, message.getData()[1])), ticksPerClick=message.getData()[2], notes32PerQuarter=message.getData()[3];
+        //println("Time Signature : "+numerator+"/"+denominator+" "+ticksPerClick+"-"+notes32PerQuarter);
+      } else if (message.getType()==0x51) {
+        bpm=60000000/(256*256*message.getData()[0]+256*message.getData()[1]+message.getData()[2]);
+        println("bpm : "+bpm);
+        cmds.add(new BpmCommand(bpm));
+      }
+    }
+    if (!set.isEmpty()) {
+      if (set.first().time>m.time) {
+        println((set.first().time-m.time)*60000 / (bpm * Sequence.PPQ));
+        IntVector2 fr=toFraction((set.first().time-m.time)*60000 / (bpm * Sequence.PPQ), 100);
+        cmds.add(new DelayCommand(abs(fr.x), abs(fr.y)));
+      }
+    }
+  }
+  StringBuilder builder=new StringBuilder();
+  builder.append(cmds.get(0).toString());
+  for (int a=0; a < cmds.size(); a++) {
+    builder.append("\n").append(cmds.get(a).toString());
+  }
+  return builder.toString();
 }
 void LedToMidi(String path, LedScript script) {
   //#ADD
+}
+int lpMidiToLedPosX(int dat1) {
+  return dat1%10;
+}
+int lpMidiToLedPosY(int dat1) {
+  return 9-dat1/10;
+}
+public static IntVector2 toFraction(double d, int factor) {//https://stackoverflow.com/questions/5968636/converting-a-float-into-a-string-fraction-representation
+  StringBuilder sb = new StringBuilder();
+  if (d < 0) {
+    sb.append('-');
+    d = -d;
+  }
+  long l = (long) d;
+  if (l != 0) sb.append(l);
+  d -= l;
+  double error = Math.abs(d);
+  int bestDenominator = 1;
+  for (int i=2; i<=factor; i++) {
+    double error2 = Math.abs(d - (double) Math.round(d * i) / i);
+    if (error2 < error) {
+      error = error2;
+      bestDenominator = i;
+    }
+  }
+  return new IntVector2((int)Math.round(d * bestDenominator), bestDenominator);
 }

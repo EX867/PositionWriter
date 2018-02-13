@@ -49,6 +49,9 @@ Button fsTime;
 TabLayout led_filetabs;
 TabLayout ks_filetabs;
 PadButton ks_pad;
+PadButton ks_chain;
+TextBox ks_soundindex;
+TextBox ks_ledindex;
 //==Additional frames===//
 CachingFrame frame_main;
 CachingFrame frame_changetitle;
