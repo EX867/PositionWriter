@@ -18,66 +18,60 @@ class LedCounter implements Comparable<LedCounter> {
     offset=offset_;
   }
   public int compareTo(LedCounter other) {
-    return (int)(offset+script.displayTime-other.offset-other.script.displayTime);
+    int ret= (int)(offset+script.displayTime-other.offset-other.script.displayTime);
+    if (ret==0) {
+      return 1;
+    }
+    return ret;
   }
 }
 class LightThread implements Runnable {
   Thread thread;//must set!!
   Predicate<LedCounter> onEnd;
   boolean active=true;//set inactive to exit.
-  HashMap<IntVector3, LedCounter> scripts=new HashMap<IntVector3, LedCounter>();
   TreeSet<LedCounter> queue=new TreeSet<LedCounter>();//new LinkedList<LedCounter>()
   MidiMapDevice deviceLink;
   int[][] display;//used to not change LED array values...
   int[][] velDisplay;
+  boolean sleeping=false;
   //
   //syncs are needed when ui thread access this thread. and interrupt.
   //use these when load/remove led.
-  LedCounter addTrack(IntVector3 coord, LedScript script) {
+  LedCounter addTrack(LedScript script) {
     LedCounter counter=new LedCounter(script, System.currentTimeMillis());
-    synchronized(this) {
-      scripts.put(coord, counter);
-    }
-    thread.interrupt();
     return counter;
   }
-  void removeTrack(IntVector3 coord) {
-    synchronized(this) {
-      scripts.get(coord).active=false;//auto remove
-      scripts.remove(coord);
-    }
-    thread.interrupt();
-  }
-  //use this when user pressed keySound button
-  void start(IntVector3 coord) {
-    LedCounter led=scripts.get(coord);
-    if (led!=null) {
-      start(led, 0);
-    }
+  void removeTrack(LedCounter script) {
+    script.active=false;//auto remove
   }
   //use this when user press led play.
   void start(LedCounter led, int displayTime) {
-    synchronized(led) {
-      led.offset=System.currentTimeMillis()-displayTime;
-      led.active=true;
-      led.paused=false;
-      led.loopCount=0;
-      led.script.displayFrame=led.script.getFrameByTime(displayTime);
-      led.script.setTimeByFrame();
-    }
-    checkDisplay(led.script.displayPad);
-    if (mainTabs_selected==LED_EDITOR) {
-      copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
-    }
     synchronized(queue) {
+      synchronized(led) {
+        led.offset=System.currentTimeMillis()-displayTime;
+        led.active=true;
+        led.paused=false;
+        led.loopCount=0;
+        led.script.displayFrame=led.script.getFrameByTime(displayTime);
+        led.script.setTimeByFrame();
+      }
+      checkDisplay(led.script.displayPad);
+      if (mainTabs_selected==LED_EDITOR) {
+        copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
+      }
+      queue.remove(led);
       queue.add(led);
+      //println(displayTime+" -> start");
     }
-    thread.interrupt();
+    if (sleeping) {
+      thread.interrupt();
+    }
   }
   void stop(LedCounter led) {
     led.active=false;
     synchronized(queue) {
       queue.remove(led);
+      //println(" -> remove");
     }
   }
   void pause(LedCounter led) {
@@ -87,15 +81,21 @@ class LightThread implements Runnable {
     }
     led.script.displayTime=(int)(System.currentTimeMillis()-led.offset);
     led.script.setFrameByTime();
-    thread.interrupt();
+    if (sleeping) {
+      thread.interrupt();
+    }
   }
   void unPause(LedCounter led) {
     synchronized(queue) {
       led.paused=false;
       led.offset=System.currentTimeMillis()-led.script.displayTime;
+      queue.remove(led);
       queue.add(led);
+      //println(" -> reset");
     }
-    thread.interrupt();
+    if (sleeping) {
+      thread.interrupt();
+    }
   }
   void checkDisplay(PadButton pad) {
     if (pad==null) {
@@ -122,7 +122,12 @@ class LightThread implements Runnable {
       LedCounter led=queue.first();  
       copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
       led.offset=System.currentTimeMillis()-led.script.displayTime;
-      thread.interrupt();
+      //if (led.paused) {
+      //  unPause(led);
+      //}
+      if (sleeping) {
+        thread.interrupt();
+      }
     }
   }
   void updateFs(int time) {
@@ -152,11 +157,10 @@ class LightThread implements Runnable {
       synchronized(queue) {
         if (queue.size()>0&&!(mainTabs_selected==LED_EDITOR&&fs.hold())) {
           LedCounter led=queue.pollFirst();
-          if (led.active) {
+          if (led.active&&!led.paused) {
             PadButton pad=led.script.displayPad;
             checkDisplay(pad);
             if (mainTabs_selected!=LED_EDITOR||led==currentLed.led) {
-              //synchronized display
               pad.displayControl(display);
             }
             displayControlSequence(led.script, display, velDisplay);//write script's displayFrame frame to display.
@@ -170,10 +174,13 @@ class LightThread implements Runnable {
               if (led.loopStart<led.loopEnd) {
                 led.script.displayTime=Math.min(led.script.displayTime, led.loopEnd);
               }
-              led.script.setFrameByTime();
+              int frame=led.script.getFrameByTime(led.script.displayTime);
+              led.script.displayFrame=min(led.script.displayFrame+1, frame);
               if (mainTabs_selected==LED_EDITOR&&led==currentLed.led) {
                 updateFs(currentLedEditor.displayTime);//led.script.displayTime
               }
+              //println(" -> continue");
+              queue.remove(led);
               queue.add(led);
             } else {//frame out of range.
               if (led.loop) {
@@ -184,6 +191,7 @@ class LightThread implements Runnable {
                 led.offset=System.currentTimeMillis()-led.script.displayTime;
                 led.script.displayFrame=led.script.getFrameByTime(led.script.displayTime)+1;
                 led.script.setTimeByFrame();
+                queue.remove(led);
                 queue.add(led);
               } else {
                 if (led.loopStart<led.loopEnd) {
@@ -191,6 +199,7 @@ class LightThread implements Runnable {
                   led.script.setFrameByTime();
                 }
                 led.active=false;
+                //println(" -> end");
               }
               if (mainTabs_selected==LED_EDITOR) {
                 copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
@@ -200,10 +209,10 @@ class LightThread implements Runnable {
               }
             }
           }
-        }
-        if (queue.size()>0) {
-          first=queue.first();
-          calcDisplay=!(mainTabs_selected==LED_EDITOR&&fs.hold());
+          if (queue.size()>0) {
+            first=queue.first();
+            calcDisplay=!(mainTabs_selected==LED_EDITOR&&fs.hold());
+          }
         }
       }//synchronized
       if (mainTabs_selected==LED_EDITOR) {
@@ -212,26 +221,29 @@ class LightThread implements Runnable {
       if (calcDisplay) {
         long nextTime=0;
         synchronized(first) {
-          LedScript scr=first.script;
-          nextTime=scr.displayTime-System.currentTimeMillis()+first.offset;
+          nextTime=first.script.displayTime-System.currentTimeMillis()+first.offset;
           if (first.loopStart<first.loopEnd) {
             nextTime=Math.min(nextTime, first.loopEnd+first.offset-System.currentTimeMillis());
           }
         }
         if (nextTime>0) {
+          sleeping=true;
           try {
             //println("["+frameCount+"] delay : "+(nextTime));
             Thread.sleep(nextTime);
           }
           catch(InterruptedException e) {
           }
+          sleeping=false;
         }
       } else {
+        sleeping=true;
         try {
           Thread.sleep(10000);
         }
         catch(InterruptedException e) {
         }
+        sleeping=true;
       }
     }
   }

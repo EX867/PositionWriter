@@ -184,7 +184,9 @@ class LedScript extends CommandScript {
     public void processCommand(Analyzer analyzer, int line, Command before, Command after) {
       setChanged(true, false);
       //println("\""+before+"\" to \""+after+"\" line "+line);
-      setTitleProcessing("reading...("+getProgress()+"/"+getTotal()+")");
+      if (getProgress()%100==0) {//for window manager!!
+        setTitleProcessing("reading...("+getProgress()+"/"+getTotal()+")");
+      }
       if (bypass)return;
       int frame=getFrame(line);
       if (after==null) {

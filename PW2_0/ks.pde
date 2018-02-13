@@ -76,7 +76,7 @@ class KsSession {//
     }
   }
   void resetIndex(int chain) {
-    if (chain<0||chain>KS.size()) {
+    if (chain<0||chain>=KS.size()) {
       return;
     }
     KsButton[][] btns=KS.get(chain);
@@ -183,14 +183,14 @@ class KsButton {
     }
     LedScript script=loadLedScript(path, readFile(path));
     script.displayPad=ks_pad;
-    led.add(index, session.light.addTrack(pos, script));
+    led.add(index, session.light.addTrack(script));
     setLedLoop(index, loop);
   }
   void reorderLed(int a, int b) {
     Collections.swap(led, a, b);
   }
   void removeLed(int index) {
-    session.light.removeTrack(pos);
+    session.light.removeTrack(led.get(index));
     led.remove(index);
   }
   void setLedLoop(int index, int loop) {
@@ -215,7 +215,7 @@ class KsButton {
       if (ledIndex>=led.size()) {
         ledIndex=0;
       }
-      session.light.start(pos);
+      session.light.start(led.get(ledIndex), 0);
       ledIndex++;
     }
     session.notePress[pos.x][pos.y]=true;
@@ -322,13 +322,13 @@ void ks_setup() {
     public void accept(IntVector2 click, IntVector2 coord, int action) {//only sends in-range events.
       if (action==PadButton.PRESS_L) {
         currentKs.selection.set(coord);
-        currentKs.getSelected().noteOn();
+        currentKs.get(currentKs.chain, coord.x, coord.y).noteOn();
       } else if (action==PadButton.PRESS_R) {
         currentKs.selection.set(coord);
       } else if (action==PadButton.DRAG_L||action==PadButton.DRAG_R) {
-        currentKs.getSelected().noteOff();
+        currentKs.get(currentKs.chain, coord.x, coord.y).noteOff();
       } else if (action==PadButton.RELEASE_L) {
-        currentKs.getSelected().noteOff();
+        currentKs.get(currentKs.chain, coord.x, coord.y).noteOff();
       }
     }
   };
@@ -434,7 +434,7 @@ KsSession loadKs(String filename) {
       for (Command cmd_ : commands) {
         if (cmd_ instanceof KsCommand) {
           KsCommand cmd=(KsCommand)cmd_;
-          println("load : "+cmd.filename);
+          //println("load : "+cmd.filename);
           if (cmd.relative) {
             session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadSound(joinPath(soundsf.getAbsolutePath(), cmd.filename), cmd.loop);
           } else {

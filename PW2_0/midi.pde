@@ -29,8 +29,7 @@ public class PadPressCommand implements InputBehavior {
       if (info.getData2()!=0) {
         if (params.length!=2)return;
         if (mainTabs_selected==LED_EDITOR) {
-          action_on.accept(null, new IntVector2());
-          //currentLed.printLed(params[0], params[1], true, 0);
+          action_autoInput.accept(new IntVector2(params[0], params[1]));
         } else if (mainTabs_selected==KS_EDITOR) {
           IntVector2 vec=new IntVector2(params[0], params[1]);
           //println("midi on : ("+vec.x+", "+vec.y+")");

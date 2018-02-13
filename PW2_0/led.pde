@@ -1,6 +1,7 @@
 java.util.function.Consumer<String> action_print;
 java.util.function.BiConsumer<IntVector2, IntVector2> action_on;
 java.util.function.BiConsumer<IntVector2, IntVector2> action_off;
+java.util.function.Consumer<IntVector2> action_autoInput;
 void led_setup() {
   final TextBox changetitle_edit=((TextBox)KyUI.get("changetitle_edit"));
   final ImageButton changetitle_exit=((ImageButton)KyUI.get("changetitle_exit"));
@@ -99,7 +100,7 @@ void led_setup() {
       action_print.accept("\noff "+pos);
     }
   };
-  final java.util.function.Consumer<IntVector2> autoInput=new java.util.function.Consumer<IntVector2>() {
+  action_autoInput=new java.util.function.Consumer<IntVector2>() {
     public void accept(IntVector2 coord) {
       int line=currentLedEditor.getCommands().size();
       int frame=currentLedEditor.LED.size()-1;
@@ -165,7 +166,7 @@ void led_setup() {
           edited=true;
           for (int b=min(coord.y, click.y); b<=max(coord.y, click.y); b++) {
             for (int a=min(coord.x, click.x); a<=max(coord.x, click.x); a++) {
-              autoInput.accept(new IntVector2(a, b));
+              action_autoInput.accept(new IntVector2(a, b));
             }
           }
         }
@@ -254,7 +255,7 @@ void led_setup() {
   };
   fs.unholdListener=new EventListener() {
     public void onEvent(Element e) {
-      ledTabs.get(0).light.unhold();
+      currentLed.light.unhold();
     }
   };
   ((TabLayout)KyUI.get("led_filetabs")).tabSelectListener=new ItemSelectListener() {
