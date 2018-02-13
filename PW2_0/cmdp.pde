@@ -41,18 +41,18 @@ class LedScript extends CommandScript {
     displayPad=displayPad_;
     processor=new LedProcessor();
     processor.clear(null);
-    cmdset=ledCommands;
+    setCmdSet(ledCommands);
+    readAll();
+    setChanged(false, false);
+  }
+  void setCmdSet(LineCommandType cmdset_) {
+    cmdset=cmdset_;
     if (editor==null) {
       setAnalyzer(new DelimiterParser(cmdset, processor));
     } else {
       editor.setContent(this);
       editor.setAnalyzer(new DelimiterParser(cmdset, processor));
     }
-    setChanged(false, false);
-  }
-  void setCmdSet(LineCommandType cmdset_) {
-    cmdset=cmdset_;
-    readAll();
   }
   LineCommandType getCmdSet() {
     return cmdset;
@@ -148,11 +148,15 @@ class LedScript extends CommandScript {
   void displayControl() {
     if (currentLedEditor==this) {
       if (displayPad!=null) {
+        currentLed.light.checkDisplay(displayPad);
         displayPad.displayControl(LED.get(displayFrame));
         displayPad.invalidate();
       }
-      midiControl(velLED.get(displayFrame));
+      midiControl();
     }
+  }
+  void midiControl() {
+    currentLed.light.midiControl(velLED.get(displayFrame));
   }
   void setChanged(boolean v, boolean force) {
     if (v) {
@@ -175,6 +179,20 @@ class LedScript extends CommandScript {
         led_filetabs.invalidate();
       }
       changed=false;
+    }
+  }
+  void infiniteLoopOff(int[][] display, int[][] velDisplay) {
+    int[][] lastFrame=LED.get(LED.size()-1);
+    int[][] velLastFrame=velLED.get(velLED.size()-1);
+    for (int a=0; a<lastFrame.length; a++) {
+      for (int b=0; b<lastFrame[a].length; b++) {
+        if (lastFrame[a][b]!=COLOR_OFF) {
+          display[a][b]=COLOR_OFF;
+        }
+        if (velLastFrame[a][b]!=COLOR_OFF) {
+          velDisplay[a][b]=COLOR_OFF;
+        }
+      }
     }
   }
   class LedProcessor extends LineCommandProcessor {

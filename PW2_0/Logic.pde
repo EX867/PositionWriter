@@ -17,6 +17,7 @@ static final int KS_INFO=2;
 //===Tabs===//
 int mainTabs_selected=LED_EDITOR;
 int externalFrame=NONE;
+int ksControl_selected=1;//ctrl
 //===States===//
 int InputMode=AUTOINPUT;
 int ColorMode=VEL;

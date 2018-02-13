@@ -5,7 +5,6 @@ import com.karnos.midimap.InputBehavior;
 void midi_setup() {
   MidiCommand.setBase(this);
   MidiCommand.addInput("press", new PadPressCommand());
-  MidiCommand.addInput("release", new PadReleaseCommand());
   MidiCommand.addInput("chain", new PadChainCommand());
   MidiCommand.reloadDevices(joinPath(path_global, path_midi));
 }
@@ -28,37 +27,38 @@ public class PadPressCommand implements InputBehavior {
       ShortMessage info=(ShortMessage)msg;
       if (info.getData2()!=0) {
         if (params.length!=2)return;
-        if (mainTabs_selected==LED_EDITOR) {
-          action_autoInput.accept(new IntVector2(params[0], params[1]));
+        if (mainTabs_selected==LED_EDITOR) {//change these to devicelink!
+          if (0<=params[0]&&params[0]<currentLedEditor.info.buttonX&&0<=params[0]&&params[1]<currentLedEditor.info.buttonY) {
+            action_autoInput.accept(new IntVector2(params[0], params[1]));
+          }
         } else if (mainTabs_selected==KS_EDITOR) {
-          IntVector2 vec=new IntVector2(params[0], params[1]);
-          //println("midi on : ("+vec.x+", "+vec.y+")");
-          ks_pad.buttonListener.accept(vec, vec, PadButton.PRESS_L);
+          if (0<=params[0]&&params[0]<currentKs.info.buttonX&&0<=params[0]&&params[1]<currentKs.info.buttonY) {
+            IntVector2 vec=new IntVector2(params[0], params[1]);
+            //println("midi on : ("+vec.x+", "+vec.y+")");
+            ks_pad.buttonListener.accept(vec, vec, PadButton.PRESS_L);
+          }
         }
       } else {
         if (mainTabs_selected==KS_EDITOR) {
-          IntVector2 vec=new IntVector2(params[0], params[1]);
-          //println("midi off : ("+vec.x+", "+vec.y+")");
-          ks_pad.buttonListener.accept(vec, vec, PadButton.RELEASE_L);
+          if (0<=params[0]&&params[0]<currentKs.info.buttonX&&0<=params[0]&&params[1]<currentKs.info.buttonY) {
+            IntVector2 vec=new IntVector2(params[0], params[1]);
+            //println("midi off : ("+vec.x+", "+vec.y+")");
+            ks_pad.buttonListener.accept(vec, vec, PadButton.RELEASE_L);
+          }
         }
       }
-    }
-  }
-}
-public class PadReleaseCommand implements InputBehavior {
-  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
-    if (mainTabs_selected==KS_EDITOR) {
-      //keySoundPad.noteOff(params[0], params[1]);
     }
   }
 }
 public class PadChainCommand implements InputBehavior {
   @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {
     if (mainTabs_selected==KS_EDITOR) {
-      currentKs.chain=params[0];
-      currentKs.resetIndex(currentKs.chain);
-      ((PadButton)KyUI.get("ks_chain")).selected.set(0, currentKs.chain);
-      KyUI.get("ks_chain").invalidate();
+      if (0<=params[0]&&params[0]<currentKs.info.chain) {
+        currentKs.chain=params[0];
+        currentKs.resetIndex(currentKs.chain);
+        ((PadButton)KyUI.get("ks_chain")).selected.set(0, currentKs.chain);
+        KyUI.get("ks_chain").invalidate();
+      }
     }
   }
 }

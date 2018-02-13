@@ -177,6 +177,11 @@ void main_setup() {
   ((TabLayout)KyUI.get("main_tabs")).tabSelectListener=new ItemSelectListener() {
     public void onEvent(int index) {
       mainTabs_selected=index;
+      if (index==LED_EDITOR) {
+        currentLedEditor.midiControl();
+      } else if (index==KS_EDITOR) {
+        currentKs.light.midiControl(currentKs.light.velDisplay);
+      }
     }
   };
   KyUI.changeLayout();//layout all!

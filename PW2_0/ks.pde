@@ -32,6 +32,8 @@ class KsSession {//
   AudioContext ksac=new AudioContext();
   MultiSamplePlayer player;
   ArrayList<KsButton[][]> KS;
+  ArrayList<String[][]> countText;
+  ArrayList<String[][]> autoPlayOrder;
   //
   IntVector2 selection=new IntVector2(0, 0);
   int chain=0;//selected chain
@@ -41,23 +43,26 @@ class KsSession {//
     Thread thread=new Thread(light=new LightThread());
     light.thread=thread;
     player = new MultiSamplePlayer(ksac, 10);
-    //player.onEnd=new Predicate<MultiMultiSamplePlayer.SampleStatePlayer.MultiSamplePlayer.SampleStateState>() {
-    //  public boolean test(MultiMultiSamplePlayer.SampleStatePlayer.MultiSamplePlayer.SampleStateState sample) {
-    //    return true;
-    //  }
-    //};
-    //light.onEnd=new Predicate<LedCounter>() {
-    //  public boolean test(LedCounter counter) {
-    //    return true;
-    //  }
-    //};
     resize(info.buttonX, info.buttonY, 8);
     thread.start();
+  }
+  void textControl() {
+    if (currentKs==this) {
+      if (ksControl_selected==1) {
+        ks_pad.textControl(countText.get(chain));
+      } else {
+        ks_pad.textControl(autoPlayOrder.get(chain));
+      }
+    }
   }
   KsButton getSelected() {
     return KS.get(chain)[selection.x][selection.y];
   }
   KsButton get(int c, int x, int y) {
+    if (c<0||c>=KS.size()) {
+      System.err.println("error occurred!");
+      c=KS.size()-1;//...
+    }
     return KS.get(c)[x][y];
   }
   void resize(int x, int y, int c) {//parameter order...fix
@@ -66,14 +71,25 @@ class KsSession {//
     info.chain=c;
     notePress=new boolean[info.buttonX][info.buttonY];
     KS=new ArrayList<KsButton[][]>();
+    countText=new ArrayList<String[][]>();
+    autoPlayOrder=new ArrayList<String[][]>();
     for (int ch=0; ch<info.chain; ch++) {
       KS.add(new KsButton[info.buttonX][info.buttonY]);
+      countText.add(new String[info.buttonX][info.buttonY]);
+      autoPlayOrder.add(new String[info.buttonX][info.buttonY]);
       for (int a=0; a<info.buttonX; a++) {
         for (int b=0; b<info.buttonY; b++) {
           KS.get(ch)[a][b]=new KsButton(this, new IntVector3(a, b, ch));
+          countText.get(ch)[a][b]="0\n0";
+          autoPlayOrder.get(ch)[a][b]="";
         }
       }
     }
+  }
+  void selectChain(int c) {
+    chain=c;
+    textControl();//#TEST
+    resetIndex(chain);
   }
   void resetIndex(int chain) {
     if (chain<0||chain>=KS.size()) {
@@ -155,7 +171,9 @@ class KsButton {
       samples.put(sample.sample, list);
     }
     sound.add(index, sample);
+    sample.link=this;
     setSoundLoop(index, loop);
+    session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
   }
   void reorderSound(int a, int b) {//must in range!
     Collections.swap(sound, a, b);
@@ -170,6 +188,7 @@ class KsButton {
     }
     session.player.stop(sample);
     sound.remove(index);
+    session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
   }
   void setSoundLoop(int index, int loop) {
     sound.get(index).loopCount=loop;
@@ -184,7 +203,9 @@ class KsButton {
     LedScript script=loadLedScript(path, readFile(path));
     script.displayPad=ks_pad;
     led.add(index, session.light.addTrack(script));
+    led.get(index).link=this;
     setLedLoop(index, loop);
+    session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
   }
   void reorderLed(int a, int b) {
     Collections.swap(led, a, b);
@@ -192,6 +213,7 @@ class KsButton {
   void removeLed(int index) {
     session.light.removeTrack(led.get(index));
     led.remove(index);
+    session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
   }
   void setLedLoop(int index, int loop) {
     led.get(index).loopCount=loop;
@@ -224,11 +246,15 @@ class KsButton {
   }
   void noteOff() {
     if (session.notePress[pos.x][pos.y]) {
-      if (sound.size()>0&&soundIndex-1>0&&soundIndex-1<sound.size()&&sound.get(soundIndex-1).loopCount==0) {
+      if (sound.size()>0&&soundIndex-1>=0&&soundIndex-1<sound.size()&&sound.get(soundIndex-1).loopCount==0) {
         session.player.stop(sound.get(soundIndex-1));
       }
-      if (led.size()>0&&ledIndex-1>0&&ledIndex-1<led.size()&&led.get(ledIndex-1).loopCount==0) {
+      if (led.size()>0&&ledIndex-1>=0&&ledIndex-1<led.size()&&led.get(ledIndex-1).loopCount==0) {
+        println("loop count 0 end");
         session.light.stop(led.get(ledIndex-1));
+        led.get(ledIndex-1).script.infiniteLoopOff(session.light.display, session.light.velDisplay);
+        session.light.midiControl(session.light.velDisplay);
+        ks_pad.invalidate();
       }
       println("chain "+pos.z+", ("+pos.x+", "+pos.y+") note off");
       session.notePress[pos.x][pos.y]=false;
@@ -236,6 +262,13 @@ class KsButton {
   }
 }
 void ks_setup() {
+  ((TabLayout)KyUI.get("ks_control")).tabSelectListener=new ItemSelectListener() {
+    public void onEvent(int index) {
+      ksControl_selected=index;
+      currentKs.textControl();
+      ks_pad.invalidate();
+    }
+  };
   final TextBox ksinfo_edit=((TextBox)KyUI.get("ksinfo_edit"));
   final TextBox ksinfo_title=((TextBox)KyUI.get("ksinfo_title"));
   final TextBox ksinfo_producername=((TextBox)KyUI.get("ksinfo_producername"));
@@ -335,8 +368,7 @@ void ks_setup() {
   ((PadButton)KyUI.get("ks_chain")).buttonListener=new PadButton.ButtonListener() {
     public void accept(IntVector2 click, IntVector2 coord, int action) {
       if (action==PadButton.PRESS_L) {
-        currentKs.chain=coord.y;
-        currentKs.resetIndex(currentKs.chain);
+        currentKs.selectChain(coord.y);
       }
     }
   };
@@ -435,10 +467,14 @@ KsSession loadKs(String filename) {
         if (cmd_ instanceof KsCommand) {
           KsCommand cmd=(KsCommand)cmd_;
           //println("load : "+cmd.filename);
-          if (cmd.relative) {
-            session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadSound(joinPath(soundsf.getAbsolutePath(), cmd.filename), cmd.loop);
+          if (0<cmd.x&&cmd.x<=session.info.buttonX&&0<cmd.y&&cmd.y<=session.info.buttonY&&0<cmd.c&&cmd.c<=session.info.chain) {
+            if (cmd.relative) {
+              session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadSound(joinPath(soundsf.getAbsolutePath(), cmd.filename), cmd.loop);
+            } else {
+              session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadSound(cmd.filename, cmd.loop);
+            }
           } else {
-            session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadSound(cmd.filename, cmd.loop);
+            System.err.println("chain out of range found in keyLED file! loading ignored");
           }
         }
       }
@@ -459,6 +495,8 @@ KsSession loadKs(String filename) {
             if (0<x&&x<=session.info.buttonX&&0<y&&y<=session.info.buttonY&&0<c&&c<=session.info.chain) {
               println("load : "+files[a].getAbsolutePath());
               session.get(c-1, x-1, y-1).loadLed(files[a].getAbsolutePath().replace("\\", "/"), loop);
+            } else {
+              System.err.println("chain out of range found in keyLED file! loading ignored");
             }
           }
         }
@@ -475,7 +513,11 @@ KsSession loadKs(String filename) {
             System.err.println("relative path found in keyLED file! loading ignored");
             //session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadLed(joinPath(file.getAbsolutePath(), cmd.filename),cmd.loop);
           } else {
-            session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadLed(cmd.filename, cmd.loop);
+            if (0<cmd.x&&cmd.x<=session.info.buttonX&&0<cmd.y&&cmd.y<=session.info.buttonY&&0<cmd.c&&cmd.c<=session.info.chain) {
+              session.get(cmd.c-1, cmd.x-1, cmd.y-1).loadLed(cmd.filename, cmd.loop);
+            } else {
+              System.err.println("chain out of range found in keyLED file! loading ignored");
+            }
           }
         }
       }
@@ -517,11 +559,21 @@ KsSession addKsFileTab(String filename) {
   return tab;
 }
 void selectKsTab(int index) {
+  if (index>=ksTabs.size()) {
+    System.err.println("selectks index : "+index);
+  }
   currentKs=ksTabs.get(index);
   ((ImageToggleButton)KyUI.get("ks_loop")).value=currentKs.loop;
   ((FrameSlider)KyUI.get("ks_frameslider")).valueS=currentKs.loopStart;
   ((FrameSlider)KyUI.get("ks_frameslider")).valueE=currentKs.loopEnd;
-  ((PadButton)KyUI.get("ks_pad")).size.set(info.buttonX, info.buttonY);
-  ((PadButton)KyUI.get("ks_chain")).size.set(1, info.chain);
-  KyUI.get("ks_pad").invalidate();
+  ks_pad.size.set(currentKs.info.buttonX, currentKs.info.buttonY);
+  ks_pad.selected.set(currentKs.selection);
+  currentKs.light.checkDisplay(ks_pad);
+  ks_pad.displayControl(currentKs.light.display);
+  currentKs.light.midiControl(currentKs.light.velDisplay);
+  currentKs.textControl();
+  ((PadButton)KyUI.get("ks_chain")).size.set(1, currentKs.info.chain);
+  ((PadButton)KyUI.get("ks_chain")).selected.set(0, currentKs.chain);
+  ks_pad.invalidate();
+  ((PadButton)KyUI.get("ks_chain")).invalidate();
 }

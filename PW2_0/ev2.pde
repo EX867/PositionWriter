@@ -262,6 +262,36 @@ void setup_ev2() {
       String filename=de.file().getAbsolutePath().replace("\\", "/");
       if (de.file().isDirectory()) {
         addKsFileTab(filename);
+      } else if (de.file().isFile()&&getFileName(filename).equals("autoPlay")) {
+        UnipackInfo info_=info;
+        info=currentKs.info;
+        LedScript autoPlay=loadApScript(filename, readFile(filename));
+        int c=0;
+        int cnt=1;
+        for (Command cmd : autoPlay.getCommands()) {
+          if (cmd instanceof ApOnCommand) {
+            ApOnCommand apOn=(ApOnCommand)cmd;
+            if (c>=0&&c<currentKs.info.chain&&apOn.x1>0&&apOn.y1>0&&apOn.x1<=currentKs.info.buttonX&&apOn.y1<=currentKs.info.buttonY) {
+              if (currentKs.autoPlayOrder.get(c)[apOn.x1-1][apOn.y1-1].isEmpty()) {
+                currentKs.autoPlayOrder.get(c)[apOn.x1-1][apOn.y1-1]+=cnt;
+              } else {
+                textSize(15);
+                int index=max(0, currentKs.autoPlayOrder.get(c)[apOn.x1-1][apOn.y1-1].lastIndexOf("\n"));
+                if (textWidth(currentKs.autoPlayOrder.get(c)[apOn.x1-1][apOn.y1-1].substring(index))<50) {
+                  currentKs.autoPlayOrder.get(c)[apOn.x1-1][apOn.y1-1]+=" "+cnt;//#ADD range commands
+                } else {
+                  currentKs.autoPlayOrder.get(c)[apOn.x1-1][apOn.y1-1]+="\n"+cnt;//#ADD range commands
+                }
+              }
+              cnt++;
+            }
+          } else if (cmd instanceof ChainCommand) {
+            ChainCommand chainCmd=(ChainCommand)cmd;
+            c=chainCmd.c-1;
+          }
+        }
+        info=info_;
+        currentKs.textControl();
       }
     }
   }

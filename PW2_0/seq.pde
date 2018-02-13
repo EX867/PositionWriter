@@ -6,7 +6,8 @@ class LedCounter implements Comparable<LedCounter> {
   //
   LedScript script;
   long offset;//start point of this script.
-  int loopCount=0;//count by 1 until it reach LedScript's loop count!
+  int loopCount=1;
+  int loopIndex=1;//count by 1 until it reach loop count!
   KsButton link;//oh I had to find that led is assigned to what button
   //controls
   boolean paused=true;//if paused,counter will not increase.
@@ -51,7 +52,7 @@ class LightThread implements Runnable {
         led.offset=System.currentTimeMillis()-displayTime;
         led.active=true;
         led.paused=false;
-        led.loopCount=0;
+        led.loopIndex=1;
         led.script.displayFrame=led.script.getFrameByTime(displayTime);
         led.script.setTimeByFrame();
       }
@@ -154,67 +155,68 @@ class LightThread implements Runnable {
     while (active) {
       boolean calcDisplay=false;
       LedCounter first=null;
-      synchronized(queue) {
-        if (queue.size()>0&&!(mainTabs_selected==LED_EDITOR&&fs.hold())) {
-          LedCounter led=queue.pollFirst();
-          if (led.active&&!led.paused) {
-            PadButton pad=led.script.displayPad;
-            checkDisplay(pad);
-            if (mainTabs_selected!=LED_EDITOR||led==currentLed.led) {
-              pad.displayControl(display);
-            }
-            displayControlSequence(led.script, display, velDisplay);//write script's displayFrame frame to display.
-            midiControl(velDisplay);
-            boolean notEnd=led.script.displayFrame<led.script.DelayPoint.size()-1;
+      //synchronized(queue) {
+      if (queue.size()>0&&!(mainTabs_selected==LED_EDITOR&&fs.hold())) {
+        LedCounter led=queue.pollFirst();
+        if (led.active&&!led.paused) {
+          PadButton pad=led.script.displayPad;
+          checkDisplay(pad);
+          if ((mainTabs_selected==LED_EDITOR&&led==currentLed.led)||(mainTabs_selected==KS_EDITOR&&(led.link==null||led.link.session==currentKs))) {
+            pad.displayControl(display);
+          }
+          displayControlSequence(led.script, display, velDisplay);//write script's displayFrame frame to display.
+          midiControl(velDisplay);
+          boolean notEnd=led.script.displayFrame<led.script.DelayPoint.size()-1;
+          if (led.loopStart<led.loopEnd) {
+            notEnd=notEnd&&led.script.displayTime<led.loopEnd;//led.script.getTimeByFrame(led.script.displayFrame+1)
+          }
+          if (notEnd) {//not end
+            led.script.displayTime=led.script.getTimeByFrame(led.script.displayFrame+1);
             if (led.loopStart<led.loopEnd) {
-              notEnd=notEnd&&led.script.displayTime<led.loopEnd;//led.script.getTimeByFrame(led.script.displayFrame+1)
+              led.script.displayTime=Math.min(led.script.displayTime, led.loopEnd);
             }
-            if (notEnd) {//not end
-              led.script.displayTime=led.script.getTimeByFrame(led.script.displayFrame+1);
+            int frame=led.script.getFrameByTime(led.script.displayTime);
+            led.script.displayFrame=min(led.script.displayFrame+1, frame);
+            if (mainTabs_selected==LED_EDITOR&&led==currentLed.led) {
+              updateFs(currentLedEditor.displayTime);//led.script.displayTime
+            }
+            //println(" -> continue");
+            queue.remove(led);
+            queue.add(led);
+          } else {//frame out of range.
+            if (led.loop||led.loopCount==0||led.loopIndex<led.loopCount) {
+              led.script.displayTime=0;
               if (led.loopStart<led.loopEnd) {
-                led.script.displayTime=Math.min(led.script.displayTime, led.loopEnd);
+                led.script.displayTime=led.loopStart;
               }
-              int frame=led.script.getFrameByTime(led.script.displayTime);
-              led.script.displayFrame=min(led.script.displayFrame+1, frame);
-              if (mainTabs_selected==LED_EDITOR&&led==currentLed.led) {
-                updateFs(currentLedEditor.displayTime);//led.script.displayTime
-              }
-              //println(" -> continue");
+              led.offset=System.currentTimeMillis()-led.script.displayTime;
+              led.script.displayFrame=led.script.getFrameByTime(led.script.displayTime)+1;
+              led.script.setTimeByFrame();
               queue.remove(led);
               queue.add(led);
-            } else {//frame out of range.
-              if (led.loop) {
-                led.script.displayTime=0;
-                if (led.loopStart<led.loopEnd) {
-                  led.script.displayTime=led.loopStart;
-                }
-                led.offset=System.currentTimeMillis()-led.script.displayTime;
-                led.script.displayFrame=led.script.getFrameByTime(led.script.displayTime)+1;
-                led.script.setTimeByFrame();
-                queue.remove(led);
-                queue.add(led);
-              } else {
-                if (led.loopStart<led.loopEnd) {
-                  led.script.displayTime=led.loopEnd;
-                  led.script.setFrameByTime();
-                }
-                led.active=false;
-                //println(" -> end");
+              led.loopIndex++;
+            } else {
+              if (led.loopStart<led.loopEnd) {
+                led.script.displayTime=led.loopEnd;
+                led.script.setFrameByTime();
               }
-              if (mainTabs_selected==LED_EDITOR) {
-                copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
-                if (led==currentLed.led) {
-                  updateFs(currentLedEditor.displayTime);
-                }
+              led.active=false;
+              //println(" -> end");
+            }
+            if (mainTabs_selected==LED_EDITOR) {
+              copyFrame(led.script.LED.get(led.script.displayFrame), led.script.velLED.get(led.script.displayFrame));
+              if (led==currentLed.led) {
+                updateFs(currentLedEditor.displayTime);
               }
             }
           }
-          if (queue.size()>0) {
-            first=queue.first();
-            calcDisplay=!(mainTabs_selected==LED_EDITOR&&fs.hold());
-          }
         }
-      }//synchronized
+        if (queue.size()>0) {
+          first=queue.first();
+          calcDisplay=!(mainTabs_selected==LED_EDITOR&&fs.hold());
+        }
+      }
+      //}//synchronized
       if (mainTabs_selected==LED_EDITOR) {
         frame_main.invalidated=true;
       }
@@ -251,11 +253,13 @@ class LightThread implements Runnable {
     int last=script.getCommands().size();
     if (script.displayFrame+1<script.DelayPoint.size()) {
       last=min(last, script.DelayPoint.get(script.displayFrame+1));
+    } else if (script.displayFrame>=script.DelayPoint.size()) {
+      return;//escape from error
     }
     //synchronized(script.displayPad) {
     for (int c=script.DelayPoint.get(script.displayFrame)+1; c<last; c++) {
       Command cmd=script.getCommands().get(c);
-      if (cmd instanceof OnCommand) {//#ADD midi command in here
+      if (cmd instanceof OnCommand) {
         OnCommand onCmd=(OnCommand)cmd;
         for (int b=max(1, onCmd.y1); b<=onCmd.y2&&b<=display[0].length; b++) {
           for (int a=max(1, onCmd.x1); a<=onCmd.x2&&a<=display.length; a++) {
@@ -283,7 +287,8 @@ class LightThread implements Runnable {
           }
         }
       } else if (cmd instanceof ChainCommand) {
-        //ksChainListener.accept(0,((ChainCommand)cmd).chain-1,PadButton.PRESS_L);
+        IntVector2 vec=new IntVector2(0, ((ChainCommand)cmd).c-1);
+        ((PadButton)KyUI.get("ks_chain")).buttonListener.accept(vec, vec, PadButton.PRESS_L);
       } else if (cmd instanceof MappingCommand) {
         //MappingCommand info=(MappingCommand)cmd;
         //KsButton btn=KS.get(ksChain)[info.x-1][info.y-1];
@@ -297,17 +302,36 @@ class LightThread implements Runnable {
         //    btn.multiLedBackup=btn.multiLed;
         //  }
         //}
+      } else if (cmd instanceof ApOnCommand) {
+        ApOnCommand apOn=(ApOnCommand)cmd;
+        for (int a=max(1, apOn.x1); a<=apOn.x2&&a<=display.length; a++) {
+          for (int b=max(1, apOn.y1); b<=apOn.y2&&b<=display[a].length; b++) {
+            IntVector2 vec=new IntVector2(a-1, b-1);
+            ks_pad.buttonListener.accept(vec, vec, PadButton.PRESS_L);
+          }
+        }
+      } else if (cmd instanceof ApOffCommand) {
+        ApOffCommand apOff=(ApOffCommand)cmd;
+        for (int a=max(1, apOff.x1); a<=apOff.x2&&a<=display.length; a++) {
+          for (int b=max(1, apOff.y1); b<=apOff.y2&&b<=display[a].length; b++) {
+            IntVector2 vec=new IntVector2(a-1, b-1);
+            ks_pad.buttonListener.accept(vec, vec, PadButton.RELEASE_L);
+          }
+        }
       }
     }
     //}
     script.displayPad.invalidate();
   }
-}
-void midiControl(int[][] velDisplay) {
-  for (int b=0; b<velDisplay[0].length; b++) {//assert display.length>0
-    for (int a=0; a<velDisplay.length; a++) {
-      //println(a+" "+b+" : "+velDisplay[a][b]);
-      MidiCommand.execute("led", velDisplay[a][b], a, b);
+  void midiControl(int[][] velDisplay) {
+    if (velDisplay==null) {
+      return;
+    }
+    for (int b=0; b<velDisplay[0].length; b++) {//assert display.length>0
+      for (int a=0; a<velDisplay.length; a++) {
+        //println(a+" "+b+" : "+velDisplay[a][b]);
+        MidiCommand.execute("led", velDisplay[a][b], a, b);//linkDevice...
+      }
     }
   }
 }

@@ -148,14 +148,16 @@ public class PadButton extends Element {
     }
     //draw pad color
     g.noStroke();
-    g.textSize(Math.min(1, padding2));
+    g.textSize(Math.max(1, padding2 * 2));
+    g.textLeading(Math.max(1, padding2 * 2));
     synchronized (this) {
       for (int a=0; a < size.x; a++) {
         for (int b=0; b < size.y; b++) {
           fill(g, display[a][b]);
           g.rect(offsetX + a * interval + padding2, offsetY + b * interval + padding2, offsetX + a * interval + interval - padding2, offsetY + b * interval + interval - padding2);
           if (!text[a][b].isEmpty()) {
-            g.text(text[a][b], offsetX + (coord.x + 0.5F) * interval, offsetY + (coord.y + 0.5F) * interval);
+            g.fill(fgColor);
+            g.text(text[a][b], offsetX + (a + 0.5F) * interval, offsetY + (b + 0.5F) * interval);
           }
         }
       }

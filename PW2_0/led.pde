@@ -223,7 +223,7 @@ void led_setup() {
         // fs.set(currentLedEditor.getTimeByFrame(currentLedEditor.displayFrame));
         currentLedEditor.FrameSliderBackup=currentLedEditor.displayTime;//user input
         currentLedEditor.displayPad.displayControl(currentLedEditor.LED.get(currentLedEditor.displayFrame));
-        midiControl(currentLedEditor.velLED.get(currentLedEditor.displayFrame));
+        currentLed.light.midiControl(currentLedEditor.velLED.get(currentLedEditor.displayFrame));
       }
       currentLedEditor.displayPad.invalidate();
       fsTime.invalidate();
@@ -379,7 +379,6 @@ void selectLedTab(int index) {
   currentLed=ledTabs.get(index);
   currentLedEditor=currentLed.led.script;
   currentLedEditor.updateSlider();
-  midiOffAll(currentLed.light.deviceLink);
   currentLedEditor.displayControl();
   KyUI.get("led_frame").invalidate();
   ((ImageToggleButton)KyUI.get("led_loop")).value=currentLed.led.loop;

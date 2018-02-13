@@ -61,7 +61,11 @@ class UnipackCommands extends LineCommandType {
     } else if (commandName.equals("on y x")) {
       return new ApOnCommand(x1, x2, y1, y2);
     } else if (commandName.equals("off y x")) {
-      return new OffCommand(x1, x2, y1, y2);
+      if (this==apCommands) {
+        return new ApOffCommand(x1, x2, y1, y2);
+      } else {
+        return new OffCommand(x1, x2, y1, y2);
+      }
     } else if (commandName.equals("off mc n")) {
       return new McOffCommand(int(params.get(2)));
     } else if (commandName.equals("delay value")) {
@@ -208,7 +212,7 @@ void script_setup() {
   ledCommands.setKeyword("rnd", C_UNITOR2);
   //
   apCommands=new UnipackCommands();
-  apCommands.addCommand(new ParamInfo("on", Parameter.FIXED, "o"), new ParamInfo("y", Parameter.INTEGER), new ParamInfo("x", Parameter.INTEGER));
+  apCommands.addCommand(new ParamInfo("on", Parameter.FIXED, "o"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE));
   apCommands.addCommand(new ParamInfo("on"), new ParamInfo("mc", Parameter.FIXED), new ParamInfo("n", Parameter.INTEGER));
   apCommands.addCommand(new ParamInfo("off", Parameter.FIXED, "f"), new ParamInfo("y", Parameter.RANGE), new ParamInfo("x", Parameter.RANGE));
   apCommands.addCommand(new ParamInfo("off"), new ParamInfo("mc"), new ParamInfo("n", Parameter.INTEGER));
@@ -342,6 +346,14 @@ class ApOnCommand extends LightCommand {
   }
   public String toString() {
     return "on "+((y1==y2)?y1+"":y1+"~"+y2)+" "+((x1==x2)?x1+"":x1+"~"+x2);
+  }
+}
+class ApOffCommand extends LightCommand {
+  public ApOffCommand(int x1_, int x2_, int y1_, int y2_) {
+    super(x1_, x2_, y1_, y2_, COLOR_OFF, 0);
+  }
+  public String toString() {
+    return "off "+((y1==y2)?y1+"":y1+"~"+y2)+" "+((x1==x2)?x1+"":x1+"~"+x2);
   }
 }
 class DelayCommand extends UnipackCommand {
