@@ -559,6 +559,7 @@ KsSession addKsFileTab(String filename) {
   return tab;
 }
 void selectKsTab(int index) {
+  //index<selection sequence change
   if (index>=ksTabs.size()) {
     System.err.println("selectks index : "+index);
   }

@@ -1,8 +1,8 @@
 static class UnipackInfo {
   String title="";
   String producerName="";
-  int buttonX=8;
-  int buttonY=8;
+  int buttonX=10;
+  int buttonY=10;
   int chain=8;
   //no landscape anymore...!
   boolean squareButtons=true;

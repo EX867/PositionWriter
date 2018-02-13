@@ -67,6 +67,7 @@ void draw() {
     }
     catch(Exception e) {
       displayError(e);
+      exit();
     }
   } else {
     main_draw();
@@ -212,6 +213,7 @@ void main_setup() {
   led_setup();
   ks_setup();
   midi_setup();
+  MidiCommand.setState("8x8");//#TEST
   //load path data
   if (((ToggleButton)KyUI.get("set_reload")).value) {//reload
     load_reload();

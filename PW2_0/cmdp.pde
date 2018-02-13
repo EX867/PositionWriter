@@ -78,7 +78,11 @@ class LedScript extends CommandScript {
   }
   float getBpm(int line) {
     int index=BpmPoint.getBeforeIndex(line-1)-1;
-    if (index==0)return DEFAULT_BPM;
+    if (index>=BpmPoint.size()) {
+      index=BpmPoint.size()-1;
+    }
+    index=BpmPoint.get(index);
+    if (index==-1)return DEFAULT_BPM;
     //assert script.getCommands().get(index) instanceof BpmCommand
     return ((BpmCommand)getCommands().get(index)).value;
   }
@@ -87,7 +91,7 @@ class LedScript extends CommandScript {
     //assert script.getCommands().get(index) instanceof DelayCommand
     DelayCommand info=(DelayCommand)getCommands().get(line);
     if (info.isFraction) {
-      return round((info.up*2400/(getBpm(line)*info.down))*100);
+      return round(info.up*240000/(getBpm(line)*info.down));
     } else return info.up;
   }
   int getFrameCount() {

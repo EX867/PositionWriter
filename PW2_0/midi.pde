@@ -56,8 +56,10 @@ public class PadChainCommand implements InputBehavior {
       if (0<=params[0]&&params[0]<currentKs.info.chain) {
         currentKs.chain=params[0];
         currentKs.resetIndex(currentKs.chain);
+        currentKs.textControl();
         ((PadButton)KyUI.get("ks_chain")).selected.set(0, currentKs.chain);
         KyUI.get("ks_chain").invalidate();
+        ks_pad.invalidate();
       }
     }
   }

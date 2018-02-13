@@ -512,12 +512,15 @@ String MidiToLed(String path) {//default changed to 10x10...
   ArrayList<Command> cmds=new ArrayList<Command>();
   cmds.ensureCapacity(set.size());
   int bpm=120;
+  boolean bpmSetted=false;
+  double tickDuration=(double)sequence.getMicrosecondLength()/sequence.getTickLength();
+  println("tickDuration : "+tickDuration);
   while (!set.isEmpty()) {
     TimeMidiMessage m=set.pollFirst();
     if (m.msg instanceof ShortMessage) {
       ShortMessage msg=(ShortMessage)m.msg;//no note on with velocity 0 in here...
-      int x=lpMidiToLedPosX(msg.getData1());
-      int y=lpMidiToLedPosY(msg.getData1());
+      int x=lpProMidiToLedPosX(msg.getData1());
+      int y=lpProMidiToLedPosY(msg.getData1());
       if (msg.getCommand()==ShortMessage.NOTE_ON) {
         cmds.add(new OnCommand(x, x, y, y, color_lp[msg.getData2()], msg.getData2()));
       } else if (msg.getCommand()==ShortMessage.NOTE_OFF) {
@@ -531,16 +534,20 @@ String MidiToLed(String path) {//default changed to 10x10...
       } else if (message.getType()==0x51) {
         bpm=60000000/(256*256*message.getData()[0]+256*message.getData()[1]+message.getData()[2]);
         println("bpm : "+bpm);
+        bpmSetted=true;
         cmds.add(new BpmCommand(bpm));
       }
     }
     if (!set.isEmpty()) {
       if (set.first().time>m.time) {
-        println((set.first().time-m.time)*60000 / (bpm * Sequence.PPQ));
-        IntVector2 fr=toFraction((set.first().time-m.time)*60000 / (bpm * Sequence.PPQ), 100);
+        double val=(set.first().time-m.time)*tickDuration/1000;
+        IntVector2 fr=toFraction(val*bpm/240000, 100);
         cmds.add(new DelayCommand(abs(fr.x), abs(fr.y)));
       }
     }
+  }
+  if (!bpmSetted) {
+    cmds.add(0, new BpmCommand(120));
   }
   StringBuilder builder=new StringBuilder();
   builder.append(cmds.get(0).toString());
@@ -553,10 +560,44 @@ void LedToMidi(String path, LedScript script) {
   //#ADD
 }
 int lpMidiToLedPosX(int dat1) {
-  return dat1%10;
+  return dat1%10+1;
 }
 int lpMidiToLedPosY(int dat1) {
-  return 9-dat1/10;
+  return 9-dat1/10+1;
+}
+int lpProMidiToLedPosX(int dat1) {
+  if (dat1>=36&&dat1<=99) {
+    if (dat1<68) {
+      return (dat1-4)%4+2;
+    } else {
+      return 6+(dat1-4)%4;
+    }
+  }
+  if (100<=dat1&&dat1<=107) {//right top->down
+    return 10;
+  } else if (107<=dat1&&dat1<=115) {//left top->down
+    return 1;
+  } else if (116<=dat1&&dat1<=123) {//bottom left->right
+    return dat1-114;
+  } else if (28<=dat1&&dat1<=35) {//top right-left
+    return dat1-26;
+  }
+  return 0;
+}
+int lpProMidiToLedPosY(int dat1) {
+  if (dat1>=36&&dat1<=99) {
+    return 9-((dat1-36)/4)%8;
+  }
+  if (100<=dat1&&dat1<=107) {
+    return dat1-98;
+  } else if (108<=dat1&&dat1<=115) {
+    return dat1-106;
+  } else if (116<=dat1&&dat1<=123) {
+    return 10;
+  } else if (28<=dat1&&dat1<=35) {
+    return 1;
+  }
+  return 0;
 }
 public static IntVector2 toFraction(double d, int factor) {//https://stackoverflow.com/questions/5968636/converting-a-float-into-a-string-fraction-representation
   StringBuilder sb = new StringBuilder();

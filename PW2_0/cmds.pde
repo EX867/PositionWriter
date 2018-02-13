@@ -372,14 +372,14 @@ class DelayCommand extends UnipackCommand {
   }
   int getValue(float bpm) {
     if (isFraction) {
-      return floor((up*2400/(bpm*down))*100);
+      return floor(up*240000/(bpm*down));
     } else {
       return up;
     }
   }
   public String toString() {
-    if (isFraction)return "delay "+up;
-    return "delay "+up+"/"+down;
+    if (isFraction)return "delay "+up+"/"+down;
+    return "delay "+up;
   }
   String toUnipadString() {
     if (isFraction)return "";

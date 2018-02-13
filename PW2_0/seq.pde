@@ -176,7 +176,8 @@ class LightThread implements Runnable {
                 led.script.displayTime=Math.min(led.script.displayTime, led.loopEnd);
               }
               int frame=led.script.getFrameByTime(led.script.displayTime);
-              led.script.displayFrame=min(led.script.displayFrame+1, frame);
+              led.script.displayFrame=frame;
+              //led.script.displayFrame=min(led.script.displayFrame+1, frame);
               if (mainTabs_selected==LED_EDITOR&&led==currentLed.led) {
                 updateFs(currentLedEditor.displayTime);//led.script.displayTime
               }
