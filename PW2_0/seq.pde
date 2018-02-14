@@ -46,7 +46,7 @@ class LightThread implements Runnable {
     script.active=false;//auto remove
   }
   //use this when user press led play.
-  void start(LedCounter led, int displayTime) {
+  void start(LedCounter led, long displayTime) {
     synchronized(queue) {
       synchronized(led) {
         led.offset=System.currentTimeMillis()-displayTime;
@@ -131,7 +131,7 @@ class LightThread implements Runnable {
       }
     }
   }
-  void updateFs(int time) {
+  void updateFs(long time) {
     fs.set(time);
     fs.invalidate();
     fsTime.text=time+"/"+fs.maxI;
@@ -336,12 +336,13 @@ class LightThread implements Runnable {
     }
   }
 }
-Multiset<Integer> calculateDelayValue(LedScript script, Multiset<Integer> delayValue) {//for led 
+Multiset<Long> calculateDelayValue(LedScript script, Multiset<Long> delayValue) {//for led 
   delayValue.clear();
-  int before=0;
+  delayValue.add(0L);
+  long before=0;
   for (int a=1; a<script.DelayPoint.size(); a++) {//assert point is DelayCommand
     int line=script.DelayPoint.get(a);
-    delayValue.add(before+((DelayCommand)script.getCommands().get(line)).getValue(script.getBpm(line)));
+    delayValue.add(before+script.getDelayValue(line));
     before=delayValue.get(delayValue.size()-1);
   }
   return delayValue;

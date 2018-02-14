@@ -24,15 +24,16 @@ class LedScript extends CommandScript {
   Multiset<Integer> DelayPoint;
   Multiset<Integer> BpmPoint;
   Multiset<Integer> ChainPoint;
-  Multiset<Integer> delayValue=new Multiset<Integer>();//updated frequently.
+  Multiset<Long> delayValue=new Multiset<Long>();//updated frequently. this delayValue array contains accumulated delay value from frame 0.
+  boolean delayValueInvalidated=true;
   LineCommandType cmdset;
   LedProcessor processor;
   PadButton displayPad;
   boolean bypass=false;//used when speed is required.
   boolean ignoreUnitorCmd=false;
   int displayFrame=0;
-  int displayTime=0;
-  int FrameSliderBackup;//backup time.used in startfromcursor and autostop.
+  long displayTime=0;
+  long FrameSliderBackup;//backup time.used in startfromcursor and autostop.
   public LedScript(String name_, CommandEdit editor_, PadButton displayPad_) {//editor,displayPad is nullable.
     super(getFileName(name_), null);
     file=new File(name_);
@@ -115,12 +116,17 @@ class LedScript extends CommandScript {
   void setTimeByFrame(int frame) {
     displayTime=getTimeByFrame(frame);
   }
-  int getTimeByFrame(int frame) {
-    int time=0;
-    for (int a=1; a<=frame&&a<DelayPoint.size(); a++) {//a<DelayPoint... is just for error handling.
-      time+=getDelayValue(DelayPoint.get(a));
+  long getTimeByFrame(int frame) {
+    if (delayValueInvalidated) {
+      delayValue=calculateDelayValue(LedScript.this, delayValue);
+      delayValueInvalidated=false;
     }
-    return time;
+    //int time=0;
+    //for (int a=1; a<=frame&&a<DelayPoint.size(); a++) {//a<DelayPoint... is just for error handling.
+    //  time+=getDelayValue(DelayPoint.get(a));
+    //}
+    //return time;
+    return delayValue.get(frame);
   }
   void setFrameByTime() {
     displayFrame=getFrameByTime(displayTime);
@@ -129,16 +135,21 @@ class LedScript extends CommandScript {
     displayFrame=getFrameByTime(time);
   }
   int getFrameByTime(long time) {
-    int sum=0;
-    int frame=0;
-    for (int a=1; a<DelayPoint.size(); a++) {
-      sum=sum+getDelayValue(DelayPoint.get(a));
-      if (time<sum) {
-        break;
-      }
-      frame++;
+    if (delayValueInvalidated) {
+      delayValue=calculateDelayValue(LedScript.this, delayValue);
+      delayValueInvalidated=false;
     }
-    return frame;
+    //int sum=0;
+    //int frame=0;
+    //for (int a=1; a<DelayPoint.size(); a++) {
+    //  sum=sum+getDelayValue(DelayPoint.get(a));
+    //  if (time<sum) {
+    //    break;
+    //  }
+    //  frame++;
+    //}
+    //return frame;
+    return delayValue.getBeforeIndex(time)-1;
   }
   void updateSlider() {
     if (currentLedEditor==this) {
@@ -291,7 +302,7 @@ class LedScript extends CommandScript {
         setTimeByFrame(displayFrame);
       }
       if (after instanceof DelayCommand || before instanceof DelayCommand ||after instanceof BpmCommand ||before instanceof BpmCommand) {
-        //delayValue=calculateDelayValue(LedScript.this, delayValue);
+        delayValueInvalidated=true;
         updateSlider();
       }
       displayControl();
@@ -326,6 +337,7 @@ class LedScript extends CommandScript {
         }//else ignore
         line++;
       }
+      delayValueInvalidated=true;
       displayFrame=min(displayFrame, DelayPoint.size()-1); 
       setTimeByFrame(displayFrame);
       //delayValue=calculateDelayValue(LedScript.this, delayValue);
