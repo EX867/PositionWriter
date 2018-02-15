@@ -154,6 +154,7 @@ void main_setup() {
   statusR=(StatusBar)KyUI.get("main_statusR");
   led_filetabs=((TabLayout)KyUI.get("led_filetabs"));
   ks_filetabs=((TabLayout)KyUI.get("ks_filetabs"));
+  led_pad=((PadButton)KyUI.get("led_pad"));
   ks_pad=((PadButton)KyUI.get("ks_pad"));
   ks_chain=((PadButton)KyUI.get("ks_chain"));
   ks_soundindex=((TextBox)KyUI.get("ks_soundindex"));
@@ -188,6 +189,8 @@ void main_setup() {
       }
     }
   };
+  ((LinearList)KyUI.get("ks_led")).enableReordering();
+  ((LinearList)KyUI.get("ks_sound")).enableReordering();
   KyUI.changeLayout();//layout all!
   final Element mainFrame=KyUI.get("main_layout");
   if (platform==WINDOWS) {
@@ -214,6 +217,7 @@ void main_setup() {
   ks_setup();
   midi_setup();
   MidiCommand.setState("8x8");//#TEST
+  au_setup();
   //load path data
   if (((ToggleButton)KyUI.get("set_reload")).value) {//reload
     load_reload();
@@ -224,7 +228,13 @@ void main_setup() {
   ((LinearList)KyUI.get("ks_fileview")).setFixedSize(30);
   FileSelectorButton.listDirectory(((LinearList)KyUI.get("ks_fileview")), new File(path_global), new java.util.function.Consumer<File>() {
     public void accept(File file) {
-      println("file accept : "+file.getAbsolutePath());
+      //println("file accept : "+file.getAbsolutePath());
+      if (isSoundFile(file)) {
+        globalSamplePlayerPlay(file.getAbsolutePath());
+      } else if (isLedFile(file)) {
+        LedScript script=loadLedScript(file.getName(), readLed(file.getAbsolutePath()));
+        globalKsLedPlayerPlay(script);
+      }
     }
   }
   );

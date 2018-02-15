@@ -1,3 +1,4 @@
+import java.util.function.*;
 void setup_ev2() {
   KyUI.addShortcut(new KyUI.Shortcut("selectAll", true, false, false, 1, java.awt.event.KeyEvent.VK_A, new EventListener() {//Ctrl-A
     public void onEvent(Element e) {
@@ -296,6 +297,110 @@ void setup_ev2() {
     }
   }
   );
+  KyUI.addDragAndDrop(KyUI.get("ks_fileview"), KyUI.get("ks_led"), new DropEventListener() {
+    public void onEvent(DropMessenger d, MouseEvent e, int index) {
+      final String filename=((FileSelectorButton)((LinearList)KyUI.get("ks_fileview")).getItems().get(d.startIndex)).file.getAbsolutePath().replace("\\", "/");
+      //println("drop : "+filename);
+      if (!new File(filename).isFile()||isSoundFile(new File(filename))) {
+        return;
+      }
+      final LinearList ks_led=(LinearList)KyUI.get("ks_led");
+      KyUI.checkOverlayCondition(new BiFunction<Element, Vector2, Boolean>() {
+        public Boolean apply(Element e, Vector2 pos) {
+          if (ks_led.isListItem(e)) {
+            currentKs.getSelected().loadLed(ks_led.getReorderIndex(pos), filename, 1);
+            return true;
+          }
+          return false;
+        }
+      }
+      );
+    }
+  }
+  );
+  KyUI.addDragAndDrop(KyUI.get("ks_fileview"), KyUI.get("ks_sound"), new DropEventListener() {
+    public void onEvent(DropMessenger d, MouseEvent e, int index) {
+      final String filename=((FileSelectorButton)((LinearList)KyUI.get("ks_fileview")).getItems().get(d.startIndex)).file.getAbsolutePath().replace("\\", "/");
+      //println("drop : "+filename);
+      if (!new File(filename).isFile()||!isSoundFile(new File(filename))) {
+        return;
+      }
+      final LinearList ks_sound=(LinearList)KyUI.get("ks_sound");
+      KyUI.checkOverlayCondition(new BiFunction<Element, Vector2, Boolean>() {
+        public Boolean apply(Element e, Vector2 pos) {
+          if (ks_sound.isListItem(e)) {
+            currentKs.getSelected().loadSound(ks_sound.getReorderIndex(pos), filename, 1);
+            return true;
+          }
+          return false;
+        }
+      }
+      );
+    }
+  }
+  );
+  KyUI.addDragAndDrop(KyUI.get("ks_led"), KyUI.get("ks_fileview"), new DropEventListener() {
+    public void onEvent(DropMessenger d, MouseEvent e, int index) {
+      currentKs.getSelected().removeLed(d.startIndex);
+    }
+  }
+  );
+  KyUI.addDragAndDrop(KyUI.get("ks_sound"), KyUI.get("ks_fileview"), new DropEventListener() {
+    public void onEvent(DropMessenger d, MouseEvent e, int index) {
+      currentKs.getSelected().removeSound(d.startIndex);
+    }
+  }
+  );
+  KyUI.addDragAndDrop(KyUI.get("ks_fileview"), ks_pad, new DropEventListener() {
+    public void onEvent(DropMessenger d, MouseEvent e, int index) {
+      final String filename=((FileSelectorButton)((LinearList)KyUI.get("ks_fileview")).getItems().get(d.startIndex)).file.getAbsolutePath().replace("\\", "/");
+      if (!new File(filename).isFile()) {
+        return;
+      }
+      //println("drop : "+filename);
+      IntVector2 coord=ks_pad.getCoord();
+      if (isSoundFile(new File(filename))) {
+        currentKs.get(currentKs.chain, coord.x, coord.y).loadSound(filename, 1);
+      } else {
+        currentKs.get(currentKs.chain, coord.x, coord.y).loadLed(filename, 1);
+      }
+    }
+  }
+  );
+  KyUI.addDragAndDrop(KyUI.get("ks_led"), ks_pad, new DropEventListener() {
+    public void onEvent(DropMessenger d, MouseEvent e, int index) {
+      IntVector2 coord=ks_pad.getCoord();
+      if (coord.equals(ks_pad.selected)) {
+        return;
+      }
+      currentKs.get(currentKs.chain, coord.x, coord.y).loadLed(currentKs.getSelected().getLed(d.startIndex), currentKs.getSelected().getLedLoop(index));
+      currentKs.getSelected().removeLed(d.startIndex);
+    }
+  }
+  );
+  KyUI.addDragAndDrop(KyUI.get("ks_sound"), ks_pad, new DropEventListener() {
+    public void onEvent(DropMessenger d, MouseEvent e, int index) {
+      IntVector2 coord=ks_pad.getCoord();
+      if (coord.equals(ks_pad.selected)) {
+        return;
+      }
+      currentKs.get(currentKs.chain, coord.x, coord.y).loadSound(currentKs.getSelected().getSound(d.startIndex), currentKs.getSelected().getSoundLoop(index));
+      currentKs.getSelected().removeSound(d.startIndex);
+    }
+  }
+  );
+  ((LinearList)KyUI.get("ks_led")).reorderListener=new BiPredicate<Integer, Integer>() {
+    public boolean test(Integer a, Integer b) {
+      currentKs.getSelected().reorderLed(a, b);
+      return true;
+    }
+  };
+  ((LinearList)KyUI.get("ks_sound")).reorderListener=new BiPredicate<Integer, Integer>() {
+    public boolean test(Integer a, Integer b) {
+      currentKs.getSelected().reorderSound(a, b);
+      return true;
+    }
+  };
 }
 
 //  } else if (functionId==S_STOP) {
@@ -313,3 +418,4 @@ void setup_ev2() {
 //  } else if (functionId==S_REDO) {
 //    RedoLog();
 //    setStatusR("redo");
+//export 

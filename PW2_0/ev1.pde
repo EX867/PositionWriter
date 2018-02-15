@@ -2,6 +2,7 @@ void setup_ev1() {//setup small listeners
   ((ImageButton)KyUI.get("ks_stop")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       currentKs.light.stopAll();
+      globalKsLedPlayer.stopAll();
       midiOffAll();
       ks_pad.displayControl(currentKs.light.display);
       ks_pad.invalidate();

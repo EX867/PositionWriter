@@ -256,14 +256,14 @@ public class PadButton extends Element {
       invalidate();
       return false;
     } else if (e.getAction() == MouseEvent.RELEASE) {
+      if (selectable && (pressedL || pressedR)) {//onselect...add listener.
+        selected.set(coord);
+      }
       if (pressedL) {
         buttonListener.accept(clickL, coord, RELEASE_L);
       }
       if (pressedR) {
         buttonListener.accept(clickR, coord, RELEASE_R);
-      }
-      if (selectable) {
-        selected.set(coord);
       }
       invalidate();
       return false;

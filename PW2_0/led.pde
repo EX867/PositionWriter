@@ -267,6 +267,7 @@ void led_setup() {
   ((TabLayout)KyUI.get("led_filetabs")).tabRemoveListener=new ItemSelectListener() {
     public void onEvent(int index) {
       ledTabs.get(index).light.active=false;
+      println("remove : "+ledTabs.get(index).led.script.name);
       ledTabs.remove(index);
       if (ledTabs.size()==0) {
         addLedTab(createNewLed());
@@ -334,6 +335,7 @@ LedTab addLedTab(String filename) {
   final LedScript script=new LedScript(filename, edit, (PadButton)KyUI.get("led_pad"));
   edit.setContent(script);
   LedTab tab=new LedTab(script);
+  println("added : "+script.name);
   ledTabs.add(tab);
   EventListener ev=new EventListener() {
     public void onEvent(Element e) {
@@ -376,6 +378,10 @@ void addLedFileTab(String filename) {
   tab.led.script.setChanged(false, false);
 }
 void selectLedTab(int index) {
+  if (index<0||index>=ledTabs.size()) {//???
+    println(index+"??");
+    return;
+  }
   currentLed=ledTabs.get(index);
   currentLedEditor=currentLed.led.script;
   currentLedEditor.updateSlider();

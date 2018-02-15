@@ -270,6 +270,12 @@ boolean isImageFile(File file) {//.gif, .jpg, .tga, .png
   if (ext.equals("gif")||ext.equals("jpg")||ext.equals("tga")||ext.equals("png"))return true;
   return false;
 }
+boolean isLedFile(File file) {//.led
+  String ext=getFileExtension(file.getName());
+  if (ext.equals("led")||ext.equals("mid"))return true;
+  if (isImageFile(file))return true;
+  return false;
+}
 String readFile(String path) {
   setTitleProcessing("reading "+path+"...");
   BufferedReader read=createReader(path);
@@ -512,9 +518,7 @@ String MidiToLed(String path) {//default changed to 10x10...
   ArrayList<Command> cmds=new ArrayList<Command>();
   cmds.ensureCapacity(set.size());
   int bpm=120;
-  boolean bpmSetted=false;
-  double tickDuration=(double)sequence.getMicrosecondLength()/sequence.getTickLength();
-  println("tickDuration : "+tickDuration);
+  int ppq=sequence.getResolution();
   while (!set.isEmpty()) {
     TimeMidiMessage m=set.pollFirst();
     if (m.msg instanceof ShortMessage) {
@@ -532,22 +536,20 @@ String MidiToLed(String path) {//default changed to 10x10...
         //int numerator=message.getData()[0], denominator=round(pow(2, message.getData()[1])), ticksPerClick=message.getData()[2], notes32PerQuarter=message.getData()[3];
         //println("Time Signature : "+numerator+"/"+denominator+" "+ticksPerClick+"-"+notes32PerQuarter);
       } else if (message.getType()==0x51) {
-        bpm=60000000/(256*256*message.getData()[0]+256*message.getData()[1]+message.getData()[2]);
+        bpm=getTempo(message);
         println("bpm : "+bpm);
-        bpmSetted=true;
         cmds.add(new BpmCommand(bpm));
       }
     }
     if (!set.isEmpty()) {
       if (set.first().time>m.time) {
-        double val=(set.first().time-m.time)*tickDuration/1000;
-        IntVector2 fr=toFraction(val*bpm/240000, 100);
+        double val=(set.first().time-m.time)*60000/(ppq*bpm);//milliseconds
+        //println(val);
+        IntVector2 fr=toFraction((double)(set.first().time-m.time)/(4*ppq), 1024);
+        //println((double)(set.first().time-m.time)/(4*ppq));
         cmds.add(new DelayCommand(abs(fr.x), abs(fr.y)));
       }
     }
-  }
-  if (!bpmSetted) {
-    cmds.add(0, new BpmCommand(120));
   }
   StringBuilder builder=new StringBuilder();
   builder.append(cmds.get(0).toString());
@@ -618,4 +620,12 @@ public static IntVector2 toFraction(double d, int factor) {//https://stackoverfl
     }
   }
   return new IntVector2((int)Math.round(d * bestDenominator), bestDenominator);
+}
+int getTempo(MetaMessage event) {
+  byte[] message = event.getData();
+  int mask = 0xFF;
+  int bvalue = (message[0] & mask);
+  bvalue = (bvalue << 8) + (message[1] & mask);
+  bvalue = (bvalue << 8) + (message[2] & mask);
+  return 60000000 / bvalue;
 }

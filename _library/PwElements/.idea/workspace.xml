@@ -27,8 +27,8 @@
       <file leaf-file-name="PadButton.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/pw2/element/PadButton.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="333">
-              <caret line="155" column="33" lean-forward="true" selection-start-line="155" selection-start-column="33" selection-end-line="155" selection-end-column="33" />
+            <state relative-caret-position="358">
+              <caret line="258" column="75" lean-forward="false" selection-start-line="258" selection-start-column="75" selection-end-line="258" selection-end-column="75" />
               <folding />
             </state>
           </provider>
@@ -49,7 +49,7 @@
       <file leaf-file-name="WavEditor.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pw2/element/WavEditor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="54">
+            <state relative-caret-position="36">
               <caret line="3" column="40" lean-forward="false" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -355,8 +355,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -385,6 +383,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -533,11 +533,14 @@
       <workItem from="1518413744347" duration="40000" />
       <workItem from="1518504971386" duration="104000" />
       <workItem from="1518505154380" duration="1421000" />
+      <workItem from="1518692407831" duration="3000" />
+      <workItem from="1518692430861" duration="63000" />
+      <workItem from="1518711689485" duration="129000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="49629000" />
+    <option name="totallyTimeSpent" value="49824000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
@@ -992,7 +995,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pw2/element/WavEditor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
+        <state relative-caret-position="36">
           <caret line="3" column="40" lean-forward="false" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1002,8 +1005,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pw2/element/PadButton.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="333">
-          <caret line="155" column="33" lean-forward="true" selection-start-line="155" selection-start-column="33" selection-end-line="155" selection-end-column="33" />
+        <state relative-caret-position="358">
+          <caret line="258" column="75" lean-forward="false" selection-start-line="258" selection-start-column="75" selection-end-line="258" selection-end-column="75" />
           <folding />
         </state>
       </provider>

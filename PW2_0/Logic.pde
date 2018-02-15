@@ -46,6 +46,7 @@ color[] color_mf;
 //===hashmap elements caching===//
 FrameSlider fs;
 Button fsTime;
+PadButton led_pad;
 TabLayout led_filetabs;
 TabLayout ks_filetabs;
 PadButton ks_pad;

@@ -1,12 +1,19 @@
 import javax.sound.midi.*;
 import java.io.FileOutputStream;
+import beads.*;
 void setup() {
   String path="C:/Users/user/Downloads/Love U Project File/Love U Project File/Love U Top Lights/LoveU Top Lights Project/LoveU/LoveU.xml";
-  XML xml=loadXML(path);
+  String sample="Love_u.wav";
   dataPath=dataPath("").replace("\\", "/");
   println(dataPath);
-  recursiveSearch(xml);
+  //recursiveSearch(loadXML(path));
+  saveCuePoints("C:/Users/user/Documents/LoveU/Samples");
+  //audioCut(dataPath+"/"+sample, loadXML("extract/onsets1.xml"));
+  midiCut(dataPath+"/extract/midi1.mid", loadXML("extract/onsets1.xml"));
+
   exit();
+}
+void draw() {
 }
 //https://github.com/genedelisa/rockymusic/blob/master/rockymusic-core/src/main/java/com/rockhoppertech/music/midi/js/MIDIUtils.java
 void recursiveSearch(XML parent) {
@@ -14,8 +21,8 @@ void recursiveSearch(XML parent) {
   for (XML xml : children) {
     if (xml.getName().equals("KeyTracks")) {
       extractKeyTrack(xml);
-    } else if (xml.getName().equals("UserOnsets")) {
-      extractOnsets(xml);
+      //} else if (xml.getName().equals("UserOnsets")) {
+      //extractOnsets(xml);
     } else {
       recursiveSearch(xml);
     }
@@ -25,13 +32,13 @@ int midiCount=1;
 int onsetsCount=1;
 int progress=0;
 String dataPath;
-void extractKeyTrack(XML xml) {//save to extract/midi/<midiCount>.mid
+void extractKeyTrack(XML xml) {//save to extract/midi<midiCount>.mid
   int bpm=140;
   XML[] keyTracks=xml.getChildren("KeyTrack");
   try {
     //<MidiKey Value="29" />
     // <MidiNoteEvent Time="14.5" Duration="0.0625" Velocity="49.0000076" OffVelocity="64" IsEnabled="true" />
-    Sequence s = new Sequence(javax.sound.midi.Sequence.PPQ, 24);
+    Sequence s = new Sequence(javax.sound.midi.Sequence.PPQ, 480);
     int ppq=s.getResolution();
     Track t=s.createTrack();
     insertTempo(t, 0, bpm);
@@ -41,7 +48,7 @@ void extractKeyTrack(XML xml) {//save to extract/midi/<midiCount>.mid
       for (XML x : notes) {
         ShortMessage on = new ShortMessage();
         ShortMessage off = new ShortMessage();
-        long time=(long)(x.getDouble("Time")*4*ppq);
+        long time=(long)(x.getDouble("Time")*ppq);
         long timeEnd=time+(long)(x.getDouble("Duration")*ppq);
         on.setMessage(ShortMessage.NOTE_ON, 0, note, (int)Math.round(x.getDouble("Velocity")));
         off.setMessage(ShortMessage.NOTE_OFF, 0, note, 0);
@@ -51,7 +58,7 @@ void extractKeyTrack(XML xml) {//save to extract/midi/<midiCount>.mid
       }
       println("keytrack finished : "+note+" "+(progress++));
     }
-    File file=new File(dataPath+"/extract/midi/"+midiCount+".mid");
+    File file=new File(dataPath+"/extract/midi"+midiCount+".mid");
     if (!file.isFile()) {
       file.getParentFile().mkdirs();
       file.createNewFile();
@@ -65,6 +72,7 @@ void extractKeyTrack(XML xml) {//save to extract/midi/<midiCount>.mid
   midiCount++;
 }
 void extractOnsets(XML xml) {//save to extract/onsets<onsetsCount>.xml
+  //this was not mapping information...
   //UserOnsets
   // <OnsetEvent Time="1.3967800453514738" Energy="0.00400238530710339546" IsVolatile="false" />
   // <OnsetEvent Time="1.6104988662131519" Energy="0.00380863319151103497" IsVolatile="false" />
@@ -118,4 +126,12 @@ public static void write(Sequence sequence, OutputStream os) {
   catch (IOException ie) {
     ie.printStackTrace();
   }
+}
+int getTempo(MetaMessage event) {
+  byte[] message = event.getData();
+  int mask = 0xFF;
+  int bvalue = (message[0] & mask);
+  bvalue = (bvalue << 8) + (message[1] & mask);
+  bvalue = (bvalue << 8) + (message[2] & mask);
+  return 60000000 / bvalue;
 }

@@ -70,6 +70,9 @@ class KsSession {//
     info.buttonY=y;
     info.chain=c;
     notePress=new boolean[info.buttonX][info.buttonY];
+    ArrayList<KsButton[][]> KS_=KS;
+    ArrayList<String[][]> countText_=countText;
+    ArrayList<String[][]> autoPlayOrder_=autoPlayOrder;
     KS=new ArrayList<KsButton[][]>();
     countText=new ArrayList<String[][]>();
     autoPlayOrder=new ArrayList<String[][]>();
@@ -79,9 +82,15 @@ class KsSession {//
       autoPlayOrder.add(new String[info.buttonX][info.buttonY]);
       for (int a=0; a<info.buttonX; a++) {
         for (int b=0; b<info.buttonY; b++) {
-          KS.get(ch)[a][b]=new KsButton(this, new IntVector3(a, b, ch));
-          countText.get(ch)[a][b]="0\n0";
-          autoPlayOrder.get(ch)[a][b]="";
+          if (KS_!=null&&ch<KS_.size()&&a<KS_.get(ch).length&&b<KS_.get(ch)[a].length) {
+            KS.get(ch)[a][b]=KS_.get(ch)[a][b];
+            countText.get(ch)[a][b]=countText_.get(ch)[a][b];
+            autoPlayOrder.get(ch)[a][b]=autoPlayOrder_.get(ch)[a][b];
+          } else {
+            KS.get(ch)[a][b]=new KsButton(this, new IntVector3(a, b, ch));
+            countText.get(ch)[a][b]="0\n0";
+            autoPlayOrder.get(ch)[a][b]="";
+          }
         }
       }
     }
@@ -135,6 +144,8 @@ class KsButton {
   //
   ArrayList<LedCounter> led;
   ArrayList<MultiSamplePlayer.SampleState> sound;
+  LinkedList<InspectorButton1> ledList;
+  LinkedList<InspectorButton1> soundList;
   int ledIndex=0;
   int soundIndex=0;
   public KsButton(KsSession session_, IntVector3 pos_) {
@@ -142,6 +153,13 @@ class KsButton {
     pos=pos_;
     led=new ArrayList<LedCounter>();
     sound=new ArrayList<MultiSamplePlayer.SampleState>();
+    ledList=new LinkedList<InspectorButton1>();
+    soundList=new LinkedList<InspectorButton1>();
+  }
+  @Override void finalize() {//when KsButton is deleted...still samples are alive.
+    for (int a=sound.size()-1; a>=0; a--) {
+      removeSound(a);
+    }
   }
   void set(KsButton other) {
     led=other.led;
@@ -162,7 +180,7 @@ class KsButton {
     if (!new File(path).isFile()) {
       return;
     }
-    MultiSamplePlayer.SampleState sample=session.player.load(path);
+    final MultiSamplePlayer.SampleState sample=session.player.load(path);
     if (samples.containsKey(sample.sample)) {
       samples.get(sample.sample).add(this);
     } else {
@@ -173,6 +191,25 @@ class KsButton {
     sound.add(index, sample);
     sample.link=this;
     setSoundLoop(index, loop);
+    final InspectorButton1<Integer, TextBox> ins=new InspectorButton1<Integer, TextBox>("", new TextBox("").setNumberOnly(TextBox.NumberType.INTEGER));
+    ins.addedTo(((LinearList)KyUI.get("ks_sound")).listLayout);
+    soundList.add(index, ins);
+    ins.setDataChangeListener(new EventListener() {
+      public void onEvent(Element e) {
+        setSoundLoop(sound.indexOf(sample), (int)ins.get());
+      }
+    }
+    );
+    ins.set(loop);
+    ins.text=getFileName(path);
+    if (this==currentKs.getSelected()) {
+      KyUI.taskManager.addTask(new Task() {
+        public void execute(Object o) {
+          onSelect();
+        }
+      }
+      , null);
+    }
     session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
   }
   void reorderSound(int a, int b) {//must in range!
@@ -188,23 +225,63 @@ class KsButton {
     }
     session.player.stop(sample);
     sound.remove(index);
+    soundList.remove(index);
     session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
+    if (this==currentKs.getSelected()) {
+      KyUI.taskManager.addTask(new Task() {
+        public void execute(Object o) {
+          onSelect();
+        }
+      }
+      , null);
+    }
+  }
+  String getSound(int index) {
+    return sound.get(index).sample.getFileName();
   }
   void setSoundLoop(int index, int loop) {
+    //println("set loop to "+loop);
     sound.get(index).loopCount=loop;
+  }
+  int getSoundLoop(int index) {
+    return sound.get(index).loopCount;
   }
   void loadLed(String path, int loop) {
     loadLed(led.size(), path, loop);
   }
-  void loadLed(int index, String path, int loop) {
+  public void loadLed(int index, String path, int loop) {
     if (!new File(path).isFile()) {
       return;
     }
-    LedScript script=loadLedScript(path, readFile(path));
+    loadLed(index, loadLedScript(path, readLed(path)), loop);
+  }
+  void loadLed(LedScript script, int loop) {
+    loadLed(led.size(), script, loop);
+  }
+  void loadLed(final int index, LedScript script, int loop) {
     script.displayPad=ks_pad;
     led.add(index, session.light.addTrack(script));
     led.get(index).link=this;
     setLedLoop(index, loop);
+    final InspectorButton1<Integer, TextBox> ins=new InspectorButton1<Integer, TextBox>("", new TextBox("").setNumberOnly(TextBox.NumberType.INTEGER));
+    ins.addedTo(((LinearList)KyUI.get("ks_led")).listLayout);
+    ledList.add(index, ins);
+    ins.setDataChangeListener(new EventListener() {
+      public void onEvent(Element e) {
+        setLedLoop(led.indexOf(led.get(index)), (int)ins.get());
+      }
+    }
+    );
+    ins.set(loop);
+    ins.text=script.name;
+    if (this==currentKs.getSelected()) {
+      KyUI.taskManager.addTask(new Task() {
+        public void execute(Object o) {
+          onSelect();
+        }
+      }
+      , null);
+    }
     session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
   }
   void reorderLed(int a, int b) {
@@ -213,14 +290,38 @@ class KsButton {
   void removeLed(int index) {
     session.light.removeTrack(led.get(index));
     led.remove(index);
+    soundList.remove(index);
     session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
+    if (this==currentKs.getSelected()) {
+      KyUI.taskManager.addTask(new Task() {
+        public void execute(Object o) {
+          onSelect();
+        }
+      }
+      , null);
+    }
+  }
+  LedScript getLed(int index) {
+    return led.get(index).script;
   }
   void setLedLoop(int index, int loop) {
     led.get(index).loopCount=loop;
   }
+  int getLedLoop(int index) {
+    return led.get(index).loopCount;
+  }
   void resetIndex() {
     ledIndex=0;
     soundIndex=0;
+  }
+  void onSelect() {
+    //update led,sound list and indexes.
+    ((LinearList)KyUI.get("ks_led")).setItems((java.util.List)ledList);
+    ((LinearList)KyUI.get("ks_sound")).setItems((java.util.List)soundList);
+    KyUI.get("ks_led").onLayout();
+    KyUI.get("ks_led").invalidate();
+    KyUI.get("ks_sound").onLayout();
+    KyUI.get("ks_sound").invalidate();
   }
   void noteOn() {
     noteOff();
@@ -250,9 +351,10 @@ class KsButton {
         session.player.stop(sound.get(soundIndex-1));
       }
       if (led.size()>0&&ledIndex-1>=0&&ledIndex-1<led.size()&&led.get(ledIndex-1).loopCount==0) {
-        println("loop count 0 end");
-        session.light.stop(led.get(ledIndex-1));
-        led.get(ledIndex-1).script.infiniteLoopOff(session.light.display, session.light.velDisplay);
+        //session.light.stop(led.get(ledIndex-1));
+        synchronized(led.get(ledIndex-1)) {
+          led.get(ledIndex-1).loopIndex=-1;
+        }
         session.light.midiControl(session.light.velDisplay);
         ks_pad.invalidate();
       }
@@ -354,14 +456,20 @@ void ks_setup() {
   ((PadButton)KyUI.get("ks_pad")).buttonListener=new PadButton.ButtonListener() {
     public void accept(IntVector2 click, IntVector2 coord, int action) {//only sends in-range events.
       if (action==PadButton.PRESS_L) {
-        currentKs.selection.set(coord);
         currentKs.get(currentKs.chain, coord.x, coord.y).noteOn();
-      } else if (action==PadButton.PRESS_R) {
+      } else if (action==PadButton.RELEASE_R) {
         currentKs.selection.set(coord);
+        //ks_pad.selected.set(coord);
+        currentKs.getSelected().onSelect();
       } else if (action==PadButton.DRAG_L||action==PadButton.DRAG_R) {
-        currentKs.get(currentKs.chain, coord.x, coord.y).noteOff();
+        if (!coord.equals(click)) {
+          currentKs.get(currentKs.chain, click.x, click.y).noteOff();
+        }
       } else if (action==PadButton.RELEASE_L) {
+        currentKs.selection.set(coord);
+        //ks_pad.selected.set(coord);
         currentKs.get(currentKs.chain, coord.x, coord.y).noteOff();
+        currentKs.getSelected().onSelect();
       }
     }
   };
@@ -369,6 +477,7 @@ void ks_setup() {
     public void accept(IntVector2 click, IntVector2 coord, int action) {
       if (action==PadButton.PRESS_L) {
         currentKs.selectChain(coord.y);
+        currentKs.getSelected().onSelect();
       }
     }
   };
@@ -573,6 +682,7 @@ void selectKsTab(int index) {
   ks_pad.displayControl(currentKs.light.display);
   currentKs.light.midiControl(currentKs.light.velDisplay);
   currentKs.textControl();
+  currentKs.getSelected().onSelect();
   ((PadButton)KyUI.get("ks_chain")).size.set(1, currentKs.info.chain);
   ((PadButton)KyUI.get("ks_chain")).selected.set(0, currentKs.chain);
   ks_pad.invalidate();
