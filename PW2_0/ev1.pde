@@ -2,7 +2,8 @@ void setup_ev1() {//setup small listeners
   ((ImageButton)KyUI.get("ks_stop")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       currentKs.light.stopAll();
-      globalKsLedPlayer.stopAll();
+      currentKs.player.stopAll();
+      globalSamplePlayer.pause(true);
       midiOffAll();
       ks_pad.displayControl(currentKs.light.display);
       ks_pad.invalidate();
@@ -26,9 +27,44 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
+  ((ImageButton)KyUI.get("tips_previous")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      if (tips.length!=0) {
+        tipsIndex--;
+        if (tipsIndex<0) {
+          tipsIndex=tips.length-1;
+        }
+        ((ImageButton)KyUI.get("tips_content")).image=tips[tipsIndex];
+        KyUI.get("tips_content").invalidate();
+      }
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("tips_next")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      if (tips.length!=0) {
+        tipsIndex++;
+        if (tipsIndex>=tips.length) {
+          tipsIndex=0;
+        }
+        ((ImageButton)KyUI.get("tips_content")).image=tips[tipsIndex];
+        KyUI.get("tips_content").invalidate();
+      }
+      return false;
+    }
+  }
+  );
   ((Button)KyUI.get("set_ffmpeg")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      //KyUI.addLayer(ffMpegLayer);
+      KyUI.addLayer(frame_mp3);
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("mp3_exit")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.removeLayer();
       return false;
     }
   }
@@ -61,7 +97,49 @@ void setup_ev1() {//setup small listeners
   );
   ((ImageButton)KyUI.get("set_midi")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      MidiCommand.reloadDevices(joinPath(path_global, path_midi));//#Change
+      MidiCommand.reloadDevices(joinPath(path_global, "midi"));//#Change
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("set_navercafe")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      link ("https://cafe.naver.com/unipad");
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("info_github")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      link ("https://github.com/EX867/PositionWriter");
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("info_processing")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      link ("https://processing.org");
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("info_ex867")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      link ("https://blog.naver.com/ghh2000");
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("info_ulm")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      link ("https://blog.naver.com/jehongjeon");
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("info_asdf")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      link ("https://ex867.github.io/asdf");
       return false;
     }
   }
@@ -82,8 +160,28 @@ void setup_ev1() {//setup small listeners
   );
   ((ImageButton)KyUI.get("set_info")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      midiOffAll();//#TEST
-      //KyUI.addLayer(infoLayer);
+      KyUI.addLayer(frame_info);
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("set_tips")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.addLayer(frame_tips);
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("info_exit")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.removeLayer();
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("tips_exit")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.removeLayer();
       return false;
     }
   }

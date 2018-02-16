@@ -58,6 +58,7 @@ static class MultiSamplePlayer {
         if (!state.ref.added) {
           ac.out.addInput(state.ref.player);
           state.ref.added = true;
+          state.loopIndex=1;
         }
         state.ref.player.pause(false);
         //state.ref.player.start();
@@ -91,7 +92,15 @@ static class MultiSamplePlayer {
       }
     }
   }
-
+  public void stopAll() {
+    synchronized(this) {
+      for (PlayerState s : players) {
+        if (s.state!=null) {
+          stop(s.state);
+        }
+      }
+    }
+  }
   public boolean isActive(SampleState state) {
     return state.active;
   }
@@ -204,7 +213,6 @@ static class MultiSamplePlayer {
                 sample.active = false;
               }
             }
-            sample.loopIndex=1;
           }
         }
       }

@@ -22,7 +22,7 @@ public class DelimiterParser extends Analyzer {
       if (a >= text.length()) break;
       while (a < text.length() && text.charAt(a) != seperator) {
         buffer.append(text.charAt(a));
-        if (text.charAt(a) == wrapper) {
+        if (text.charAt(a) == wrapper) {//??
           int wrapperChar=a;//use in error
           a++;
           while (a >= text.length() || text.charAt(a) != wrapper) {
@@ -33,6 +33,7 @@ public class DelimiterParser extends Analyzer {
             buffer.append(text.charAt(a));
             a++;
           }
+          buffer.append(wrapper);
         }
         a++;
       }

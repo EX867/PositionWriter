@@ -31,6 +31,8 @@ VelocityButton VelocityType;
 color[] color_vel;
 String userMacro1="\ndelay 50";//#TEST 20
 String userMacro2="\ndelay 30";
+PImage[] tips;
+int tipsIndex=0;
 //===Current editors===//
 LedScript currentLedEditor;//equivalent to currentLed.led.script
 LedTab currentLed;
@@ -38,9 +40,8 @@ KsSession currentKs;
 //===Paths===//
 String path_global=joinPath(getDocuments(), "PositionWriter");
 String path_projects="projects";
-String path_ledPath="led";
+String path_led="led";
 String path_export="export";
-String path_midi="midi";
 color[] color_lp;
 color[] color_mf;
 //===hashmap elements caching===//
@@ -57,6 +58,9 @@ TextBox ks_ledindex;
 CachingFrame frame_main;
 CachingFrame frame_changetitle;
 CachingFrame frame_ksinfo;
+CachingFrame frame_info;
+CachingFrame frame_tips;
+CachingFrame frame_mp3;
 //
 interface TitleChangeTarget {
   String getTitle();
@@ -150,4 +154,31 @@ void export_reload() {
     xml.addChild("led").setContent(tab.led.script.file.getAbsolutePath());
   }
   writeFile(joinPath(getDataPath(), "reload.xml"), xml.format(2));
+}
+void loadTips() {
+  File[] files=new File(joinPath(getDataPath(), "tips")).listFiles();
+  ArrayList<PImage> images=new ArrayList<PImage>();
+  for (File f : files) {
+    if (isImageFile(f)) {
+      images.add(loadImage(f.getAbsolutePath()));
+    }
+  }
+  tips=new PImage[images.size()];
+  for (int a=0; a<tips.length; a++) {
+    tips[a]=images.get(a);
+  }
+  if (tips.length!=0) {
+    ((ImageButton)KyUI.get("tips_content")).image=tips[tipsIndex];
+  }
+}
+void loadPaths() {
+  if (new File(joinPath(getDataPath(), "path.xml")).isFile()) {
+    //path.xml : <Data "global"="C:/Users/?/Documents/PositionWriter" "projects"="..." "led"="..." "export"="..."/>
+    String username=getUsername();
+    XML customPath=loadXML("path.xml");
+    path_global=customPath.getString("global", path_global).replace("?", username);
+    path_projects=customPath.getString("projects", path_projects).replace("?", username);
+    path_led=customPath.getString("led", path_led).replace("?", username);
+    path_export=customPath.getString("export", path_export).replace("?", username);
+  }
 }

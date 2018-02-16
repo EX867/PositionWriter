@@ -1,6 +1,5 @@
 AudioContext globalAc;
 SamplePlayer globalSamplePlayer;
-LightThread globalKsLedPlayer;
 void au_setup() {
   globalAc=new AudioContext();
   globalSamplePlayer=new SamplePlayer(globalAc, 2);
@@ -12,10 +11,6 @@ void au_setup() {
   //  }
   //}
   //);
-  globalKsLedPlayer=new LightThread();
-  Thread thr=new Thread(globalKsLedPlayer);
-  globalKsLedPlayer.thread=thr;
-  thr.start();
 }
 void globalSamplePlayerPlay(String path) {//use for temporary play files
   try {
@@ -30,8 +25,4 @@ void globalSamplePlayerPlay(String path) {//use for temporary play files
   catch(Exception e) {
     e.printStackTrace();
   }
-}
-void globalKsLedPlayerPlay(LedScript script) {
-  script.displayPad=ks_pad;
-  globalKsLedPlayer.start(globalKsLedPlayer.addTrack(script), 0);
 }

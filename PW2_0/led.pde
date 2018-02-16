@@ -316,7 +316,7 @@ void saveLed(final LedScript led) {
   }
 }
 void exportLed(final LedScript led) {
-  final String filename=getNotDuplicatedFilename(joinPath(joinPath(path_global, path_ledPath), getFileName(led.file.getAbsolutePath())));
+  final String filename=getNotDuplicatedFilename(joinPath(joinPath(path_global, path_led), getFileName(led.file.getAbsolutePath())));
   saveFileTo(filename, new Runnable() {
     public void run() {
       writeFile(filename, ToUnipadLed(led));

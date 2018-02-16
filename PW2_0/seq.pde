@@ -226,7 +226,7 @@ class LightThread implements Runnable {
           }
         }
       }//synchronized
-      if (mainTabs_selected==LED_EDITOR) {
+      if (mainTabs_selected==LED_EDITOR||mainTabs_selected==KS_EDITOR) {
         frame_main.invalidated=true;
       }
       if (calcDisplay) {

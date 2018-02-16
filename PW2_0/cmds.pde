@@ -124,14 +124,15 @@ class UnipackCommands extends LineCommandType {
       }
       return new MappingCommand(MappingCommand.LED, int(params.get(2)), int(params.get(1)), n);//sound
     }
+    println(params.get(3));
     if (commandName.equals("kschain y x relative")) {
       return new KsCommand(int(params.get(0)), int(params.get(2)), int(params.get(1)), params.get(3), true, 1);
     } else if (commandName.equals("kschain y x relative loop")) {
       return new KsCommand(int(params.get(0)), int(params.get(2)), int(params.get(1)), params.get(3), true, int(params.get(4)));
     } else if (commandName.equals("kschain y x absolute")) {
-      return new KsCommand(int(params.get(0)), int(params.get(2)), int(params.get(1)), params.get(3), false, 1);
+      return new KsCommand(int(params.get(0)), int(params.get(2)), int(params.get(1)), params.get(3).substring(1, params.get(3).length()-1), false, 1);
     } else if (commandName.equals("kschain y x absolute loop")) {
-      return new KsCommand(int(params.get(0)), int(params.get(2)), int(params.get(1)), params.get(3), false, int(params.get(4)));
+      return new KsCommand(int(params.get(0)), int(params.get(2)), int(params.get(1)), params.get(3).substring(1, params.get(3).length()-1), false, int(params.get(4)));
     }
     return getErrorCommand();
   }

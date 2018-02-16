@@ -94,7 +94,7 @@ class ThreadScanner implements Runnable {
 //      logs.add("running aapt...");
 //      registerRender();
 //      List<String> cmd = new ArrayList<String>();
-//      cmd.add(joinPath(datapath, "builder")+"/aapt.exe");
+//      cmd.add(joinPath(datapath, "externalF")+"/aapt.exe");
 //      cmd.add("package");
 //      cmd.add("-v");
 //      cmd.add("-f");

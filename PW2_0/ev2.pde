@@ -134,6 +134,7 @@ void setup_ev2() {
             currentLedEditor.setTimeByFrame();
             currentLedEditor.updateSlider();
             currentLedEditor.displayControl();
+            currentLed.light.copyFrame(currentLedEditor.LED.get(currentLedEditor.displayFrame), currentLedEditor.velLED.get(currentLedEditor.displayFrame));
           }
         }
       }
@@ -149,6 +150,7 @@ void setup_ev2() {
             currentLedEditor.setTimeByFrame();
             currentLedEditor.updateSlider();
             currentLedEditor.displayControl();
+            currentLed.light.copyFrame(currentLedEditor.LED.get(currentLedEditor.displayFrame), currentLedEditor.velLED.get(currentLedEditor.displayFrame));
           }
         }
       }

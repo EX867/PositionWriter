@@ -151,8 +151,8 @@ public class PadButton extends Element {
     g.textSize(Math.max(1, padding2 * 2));
     g.textLeading(Math.max(1, padding2 * 2));
     synchronized (this) {
-      for (int a=0; a < size.x; a++) {
-        for (int b=0; b < size.y; b++) {
+      for (int a=0; a < display.length; a++) {
+        for (int b=0; b < display[a].length; b++) {
           fill(g, display[a][b]);
           g.rect(offsetX + a * interval + padding2, offsetY + b * interval + padding2, offsetX + a * interval + interval - padding2, offsetY + b * interval + interval - padding2);
           if (!text[a][b].isEmpty()) {

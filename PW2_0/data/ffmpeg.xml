@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+  <layout>
+    <kyui.element.CenterFrameLayout active="true" bgColor="0" desc="" enabled="true" margin="0" name="mp3_cf1" overlayOnDrag="0" padding="0" pos="[(0.0, 0.0)~(1460.0, 960.0)]" visible="true">
+      <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="FIXED" name="mp3_dv1" overlayOnDrag="0" padding="0" pos="[(280.0, 115.0)~(1180.0, 845.0)]" rotation="UP" value="60.0" visible="true">
+        <kyui.element.LinearLayout active="true" bgColor="0" desc="" direction="HORIZONTAL" draggable="false" enabled="true" fixedSize="50" intervalSize="0" margin="0" mode="LEAVE" name="mp3_lin2" offset="0.0" overlayOnDrag="0" padding="5" pos="[(280.0, 115.0)~(1180.0, 175.0)]" visible="true">
+          <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" margin="0" name="mp3_playstop" overlayOnDrag="0" padding="7" path="playstop.png" pos="[(285.0, 120.0)~(335.0, 170.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+          <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" margin="0" name="mp3_stop" overlayOnDrag="0" padding="7" path="stop.png" pos="[(340.0, 120.0)~(390.0, 170.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+          <kyui.element.Slider active="true" bgColor="-8421505" desc="" direction="HORIZONTAL" enabled="true" fgColor="50" margin="0" max="10.0" min="0.0" name="mp3_slider" overlayOnDrag="0" padding="6" pos="[(395.0, 120.0)~(1015.0, 170.0)]" sliderSize="3" value="0.0" visible="true"/>
+          <kyui.element.Button active="true" bgColor="-13487566" desc="" enabled="true" margin="10" name="mp3_time" overlayOnDrag="0" padding="10" pos="[(1020.0, 130.0)~(1120.0, 160.0)]" rotation="UP" text="10:36/11:23" textColor="-1" textSize="12" visible="true"/>
+          <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@27e4d8c7" margin="0" name="mp3_exit" overlayOnDrag="0" padding="7" path="exit.png" pos="[(1125.0, 120.0)~(1175.0, 170.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+        </kyui.element.LinearLayout>
+        <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="FIXED" name="mp3_dv2" overlayOnDrag="0" padding="0" pos="[(280.0, 175.0)~(1180.0, 845.0)]" rotation="DOWN" value="60.0" visible="true">
+          <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="FIXED" name="mp3_dv3" overlayOnDrag="0" padding="0" pos="[(280.0, 175.0)~(1180.0, 785.0)]" rotation="DOWN" value="60.0" visible="true">
+            <kyui.element.LinearList active="true" bgColor="-8421505" desc="" direction="VERTICAL" enabled="true" fgColor="50" margin="2" name="mp3_input" overlayOnDrag="0" padding="0" pos="[(282.0, 177.0)~(1178.0, 723.0)]" sliderSize="14" visible="true"/>
+            <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="FIXED" name="mp3_dv4" overlayOnDrag="0" padding="5" pos="[(280.0, 725.0)~(1180.0, 785.0)]" rotation="RIGHT" value="57.0" visible="true">
+              <kyui.element.LinearLayout active="true" bgColor="0" desc="" direction="HORIZONTAL" draggable="false" enabled="true" fixedSize="60" intervalSize="5" margin="0" mode="STATIC" name="mp3_lin3" offset="0.0" overlayOnDrag="0" padding="0" pos="[(285.0, 730.0)~(1121.0, 780.0)]" visible="true">
+                <kyui.element.DropDown active="true" bgColor="-13487566" desc="" enabled="true" margin="0" name="mp3_codec" overlayOnDrag="0" padding="10" pos="[(285.0, 730.0)~(490.25, 780.0)]" rotation="UP" text="select codec" textColor="-1" textSize="15" visible="true"/>
+                <kyui.element.DropDown active="true" bgColor="-13487566" desc="" enabled="true" margin="0" name="mp3_format" overlayOnDrag="0" padding="10" pos="[(495.25, 730.0)~(700.5, 780.0)]" rotation="UP" text="select format" textColor="-1" textSize="15" visible="true"/>
+                <kyui.element.TextBox active="true" bgColor="-8421505" blankLines="6" desc="" enabled="true" error="false" errorColor="-65536" fgColor="50" hint="192000" hintColor="-1775095246" lineNumBgColor="40" lineNumColor="-1" lineNumSize="0" margin="0" name="mp3_bitrate" numberOnly="INTEGER" overlayOnDrag="0" padding="20" pos="[(705.5, 730.0)~(910.75, 780.0)]" rightText="" rightTextSize="15" selectionColor="-13487411" text="192000" textColor="50" textSize="17" title=" Bit rate " visible="true"/>
+                <kyui.element.TextBox active="true" bgColor="-8421505" blankLines="6" desc="" enabled="true" error="false" errorColor="-65536" fgColor="50" hint="44100" hintColor="-1775095246" lineNumBgColor="40" lineNumColor="-1" lineNumSize="0" margin="0" name="mp3_samplerate" numberOnly="INTEGER" overlayOnDrag="0" padding="20" pos="[(915.75, 730.0)~(1121.0, 780.0)]" rightText="" rightTextSize="15" selectionColor="-13487411" text="44100" textColor="50" textSize="17" title=" Sample rate " visible="true"/>
+              </kyui.element.LinearLayout>
+              <kyui.element.ImageToggleButton active="true" bgColor="-13487566" desc="" enabled="true" margin="0" name="mp3_stereo" overlayOnDrag="0" padding="7" path="stereo.png" pos="[(1125.0, 730.0)~(1175.0, 780.0)]" rotation="UP" scaled="true" text="Button" value="true" textColor="-1" textSize="15" visible="true"/>
+            </kyui.element.DivisionLayout>
+          </kyui.element.DivisionLayout>
+          <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="3.0" inverse="false" margin="0" mode="FIXED" name="mp3_dv5" overlayOnDrag="0" padding="2" pos="[(280.0, 785.0)~(1180.0, 845.0)]" rotation="RIGHT" value="100.0" visible="true">
+            <kyui.element.TextBox active="true" bgColor="-8421505" blankLines="6" desc="" enabled="true" error="false" errorColor="-65536" fgColor="50" hint="ex) C:/Users/user/Documents/PositionWriter/source..." hintColor="-1775095246" lineNumBgColor="40" lineNumColor="-1" lineNumSize="0" margin="0" name="mp3_output" numberOnly="INTEGER" overlayOnDrag="0" padding="20" pos="[(282.0, 787.0)~(1079.0, 843.0)]" rightText="" rightTextSize="15" selectionColor="-13487411" text="" textColor="50" textSize="17" title=" Enter output path " visible="true"/>
+            <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" margin="0" name="mp3_convert" overlayOnDrag="0" padding="10" path="convert.png" pos="[(1084.0, 787.0)~(1178.0, 843.0)]" rotation="UP" scaled="false" text="Button" textColor="-1" textSize="15" visible="true"/>
+          </kyui.element.DivisionLayout>
+        </kyui.element.DivisionLayout>
+      </kyui.element.DivisionLayout>
+    </kyui.element.CenterFrameLayout>
+  </layout>
+  <color/>
+  <shortcut/>
+</Data>

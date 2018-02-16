@@ -6,7 +6,7 @@ void midi_setup() {
   MidiCommand.setBase(this);
   MidiCommand.addInput("press", new PadPressCommand());
   MidiCommand.addInput("chain", new PadChainCommand());
-  MidiCommand.reloadDevices(joinPath(path_global, path_midi));
+  MidiCommand.reloadDevices(joinPath(path_global, "midi"));
 }
 void midiOffAll(MidiMapDevice linkDevice) {
 }

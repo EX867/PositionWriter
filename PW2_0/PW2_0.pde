@@ -91,6 +91,9 @@ void handleKeyEvent(KeyEvent e) {
     //println((int)key+" "+keyCode);
   }
 }
+void keyPressed() {
+  KyUI.preventFromExit(this, e);
+}
 void handleMouseEvent(MouseEvent e) {
   super.handleMouseEvent(e);
   KyUI.handleEvent(e);
@@ -115,10 +118,21 @@ void main_draw() {
     }
   }
   KyUI.render(g); 
-  //pushMatrix(); 
-  //scale(KyUI.scaleGlobal); 
-  ////draw other things
-  //popMatrix();
+  pushMatrix(); 
+  scale(KyUI.scaleGlobal);
+  strokeWeight(1);
+  textAlign(LEFT, TOP);
+  textSize(12);
+  stroke(255);
+  noFill();
+  ellipse(mouseX, mouseY, 20, 20);
+  fill(255);
+  line(0, mouseY, width, mouseY);
+  line(mouseX, 0, mouseX, height);
+  strokeWeight(5);
+  line(mouseX, mouseY, pmouseX, pmouseY);
+  text("[" + mouseX + ", " + mouseY + "] (" + frameRate + ")", mouseX + 10, mouseY + 12);
+  popMatrix();
   autoSave();
 }
 void main_setup() {
@@ -148,6 +162,9 @@ void main_setup() {
   LayoutLoader.loadXML(frame_main=KyUI.getRoot(), loadXML("layout.xml"));
   LayoutLoader.loadXML(frame_changetitle=KyUI.getNewLayer().setAlpha(100), loadXML("changetitle.xml"));
   LayoutLoader.loadXML(frame_ksinfo=KyUI.getNewLayer().setAlpha(100), loadXML("ksinfo.xml"));
+  LayoutLoader.loadXML(frame_info=KyUI.getNewLayer().setAlpha(100), loadXML("info.xml"));
+  LayoutLoader.loadXML(frame_tips=KyUI.getNewLayer().setAlpha(100), loadXML("tips.xml"));
+  LayoutLoader.loadXML(frame_mp3=KyUI.getNewLayer().setAlpha(100), loadXML("ffmpeg.xml"));
   KyUI.taskManager.executeAll();//add all element
   //initialize
   statusL=(StatusBar)KyUI.get("main_statusL");
@@ -208,8 +225,15 @@ void main_setup() {
     }
     );
   }
+  //((TextBox)UI[getUIidRev("MP3_OUTPUT")]).text=joinPath(GlobalPath, "editor");
+  //((ScrollList)UI[getUIid("MP3_CODEC")]).setItems((String[])new it.sauronsoftware.jave.Encoder().getAudioEncoders());
+  //((ScrollList)UI[getUIid("MP3_FORMAT")]).setItems((String[])new it.sauronsoftware.jave.Encoder().getSupportedEncodingFormats());
+  //((Button)UI[getUIid("INITIAL_HOWTOUSE")]).text=readFile("versionText");
+  //skinEditor=(SkinEditView)UI[getUIidRev("SKIN_EDIT")];
+  //skinEditor.setComponents((TextBox)UI[getUIidRev("SKIN_PACKAGE")], (TextBox)UI[getUIidRev("SKIN_TITLE")], (TextBox)UI[getUIidRev("SKIN_AUTHOR")], (TextBox)UI[getUIidRev("SKIN_DESCRIPTION")], (TextBox)UI[getUIidRev("SKIN_APPNAME")], (Button)UI[getUIidRev("SKIN_TEXT1")]);
   info=new UnipackInfo();
   //setup
+  loadTips();
   setup_ev1();
   script_setup();
   load_settings();
@@ -218,7 +242,8 @@ void main_setup() {
   midi_setup();
   MidiCommand.setState("8x8");//#TEST
   au_setup();
-  //load path data
+  loadPaths();
+  ((Button)KyUI.get("set_globalpath")).text=path_global;
   if (((ToggleButton)KyUI.get("set_reload")).value) {//reload
     load_reload();
   } else {
@@ -233,7 +258,8 @@ void main_setup() {
         globalSamplePlayerPlay(file.getAbsolutePath());
       } else if (isLedFile(file)) {
         LedScript script=loadLedScript(file.getName(), readLed(file.getAbsolutePath()));
-        globalKsLedPlayerPlay(script);
+        script.displayPad=ks_pad;
+        currentKs.light.start(currentKs.light.addTrack(script), 0);
       }
     }
   }

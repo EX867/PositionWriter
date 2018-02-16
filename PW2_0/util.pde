@@ -53,7 +53,7 @@ boolean isValidPackageName(String content) {
 String createNewLed() {
   long time = System.currentTimeMillis(); 
   java.text.SimpleDateFormat dayTime = new java.text.SimpleDateFormat("yyyy_MM_dd_");
-  return joinPath(path_global, joinPath(path_ledPath, dayTime.format(new java.util.Date(time))+hex((int)(time%86400000))+".led"));
+  return joinPath(path_global, joinPath(path_led, dayTime.format(new java.util.Date(time))+hex((int)(time%86400000))+".led"));
 }
 String createNewKs() {
   long time = System.currentTimeMillis();
