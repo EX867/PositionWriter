@@ -69,6 +69,13 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
+  ((ImageButton)KyUI.get("log_exit")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.removeLayer();
+      return false;
+    }
+  }
+  );
   ((Button)KyUI.get("set_skinbuilder")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       //KyUI.addLayer(skitEditLayer);
@@ -76,13 +83,32 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
-  //((Button)KyUI.get("layer_exit")).setPressListener(new MouseEventListener() {//use one exit button all time...
-  //  public boolean onEvent(MouseEvent e, int index) {
-  //    KyUI.removeLayer();
-  //    return false;
-  //  }
-  //}
-  //);
+  ((ImageButton)KyUI.get("mp3_playstop")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("mp3_stop")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("mp3_convert")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent ev, int index) {
+      KyUI.addLayer(frame_log);
+      LinearList list=(LinearList)KyUI.get("mp3_input");
+      ArrayList<String> input=new ArrayList<String>();
+      for (Element e : list.getItems()) {
+        input.add(((LinearList.SelectableButton)e).text);
+      }
+      String[] a=new String[input.size()];
+      converter.convertAll(input.toArray(a), ((TextBox)KyUI.get("mp3_output")).getText(), ((DropDown)KyUI.get("mp3_format")).text, ((DropDown)KyUI.get("mp3_codec")).text, ((TextBox)KyUI.get("mp3_bitrate")).valueI, ((ImageToggleButton)KyUI.get("mp3_stereo")).value?2:1, ((TextBox)KyUI.get("mp3_samplerate")).valueI);
+      return false;
+    }
+  }
+  );
   ((ImageButton)KyUI.get("set_apply")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       currentLedEditor.resize(((TextBox)KyUI.get("set_buttony")).valueI, ((TextBox)KyUI.get("set_buttonx")).valueI);

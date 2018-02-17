@@ -91,7 +91,7 @@ void handleKeyEvent(KeyEvent e) {
     //println((int)key+" "+keyCode);
   }
 }
-void keyPressed(KeyEvent e) {
+void keyPressed() {
   KyUI.preventFromExit(this, e);
 }
 void handleMouseEvent(MouseEvent e) {
@@ -165,7 +165,6 @@ void main_setup() {
   LayoutLoader.loadXML(frame_info=KyUI.getNewLayer().setAlpha(100), loadXML("info.xml"));
   LayoutLoader.loadXML(frame_tips=KyUI.getNewLayer().setAlpha(100), loadXML("tips.xml"));
   LayoutLoader.loadXML(frame_mp3=KyUI.getNewLayer().setAlpha(100), loadXML("ffmpeg.xml"));
-  LayoutLoader.loadXML(frame_log=KyUI.getNewLayer().setAlpha(100), loadXML("logger.xml"));
   KyUI.taskManager.executeAll();//add all element
   //initialize
   statusL=(StatusBar)KyUI.get("main_statusL");
@@ -229,18 +228,14 @@ void main_setup() {
   try {
     String[] encoders=new it.sauronsoftware.jave.Encoder().getAudioEncoders();
     for (String s : encoders) {
-      ((DropDown)KyUI.get("mp3_codec")).addItem(s);
+      ((DropDown)KyUI.get("set_mode")).addItem();
     }
-    ((DropDown)KyUI.get("mp3_codec")).text="libmp3lame";
-    String[] formats=new it.sauronsoftware.jave.Encoder().getSupportedEncodingFormats();
-    for (String s : formats) {
-      ((DropDown)KyUI.get("mp3_format")).addItem(s);
-    }
-    ((DropDown)KyUI.get("mp3_format")).text="mp3";
   }
   catch(Exception e) {
     e.printStackTrace();
   }
+  //((ScrollList)UI[getUIid("MP3_CODEC")]).setItems((String[]));
+  //((ScrollList)UI[getUIid("MP3_FORMAT")]).setItems((String[])new it.sauronsoftware.jave.Encoder().getSupportedEncodingFormats());
   //((Button)UI[getUIid("INITIAL_HOWTOUSE")]).text=readFile("versionText");
   //skinEditor=(SkinEditView)UI[getUIidRev("SKIN_EDIT")];
   //skinEditor.setComponents((TextBox)UI[getUIidRev("SKIN_PACKAGE")], (TextBox)UI[getUIidRev("SKIN_TITLE")], (TextBox)UI[getUIidRev("SKIN_AUTHOR")], (TextBox)UI[getUIidRev("SKIN_DESCRIPTION")], (TextBox)UI[getUIidRev("SKIN_APPNAME")], (Button)UI[getUIidRev("SKIN_TEXT1")]);
@@ -264,7 +259,6 @@ void main_setup() {
     addKsTab(createNewKs());
   }
   ((LinearList)KyUI.get("ks_fileview")).setFixedSize(30);
-  ((LinearList)KyUI.get("mp3_input")).setFixedSize(30);
   FileSelectorButton.listDirectory(((LinearList)KyUI.get("ks_fileview")), new File(path_global), new java.util.function.Consumer<File>() {
     public void accept(File file) {
       //println("file accept : "+file.getAbsolutePath());

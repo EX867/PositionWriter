@@ -1,5 +1,5 @@
 //be.tarsos.examples.Player code modified.
-public class ModPlayer implements StateReturner, SliderUpdater {
+public class ModPlayer {
   private String loadedPath;
   //ugens
   AudioContext ac;

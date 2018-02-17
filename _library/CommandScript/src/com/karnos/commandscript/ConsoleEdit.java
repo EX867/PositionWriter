@@ -105,6 +105,10 @@ public class ConsoleEdit extends TextEdit {
   public void addLine(int line_, String text) {
     //do nothing
   }
+  public ConsoleEdit addLine(String text) {
+    addLine(content.lines(), text);
+    return this;
+  }
   private void addLine_(int line_, String text) {
     content.addLine(line_, text);
     moveTo(line_);

@@ -2,18 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8e9be9d5-d74c-49b3-8b4f-ea4822ab3658" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../../PW2_0/data/Advertisement.url" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar" afterPath="$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/PW2_0.pde" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/PW2_0_old.pde" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/PW2_0_old.pde" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/au.pde" afterPath="$PROJECT_DIR$/../../PW2_0/au.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/cmds.pde" afterPath="$PROJECT_DIR$/../../PW2_0/cmds.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/ev1.pde" afterPath="$PROJECT_DIR$/../../PW2_0/ev1.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/ks.pde" afterPath="$PROJECT_DIR$/../../PW2_0/ks.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/seq.pde" afterPath="$PROJECT_DIR$/../../PW2_0/seq.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -35,21 +27,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DelimiterParser.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DelimiterParser.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="576">
+            <state relative-caret-position="18">
               <caret line="35" column="3" lean-forward="false" selection-start-line="35" selection-start-column="3" selection-end-line="35" selection-end-column="3" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#658#666#0" expanded="true" />
-                <element signature="e#718#727#0" expanded="true" />
-                <element signature="e#2639#2662#0" expanded="true" />
-                <element signature="e#2729#2740#0" expanded="true" />
-                <element signature="e#2976#2987#0" expanded="true" />
-                <element signature="e#3185#3196#0" expanded="true" />
-                <element signature="e#5280#5291#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ConsoleEdit.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="281">
+              <caret line="109" column="16" lean-forward="false" selection-start-line="109" selection-start-column="16" selection-end-line="109" selection-end-column="16" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -179,7 +174,6 @@
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/LineCommandType.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/Multiset.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test2.java" />
-        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/EndBlockStyleParser.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java" />
         <option value="$PROJECT_DIR$/build/build.xml" />
@@ -188,6 +182,7 @@
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java" />
+        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java" />
       </list>
     </option>
   </component>
@@ -294,9 +289,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -557,11 +552,12 @@
       <workItem from="1518755104416" duration="718000" />
       <workItem from="1518756640737" duration="436000" />
       <workItem from="1518757318392" duration="82000" />
+      <workItem from="1518856883569" duration="307000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="131024000" />
+    <option name="totallyTimeSpent" value="131331000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
@@ -811,14 +807,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="15" column="5" lean-forward="true" selection-start-line="15" selection-start-column="5" selection-end-line="15" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/Command.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
@@ -887,18 +875,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
+        <state relative-caret-position="18">
           <caret line="35" column="3" lean-forward="false" selection-start-line="35" selection-start-column="3" selection-end-line="35" selection-end-column="3" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#658#666#0" expanded="true" />
-            <element signature="e#718#727#0" expanded="true" />
-            <element signature="e#2639#2662#0" expanded="true" />
-            <element signature="e#2729#2740#0" expanded="true" />
-            <element signature="e#2976#2987#0" expanded="true" />
-            <element signature="e#3185#3196#0" expanded="true" />
-            <element signature="e#5280#5291#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="109" column="16" lean-forward="false" selection-start-line="109" selection-start-column="16" selection-end-line="109" selection-end-column="16" />
+          <folding />
         </state>
       </provider>
     </entry>

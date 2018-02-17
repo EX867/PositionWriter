@@ -403,6 +403,13 @@ void setup_ev2() {
       return true;
     }
   };
+  KyUI.addDragAndDrop(KyUI.get("mp3_input"), new FileDropEventListener() {
+    public void onEvent(DropEvent de) {
+      String filename=de.file().getAbsolutePath().replace("\\", "/");
+      ((LinearList)KyUI.get("mp3_input")).addItem(filename);
+    }
+  }
+  );
 }
 
 //  } else if (functionId==S_STOP) {

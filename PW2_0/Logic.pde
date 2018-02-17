@@ -61,6 +61,7 @@ CachingFrame frame_ksinfo;
 CachingFrame frame_info;
 CachingFrame frame_tips;
 CachingFrame frame_mp3;
+CachingFrame frame_log;
 //
 interface TitleChangeTarget {
   String getTitle();
@@ -99,6 +100,7 @@ void load_settings() {
   if (DEVELOPER_BUILD) {
     ((Button)KyUI.get("led_printq")).text=userMacro1.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
     ((Button)KyUI.get("led_printe")).text=userMacro2.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
+    ((ToggleButton)KyUI.get("set_autosave")).value=false;
     return;
   }
   if (!new File(path).isFile()) {
