@@ -106,7 +106,9 @@ public class ConsoleEdit extends TextEdit {
     //do nothing
   }
   public ConsoleEdit addLine(String text) {
-    addLine(content.lines(), text);
+    content.insert(content.lines() - 1, getLine(content.lines() - 1).length(), text);
+    content.insert(content.lines() - 1, getLine(content.lines() - 1).length(), "\n" + header);
+    editingLine=content.lines() - 1;
     return this;
   }
   private void addLine_(int line_, String text) {

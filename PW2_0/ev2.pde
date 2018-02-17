@@ -410,6 +410,12 @@ void setup_ev2() {
     }
   }
   );
+  KyUI.addDragAndDrop(KyUI.get("mp3_input"), KyUI.get("mp3_cf1"), new DropEventListener() {
+    public void onEvent(DropMessenger m, MouseEvent ev, int index) {
+      ((LinearList)KyUI.get("mp3_input")).removeItem(m.startIndex);
+    }
+  }
+  );
 }
 
 //  } else if (functionId==S_STOP) {

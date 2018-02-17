@@ -55,7 +55,7 @@ void vs_checkVersion() {
   }
 }
 void displayUpdatedScreen() {
-  //#ADD
+  KyUI.addLayer(frame_update);
 }
 void registerFileType() {//associates .led and .pwm
   //#platform_specific

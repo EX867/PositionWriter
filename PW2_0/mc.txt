@@ -1,3 +1,9 @@
+
+    <element id="122" type="TYPE_TEXTBOX" x="400" y="50" w="380" h="35" description="" title="input path (folder)" text="" hint="C:/Users/user/Documents..." numberonly="false" textsize="20">MC_INPUT</element>
+    <element id="123" type="TYPE_TEXTBOX" x="400" y="130" w="380" h="35" description="" title="output path (folder)" text="" hint="C:/Users/user/Documents..." numberonly="false" textsize="20">MC_OUTPUT</element>
+    <element id="124" type="TYPE_BUTTON" x="842" y="50" w="45" h="35" description="mc to 10, or 10 to mc." text="mc->10" textsize="20">MC_MC10</element>
+    <element id="125" type="TYPE_BUTTON" x="842" y="130" w="45" h="35" description="convert!" image="I_CONVERT.png">MC_CONVERT</element>
+    <element id="126" type="TYPE_BUTTON" x="865" y="-35" w="25" h="25" description="exit frame." image="I_EXIT.png">MC_EXIT</element>
 McConverter mcConverter=new McConverter();
 class McConverter {
   class ThreadConverter implements Runnable {

@@ -7,9 +7,9 @@ import java.io.FilenameFilter;
 class ThreadScanner implements Runnable {
   InputStream input;
   java.util.Scanner scanner;
-  ArrayList<String> logs;
+  ConsoleEdit logs;
   boolean active;
-  ThreadScanner(InputStream input_, ArrayList<String> logs_) {
+  ThreadScanner(InputStream input_, ConsoleEdit logs_) {
     input=input_;
     scanner=new java.util.Scanner(input);
     active=true;
@@ -23,10 +23,9 @@ class ThreadScanner implements Runnable {
     while (input!=null&&line!=null&&active) {
       if (scanner.hasNextLine()) {
         line= scanner.nextLine();
-        System.out.println(line);
-        logs.add(line);
+        logs.addLine(line);
         try {
-          Thread.sleep(1);
+          Thread.sleep(10);
         }
         catch(InterruptedException e) {
         }
@@ -34,194 +33,165 @@ class ThreadScanner implements Runnable {
     }
   }
 }
-//void build_windows(String packageName, String appName, String author, String description, String themeName, String themeVersion, color text) {
-//  ((Logger)UI[getUIid("ERROR_LOG")]).logs.clear();
-//  if (new java.io.File(joinPath(joinPath(GlobalPath, ExternalPath), "android.jar")).isFile()==false) {
-//    displayLogError("You have to copy android.jar into \""+joinPath(joinPath(GlobalPath, ExternalPath), "android.jar")+"\" before building skin!");
-//    return;
-//  }
-//  new Thread(new ThreadBuilder(packageName, appName, author, description, themeName, themeVersion, text)).start();
-//}
-//void build_windows(String packageName, String appName, String author, String description, String themeName, String themeVersion, color text) {
-//  new Thread(new Runnable() {
-//    color actionBar=color(0);
-//    ArrayList<String> logs=null;//=new ArrayList<String>();//((Logger)UI[getUIid("ERROR_LOG")]).logs;
-//    try {
-//      String datapath=getDataPath();
-//      String buildPath=joinPath(joinPath(GlobalPath, TempPath), appName);
-//      surface.setTitle(title_filename+title_edited+title_suffix+" - deleting old files...");
-//      logs.add("deleting old files...");
-//      registerRender();
-//      if (new File(buildPath).exists())deleteFile(buildPath);
-//      surface.setTitle(title_filename+title_edited+title_suffix+" - creating files for build...");
-//      logs.add("creating files for build...");
-//      registerRender();
-//      String drawable=joinPath(buildPath, "res/drawable/");
-//      skin_appIcon.save(drawable+"appicon.png");
-//      skin_themeIcon.save(drawable+"theme_ic.png");
-//      skin_btn.save(drawable+"btn.png");
-//      skin_btnPressed.save(drawable+"btn_.png");
-//      skin_chain.save(drawable+"chain.png");
-//      skin_chainSelected.save(drawable+"chain_.png");
-//      skin_chainNext.save(drawable+"chain__.png");
-//      skin_play.save(drawable+"play.png");
-//      skin_playPressed.save(drawable+"play_.png");
-//      skin_pause.save(drawable+"pause.png");
-//      skin_pausePressed.save(drawable+"pause_.png");
-//      skin_prev.save(drawable+"prev.png");
-//      skin_prevPressed.save(drawable+"prev_.png");
-//      skin_next.save(drawable+"next.png");
-//      skin_nextPressed.save(drawable+"next_.png");
-//      skin_background.save(drawable+"playbg.png");
-//      skin_cover.save(drawable+"phantom.png");
-//      skin_coverMiddle.save(drawable+"phantom_.png");
-//      writeFile(joinPath(buildPath, "src/java/"+packageName.replace(".", "/")+"/MainActivity.java"), build_generateMainActivity(packageName));
-//      copyFile(joinPath(datapath, "template/skin/xml_next.xml"), joinPath(buildPath, "res/drawable/xml_next.xml"));
-//      copyFile(joinPath(datapath, "template/skin/xml_prev.xml"), joinPath(buildPath, "res/drawable/xml_prev.xml"));
-//      copyFile(joinPath(datapath, "template/skin/xml_pause.xml"), joinPath(buildPath, "res/drawable/xml_pause.xml"));
-//      copyFile(joinPath(datapath, "template/skin/xml_play.xml"), joinPath(buildPath, "res/drawable/xml_play.xml"));
-//      copyFile(joinPath(datapath, "template/skin/activity_main.xml"), joinPath(buildPath, "res/layout/activity_main.xml"));
-//      writeFile(joinPath(buildPath, "res/values/colors.xml"), build_generateColors(actionBar, text));
-//      writeFile(joinPath(buildPath, "res/values/styles.xml"), build_generateStyles());
-//      writeFile(joinPath(buildPath, "res/values/strings.xml"), build_generateStrings(appName, author, description, themeName));
-//      writeFile(joinPath(buildPath, "AndroidManifest.xml"), build_generateManifest(packageName, themeVersion));
-//      new File(joinPath(buildPath, "gen/"+ packageName.replace(".", "/")+"/R.java")).getParentFile().mkdirs();
-//      new File(joinPath(buildPath, "gen/"+ packageName.replace(".", "/")+"/R.java")).createNewFile();
-//      new File(joinPath(buildPath, "bin")).mkdirs();
-//      new File(joinPath(buildPath, "bin/apk")).mkdirs();
-//      //Run AAPT
-//      surface.setTitle(title_filename+title_edited+title_suffix+" - running aapt...");
-//      logs.add("running aapt...");
-//      registerRender();
-//      List<String> cmd = new ArrayList<String>();
-//      cmd.add(joinPath(datapath, "externalF")+"/aapt.exe");
-//      cmd.add("package");
-//      cmd.add("-v");
-//      cmd.add("-f");
-//      cmd.add("-m");
-//      cmd.add("-S");
-//      cmd.add("\""+joinPath(buildPath, "res")+"\"");
-//      cmd.add("-J");
-//      cmd.add(joinPath(buildPath, "gen"));
-//      cmd.add("-M");
-//      cmd.add("\""+joinPath(buildPath, "AndroidManifest.xml")+"\"");
-//      cmd.add("-I");
-//      cmd.add("\""+joinPath(joinPath(GlobalPath, ExternalPath), "android.jar")+"\"");
-//      /*cmd.add("-S");
-//       cmd.add("\""+joinPath(datapath, "builder/libs/android-support-v7-appcompat.jar")+"\"");*/
-//      cmd.add("-F");
-//      cmd.add("\""+joinPath(buildPath, "bin/"+appName+".apk.res")+"\"");
-//      cmd.add("--generate-dependencies");
-//      ProcessBuilder builder = new ProcessBuilder(cmd);
-//      builder.redirectErrorStream(true);
-//      Process aaptProcess = builder.start();
-//      ThreadScanner scanner=new ThreadScanner(aaptProcess.getInputStream());
-//      new Thread(scanner).start();
-//      int code = aaptProcess.waitFor();
-//      scanner.active=false;
-//      scanner.close();
-//      if (code != 0) {
-//        System.err.println("AAPT exited with error code " + code);
-//        throw new Exception("AAPT exited with error code "+code);
-//      }
-//      if (new File(joinPath(buildPath, "bin/"+appName+".apk.res")).exists()==false) {
-//        throw new Exception(appName+".apk.res file is not created");
-//      }
-//      //Run ECJ
-//      surface.setTitle(title_filename+title_edited+title_suffix+" - compiling...");
-//      Main main = new Main(new PrintWriter(System.out), new PrintWriter(System.err), false, null, null);
-//      String[] ecjArgs = {
-//        "-warn:-unusedImport", // Disable warning for unused imports
-//        "-extdirs", joinPath(datapath, "builder"), // The location of the external libraries
-//        "-bootclasspath", joinPath(joinPath(GlobalPath, ExternalPath), "android.jar"), // The location of android.jar
-//        "-classpath", joinPath(buildPath, "src"), // The location of the source folder
-//        "-classpath", joinPath(buildPath, "gen"), // The location of the generated folder
-//        "-1.6", 
-//        "-target", "1.6", // Target Java level
-//        "-proc:none", // Disable annotation processors...
-//        "-d", joinPath(buildPath, "bin/classes"), // The location of the output folder
-//        joinPath(joinPath(buildPath, "src"), joinPath("java", packageName.replace(".", "/")+"/MainActivity.java")) // The location of the main activity
-//      };
-//      if (main.compile(ecjArgs)) {
-//        logs.add("Compile success!");
-//        registerRender();
-//      } else {
-//        //We have some compilation errors
-//        println("Compilation with ECJ failed");
-//        surface.setTitle(title_filename+title_edited+title_suffix);
-//        throw new Exception("Compilation with ECJ failed");
-//      }
-//      //Run DX Dexer
-//      surface.setTitle(title_filename+title_edited+title_suffix+" - dexing...");
-//      logs.add("Dexing source...");
-//      registerRender();
-//      String[] dxArgs= new String[] {
-//        "--num-threads=1", 
-//        "--output=" + joinPath(buildPath, /*"bin/main-classes.dex"*/"bin/classes.dex"), //The output location of the sketch's dexed classes
-//        joinPath(buildPath, "bin/classes")//add "classes" to get DX to work properly
-//      };
-//      //This is some side-stepping to avoid System.exit() calls
-//      com.androidjarjar.dx.command.dexer.Main.Arguments dexArgs = new com.androidjarjar.dx.command.dexer.Main.Arguments();
-//      dexArgs.parse(dxArgs);
-//      int resultCode = com.androidjarjar.dx.command.dexer.Main.run(dexArgs);
-//      if (resultCode != 0) {
-//        System.err.println("DX Dexer result code: " + resultCode);
-//        throw new Exception("DX Dexer exited with code "+resultCode);
-//      }
-//      //Run DX Merger
-//      //surface.setTitle(title_filename+title_edited+title_suffix+" - merging dex files...");
-//      //if (new File(joinPath(datapath, "builder/libs/android-support-v7-appcompat.dex")).isFile()==false) {
-//      //  dexJar(joinPath(datapath, "builder/libs/android-support-v7-appcompat.jar"), joinPath(datapath, "builder/libs/android-support-v7-appcompat.dex"));
-//      //}
-//      //String[] args = new String[2];
-//      //args[0] = joinPath(buildPath, "bin/classes.dex"); //The location of the output DEX class file
-//      //args[1] = joinPath(buildPath, "bin/main-classes.dex"); //The location of the sketch's dexed classes
-//      //Apparently, this tool accepts as many dex files as we want to throw at it...
-//      //args[2]=joinPath(datapath, "builder/libs/android-support-v7-appcompat.dex");
-//      //com.androidjarjar.dx.merge.DexMerger.main(args);
-//      //Run APKBuilder
-//      surface.setTitle(title_filename+title_edited+title_suffix+" - building apk...");
-//      logs.add("building apk...");
-//      registerRender();
-//      //Create the builder with the basic files
-//      ApkBuilder apkbuilder = new ApkBuilder(new File(joinPath(buildPath, "bin/" + appName + ".apk.unsigned")), //The location of the output APK file (unsigned)
-//        new File(joinPath(buildPath, "bin/" + appName + ".apk.res")), //The location of the .apk.res file
-//        new File(joinPath(buildPath, "bin/classes.dex")), //The location of the DEX class file
-//        null, null //Only specify an output stream if we want verbose output
-//        );
-//      //Add everything else
-//      apkbuilder.addSourceFolder(new File(joinPath(buildPath, "src"))); //The location of the source folder
-//      //Seal the APK
-//      apkbuilder.sealApk();
-//      surface.setTitle(title_filename+title_edited+title_suffix+" - signing apk with default keystore...");
-//      logs.add("signing apk with default keystore...");
-//      registerRender();
-//      String inFilename =joinPath(buildPath, "bin/" + appName + ".apk.unsigned");
-//      String outFilename = joinPath(buildPath, "bin/apk/" + appName + ".apk");
-//      ZipSigner signer = null;
-//      signer=new ZipSigner();
-//      signer.setKeymode("testkey");
-//      try {
-//        signer.signZip(inFilename, outFilename);
-//      }
-//      catch(Throwable t) {
-//        t.printStackTrace();
-//      }
-//      logs.add("");
-//      logs.add("Build success!");
-//      registerRender();
-//      surface.setTitle(title_filename+title_edited+title_suffix);
-//    }
-//    catch(Exception e) {
-//      surface.setTitle(title_filename+title_edited+title_suffix);
-//      displayError(e);
-//      return;
-//    }
-//    openFileExplorer(joinPath(joinPath(joinPath(GlobalPath, TempPath), appName), "bin/apk/" ));//appName + ".apk"
-//    registerRender();
-//  }
-//  ).start();
-//}
+void build_windows(final String packageName, final String appName, final String author, final String description, final String themeName, final String themeVersion, final color text) {
+  new Thread(new Runnable() {
+    public void run() {
+      color actionBar=color(0);
+      ConsoleEdit logs=(ConsoleEdit)KyUI.get("log_content");
+      String androidJarPath=joinPath(getDataPath(), "builder/android.jar");
+      if (new java.io.File(androidJarPath).isFile()==false) {
+        InputStream in=null;
+        try {
+          in = new URL("https://github.com/EX867/external/raw/master/android.jar").openStream();
+          java.nio.file.Files.copy(in, java.nio.file.Paths.get(androidJarPath), java.nio.file.StandardCopyOption.REPLACE_EXISTING);//java.nio.charset.StandardCharsets.UTF_8,
+        }
+        catch(Exception e) {
+          logs.addLine("android.jar not found, can't download from URL\n   cause : "+e.toString());
+          return;
+        }
+      }
+      try {
+        String datapath=getDataPath();
+        String buildPath=joinPath(joinPath(path_global, "temp"), appName);
+        logs.addLine("deleting old files...").invalidate();
+        if (new File(buildPath).exists())deleteFile(buildPath);
+        logs.addLine("creating files for build...").invalidate();
+        String drawable=joinPath(buildPath, "res/drawable/");
+        ((ImageDrop)KyUI.get("skin_appicon")).image.save(drawable+"appicon.png");
+        ((ImageDrop)KyUI.get("skin_themeIcon")).image.save(drawable+"theme_ic.png");
+        ((ImageDrop)KyUI.get("skin_btn")).image.save(drawable+"btn.png");
+        ((ImageDrop)KyUI.get("skin_btnPressed")).image.save(drawable+"btn_.png");
+        ((ImageDrop)KyUI.get("skin_chain")).image.save(drawable+"chain.png");
+        ((ImageDrop)KyUI.get("skin_chainSelected")).image.save(drawable+"chain_.png");
+        ((ImageDrop)KyUI.get("skin_chainNext")).image.save(drawable+"chain__.png");
+        ((ImageDrop)KyUI.get("skin_play")).image.save(drawable+"play.png");
+        ((ImageDrop)KyUI.get("skin_playPressed")).image.save(drawable+"play_.png");
+        ((ImageDrop)KyUI.get("skin_pause")).image.save(drawable+"pause.png");
+        ((ImageDrop)KyUI.get("skin_pausePressed")).image.save(drawable+"pause_.png");
+        ((ImageDrop)KyUI.get("skin_prev")).image.save(drawable+"prev.png");
+        ((ImageDrop)KyUI.get("skin_prevPressed")).image.save(drawable+"prev_.png");
+        ((ImageDrop)KyUI.get("skin_next")).image.save(drawable+"next.png");
+        ((ImageDrop)KyUI.get("skin_nextPressed")).image.save(drawable+"next_.png");
+        ((ImageDrop)KyUI.get("skin_background")).image.save(drawable+"playbg.png");
+        ((ImageDrop)KyUI.get("skin_cover")).image.save(drawable+"phantom.png");
+        ((ImageDrop)KyUI.get("skin_coverMiddle")).image.save(drawable+"phantom_.png");
+        writeFile(joinPath(buildPath, "src/java/"+packageName.replace(".", "/")+"/MainActivity.java"), build_generateMainActivity(packageName));
+        copyFile(joinPath(datapath, "template/skin/xml_next.xml"), joinPath(buildPath, "res/drawable/xml_next.xml"));
+        copyFile(joinPath(datapath, "template/skin/xml_prev.xml"), joinPath(buildPath, "res/drawable/xml_prev.xml"));
+        copyFile(joinPath(datapath, "template/skin/xml_pause.xml"), joinPath(buildPath, "res/drawable/xml_pause.xml"));
+        copyFile(joinPath(datapath, "template/skin/xml_play.xml"), joinPath(buildPath, "res/drawable/xml_play.xml"));
+        copyFile(joinPath(datapath, "template/skin/activity_main.xml"), joinPath(buildPath, "res/layout/activity_main.xml"));
+        writeFile(joinPath(buildPath, "res/values/colors.xml"), build_generateColors(actionBar, text));
+        writeFile(joinPath(buildPath, "res/values/styles.xml"), build_generateStyles());
+        writeFile(joinPath(buildPath, "res/values/strings.xml"), build_generateStrings(appName, author, description, themeName));
+        writeFile(joinPath(buildPath, "AndroidManifest.xml"), build_generateManifest(packageName, themeVersion));
+        new File(joinPath(buildPath, "gen/"+ packageName.replace(".", "/")+"/R.java")).getParentFile().mkdirs();
+        new File(joinPath(buildPath, "gen/"+ packageName.replace(".", "/")+"/R.java")).createNewFile();
+        new File(joinPath(buildPath, "bin")).mkdirs();
+        new File(joinPath(buildPath, "bin/apk")).mkdirs();
+        //Run AAPT
+        logs.addLine("running aapt...").invalidate();
+        List<String> cmd = new ArrayList<String>();
+        cmd.add(joinPath(datapath, "externalF")+"/aapt.exe");
+        cmd.add("package");
+        cmd.add("-v");
+        cmd.add("-f");
+        cmd.add("-m");
+        cmd.add("-S");
+        cmd.add("\""+joinPath(buildPath, "res")+"\"");
+        cmd.add("-J");
+        cmd.add(joinPath(buildPath, "gen"));
+        cmd.add("-M");
+        cmd.add("\""+joinPath(buildPath, "AndroidManifest.xml")+"\"");
+        cmd.add("-I");
+        cmd.add("\""+androidJarPath+"\"");
+        /*cmd.add("-S");
+         cmd.add("\""+joinPath(datapath, "builder/libs/android-support-v7-appcompat.jar")+"\"");*/
+        cmd.add("-F");
+        cmd.add("\""+joinPath(buildPath, "bin/"+appName+".apk.res")+"\"");
+        cmd.add("--generate-dependencies");
+        ProcessBuilder builder = new ProcessBuilder(cmd);
+        builder.redirectErrorStream(true);
+        Process aaptProcess = builder.start();
+        ThreadScanner scanner=new ThreadScanner(aaptProcess.getInputStream(), logs);
+        new Thread(scanner).start();
+        int code = aaptProcess.waitFor();
+        scanner.active=false;
+        scanner.close();
+        if (code != 0) {
+          throw new Exception("AAPT exited with error code "+code);
+        }
+        if (new File(joinPath(buildPath, "bin/"+appName+".apk.res")).exists()==false) {
+          throw new Exception(appName+".apk.res file is not created");
+        }
+        //Run ECJ
+        logs.addLine("compiling...");
+        Main main = new Main(new PrintWriter(System.out), new PrintWriter(System.err), false, null, null);
+        String[] ecjArgs = {
+          "-warn:-unusedImport", // Disable warning for unused imports
+          "-extdirs", joinPath(datapath, "builder"), // The location of the external libraries
+          "-bootclasspath", androidJarPath, // The location of android.jar
+          "-classpath", joinPath(buildPath, "src"), // The location of the source folder
+          "-classpath", joinPath(buildPath, "gen"), // The location of the generated folder
+          "-1.6", 
+          "-target", "1.6", // Target Java level
+          "-proc:none", // Disable annotation processors...
+          "-d", joinPath(buildPath, "bin/classes"), // The location of the output folder
+          joinPath(joinPath(buildPath, "src"), joinPath("java", packageName.replace(".", "/")+"/MainActivity.java")) // The location of the main activity
+        };
+        if (main.compile(ecjArgs)) {
+          logs.addLine("compile success!").invalidate();
+        } else {
+          throw new Exception("Compilation with ECJ failed");
+        }
+        //Run DX Dexer
+        logs.addLine("Dexing source...").invalidate();
+        String[] dxArgs= new String[] {
+          "--num-threads=1", 
+          "--output=" + joinPath(buildPath, /*"bin/main-classes.dex"*/"bin/classes.dex"), //The output location of the sketch's dexed classes
+          joinPath(buildPath, "bin/classes")//add "classes" to get DX to work properly
+        };
+        //This is some side-stepping to avoid System.exit() calls
+        com.androidjarjar.dx.command.dexer.Main.Arguments dexArgs = new com.androidjarjar.dx.command.dexer.Main.Arguments();
+        dexArgs.parse(dxArgs);
+        int resultCode = com.androidjarjar.dx.command.dexer.Main.run(dexArgs);
+        if (resultCode != 0) {
+          System.err.println("DX Dexer result code: " + resultCode);
+          throw new Exception("DX Dexer exited with code "+resultCode);
+        }
+        //Run APKBuilder
+        logs.addLine("building apk...").invalidate();
+        //Create the builder with the basic files
+        ApkBuilder apkbuilder = new ApkBuilder(new File(joinPath(buildPath, "bin/" + appName + ".apk.unsigned")), //The location of the output APK file (unsigned)
+          new File(joinPath(buildPath, "bin/" + appName + ".apk.res")), //The location of the .apk.res file
+          new File(joinPath(buildPath, "bin/classes.dex")), //The location of the DEX class file
+          null, null //Only specify an output stream if we want verbose output
+          );
+        //Add everything else
+        apkbuilder.addSourceFolder(new File(joinPath(buildPath, "src"))); //The location of the source folder
+        //Seal the APK
+        apkbuilder.sealApk();
+        logs.addLine("signing apk with default keystore...").invalidate();
+        ZipSigner signer = null;
+        signer=new ZipSigner();
+        signer.setKeymode("testkey");
+        try {
+          signer.signZip(joinPath(buildPath, "bin/" + appName + ".apk.unsigned"), joinPath(buildPath, "bin/apk/" + appName + ".apk"));
+        }
+        catch(Throwable t) {
+          t.printStackTrace();
+        }
+        logs.addLine("Build success!\n").invalidate();
+      }
+      catch(Exception e) {
+        logs.addLine("Build failed : "+e.toString()+"!\n").invalidate();
+        return;
+      }
+      openFileExplorer(joinPath(joinPath(joinPath(path_global, "temp"), appName), "bin/apk/" ));//appName + ".apk"
+    }
+  }
+  ).start();
+}
 public static void dexJar(String inputPath, String outputPath) {
   try {
     String[] args = new String[] {

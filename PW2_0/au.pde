@@ -32,6 +32,8 @@ FFmpegConverter converter=new FFmpegConverter();
 public class FFmpegConverter {//play with globalSamplePlayer
   int converting=0;
   int converted=0;
+  int successCount=0;
+  String selection="";
   boolean checkDecodable(String input) {
     return new File(input).isFile();
     //MultimediaInfo info=new it.sauronsoftware.jave.Encoder().getInfo(file);
@@ -47,14 +49,13 @@ public class FFmpegConverter {//play with globalSamplePlayer
       filename=filename_;
     }
     public void sourceInfo(MultimediaInfo info) {
-      ((ConsoleEdit)KyUI.get("log_content")).addLine("File : "+filename).addLine("   / format : "+info.getFormat()+" / bitRate : "+info.getAudio().getBitRate()+" / channels : "+info.getAudio().getChannels()).addLine("   / sampleRate : "+info.getAudio().getChannels()+" / decoder : "+info.getAudio().getDecoder()).invalidate();
     }
     public void progress(int permil) {//0 to 1000
-      if (permil==1000) {
-        ((ConsoleEdit)KyUI.get("log_content")).addLine("File : "+filename).addLine("   / convert finised");
+      if (permil>=1000) {
+        ((ConsoleEdit)KyUI.get("log_content")).addLine("File : "+filename+"\n   / convert finised\n");
         converted++;
         if (converting==converted) {
-          ((ConsoleEdit)KyUI.get("log_content")).addLine("Event : converting all files finised ("+converted+" of "+converting+")");
+          ((ConsoleEdit)KyUI.get("log_content")).addLine("Event : converting all files finished ("+converted+" of "+converting+")\n   successed : "+successCount+"\n");
           ((ImageButton)KyUI.get("log_exit")).setEnabled(true);
           ((ImageButton)KyUI.get("log_exit")).invalidate();
           converting=0;
@@ -93,15 +94,22 @@ public class FFmpegConverter {//play with globalSamplePlayer
       public void run() {
       ((ImageButton)KyUI.get("log_exit")).setEnabled(false);
       ((ImageButton)KyUI.get("log_exit")).invalidate();
-      int successCount=0;
       converted=0;
+      successCount=0;
       converting=input.length;
       for (int a=0; a<input.length; a++) {
-        setTitleProcessing("convertng...("+converted+"/"+converting+")");
-        try {
-          if (converter.checkDecodable(input[a])) {
+        setTitleProcessing("converting...("+converted+"/"+converting+")");
+        if (converter.checkDecodable(input[a])) {
+          try {
             String input=this.input[a];
             String output=joinPath(this.output, changeFormat(getFileName(input), outputFormat));
+            it.sauronsoftware.jave.Encoder encoder=new it.sauronsoftware.jave.Encoder();
+            MultimediaInfo info=encoder.getInfo(new File(input));
+            ((ConsoleEdit)KyUI.get("log_content")).addLine("File : "+output+"\n   / format : "+info.getFormat()+"\n   / bitRate : "+info.getAudio().getBitRate()+"\n   / channels : "+info.getAudio().getChannels()+"\n   / sampleRate : "+info.getAudio().getSamplingRate()+"\n   / decoder : "+info.getAudio().getDecoder()+"\n").invalidate();
+            //check this is decodable(important!)
+            if (!Arrays.asList(encoder.getAudioDecoders()).contains(info.getAudio().getDecoder())) {
+              throw new Exception("file is not decodable");
+            }
             AudioAttributes audio = new AudioAttributes();
             audio.setCodec(outputCodec); // - getAudioEncoders()
             audio.setBitRate(outputBitRate);
@@ -110,21 +118,29 @@ public class FFmpegConverter {//play with globalSamplePlayer
             EncodingAttributes attrs = new EncodingAttributes();
             attrs.setFormat(outputFormat);
             attrs.setAudioAttributes(audio);
-            new it.sauronsoftware.jave.Encoder().encode(new File(input), new File(output), attrs, new ModEncodingListener(input));
+            ((ConsoleEdit)KyUI.get("log_content")).addLine("Event : conversion started : "+input+"\n   to "+output+"\n").invalidate();
+            println("conversion start "+input+" to "+output);
+            encoder.encode(new File(input), new File(output), attrs, new ModEncodingListener(input));
             successCount++;
-          } else {
-            ((ConsoleEdit)KyUI.get("log_content")).addLine("Event : cannot convert file : "+input[a]).invalidate();
           }
-        }
-        catch(Exception e) {
-          e.printStackTrace();
+          catch(Exception e) {
+            converted++;
+            ((ConsoleEdit)KyUI.get("log_content")).addLine("Error : cannot convert file : "+input[a]+"\n   "+e.toString()+"\n").invalidate();
+            e.printStackTrace();
+          }
+        } else {
+          ((ConsoleEdit)KyUI.get("log_content")).addLine("Error : cannot convert file : "+input[a]+"\n   file not exists!\n").invalidate();
+          println("cannot convert file : "+input[a]);
+          converted++;
         }
       }
       if (successCount==0) {
-        ((ConsoleEdit)KyUI.get("log_content")).addLine("Event : none of input files converted.").invalidate();
-        ;
+        ((ConsoleEdit)KyUI.get("log_content")).addLine("Event : none of input files converted.\n").invalidate();
         ((ImageButton)KyUI.get("log_exit")).setEnabled(true);
         ((ImageButton)KyUI.get("log_exit")).invalidate();
+        converting=0;
+        converted=0;
+        setTitleProcessing();
       }
     }
   }

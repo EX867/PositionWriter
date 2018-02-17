@@ -2,15 +2,13 @@ import pw2.element.*;
 //PositionWriter 2.0.pde
 //===ADD list===//
 //led=(undo,redo),stop
-//shortcuts = ,ksclear,delay value edit,macros
+//shortcuts = ,ksclear,delay value edit,macros,export
 //add ziploader
 //note on highlight
 //add custom velocity selector
-//loop statements?
-//vel 0->invisible
-//auto download android.jar
 //script updater and file downloader(and midi preset) frame
 //add rnd view
+//colors drag and drop in settings
 //
 //===ADD list - not now===//
 //
@@ -166,6 +164,7 @@ void main_setup() {
   LayoutLoader.loadXML(frame_tips=KyUI.getNewLayer().setAlpha(100), loadXML("tips.xml"));
   LayoutLoader.loadXML(frame_mp3=KyUI.getNewLayer().setAlpha(100), loadXML("ffmpeg.xml"));
   LayoutLoader.loadXML(frame_log=KyUI.getNewLayer().setAlpha(100), loadXML("logger.xml"));
+  LayoutLoader.loadXML(frame_update=KyUI.getNewLayer().setAlpha(100), loadXML("update.xml"));
   KyUI.taskManager.executeAll();//add all element
   //initialize
   statusL=(StatusBar)KyUI.get("main_statusL");
@@ -209,6 +208,7 @@ void main_setup() {
   };
   ((LinearList)KyUI.get("ks_led")).enableReordering();
   ((LinearList)KyUI.get("ks_sound")).enableReordering();
+  ui_attachSlider((ConsoleEdit)KyUI.get("log_content"));
   KyUI.changeLayout();//layout all!
   final Element mainFrame=KyUI.get("main_layout");
   if (platform==WINDOWS) {
@@ -280,8 +280,8 @@ void main_setup() {
   );
   if (!DEVELOPER_BUILD&&new File(joinPath(dataPath, "Initial")).isFile()) {//detect first time use.
     println("initial open");
-    //KyUI.addLayer(initialLayer);
-    //registerFileType();
+    KyUI.addLayer(frame_tips);
+    registerFileType();
     new File(joinPath(dataPath, "Initial")).delete();
   }
   new Thread(new Runnable() {

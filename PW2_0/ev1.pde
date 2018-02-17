@@ -83,14 +83,30 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
-  ((ImageButton)KyUI.get("mp3_playstop")).setPressListener(new MouseEventListener() {
-    public boolean onEvent(MouseEvent e, int index) {
+  ((LinearList)KyUI.get("mp3_input")).setSelectListener(new ItemSelectListener() {
+    public void onEvent(int index) {
+      converter.selection=((Button)((LinearList)KyUI.get("mp3_input")).getItems().get(index)).text;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("mp3_play")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent ev, int index) {
+      LinearList list=(LinearList)KyUI.get("mp3_input");
+      for (Element e : list.getItems()) {
+        if (((Button)e).text.equals(converter.selection)) {
+          if (new File(converter.selection).isFile()) {
+            globalSamplePlayerPlay(converter.selection);
+          }
+          return false;
+        }
+      }
       return false;
     }
   }
   );
   ((ImageButton)KyUI.get("mp3_stop")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
+      globalSamplePlayer.pause(true);
       return false;
     }
   }
@@ -199,6 +215,20 @@ void setup_ev1() {//setup small listeners
   }
   );
   ((ImageButton)KyUI.get("info_exit")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.removeLayer();
+      return false;
+    }
+  }
+  );
+  ((Button)KyUI.get("update_content")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      link ("https://github.com/EX867/PositionWriter/releases");
+      return false;
+    }
+  }
+  );
+  ((ImageButton)KyUI.get("update_exit")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       KyUI.removeLayer();
       return false;
