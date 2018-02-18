@@ -165,6 +165,8 @@ void main_setup() {
   LayoutLoader.loadXML(frame_mp3=KyUI.getNewLayer().setAlpha(100), loadXML("ffmpeg.xml"));
   LayoutLoader.loadXML(frame_log=KyUI.getNewLayer().setAlpha(100), loadXML("logger.xml"));
   LayoutLoader.loadXML(frame_update=KyUI.getNewLayer().setAlpha(100), loadXML("update.xml"));
+  frame_skinedit=KyUI.getNewLayer().setAlpha(180);
+  frame_skinedit.addChild(new SkinEditView("skin_edit", new Rect(0, 0, 1460, 960)));
   KyUI.taskManager.executeAll();//add all element
   //initialize
   statusL=(StatusBar)KyUI.get("main_statusL");
@@ -192,6 +194,7 @@ void main_setup() {
   KyUI.get("led_consolelayout").setEnabled(false);
   KyUI.get("led_findlr").setEnabled(false);
   ui_attachSlider((ConsoleEdit)KyUI.get("led_console"));
+  ui_attachSlider((ConsoleEdit)KyUI.get("log_content"));
   ((DropDown)KyUI.get("set_mode")).addItem("AUTOINPUT");
   ((DropDown)KyUI.get("set_mode")).addItem("RIGHT OFF MODE");
   //load shortcuts
@@ -208,8 +211,8 @@ void main_setup() {
   };
   ((LinearList)KyUI.get("ks_led")).enableReordering();
   ((LinearList)KyUI.get("ks_sound")).enableReordering();
-  ui_attachSlider((ConsoleEdit)KyUI.get("log_content"));
   KyUI.changeLayout();//layout all!
+  frame_log.onLayout();
   final Element mainFrame=KyUI.get("main_layout");
   if (platform==WINDOWS) {
     KyUI.addResizeListener(new ResizeListener() {

@@ -78,7 +78,7 @@ void setup_ev1() {//setup small listeners
   );
   ((Button)KyUI.get("set_skinbuilder")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      //KyUI.addLayer(skitEditLayer);
+      KyUI.addLayer(frame_skinedit);
       return false;
     }
   }

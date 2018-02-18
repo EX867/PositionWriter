@@ -48,6 +48,23 @@ boolean isValidPackageName(String content) {
   }
   return true;
 }
+public String addLinebreaks(String input, int maxLineLength) {//https://stackoverflow.com/questions/7528045/large-string-split-into-lines-with-maximum-length-in-java
+  java.util.StringTokenizer tok = new java.util.StringTokenizer(input, " ");
+  StringBuilder output = new StringBuilder(input.length());
+  int lineLen = 0;
+  while (tok.hasMoreTokens()) {
+    String word = tok.nextToken();
+    if (lineLen + word.length() > maxLineLength) {
+      output.append("\n");
+      lineLen = 0;
+    } else {
+      output.append(" ");
+    }
+    output.append(word);
+    lineLen += word.length();
+  }
+  return output.toString();
+}
 //
 //===PW saving files===//
 String createNewLed() {

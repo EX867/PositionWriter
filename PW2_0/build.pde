@@ -40,15 +40,45 @@ void build_windows(final String packageName, final String appName, final String 
       ConsoleEdit logs=(ConsoleEdit)KyUI.get("log_content");
       String androidJarPath=joinPath(getDataPath(), "builder/android.jar");
       if (new java.io.File(androidJarPath).isFile()==false) {
+        logs.addLine("android.jar not found, downloading android.jar from URL...").invalidate();
         InputStream in=null;
+        FileOutputStream fos=null;
         try {
-          in = new URL("https://github.com/EX867/external/raw/master/android.jar").openStream();
-          java.nio.file.Files.copy(in, java.nio.file.Paths.get(androidJarPath), java.nio.file.StandardCopyOption.REPLACE_EXISTING);//java.nio.charset.StandardCharsets.UTF_8,
+          URL url=new URL("https://github.com/EX867/external/raw/master/android.jar");
+          in = url.openStream();
+          fos = new FileOutputStream(androidJarPath);
+          byte[] buf = new byte[1024*1024];
+          double len = 0;
+          double tmp = 0;
+          int count=1;
+          int size = url.openConnection().getContentLength()*10/1024/1024;
+          while ((len = in.read(buf)) > 0) {        
+            tmp += len / 1024 / 1024;
+            if (tmp*10>count) {
+              logs.addLine(((float)count/10)+"MB / "+((float)size/10)+"MB").invalidate();
+              count++;
+            }
+            fos.write(buf, 0, (int) len);
+            fos.flush();
+          }
+          logs.addLine("android.jar download finished.").invalidate();
         }
         catch(Exception e) {
           logs.addLine("android.jar not found, can't download from URL\n   cause : "+e.toString());
           return;
         }
+        try {
+          in.close();
+        }
+        catch(Exception e) {
+        }
+        try {
+          fos.close();
+        }
+        catch(Exception e) {
+        }
+      } else {
+        logs.addLine("android.jar was found, continuing build...").invalidate();
       }
       try {
         String datapath=getDataPath();
@@ -57,7 +87,7 @@ void build_windows(final String packageName, final String appName, final String 
         if (new File(buildPath).exists())deleteFile(buildPath);
         logs.addLine("creating files for build...").invalidate();
         String drawable=joinPath(buildPath, "res/drawable/");
-        ((ImageDrop)KyUI.get("skin_appicon")).image.save(drawable+"appicon.png");
+        ((ImageDrop)KyUI.get("skin_appIcon")).image.save(drawable+"appicon.png");
         ((ImageDrop)KyUI.get("skin_themeIcon")).image.save(drawable+"theme_ic.png");
         ((ImageDrop)KyUI.get("skin_btn")).image.save(drawable+"btn.png");
         ((ImageDrop)KyUI.get("skin_btnPressed")).image.save(drawable+"btn_.png");
@@ -76,11 +106,11 @@ void build_windows(final String packageName, final String appName, final String 
         ((ImageDrop)KyUI.get("skin_cover")).image.save(drawable+"phantom.png");
         ((ImageDrop)KyUI.get("skin_coverMiddle")).image.save(drawable+"phantom_.png");
         writeFile(joinPath(buildPath, "src/java/"+packageName.replace(".", "/")+"/MainActivity.java"), build_generateMainActivity(packageName));
-        copyFile(joinPath(datapath, "template/skin/xml_next.xml"), joinPath(buildPath, "res/drawable/xml_next.xml"));
-        copyFile(joinPath(datapath, "template/skin/xml_prev.xml"), joinPath(buildPath, "res/drawable/xml_prev.xml"));
-        copyFile(joinPath(datapath, "template/skin/xml_pause.xml"), joinPath(buildPath, "res/drawable/xml_pause.xml"));
-        copyFile(joinPath(datapath, "template/skin/xml_play.xml"), joinPath(buildPath, "res/drawable/xml_play.xml"));
-        copyFile(joinPath(datapath, "template/skin/activity_main.xml"), joinPath(buildPath, "res/layout/activity_main.xml"));
+        copyFile(joinPath(datapath, "external/skin/xml_next.xml"), joinPath(buildPath, "res/drawable/xml_next.xml"));
+        copyFile(joinPath(datapath, "external/skin/xml_prev.xml"), joinPath(buildPath, "res/drawable/xml_prev.xml"));
+        copyFile(joinPath(datapath, "external/skin/xml_pause.xml"), joinPath(buildPath, "res/drawable/xml_pause.xml"));
+        copyFile(joinPath(datapath, "external/skin/xml_play.xml"), joinPath(buildPath, "res/drawable/xml_play.xml"));
+        copyFile(joinPath(datapath, "external/skin/activity_main.xml"), joinPath(buildPath, "res/layout/activity_main.xml"));
         writeFile(joinPath(buildPath, "res/values/colors.xml"), build_generateColors(actionBar, text));
         writeFile(joinPath(buildPath, "res/values/styles.xml"), build_generateStyles());
         writeFile(joinPath(buildPath, "res/values/strings.xml"), build_generateStrings(appName, author, description, themeName));
@@ -92,7 +122,7 @@ void build_windows(final String packageName, final String appName, final String 
         //Run AAPT
         logs.addLine("running aapt...").invalidate();
         List<String> cmd = new ArrayList<String>();
-        cmd.add(joinPath(datapath, "externalF")+"/aapt.exe");
+        cmd.add(joinPath(datapath, "builder")+"/aapt.exe");
         cmd.add("package");
         cmd.add("-v");
         cmd.add("-f");
@@ -156,7 +186,6 @@ void build_windows(final String packageName, final String appName, final String 
         dexArgs.parse(dxArgs);
         int resultCode = com.androidjarjar.dx.command.dexer.Main.run(dexArgs);
         if (resultCode != 0) {
-          System.err.println("DX Dexer result code: " + resultCode);
           throw new Exception("DX Dexer exited with code "+resultCode);
         }
         //Run APKBuilder
@@ -174,17 +203,12 @@ void build_windows(final String packageName, final String appName, final String 
         logs.addLine("signing apk with default keystore...").invalidate();
         ZipSigner signer = null;
         signer=new ZipSigner();
-        signer.setKeymode("testkey");
-        try {
-          signer.signZip(joinPath(buildPath, "bin/" + appName + ".apk.unsigned"), joinPath(buildPath, "bin/apk/" + appName + ".apk"));
-        }
-        catch(Throwable t) {
-          t.printStackTrace();
-        }
+        signer.setKeymode(ZipSigner.KEY_TESTKEY);
+        signer.signZip(joinPath(buildPath, "bin/" + appName + ".apk.unsigned"), joinPath(buildPath, "bin/apk/" + appName + ".apk"));
         logs.addLine("Build success!\n").invalidate();
       }
       catch(Exception e) {
-        logs.addLine("Build failed : "+e.toString()+"!\n").invalidate();
+        logs.addLine("Build failed : \n\n"+addLinebreaks(e.toString(), 50)+"!\n").invalidate();
         return;
       }
       openFileExplorer(joinPath(joinPath(joinPath(path_global, "temp"), appName), "bin/apk/" ));//appName + ".apk"
@@ -192,6 +216,7 @@ void build_windows(final String packageName, final String appName, final String 
   }
   ).start();
 }
+//https://github.com/Calsign/APDE/blob/master/APDE/src/main/java/com/calsignlabs/apde/tool/ExportSignedPackage.java
 public static void dexJar(String inputPath, String outputPath) {
   try {
     String[] args = new String[] {
@@ -239,14 +264,15 @@ String build_generateColors(color actionBar, color text) {
 }
 String build_generateManifest(String packageName, String themeVersion) {
   String ret="<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"+
-    "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n"+
-    "  package=\""+packageName+"\"\n"+
+    "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" \n"+
+    "  package=\""+packageName+"\" \n"+
     "  android:versionName=\""+themeVersion+"\">\n"+
+    "  android:versionCode=\"1\">\n"+
     "  <application\n"+
     "    android:allowBackup=\"true\"\n"+
     "    android:icon=\"@drawable/appicon\"\n"+
     "    android:label=\"@string/app_name\"\n"+
-    "    android:supportsRtl=\"true\"\n"+
+    //"    android:supportsRtl=\"true\"\n"+
     "    android:theme=\"@style/AppTheme\">\n"+
     "    <activity android:name=\".MainActivity\">\n"+
     "      <intent-filter>\n"+
