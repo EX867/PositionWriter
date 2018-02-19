@@ -9,7 +9,7 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingTop="16dp"
-    tools:context="com.kimjisub.launchpad.theme.template.MainActivity">
+    tools:context="PACKAGE_NAME.MainActivity">
 
 	<RelativeLayout
 	    android:layout_width="match_parent"
@@ -40,12 +40,14 @@
 			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
 			    android:text="@string/theme_description"
+			    android:gravity="center"
 			    android:layout_marginTop="5dp"/>
 
 			<TextView
 			    android:layout_width="match_parent"
 			    android:layout_height="wrap_content"
 			    android:text="@string/theme_author"
+			    android:gravity="center"
 			    android:layout_marginTop="5dp"/>
 		</LinearLayout>
 	</RelativeLayout>

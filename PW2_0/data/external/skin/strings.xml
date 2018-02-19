@@ -1,0 +1,7 @@
+<resources>
+	<string name="app_name">APP_NAME</string>
+
+	<string name="theme_name">THEME_NAME</string>
+	<string name="theme_description">THEME_DESCRIPTION</string>
+	<string name="theme_author">THEME_AUTHOR</string>
+</resources>

@@ -246,6 +246,10 @@ void setup_ev2() {
         for (LedTab tab : ledTabs) {
           saveLed(tab.led.script);
         }
+      }else if(mainTabs_selected==KS_EDITOR){
+        for(KsSession tab : ksTabs){
+          saveKs(tab,true);
+        }
       }
     }
   }
