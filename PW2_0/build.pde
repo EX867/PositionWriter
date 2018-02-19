@@ -1,6 +1,5 @@
 //https://github.com/Calsign/APDE/blob/master/APDE/src/main/java/com/calsignlabs/apde/build/Build.java
 //https://spin.atomicobject.com/2011/08/22/building-android-application-bundles-apks-by-hand/
-import kellinwood.security.zipsigner.ZipSigner;
 import com.android.sdklib.build.ApkBuilder;
 import org.eclipse.jdt.internal.compiler.batch.Main;
 import java.io.FilenameFilter;
@@ -16,6 +15,7 @@ class ThreadScanner implements Runnable {
     logs=logs_;
   }
   void close() throws IOException {
+    active=false;
     scanner.close();
   }
   @Override void run() {
@@ -23,12 +23,12 @@ class ThreadScanner implements Runnable {
     while (input!=null&&line!=null&&active) {
       if (scanner.hasNextLine()) {
         line= scanner.nextLine();
-        logs.addLine(line);
-        try {
-          Thread.sleep(10);
-        }
-        catch(InterruptedException e) {
-        }
+        logs.addLine(addLinebreaks(line, 75));
+        //try {
+        //  Thread.sleep(1);
+        //}
+        //catch(InterruptedException e) {
+        //}
       }
     }
   }
@@ -36,6 +36,8 @@ class ThreadScanner implements Runnable {
 void build_windows(final String packageName, final String appName, final String author, final String description, final String themeName, final String themeVersion, final color text) {
   new Thread(new Runnable() {
     public void run() {
+      ((ImageButton)KyUI.get("log_exit")).setEnabled(false);
+      ((ImageButton)KyUI.get("log_exit")).invalidate();
       color actionBar=color(0);
       ConsoleEdit logs=(ConsoleEdit)KyUI.get("log_content");
       String androidJarPath=joinPath(getDataPath(), "builder/android.jar");
@@ -121,41 +123,25 @@ void build_windows(final String packageName, final String appName, final String 
         new File(joinPath(buildPath, "bin/apk")).mkdirs();
         //Run AAPT
         logs.addLine("running aapt...").invalidate();
-        List<String> cmd = new ArrayList<String>();
-        cmd.add(joinPath(datapath, "builder")+"/aapt.exe");
-        cmd.add("package");
-        cmd.add("-v");
-        cmd.add("-f");
-        cmd.add("-m");
-        cmd.add("-S");
-        cmd.add("\""+joinPath(buildPath, "res")+"\"");
-        cmd.add("-J");
-        cmd.add(joinPath(buildPath, "gen"));
-        cmd.add("-M");
-        cmd.add("\""+joinPath(buildPath, "AndroidManifest.xml")+"\"");
-        cmd.add("-I");
-        cmd.add("\""+androidJarPath+"\"");
-        /*cmd.add("-S");
-         cmd.add("\""+joinPath(datapath, "builder/libs/android-support-v7-appcompat.jar")+"\"");*/
-        cmd.add("-F");
-        cmd.add("\""+joinPath(buildPath, "bin/"+appName+".apk.res")+"\"");
-        cmd.add("--generate-dependencies");
-        ProcessBuilder builder = new ProcessBuilder(cmd);
+        String aaptPath="\""+joinPath(datapath, "builder/aapt.exe")+"\"";
+        String resPath="\""+joinPath(buildPath, "res")+"\"";
+        String genPath="\""+joinPath(buildPath, "gen")+"\"";
+        String manifestPath="\""+joinPath(buildPath, "AndroidManifest.xml")+"\"";
+        String apkResPath=joinPath(buildPath, "bin/"+appName+".apk.res");
+        int code=0;
+        ProcessBuilder builder = new ProcessBuilder(new String[]{aaptPath, "package", "-v", "-f", "-m", "-S", resPath, "-J", genPath, "-M", manifestPath, "-I", "\""+androidJarPath+"\"", "-F", "\""+apkResPath+"\"", "--generate-dependencies"});
         builder.redirectErrorStream(true);
         Process aaptProcess = builder.start();
         ThreadScanner scanner=new ThreadScanner(aaptProcess.getInputStream(), logs);
         new Thread(scanner).start();
-        int code = aaptProcess.waitFor();
-        scanner.active=false;
-        scanner.close();
-        if (code != 0) {
+        if ((code=aaptProcess.waitFor()) != 0) {
           throw new Exception("AAPT exited with error code "+code);
         }
+        scanner.close();
         if (new File(joinPath(buildPath, "bin/"+appName+".apk.res")).exists()==false) {
           throw new Exception(appName+".apk.res file is not created");
         }
-        //Run ECJ
-        logs.addLine("compiling...");
+        logs.addLine("compiling...");//Run ECJ
         Main main = new Main(new PrintWriter(System.out), new PrintWriter(System.err), false, null, null);
         String[] ecjArgs = {
           "-warn:-unusedImport", // Disable warning for unused imports
@@ -190,33 +176,47 @@ void build_windows(final String packageName, final String appName, final String 
         }
         //Run APKBuilder
         logs.addLine("building apk...").invalidate();
-        //Create the builder with the basic files
-        ApkBuilder apkbuilder = new ApkBuilder(new File(joinPath(buildPath, "bin/" + appName + ".apk.unsigned")), //The location of the output APK file (unsigned)
+        ApkBuilder apkbuilder = new ApkBuilder(new File(joinPath(buildPath, "bin/" + appName + ".apk.unaligned.unsigned")), //The location of the output APK file (unsigned)
           new File(joinPath(buildPath, "bin/" + appName + ".apk.res")), //The location of the .apk.res file
           new File(joinPath(buildPath, "bin/classes.dex")), //The location of the DEX class file
           null, null //Only specify an output stream if we want verbose output
           );
-        //Add everything else
         apkbuilder.addSourceFolder(new File(joinPath(buildPath, "src"))); //The location of the source folder
-        //Seal the APK
         apkbuilder.sealApk();
         logs.addLine("signing apk with default keystore...").invalidate();
-        ZipSigner signer = null;
-        signer=new ZipSigner();
-        signer.setKeymode(ZipSigner.KEY_TESTKEY);
-        signer.signZip(joinPath(buildPath, "bin/" + appName + ".apk.unsigned"), joinPath(buildPath, "bin/apk/" + appName + ".apk"));
-        logs.addLine("Build success!\n").invalidate();
+        //-keystore examplestore -signedjar sCount.jar Count.jar signFiles 
+        builder=new ProcessBuilder(joinPath(datapath, "builder/jarsigner.exe"), "-verbose", "-keystore", joinPath(datapath, "builder/debug.keystore"), "-keypass", "android", "-storepass", "android", "-signedjar", joinPath(buildPath, "bin/" + appName + ".apk.unaligned"), joinPath(buildPath, "bin/" + appName + ".apk.unaligned.unsigned"), "androiddebugkey");
+        builder.redirectErrorStream(true);
+        Process process = builder.start();
+        scanner=new ThreadScanner(process.getInputStream(), logs);
+        new Thread(scanner).start();
+        if ((code=process.waitFor()) != 0) {
+          throw new Exception("JarSigner exited with error code "+code);
+        }
+        scanner.close();
+        logs.addLine("aligning apk").invalidate();
+        builder=new ProcessBuilder(joinPath(datapath, "builder/zipalign.exe"), "-f", "-v", "4", joinPath(buildPath, "bin/" + appName + ".apk.unaligned"), joinPath(buildPath, "bin/apk/" + appName + ".apk"));
+        builder.redirectErrorStream(true);
+        process = builder.start();
+        scanner=new ThreadScanner(process.getInputStream(), logs);
+        new Thread(scanner).start();
+        if ((code=process.waitFor()) != 0) {
+          throw new Exception("ZipAlign exited with error code "+code);
+        }
+        scanner.close();
+        logs.addLine("Build successful!\n").invalidate();
+        openFileExplorer(joinPath(buildPath, "bin/apk/"));//appName + ".apk"
       }
       catch(Exception e) {
-        logs.addLine("Build failed : \n\n"+addLinebreaks(e.toString(), 50)+"!\n").invalidate();
+        logs.addLine("Build failed : \n\n"+e.toString()+"!\n").invalidate();
         return;
       }
-      openFileExplorer(joinPath(joinPath(joinPath(path_global, "temp"), appName), "bin/apk/" ));//appName + ".apk"
+      ((ImageButton)KyUI.get("log_exit")).setEnabled(true);
+      ((ImageButton)KyUI.get("log_exit")).invalidate();
     }
   }
   ).start();
 }
-//https://github.com/Calsign/APDE/blob/master/APDE/src/main/java/com/calsignlabs/apde/tool/ExportSignedPackage.java
 public static void dexJar(String inputPath, String outputPath) {
   try {
     String[] args = new String[] {
@@ -268,6 +268,9 @@ String build_generateManifest(String packageName, String themeVersion) {
     "  package=\""+packageName+"\" \n"+
     "  android:versionName=\""+themeVersion+"\">\n"+
     "  android:versionCode=\"1\">\n"+
+    "  <uses-sdk\n"+
+    "    android:minSdkVersion=\"11\""+
+    "    android:targetSdkVersion=\"11\" />"+
     "  <application\n"+
     "    android:allowBackup=\"true\"\n"+
     "    android:icon=\"@drawable/appicon\"\n"+
