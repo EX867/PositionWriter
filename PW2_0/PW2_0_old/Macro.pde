@@ -4,17 +4,8 @@ Calculator calculator=new Calculator();
 PatternMatcher patternMatcher=new PatternMatcher();
 ArrayList<PatternMatcher.Result> findData=new ArrayList<PatternMatcher.Result>();
 int findIndex=-1;
-enum CharType {
-  Undefined, Digit, Letter, Exp, Seperator, Comparator, Operator, Escape
-}
-enum TokenClass {
-  Undefined, End, Word, Constant, Exp, Seperator, Comparator, Operator
-}
 enum TokenType {
   Undefined, Start, End, Number, N, Lparen, Rparen, Equal, NotEqual, Greater, Lesser, GreatEqual, LessEqual, Or, And, Plus, Minus, Multi, Divide, Modulo, UnaryMinus, UnaryPlus, IfOperator, ElseOperator
-}
-enum ValueType {
-  Error, IntegerType, BooleanType
 }
 class Calculator {
   class Token {
@@ -345,115 +336,6 @@ class Calculator {
       get=NextToken();
     }
     return ToBackwards(tokens);
-  }
-  CharType GetCharType(char c) {
-    if (c=='\\')return CharType.Escape;
-    if ('0'<=c&&c<='9')return CharType.Digit;
-    if (c=='('||c==')')return CharType.Seperator;
-    if (c=='='||c=='!'||c=='>'||c=='<'||c=='|'||c=='&')return CharType.Comparator;
-    if (c=='+'||c=='-'||c=='*'||c=='/'||c=='%'||c=='?'||c==':')return CharType.Operator;
-    if (c=='['||c==']')return CharType.Exp;
-    else return CharType.Letter;
-  }
-  Token NextToken () {//Digit, Letter,Seperator, Sign, Escape
-    if (ch=='[') {
-      ch=nextChar();
-      return new Token(TokenType.Start, TokenClass.Undefined);
-    }
-    if (ch==']')return new Token(TokenType.End, TokenClass.End);
-    while (ch==' '||ch=='\n'||ch=='\t')ch=nextChar ();//skip spaces
-    if (GetCharType (ch)==CharType.Letter||GetCharType(ch)==CharType.Escape) {//can be keyword or identifier of const!
-      String text="";
-      while (GetCharType (ch)==CharType.Letter||GetCharType (ch)==CharType.Digit||GetCharType(ch)==CharType.Escape) {
-        text+=ch;
-        ch=nextChar ();
-        if (GetCharType(ch)==CharType.Escape) {
-          ch=nextChar();
-          if (ch=='0')ch='\0';
-          else if (ch=='n')ch='\n';//these 3 are not allowed in textbox.
-          else if (ch=='r')ch='\r';
-          else if (ch=='t')ch='\t';
-          else if (ch=='\\')ch='\\';
-          else if (ch=='[')ch='[';
-          else if (ch==']')ch=']';
-          else return new Token(TokenType.Undefined, TokenClass.Undefined, text);
-        }
-      }
-      if (anyIdent) {
-        if (currentIdent.equals("")) {
-          currentIdent=text;
-          identifiers.add(new Identifier(currentIdent, 0));
-        }
-        if (text.equals("index"))return new Token(TokenType.N, TokenClass.Word, text);
-        else if (text.equals("frame"))return new Token(TokenType.N, TokenClass.Word, text);
-        else if (text.equals(currentIdent))return new Token(TokenType.N, TokenClass.Word, text);
-        else return new Token(TokenType.Undefined, TokenClass.Undefined, text);
-      } else {
-        if (isIdentExists(text))return new Token(TokenType.N, TokenClass.Word, text);
-        else return new Token(TokenType.Undefined, TokenClass.Undefined, text);
-      }
-    } else if (GetCharType (ch)==CharType.Digit) {//can be int or float
-      String text="";
-      while (GetCharType (ch)==CharType.Digit) {
-        text+=ch;
-        ch=nextChar ();
-      }
-      return new Token(TokenType.Number, TokenClass.Constant, text);
-    } else if (GetCharType (ch)==CharType.Seperator) {
-      char text=ch;
-      ch=nextChar();
-      if (text=='(')return new Token(TokenType.Lparen, TokenClass.Seperator, 0);
-      if (text==')')return new Token(TokenType.Rparen, TokenClass.Seperator, 0);
-      return new Token(TokenType.Undefined, TokenClass.Undefined, "Seperator");
-    } else if (GetCharType (ch)==CharType.Comparator) {
-      String text="";
-      while (GetCharType (ch)==CharType.Comparator) {
-        text+=ch;
-        ch=nextChar ();
-      }
-      if (text.equals("=="))return new Token(TokenType.Equal, TokenClass.Comparator, 2);
-      if (text.equals("!="))return new Token(TokenType.NotEqual, TokenClass.Comparator, 2);
-      if (text.equals(">"))return new Token(TokenType.Greater, TokenClass.Comparator, 2);
-      if (text.equals("<"))return new Token(TokenType.Lesser, TokenClass.Comparator, 2);
-      if (text.equals(">="))return new Token(TokenType.GreatEqual, TokenClass.Comparator, 2);
-      if (text.equals("<="))return new Token(TokenType.LessEqual, TokenClass.Comparator, 2);
-      if (text.equals("||"))return new Token(TokenType.Or, TokenClass.Comparator, 1);
-      if (text.equals("&&"))return new Token(TokenType.And, TokenClass.Comparator, 1);
-      return new Token(TokenType.Undefined, TokenClass.Undefined, text);
-    } else if (GetCharType(ch)==CharType.Operator) {
-      String text="";
-      while (GetCharType (ch)==CharType.Operator) {
-        text+=ch;
-        ch=nextChar ();
-      }
-      if (text.equals("*"))return new Token(TokenType.Multi, TokenClass.Operator, 4);
-      if (text.equals("/"))return new Token(TokenType.Divide, TokenClass.Operator, 4);
-      if (text.equals("%"))return new Token(TokenType.Modulo, TokenClass.Operator, 4);
-      if (text.equals("+")) {//no unary check
-        return new Token(TokenType.Plus, TokenClass.Operator, 3);
-      }
-      if (text.equals("-")) {
-        return new Token(TokenType.Minus, TokenClass.Operator, 3);
-      }
-      if (text.equals("?"))return new Token(TokenType.IfOperator, TokenClass.Operator, 1);
-      if (text.equals(":"))return new Token(TokenType.ElseOperator, TokenClass.Operator, 1);
-      return new Token(TokenType.Undefined, TokenClass.Undefined, text);
-    } else {
-      String text=""+ch;
-      while (GetCharType (ch)==CharType.Undefined) {
-        text+=ch;
-        ch=nextChar ();
-      }
-      return new Token(TokenType.Undefined, TokenClass.Undefined, text);
-    }
-  }
-  char nextChar () {
-    index++;
-    if (index>=loadedText.length()) {
-      error=true;
-      return ']';
-    }
-    return loadedText.charAt(index);
   }
   ArrayList<ArrayList> scripts=new ArrayList<ArrayList>();
   String getRegex(String in) {

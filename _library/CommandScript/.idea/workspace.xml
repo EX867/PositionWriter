@@ -2,8 +2,472 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8e9be9d5-d74c-49b3-8b4f-ea4822ab3658" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/images/chain1.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/images/chain2.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/images/chain3.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/images/chain4.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/images/chain5.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/images/chain6.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/images/chain7.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/images/chain8.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/images/load.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/code/sDrop.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/data/Converter.ico" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/data/PositionWriter.ico" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/data/Replace2Space.ico" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/data/target.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/KyUI.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/Libraries.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/MidiMap.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/PwElements.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/animated-gif-lib-1.4.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/dx.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/ecj-4.6.2.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/guava-21.0.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/javassist-3.21.0-GA.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/jave-1.0.2.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/reflections-0.9.9.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/code/sdklib.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/UN_DELETE.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/UN_DOWNLOAD.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/UN_LOGIN.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/UN_UPDATE.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/UN_UPLOAD.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/add.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/asdf.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/autoscroll.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/builder/aapt.exe" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/builder/debug.keystore" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/builder/jarsigner.exe" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/builder/keytool.exe" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/builder/zipalign.exe" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/calcmode.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/changetitle.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/command.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/convert.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/cutwav.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/cv_back.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/cv_error.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/cv_result.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/cv_warning.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/devinfo.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/disabled.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/ex867.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/exit.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/appicon.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/btn.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/btn_.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/chain.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/chain_.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/chain__.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/next.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/next_.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/pause.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/pause_.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/phantom.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/phantom_.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/play.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/play_.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/playbg.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/prev.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/prev_.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/theme_ic.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/ffmpeg.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/find.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/github.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/icon.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/info.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/inframe.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/list.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/loop.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/midi.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/navercafe.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/next.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/normalize.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/play.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/playstop.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/previous.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/processing.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/refresh.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/removewav.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/replaceall.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/restore.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/reverse.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/run.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/save.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/size60.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/skinback.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/skinback_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/stereo.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/stop.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/tips.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/tips/htu1.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/tips/htu2.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/tips/htu3.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/ulm.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/wave.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/zip.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/pwm.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/icon-36.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/icon-48.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/icon-72.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/icon-96.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/key" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/DS_WC.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/data/Converter.ico" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/data/PositionWriter.ico" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/data/Replace2Space.ico" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW_initial/data/settings/configure.ini" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/data/SourceCodePro-Regular.ttf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/data/back.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/data/error.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/data/icon.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/data/result.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/data/warning.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/icon1_4.ico" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/icon1_4.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/icon2_0.ico" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/icon2_0.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw1_htu/htu1_1.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw1_htu/htu1_2.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw1_htu/htu1_3.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw1_htu/htu1_4.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw1_htu/htu1_5.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw1_htu/htu1_6.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw1_htu/htu1_7.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu1.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu10.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu10_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu10_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu11.PNG" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu11_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu11_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu12.PNG" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu12_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu12_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu13.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu13_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu13_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu14.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu14_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu14_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu15.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu15_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu15_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu16.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu16_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu16_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu1_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu1_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu2.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu2_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu2_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu3.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu3_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu3_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu4.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu4_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu4_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu5.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu5_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu5_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu6.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu6_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu6_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu7.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu7_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu7_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu8.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu8_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu8_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu9.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu9_en.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw2_htu/pw2_htu9_ko.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/lib/core-reduced.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/jni/Android/armeabi/librubberband-jni.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/jni/JVM/librubberband-jni.dylib" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/jni/JVM/librubberband-jni.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/jni/JVM/rubberband-jni_win32.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/jni/JVM/rubberband-jni_win64.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/lib/beads.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../processing/core.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/CmdFileCreator/CmdFileCreator.exe" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/CmdFileCreator/lib/CmdFileCreator.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/CmdFileCreator/lib/core.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/CmdFileCreator/lib/gluegen-rt-natives-windows-i586.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/CmdFileCreator/lib/gluegen-rt.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/CmdFileCreator/lib/jogl-all-natives-windows-i586.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/CmdFileCreator/lib/jogl-all.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../.gitignore" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../AlsExtractor/AlsExtractor.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../AlsExtractor/audiocut.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../AlsExtractor/audiofileLength.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../AlsExtractor/midicut.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Builds/VisualStudio2015/KeySoundPlayer.sln" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Builds/VisualStudio2015/KeySoundPlayer_SharedCode.vcxproj" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Builds/VisualStudio2015/KeySoundPlayer_SharedCode.vcxproj.filters" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Builds/VisualStudio2015/KeySoundPlayer_StandalonePlugin.vcxproj" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Builds/VisualStudio2015/KeySoundPlayer_StandalonePlugin.vcxproj.filters" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Builds/VisualStudio2015/KeySoundPlayer_VST.vcxproj" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Builds/VisualStudio2015/KeySoundPlayer_VST.vcxproj.filters" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Builds/VisualStudio2015/resources.rc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/AppConfig.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/JuceHeader.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/ReadMe.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_basics.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_basics.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_devices.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_devices.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_formats.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_formats.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_AAX.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_AAX.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_AU.r" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_AU_1.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_AU_2.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_AUv3.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_RTAS.r" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_RTAS_1.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_RTAS_2.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_RTAS_3.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_RTAS_4.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_RTAS_utils.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_RTAS_utils.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_Standalone.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_VST2.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_VST3.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_VST_utils.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_plugin_client_utils.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_processors.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_processors.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_utils.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_audio_utils.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_core.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_core.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_cryptography.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_cryptography.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_data_structures.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_data_structures.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_events.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_events.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_graphics.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_graphics.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_gui_basics.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_gui_basics.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_gui_extra.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_gui_extra.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_opengl.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_opengl.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_video.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/JuceLibraryCode/include_juce_video.mm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/KeySoundPlayer.jucer" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Source/PluginEditor.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Source/PluginEditor.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Source/PluginProcessor.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../KeySoundPlayer/Source/PluginProcessor.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/Converter.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/Display.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/External.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/Finals.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/JFrames.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/Key.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/Lex.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/PW1_4.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/Utils.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/data/configure.ini" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/data/setup.ini" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW1_4/data/shortcut.ini" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/Logic.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/Macro.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/ModPlayer.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/PW2_0_old.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/data/Colors_default.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/data/Shortcuts_default.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/au.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/cmdp.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/cmds.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/changetitle.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/dialog.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/AndroidManifest.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/activity_main.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/colors.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/description.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/readme.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/strings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/styles.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/xml_next.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/xml_pause.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/xml_play.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/external/skin/xml_prev.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/ffmpeg.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/info.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/ksinfo.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/layout.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/layout_led_frame.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/logger.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/midi/Launchpad MK2.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/tips.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/update.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/versionInfo.json" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/data/versionText" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/err.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/ev1.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/ev2.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/info.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/ks.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/led.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/mc.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/midi.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/sem.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/seq.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/skin.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/uif.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/uncloud.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/util.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PW2_0/vs.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/AndroidManifest.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/backbutton.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/clipboard.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/display.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/initializer.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/initui.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/keyboard.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/multitouch.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/positionwriter.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../PWM1_0/render.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/CmdFileCreator/CmdFileCreator.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/Audio.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/Converter.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/DS_Editor.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/DS_Info.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/DS_LEDUI.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/DS_Sound.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/Display.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/External.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/Finals.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/JFrames.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/Key.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/Lex.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/PW1_5.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/Settings.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/Utils.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/data/configure.ini" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/data/error_log.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/data/setup.ini" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW1_5/data/shortcut.ini" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW_initial/PW_initial.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/PW_initial/data/settings/Llist" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/Lex.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/Utils.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/data/SourceCodePro-LICENSE.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/fileView.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_end/mc_converter/mc_converter.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../_image/pw1_htu/htu1_5.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/user.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/KyUI.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/core.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/guava_21_0.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/CommandScript.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/build.bat" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/build/build.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/Command.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/Difference.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/EditRecorder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/LineCommandProcessor.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/LineCommandType.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/LineError.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/Multiset.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/ParamInfo.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/Parameter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test2.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/.idea/dictionaries/user.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/.idea/encodings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/.idea/libraries/core_reduced.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/.idea/modules.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/MidiMap.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/build/build.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/src/com/karnos/midimap/InputBehavior.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/src/com/karnos/midimap/MidiCommand.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/src/com/karnos/midimap/MidiMap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/src/com/karnos/midimap/MidiMapDevice.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MidiMap/src/com/karnos/midimap/OutputBehavior.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/.idea/dictionaries/user.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/.idea/encodings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/.idea/libraries/CommandScript.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/.idea/libraries/KyUI.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/.idea/libraries/core.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/.idea/modules.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/PwElements.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/build/build.bat" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/build/build.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/src/pw2/element/FrameSlider.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/src/pw2/element/IntVector2.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/src/pw2/element/PadButton.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/src/pw2/element/UGenViewer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/src/pw2/element/VelocityButton.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PwElements/src/pw2/element/WavEditor.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SDrop/build/build.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SDrop/src/sojamo/drop/DropEvent.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SDrop/src/sojamo/drop/DropHandler.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SDrop/src/sojamo/drop/DropImageReader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SDrop/src/sojamo/drop/DropListener.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SDrop/src/sojamo/drop/SDrop.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/LICENSE" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/build/build.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/build/rubberband-library.vcxproj" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/src/be/tarsos/util/FileUtils.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/src/com/breakfastquay/rubberband/RubberBandStretcher.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/src/com/karnos/Private.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/src/justafolder/JustAFile.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../libraries/src/net/beadsproject/beads/ugens/RubberBandProcessor.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../docs/asdf/index.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../docs/asdf/libraries/p5.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../docs/asdf/sketch.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../docs/index.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../docs/libraries/p5.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../docs/links/index.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../docs/sketch.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../docs/versionInfo/index.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/CmdFileCreator/source/CmdFileCreator.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/CmdFileCreator/source/CmdFileCreator.pde" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/LICENSE.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/PWsetup.nsi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/batch scripts/gitinit.bat" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/batch scripts/pwgit.bat" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/batch scripts/pwrelease.bat" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/batch scripts/pwsync.bat" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/iconChanger/IconChanger1_4_32.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/iconChanger/IconChanger1_4_64.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/iconChanger/IconChanger2_0_32.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/iconChanger/IconChanger2_0_64.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../release/readme.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../x.bat" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,56 +489,35 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DelimiterParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="1" column="27" lean-forward="true" selection-start-line="1" selection-start-column="27" selection-end-line="1" selection-end-column="27" />
-              <folding>
-                <element signature="method#parse#0;class#DelimiterParser#0" expanded="false" />
-                <element signature="method#search#0;class#DelimiterParser#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CommandEdit.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="184" column="22" lean-forward="true" selection-start-line="184" selection-start-column="22" selection-end-line="184" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="CStyleParser.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="650">
-              <caret line="104" column="7" lean-forward="true" selection-start-line="104" selection-start-column="7" selection-end-line="104" selection-end-column="7" />
+            <state relative-caret-position="353">
+              <caret line="410" column="58" lean-forward="false" selection-start-line="410" selection-start-column="58" selection-end-line="410" selection-end-column="58" />
               <folding>
-                <element signature="e#3288#3289#0" expanded="true" />
-                <element signature="e#3478#3479#0" expanded="true" />
-                <element signature="e#3671#3672#0" expanded="true" />
-                <element signature="e#3712#3713#0" expanded="true" />
-                <element signature="e#3998#3999#0" expanded="true" />
-                <element signature="e#4020#4021#0" expanded="true" />
-                <element signature="e#4135#4136#0" expanded="true" />
-                <element signature="e#4157#4158#0" expanded="true" />
-                <element signature="e#4254#4255#0" expanded="true" />
-                <element signature="e#4276#4277#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#1570#1578#0" expanded="true" />
+                <element signature="method#getCharType#0;class#CStyleParser#0" expanded="false" />
+                <element signature="e#12512#12513#0" expanded="true" />
+                <element signature="e#12534#12535#0" expanded="true" />
+                <element signature="class#ValType#0;class#CStyleParser#0" expanded="false" />
+                <element signature="class#CommandType#0;class#CStyleParser#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Analyzer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java">
+      <file leaf-file-name="Primitives.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Primitives.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="812">
-              <caret line="192" column="59" lean-forward="false" selection-start-line="192" selection-start-column="59" selection-end-line="192" selection-end-column="59" />
-              <folding />
+            <state relative-caret-position="324">
+              <caret line="59" column="3" lean-forward="true" selection-start-line="59" selection-start-column="3" selection-end-line="59" selection-end-column="3" />
+              <folding>
+                <element signature="class#Array#0;class#Primitives#0" expanded="false" />
+                <element signature="e#982#983#0" expanded="true" />
+                <element signature="e#1004#1005#0" expanded="true" />
+                <marker date="1519224700188" expanded="false" signature="10479:10485" ph=" { " />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -116,6 +559,9 @@
       <find>info.buttonY</find>
       <find>lines()</find>
       <find>readAll</find>
+      <find>+</find>
+      <find>gt</find>
+      <find>add</find>
     </findStrings>
     <replaceStrings>
       <replace>End</replace>
@@ -133,6 +579,9 @@
       <replace>Integer.parseInt</replace>
       <replace>8</replace>
       <replace>getCommands().size()</replace>
+      <replace>&gt;=</replace>
+      <replace>lt</replace>
+      <replace>sub</replace>
     </replaceStrings>
     <dirStrings>
       <dir>C:\Users\user\Documents\[Projects]\PositionWriter\_library\CommandScript\src\com\karnos\commandscript</dir>
@@ -179,6 +628,8 @@
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
+        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/Primitives.java" />
+        <option value="$PROJECT_DIR$/src/Primitives.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java" />
       </list>
     </option>
@@ -286,6 +737,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -311,22 +763,14 @@
             </path>
             <path>
               <item name="CommandScript" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CommandScript" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="commandscript" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CommandScript" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scratches" />
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -340,6 +784,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
       <recent name="com.karnos.commandscript" />
       <recent name="com.karnos.commandscript.test" />
     </key>
@@ -554,11 +999,20 @@
       <workItem from="1518877586146" duration="627000" />
       <workItem from="1518963144485" duration="25000" />
       <workItem from="1519125522420" duration="6417000" />
+      <workItem from="1519209233523" duration="1220000" />
+      <workItem from="1519210802437" duration="497000" />
+      <workItem from="1519212322779" duration="648000" />
+      <workItem from="1519213280567" duration="87000" />
+      <workItem from="1519213696756" duration="3140000" />
+      <workItem from="1519217147086" duration="356000" />
+      <workItem from="1519217796574" duration="645000" />
+      <workItem from="1519218664458" duration="149000" />
+      <workItem from="1519219100769" duration="7047000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="138488000" />
+    <option name="totallyTimeSpent" value="152277000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
@@ -600,20 +1054,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/LineCommandType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="36" column="1" lean-forward="true" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -769,20 +1209,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/LineCommandType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="13" lean-forward="true" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/LineCommandProcessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="44" lean-forward="true" selection-start-line="1" selection-start-column="44" selection-end-line="1" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/../../PW2_0/code/KyUI.jar!/kyui/element/TextEdit.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="411">
@@ -794,7 +1220,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
           <caret line="31" column="22" lean-forward="true" selection-start-line="31" selection-start-column="22" selection-end-line="31" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -809,10 +1234,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="17" lean-forward="false" selection-start-line="0" selection-start-column="17" selection-end-line="0" selection-end-column="17" />
-          <folding>
-            <element signature="e#438#439#0" expanded="false" />
-            <element signature="e#488#489#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -827,7 +1248,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="452">
           <caret line="103" column="3" lean-forward="false" selection-start-line="103" selection-start-column="3" selection-end-line="103" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -835,6 +1255,48 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1978">
           <caret line="129" column="5" lean-forward="false" selection-start-line="129" selection-start-column="5" selection-end-line="129" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/LineCommandProcessor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" column="44" lean-forward="true" selection-start-line="1" selection-start-column="44" selection-end-line="1" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_121/src.zip!/java/lang/reflect/Array.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="103">
+          <caret line="45" column="7" lean-forward="true" selection-start-line="45" selection-start-column="7" selection-end-line="45" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/LineCommandType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="3" column="52" lean-forward="false" selection-start-line="3" selection-start-column="52" selection-end-line="3" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="13" lean-forward="false" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="method#parse#0;class#DelimiterParser#0" expanded="false" />
+            <element signature="method#search#0;class#DelimiterParser#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="25" column="31" lean-forward="true" selection-start-line="25" selection-start-column="31" selection-end-line="25" selection-end-column="31" />
           <folding />
         </state>
       </provider>
@@ -847,48 +1309,39 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="812">
-          <caret line="192" column="59" lean-forward="false" selection-start-line="192" selection-start-column="59" selection-end-line="192" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="27" lean-forward="true" selection-start-line="1" selection-start-column="27" selection-end-line="1" selection-end-column="27" />
-          <folding>
-            <element signature="method#parse#0;class#DelimiterParser#0" expanded="false" />
-            <element signature="method#search#0;class#DelimiterParser#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="184" column="22" lean-forward="true" selection-start-line="184" selection-start-column="22" selection-end-line="184" selection-end-column="22" />
+        <state relative-caret-position="2988">
+          <caret line="184" column="22" lean-forward="false" selection-start-line="184" selection-start-column="22" selection-end-line="184" selection-end-column="22" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Primitives.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="59" column="3" lean-forward="true" selection-start-line="59" selection-start-column="3" selection-end-line="59" selection-end-column="3" />
+          <folding>
+            <element signature="class#Array#0;class#Primitives#0" expanded="false" />
+            <element signature="e#982#983#0" expanded="true" />
+            <element signature="e#1004#1005#0" expanded="true" />
+            <marker date="1519224700188" expanded="false" signature="10479:10485" ph=" { " />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
-          <caret line="104" column="7" lean-forward="true" selection-start-line="104" selection-start-column="7" selection-end-line="104" selection-end-column="7" />
+        <state relative-caret-position="353">
+          <caret line="410" column="58" lean-forward="false" selection-start-line="410" selection-start-column="58" selection-end-line="410" selection-end-column="58" />
           <folding>
-            <element signature="e#3288#3289#0" expanded="true" />
-            <element signature="e#3478#3479#0" expanded="true" />
-            <element signature="e#3671#3672#0" expanded="true" />
-            <element signature="e#3712#3713#0" expanded="true" />
-            <element signature="e#3998#3999#0" expanded="true" />
-            <element signature="e#4020#4021#0" expanded="true" />
-            <element signature="e#4135#4136#0" expanded="true" />
-            <element signature="e#4157#4158#0" expanded="true" />
-            <element signature="e#4254#4255#0" expanded="true" />
-            <element signature="e#4276#4277#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1570#1578#0" expanded="true" />
+            <element signature="method#getCharType#0;class#CStyleParser#0" expanded="false" />
+            <element signature="e#12512#12513#0" expanded="true" />
+            <element signature="e#12534#12535#0" expanded="true" />
+            <element signature="class#ValType#0;class#CStyleParser#0" expanded="false" />
+            <element signature="class#CommandType#0;class#CStyleParser#0" expanded="false" />
           </folding>
         </state>
       </provider>
