@@ -12,5 +12,6 @@
     <orderEntry type="library" name="KyUI" level="project" />
     <orderEntry type="library" name="core" level="project" />
     <orderEntry type="library" name="CommandScript" level="project" />
+    <orderEntry type="library" name="beads" level="project" />
   </component>
 </module>
