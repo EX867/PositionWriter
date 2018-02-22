@@ -1,27 +1,35 @@
 package pw2.element;
+import beads.AudioContext;
+import beads.Glide;
+import beads.UGen;
 import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.event.EventListener;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.event.MouseEvent;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 public class Knob extends Element {
-  public int strokeWeight=12;
+  public int strokeWeight=6;
+  public int indicatorWidth=12;
   final float minAngle=PApplet.TWO_PI / 3;
   final float totalAngle=PApplet.TWO_PI * 5 / 6;
-  public float min=0;
-  public float max=1;
-  public float center=0;
-  public float value=0.0F;
+  public double min=0;
+  public double max=1;
+  public double center=0;
+  public double value=0.0F;
   public int fgColor;//knob color
   public int highlightColor;
   public float sensitivity=1;
   //
-  float clickValue=0;
+  double clickValue=0;
   public boolean selected=false;
   public EventListener adjustListener;
   public EventListener selectListener;
-  //boolean logScale=false;
+  public Glide glide;//change this to envelope plus glide control custom ugen!
+  boolean logScale=false;
   public Knob(String s) {
     super(s);
     bgColor=KyUI.Ref.color(127);
@@ -29,11 +37,58 @@ public class Knob extends Element {
     highlightColor=KyUI.Ref.color(0, 0, 255);
     padding=12;
   }
-  public Knob set(float min_, float max_, float center_, float value_) {
-    min=min_;
-    max=max_;
-    center=center_;
-    value=value_;
+  public Knob set(double min_, double max_, double center_, double value_) {
+    if (logScale) {
+      min=Math.log10(min_);
+      max=Math.log10(max_);
+      center=Math.log10(Math.min(max_, Math.max(min_, center_)));
+      value=Math.log10(Math.min(max_, Math.max(min_, value_)));
+    } else {
+      min=min_;
+      max=max_;
+      center=Math.min(max, Math.max(min, center_));
+      value=Math.min(max, Math.max(min, value_));
+    }
+    return this;
+  }
+  public Knob attach(AudioContext ac, Consumer<UGen> set, Function<Double, Double> get, double min_, double max_, double center_, double value_) {
+    set(min_, max_, center_, value_);
+    glide=new Glide(ac, get.apply(value).floatValue(), 30);
+    set.accept(glide);
+    adjustListener=(e) -> {
+      glide.setValue(get.apply(value).floatValue());
+    };
+    return this;
+  }
+  public Knob attach(AudioContext ac, Consumer<UGen> set, double min_, double max_, double center_, double value_, boolean logScale_) {
+    logScale=logScale_;
+    if (logScale) {
+      if (min_ <= 0) {
+        min_=PApplet.EPSILON;
+      }
+      if (max_ <= 0) {
+        max_=PApplet.EPSILON;
+      }
+      if (center_ <= 0) {
+        center_=PApplet.EPSILON;
+      }
+      if (value_ <= 0) {
+        value_=PApplet.EPSILON;
+      }
+      return attach(ac, set, (Double in) -> {
+        return Math.pow(10, in);
+      }, min_, max_, center_, value_);
+    } else {
+      return attach(ac, set, (Double in) -> {
+        return in;
+      }, min_, max_, center_, value_);
+    }
+  }
+  public Knob attach(Consumer<Double> set, double min_, double max_, double center_, double value_) {
+    set(min_, max_, center_, value_);
+    adjustListener=(e) -> {
+      set.accept(value);
+    };
     return this;
   }
   @Override
@@ -52,7 +107,7 @@ public class Knob extends Element {
     }
     float innerRadius=radius * 2 / 3;
     float pointRadius=radius / 6;
-    float paddingAngle=strokeWeight / (radius + strokeWeight + strokeWeight / 2);
+    float paddingAngle=indicatorWidth / (radius + indicatorWidth + indicatorWidth / 2);
     g.ellipseMode(PApplet.RADIUS);
     g.fill(fgColor);
     g.stroke(fgColor);
@@ -72,9 +127,9 @@ public class Knob extends Element {
     g.stroke(strokeWeight);
     g.pushMatrix();
     g.translate(offsetX + radius, offsetY + radius);
-    g.rotate(minAngle + totalAngle * (value - min) / (max - min));
+    g.rotate((float)(minAngle + totalAngle * (value - min) / (max - min)));
     g.stroke(bgColor);
-    g.rect(-strokeWeight, strokeWeight, radius + strokeWeight, -strokeWeight);
+    g.rect(-indicatorWidth, indicatorWidth, radius + indicatorWidth, -indicatorWidth);
     g.popMatrix();
     g.noStroke();
     g.ellipse(offsetX + radius, offsetY + radius, pointRadius, pointRadius);
@@ -86,20 +141,27 @@ public class Knob extends Element {
       if (selectListener != null) {
         selectListener.onEvent(this);
       }
-    } else if (e.getAction() == MouseEvent.DRAG && pressedL) {
+    } else if (e.getAction() == MouseEvent.DRAG) {
       float centerX=(pos.left + pos.right) / 2;
-      value=clickValue + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x) * sensitivity / (pos.right - pos.left);
-      value=Math.min(max, Math.max(min, value));
-      if (adjustListener != null) {
-        adjustListener.onEvent(this);
+      if (pressedL) {
+        value=clickValue + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 2 / (pos.right - pos.left);
       }
-      invalidate();
-      return false;
+      if (pressedR) {
+        value=clickValue + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 20 / (pos.bottom - pos.top);
+      }
+      if (pressedL || pressedR) {
+        value=Math.min(max, Math.max(min, value));
+        if (adjustListener != null) {
+          adjustListener.onEvent(this);
+        }
+        invalidate();
+        return false;
+      }
     }
     return true;
   }
-  public void arc(PGraphics g, float x, float y, float rx, float ry, float s, float e, int mode) {
-    g.arc(x, y, rx, ry, Math.min(s, e), Math.max(s, e), mode);
+  public void arc(PGraphics g, float x, float y, float rx, float ry, double s, double e, int mode) {
+    g.arc(x, y, rx, ry, (float)Math.min(s, e), (float)Math.max(s, e), mode);
   }
   public void adjust(float value_) {
     value=Math.min(max, Math.max(min, value_));

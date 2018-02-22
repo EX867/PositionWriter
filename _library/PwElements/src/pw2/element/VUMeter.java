@@ -52,15 +52,16 @@ public class VUMeter extends Element {
     for (int a=0; a < power.length; a++) {
       Float features=power[a].getFeatures();
       if (features != null) {
+        features*=power.length;//mult with channels
         float db=(float)linToDb(features);
         g.fill(fgColor);
         g.rect(pos.left + a * interval + 2, pos.top + head, pos.left + (a + 1) * interval - 4, pos.bottom);
         if (db < 0) {
           g.fill(highlightColor);
-          g.rect(pos.left + a * interval + 3, pos.bottom - (pos.bottom - pos.top - head) * features, pos.left + (a + 1) * interval - 6, pos.bottom);
+          g.rect(pos.left + a * interval + 3, pos.bottom - (pos.bottom - pos.top - head) * features, pos.left + (a + 1) * interval - 5, pos.bottom);
         } else {
           g.fill(errorColor);
-          g.rect(pos.left + a * interval + 3, pos.bottom - (pos.bottom - pos.top - head) * features, pos.left + (a + 1) * interval - 6, pos.bottom);
+          g.rect(pos.left + a * interval + 3, pos.bottom - (pos.bottom - pos.top - head) * features, pos.left + (a + 1) * interval - 5, pos.bottom);
         }
       }
     }
