@@ -5,9 +5,12 @@ import beads.UGen;
 import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.event.EventListener;
+import kyui.util.ColorExt;
+import kyui.util.Task;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.event.MouseEvent;
+import pw2.beads.UGenWrapper;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -19,16 +22,20 @@ public class Knob extends Element {
   public double min=0;
   public double max=1;
   public double center=0;
+  public double initialValue=0;
   public double value=0.0F;
   public int fgColor;//knob color
   public int highlightColor;
   public float sensitivity=1;
   //
   double clickValue=0;
+  long lastClicked=0;
+  boolean doubleClickReady=false;
   public boolean selected=false;
+  public Function<Double, Double> get;
+  public Runnable doubleClickListener;
   public EventListener adjustListener;
   public EventListener selectListener;
-  public Glide glide;//change this to envelope plus glide control custom ugen!
   boolean logScale=false;
   public Knob(String s) {
     super(s);
@@ -49,18 +56,18 @@ public class Knob extends Element {
       center=Math.min(max, Math.max(min, center_));
       value=Math.min(max, Math.max(min, value_));
     }
+    initialValue=value;
     return this;
   }
-  public Knob attach(AudioContext ac, Consumer<UGen> set, Function<Double, Double> get, double min_, double max_, double center_, double value_) {
+  public Knob attach(AudioContext ac, UGenWrapper ugen, Task param, Function<Double, Double> get_, double min_, double max_, double center_, double value_) {
+    get=get_;
     set(min_, max_, center_, value_);
-    glide=new Glide(ac, get.apply(value).floatValue(), 30);
-    set.accept(glide);
     adjustListener=(e) -> {
-      glide.setValue(get.apply(value).floatValue());
+      ugen.changeParameter(param, get.apply(value).doubleValue());
     };
     return this;
   }
-  public Knob attach(AudioContext ac, Consumer<UGen> set, double min_, double max_, double center_, double value_, boolean logScale_) {
+  public Knob attach(AudioContext ac, UGenWrapper ugen, Task param, double min_, double max_, double center_, double value_, boolean logScale_) {
     logScale=logScale_;
     if (logScale) {
       if (min_ <= 0) {
@@ -75,21 +82,14 @@ public class Knob extends Element {
       if (value_ <= 0) {
         value_=PApplet.EPSILON;
       }
-      return attach(ac, set, (Double in) -> {
+      return attach(ac, ugen, param, (Double in) -> {
         return Math.pow(10, in);
       }, min_, max_, center_, value_);
     } else {
-      return attach(ac, set, (Double in) -> {
+      return attach(ac, ugen, param, (Double in) -> {
         return in;
       }, min_, max_, center_, value_);
     }
-  }
-  public Knob attach(Consumer<Double> set, double min_, double max_, double center_, double value_) {
-    set(min_, max_, center_, value_);
-    adjustListener=(e) -> {
-      set.accept(value);
-    };
-    return this;
   }
   @Override
   public void render(PGraphics g) {
@@ -107,29 +107,35 @@ public class Knob extends Element {
     }
     float innerRadius=radius * 2 / 3;
     float pointRadius=radius / 6;
-    float paddingAngle=indicatorWidth / (radius + indicatorWidth + indicatorWidth / 2);
+    float paddingAngle=indicatorWidth / (radius + strokeWeight + indicatorWidth / 2);
+    int color=fgColor;
+    if (pressedL || pressedR) {
+      color=ColorExt.brighter(color, 20);
+    } else if (entered) {
+      color=ColorExt.brighter(color, 10);
+    }
     g.ellipseMode(PApplet.RADIUS);
-    g.fill(fgColor);
-    g.stroke(fgColor);
+    g.fill(color);
+    g.stroke(color);
     g.strokeWeight(strokeWeight);
     arc(g, offsetX + radius, offsetY + radius, radius, radius, minAngle - paddingAngle, minAngle + totalAngle + paddingAngle, PApplet.PIE);
     g.noStroke();
     g.fill(highlightColor);
     arc(g, offsetX + radius, offsetY + radius, radius - strokeWeight + 3, radius - strokeWeight + 3, minAngle + totalAngle * (center - min) / (max - min), minAngle + totalAngle * (value - min) / (max - min), PApplet.PIE);
     g.strokeWeight(strokeWeight);
-    g.stroke(fgColor);
-    g.fill(fgColor);
+    g.stroke(color);
+    g.fill(color);
     arc(g, offsetX + radius, offsetY + radius, innerRadius + strokeWeight, innerRadius + strokeWeight, minAngle + totalAngle * (center - min) / (max - min), minAngle + totalAngle * (value - min) / (max - min), PApplet.PIE);
     g.noStroke();
     g.fill(bgColor);
     g.ellipse(offsetX + radius, offsetY + radius, innerRadius, innerRadius);
-    g.fill(fgColor);
+    g.fill(color);
     g.stroke(strokeWeight);
     g.pushMatrix();
     g.translate(offsetX + radius, offsetY + radius);
     g.rotate((float)(minAngle + totalAngle * (value - min) / (max - min)));
     g.stroke(bgColor);
-    g.rect(-indicatorWidth, indicatorWidth, radius + indicatorWidth, -indicatorWidth);
+    g.rect(-indicatorWidth, indicatorWidth, radius + strokeWeight, -indicatorWidth);
     g.popMatrix();
     g.noStroke();
     g.ellipse(offsetX + radius, offsetY + radius, pointRadius, pointRadius);
@@ -141,13 +147,24 @@ public class Knob extends Element {
       if (selectListener != null) {
         selectListener.onEvent(this);
       }
+      long time=System.currentTimeMillis();
+      if (doubleClickReady && time - lastClicked < KyUI.DOUBLE_CLICK_INTERVAL) {
+        adjust(initialValue);
+        doubleClickReady=false;
+      } else {
+        doubleClickReady=true;
+      }
+      lastClicked=time;
     } else if (e.getAction() == MouseEvent.DRAG) {
       float centerX=(pos.left + pos.right) / 2;
+      if (pressedL || pressedR) {
+        value=clickValue;
+      }
       if (pressedL) {
-        value=clickValue + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 2 / (pos.right - pos.left);
+        value=value + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 2 / (pos.right - pos.left);
       }
       if (pressedR) {
-        value=clickValue + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 20 / (pos.bottom - pos.top);
+        value=value + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 20 / (pos.bottom - pos.top);
       }
       if (pressedL || pressedR) {
         value=Math.min(max, Math.max(min, value));
@@ -163,7 +180,7 @@ public class Knob extends Element {
   public void arc(PGraphics g, float x, float y, float rx, float ry, double s, double e, int mode) {
     g.arc(x, y, rx, ry, (float)Math.min(s, e), (float)Math.max(s, e), mode);
   }
-  public void adjust(float value_) {
+  public void adjust(double value_) {
     value=Math.min(max, Math.max(min, value_));
     if (adjustListener != null) {
       adjustListener.onEvent(this);
