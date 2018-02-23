@@ -1,9 +1,8 @@
 package pw2.beads;
 import beads.AudioContext;
-import beads.Glide;
 import beads.Reverb;
 import kyui.util.Task;
-public class ReverbW extends UGenWrapper {
+public class ReverbW extends UGenW {
   public Reverb[] reverb;
   public Task setSize=(Object d) -> {//assert d instanceof Double
     for (int a=0; a < reverb.length; a++) {

@@ -3,7 +3,7 @@ import beads.AudioContext;
 import beads.BiquadFilter;
 import beads.Glide;
 import kyui.util.Task;
-public class BiquadFilterW extends UGenWrapper {
+public class BiquadFilterW extends UGenW {
   public BiquadFilter filter;
   Glide frequency_;
   Glide q_;//0.7-7

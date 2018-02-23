@@ -3,7 +3,7 @@ import beads.AudioContext;
 import beads.Gain;
 import beads.Glide;
 import kyui.util.Task;
-public class GainW extends UGenWrapper {
+public class GainW extends UGenW {
   public Gain gain;
   Glide gain_;
   public Task setGain=(Object d) -> {//assert d instanceof Double

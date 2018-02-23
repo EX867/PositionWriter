@@ -1,7 +1,5 @@
 package pw2.element;
 import beads.AudioContext;
-import beads.Glide;
-import beads.UGen;
 import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.event.EventListener;
@@ -10,9 +8,9 @@ import kyui.util.Task;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.event.MouseEvent;
-import pw2.beads.UGenWrapper;
+import pw2.beads.UGenW;
 
-import java.util.function.Consumer;
+import java.text.DecimalFormat;
 import java.util.function.Function;
 public class Knob extends Element {
   public int strokeWeight=6;
@@ -27,7 +25,9 @@ public class Knob extends Element {
   public int fgColor;//knob color
   public int highlightColor;
   public float sensitivity=1;
+  public String label="";
   //
+  static DecimalFormat cut2=new DecimalFormat("0.00");
   double clickValue=0;
   long lastClicked=0;
   boolean doubleClickReady=false;
@@ -39,6 +39,14 @@ public class Knob extends Element {
   boolean logScale=false;
   public Knob(String s) {
     super(s);
+    init();
+  }
+  public Knob(String s, String label_) {
+    super(s);
+    label=label_;
+    init();
+  }
+  private void init() {
     bgColor=KyUI.Ref.color(127);
     fgColor=KyUI.Ref.color(50);
     highlightColor=KyUI.Ref.color(0, 0, 255);
@@ -59,7 +67,7 @@ public class Knob extends Element {
     initialValue=value;
     return this;
   }
-  public Knob attach(AudioContext ac, UGenWrapper ugen, Task param, Function<Double, Double> get_, double min_, double max_, double center_, double value_) {
+  public Knob attach(AudioContext ac, UGenW ugen, Task param, Function<Double, Double> get_, double min_, double max_, double center_, double value_) {
     get=get_;
     set(min_, max_, center_, value_);
     adjustListener=(e) -> {
@@ -67,7 +75,7 @@ public class Knob extends Element {
     };
     return this;
   }
-  public Knob attach(AudioContext ac, UGenWrapper ugen, Task param, double min_, double max_, double center_, double value_, boolean logScale_) {
+  public Knob attach(AudioContext ac, UGenW ugen, Task param, double min_, double max_, double center_, double value_, boolean logScale_) {
     logScale=logScale_;
     if (logScale) {
       if (min_ <= 0) {
@@ -129,15 +137,19 @@ public class Knob extends Element {
     g.noStroke();
     g.fill(bgColor);
     g.ellipse(offsetX + radius, offsetY + radius, innerRadius, innerRadius);
-    g.fill(color);
-    g.stroke(strokeWeight);
+    //draw indicator and text
     g.pushMatrix();
     g.translate(offsetX + radius, offsetY + radius);
+    g.fill(color);
+    g.stroke(strokeWeight);
     g.rotate((float)(minAngle + totalAngle * (value - min) / (max - min)));
     g.stroke(bgColor);
     g.rect(-indicatorWidth, indicatorWidth, radius + strokeWeight, -indicatorWidth);
     g.popMatrix();
+    g.textSize(pointRadius * 4 / 3);
     g.noStroke();
+    g.text(label, offsetX + radius, offsetY + radius - pointRadius * 2 - 2);
+    g.text(cut2.format(get.apply(value)), offsetX + radius, offsetY + radius + pointRadius * 2 - 2);
     g.ellipse(offsetX + radius, offsetY + radius, pointRadius, pointRadius);
   }
   @Override

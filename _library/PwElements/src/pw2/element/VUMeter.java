@@ -74,7 +74,7 @@ public class VUMeter extends Element {
   }
   @Override
   public void update() {
-    if (!attachedUGen.isPaused() && attachedUGen.getContext().isRunning()) {
+    if (attachedUGen != null && !attachedUGen.isPaused() && attachedUGen.getContext().isRunning()) {
       invalidate();
     }
   }

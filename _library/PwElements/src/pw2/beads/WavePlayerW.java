@@ -4,7 +4,7 @@ import beads.Buffer;
 import beads.Glide;
 import beads.WavePlayer;
 import kyui.util.Task;
-public class WavePlayerW extends UGenWrapper {
+public class WavePlayerW extends UGenW {
   public WavePlayer player;
   Glide frequency_;
   public Task setFrequency=(Object d) -> {//assert d instanceof Double
