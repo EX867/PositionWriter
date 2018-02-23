@@ -19,4 +19,14 @@ public class WavePlayerW extends UGenW {
     drawFromChainInput(player);
     addToChainOutput(player);
   }
+  @Override
+  public void kill() {
+    super.kill();
+    player.kill();
+    frequency_.kill();
+  }
+  @Override
+  protected void onBypass(boolean v) {
+    player.pause(v);
+  }
 }

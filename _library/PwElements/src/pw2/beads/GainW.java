@@ -17,4 +17,14 @@ public class GainW extends UGenW {
     drawFromChainInput(gain);
     addToChainOutput(gain);
   }
+  @Override
+  protected void onBypass(boolean v) {
+    gain.pause(v);
+  }
+  @Override
+  public void kill() {
+    super.kill();
+    gain.kill();
+    gain_.kill();
+  }
 }

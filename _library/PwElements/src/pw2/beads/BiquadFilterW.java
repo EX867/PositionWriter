@@ -29,4 +29,16 @@ public class BiquadFilterW extends UGenW {
     drawFromChainInput(filter);
     addToChainOutput(filter);
   }
+  @Override
+  public void kill() {
+    super.kill();
+    filter.kill();
+    frequency_.kill();
+    q_.kill();
+    gain_.kill();
+  }
+  @Override
+  protected void onBypass(boolean v) {
+    filter.pause(v);
+  }
 }

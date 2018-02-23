@@ -45,23 +45,23 @@ public class Scope extends Element {
       public void accept(float[][] bufOut) {
         if (!canDraw) return;
         image.loadPixels();
+        java.util.Arrays.fill(image.pixels, 0);
+        int size=bufOut[0].length;
+        while (size > 0 && PApplet.abs(bufOut[0][bufOut[0].length - size]) > 0.05F) {
+          size--;
+        }
+        if (size == 0) {
+          size=bufOut[0].length;
+        }
+        int pvOffset=image.height / 2;
+        for (int a=0; a < image.width; a++) {
+          int buffIndex=bufOut[0].length - size + a * size / image.width;
+          int vOffset=(int)((1 - bufOut[0][buffIndex]) * image.height / 2);
+          vOffset=Math.min(image.height - 1, Math.max(0, vOffset));
+          line(a, pvOffset, vOffset);
+          pvOffset=vOffset;
+        }
         synchronized (image) {//slowing down...thread safe...
-          java.util.Arrays.fill(image.pixels, 0);
-          int size=bufOut[0].length;
-          while (size > 0 && PApplet.abs(bufOut[0][bufOut[0].length - size]) > 0.05F) {
-            size--;
-          }
-          if (size == 0) {
-            size=bufOut[0].length;
-          }
-          int pvOffset=image.height / 2;
-          for (int a=0; a < image.width; a++) {
-            int buffIndex=bufOut[0].length - size + a * size / image.width;
-            int vOffset=(int)((1 - bufOut[0][buffIndex]) * image.height / 2);
-            vOffset=Math.min(image.height - 1, Math.max(0, vOffset));
-            line(a, pvOffset, vOffset);
-            pvOffset=vOffset;
-          }
           image.updatePixels();
         }
         changed=true;

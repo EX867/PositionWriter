@@ -1,18 +1,43 @@
 package pw2.beads;
-import beads.AudioContext;
-import beads.UGenChain;
+import beads.*;
 import kyui.util.Task;
 import kyui.util.TaskManager;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
 public abstract class UGenW extends UGenChain {//solve synchronization error with task system.
   public static float GLIDE_TIME=30;
   TaskManager tm=new TaskManager();
   ArrayList<UGenListener> listener=new ArrayList<>();
+  boolean bypass=false;
   //Task setFrequency...
-  public UGenW(AudioContext audioContext, int in, int out) {
-    super(audioContext, in, out);
+  protected Field reflectedChainOutField;
+  protected UGen reflectedChainOut;
+  protected Field bufOutField;
+  protected Transfer transfer;
+  @Override
+  public void kill() {
+    transfer.kill();
+    super.kill();
+  }
+  public UGenW(AudioContext ac, int in, int out) {
+    super(ac, in, out);
+    transfer=new Transfer(ac, in, out);
+    try {
+      reflectedChainOutField=UGenChain.class.getDeclaredField("chainOut");
+      reflectedChainOutField.setAccessible(true);
+      reflectedChainOut=(UGen)reflectedChainOutField.get(this);
+      Field field=UGenChain.class.getDeclaredField("chainIn");
+      field.setAccessible(true);
+      bufOutField=UGen.class.getDeclaredField("bufOut");
+      bufOutField.setAccessible(true);
+      bufOutField.set(transfer, bufOut);
+      transfer.addInput((UGen)field.get(this));
+    } catch (Exception e) {
+      System.err.println("reflection failed");
+      e.printStackTrace();
+    }
   }
   public void changeParameter(Task task, Double value) {
     tm.addTask(task, value);
@@ -38,4 +63,20 @@ public abstract class UGenW extends UGenChain {//solve synchronization error wit
   public void addListener(UGenListener l) {
     listener.add(l);
   }
+  public void bypass(boolean v) {
+    tm.addTask((o) -> {
+      bypass=v;
+      try {
+        if (v) {
+          reflectedChainOutField.set(this, transfer);
+        } else {
+          reflectedChainOutField.set(this, reflectedChainOut);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      onBypass(v);
+    }, null);
+  }
+  protected abstract void onBypass(boolean v);
 }

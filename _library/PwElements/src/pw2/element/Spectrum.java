@@ -38,6 +38,30 @@ public class Spectrum extends Element {
     power=new PowerSpectrum();
     segmenter.addListener(fft);
     fft.addListener(power);
+    power.addListener(new FeatureExtractor<Object, float[]>() {
+      @Override
+      public void process(TimeStamp timeStamp, TimeStamp timeStamp1, float[] features) {
+        if (!canDraw) return;
+        image.loadPixels();
+        java.util.Arrays.fill(image.pixels, 0);
+        //float[] features=power.getFeatures();
+        int pvOffset=0;
+        int pfeatureIndex=0;
+        if (features != null) {
+          for (int i=0; i < features.length; i++) {
+            int featureIndex=(int)(image.width * Math.log10((double)i * (10 - 1) / features.length + 1));
+            int vOffset=(int)((1 - 2 * Math.sqrt(features[i]) / fft.getNumberOfFeatures()) * image.height);
+            vOffset=Math.min(image.height - 1, Math.max(0, vOffset));
+            line(pfeatureIndex, pvOffset, featureIndex, vOffset);
+            pvOffset=vOffset;
+            pfeatureIndex=featureIndex;
+          }
+        }
+        synchronized (image) {
+          image.updatePixels();
+        }
+      }
+    });
     ac.out.addDependent(segmenter);
   }
   public void deattach() {
@@ -51,14 +75,23 @@ public class Spectrum extends Element {
     bgColor=KyUI.Ref.color(127);
     fgColor=KyUI.Ref.color(50);
   }
-  private void line(int x, int y1, int y2) {
+  private void line(int x1, int y1, int x2, int y2) {
     if (y1 > y2) {
       int temp=y1;
       y1=y2;
       y2=temp;
+      temp=x1;
+      x1=x2;
+      x2=temp;
+    } else if (y1 == y2 && x1 > x2) {
+      int temp=x1;
+      x1=x2;
+      x2=temp;
     }
-    for (int a=y1; a <= y2; a++) {
-      image.pixels[a * image.width + x]=fgColor;
+    if (y1 != y2) {
+      for (int a=y1; a < y2; a++) {
+        image.pixels[a * image.width + (x1 + (x2 - x1) * (a - y1) / (y2 - y1))]=fgColor;
+      }
     }
   }
   @Override
@@ -66,32 +99,18 @@ public class Spectrum extends Element {
     if (attachedUGen == null) {//no!!
       return;
     }
+    g.strokeWeight(strokeWeight);
     g.fill(bgColor);
-    pos.render(g);
-    g.imageMode(PApplet.CENTER);
-    if (!canDraw) return;
-    image.loadPixels();
-    java.util.Arrays.fill(image.pixels, 0);
-    g.imageMode(PApplet.CENTER);
-    float[] features=power.getFeatures();
-    int pvOffset=0;
-    if (features != null) {
-      for (int i=0; i < image.width; i++) {
-        int featureIndex=i * features.length / image.width;
-        int vOffset=image.height - 1 - Math.min((int)((120 - features[featureIndex]) * image.height), image.height - 1);
-        vOffset=Math.min(image.height - 1, Math.max(0, vOffset));
-        line(i, pvOffset, vOffset);
-        pvOffset=vOffset;
-      }
+    g.stroke(fgColor);
+    pos.render(g, -strokeWeight / 2);
+    g.noStroke();
+    if(image==null){
+      return;
     }
-    image.updatePixels();
-    g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);
-  }
-  public static double linToDb(double in) {
-    return 20 * Math.log10(in);
-  }
-  public static double dbToLin(float in) {
-    return Math.pow(10, 0.05 * in);
+    g.imageMode(PApplet.CENTER);
+    synchronized (image) {
+      g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);
+    }
   }
   @Override
   public void update() {

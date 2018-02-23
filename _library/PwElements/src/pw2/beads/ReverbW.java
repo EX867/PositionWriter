@@ -29,8 +29,20 @@ public class ReverbW extends UGenW {
     reverb=new Reverb[in];
     for (int a=0; a < reverb.length; a++) {
       reverb[a]=new Reverb(ac, out);
-      drawFromChainInput(a,reverb[a]);
+      drawFromChainInput(a, reverb[a]);
       addToChainOutput(reverb[a]);
+    }
+  }
+  @Override
+  public void kill() {
+    for (int a=0; a < reverb.length; a++) {
+      reverb[a].kill();
+    }
+  }
+  @Override
+  protected void onBypass(boolean v) {
+    for (int a=0; a < reverb.length; a++) {
+      reverb[a].pause(v);
     }
   }
 }

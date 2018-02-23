@@ -160,7 +160,7 @@ public class Knob extends Element {
         selectListener.onEvent(this);
       }
       long time=System.currentTimeMillis();
-      if (doubleClickReady && time - lastClicked < KyUI.DOUBLE_CLICK_INTERVAL) {
+      if (e.getButton() == PApplet.LEFT && doubleClickReady && time - lastClicked < KyUI.DOUBLE_CLICK_INTERVAL) {
         adjust(initialValue);
         doubleClickReady=false;
       } else {

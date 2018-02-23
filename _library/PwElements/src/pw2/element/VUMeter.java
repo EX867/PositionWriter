@@ -69,7 +69,7 @@ public class VUMeter extends Element {
   public static double linToDb(double in) {
     return 20 * Math.log10(in);
   }
-  public static double dbToLin(float in) {
+  public static double dbToLin(double in) {
     return Math.pow(10, 0.05 * in);
   }
   @Override
