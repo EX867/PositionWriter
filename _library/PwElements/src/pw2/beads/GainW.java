@@ -1,30 +1,30 @@
 package pw2.beads;
 import beads.AudioContext;
 import beads.Gain;
-import beads.Glide;
-import kyui.util.Task;
+import pw2.element.Knob;
 public class GainW extends UGenW {
-  public Gain gain;
-  Glide gain_;
-  public Task setGain=(Object d) -> {//assert d instanceof Double
-    gain_.setValue(((Double)d).floatValue());
-  };
+  public Gain ugen;
+  public KnobAutomation gain;
+  public Parameter setGain=new Parameter((Object d) -> {//assert d instanceof Double
+    gain.setValue(((Double)d).floatValue());
+  }, (Knob target) -> {
+    gain.target=target;
+  });
   public GainW(AudioContext ac, int in) {
     super(ac, in, in);
-    gain=new Gain(ac, in);
-    gain_=new Glide(ac, 1, GLIDE_TIME);
-    gain.setGain(gain_);
-    drawFromChainInput(gain);
-    addToChainOutput(gain);
+    ugen=new Gain(ac, in);
+    ugen.setGain(gain=new KnobAutomation(ac, 1));
+    drawFromChainInput(ugen);
+    addToChainOutput(ugen);
   }
   @Override
   protected void onBypass(boolean v) {
-    gain.pause(v);
+    ugen.pause(v);
   }
   @Override
   public void kill() {
     super.kill();
+    ugen.kill();
     gain.kill();
-    gain_.kill();
   }
 }

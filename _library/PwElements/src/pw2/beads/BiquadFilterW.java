@@ -1,44 +1,49 @@
 package pw2.beads;
 import beads.AudioContext;
 import beads.BiquadFilter;
-import beads.Glide;
-import kyui.util.Task;
+import pw2.element.Knob;
 public class BiquadFilterW extends UGenW {
-  public BiquadFilter filter;
-  Glide frequency_;
-  Glide q_;//0.7-7
-  Glide gain_;
-  public Task setFrequency=(Object d) -> {
-    frequency_.setValue(((Double)d).floatValue());
-  };
-  public Task setQ=(Object d) -> {
-    q_.setValue(((Double)d).floatValue());
-  };
-  public Task setGain=(Object d) -> {
-    gain_.setValue(((Double)d).floatValue());
-  };
+  public BiquadFilter ugen;
+  public KnobAutomation frequency;
+  public KnobAutomation q;//0.7-7
+  public KnobAutomation gain;
+  public Parameter setFrequency=new Parameter((Object d) -> {
+    frequency.setValue(((Double)d).floatValue());
+  }, (Knob target) -> {
+    frequency.target=target;
+  });
+  public Parameter setQ=new Parameter((Object d) -> {
+    q.setValue(((Double)d).floatValue());
+  }, (Knob target) -> {
+    q.target=target;
+  });
+  public Parameter setGain=new Parameter((Object d) -> {
+    gain.setValue(((Double)d).floatValue());
+  }, (Knob target) -> {
+    gain.target=target;
+  });
   public BiquadFilterW(AudioContext ac, int channels, BiquadFilter.Type type) {
     super(ac, channels, channels);
-    filter=new BiquadFilter(ac, channels, type);
-    frequency_=new Glide(ac, 20000, GLIDE_TIME);
-    q_=new Glide(ac, 1, GLIDE_TIME);
-    gain_=new Glide(ac, 1, GLIDE_TIME);
-    filter.setFrequency(frequency_);
-    filter.setQ(q_);
-    filter.setGain(gain_);
-    drawFromChainInput(filter);
-    addToChainOutput(filter);
+    ugen=new BiquadFilter(ac, channels, type);
+    frequency=new KnobAutomation(ac, 20000);
+    q=new KnobAutomation(ac, 1);
+    gain=new KnobAutomation(ac, 1);
+    ugen.setFrequency(frequency);
+    ugen.setQ(q);
+    ugen.setGain(gain);
+    drawFromChainInput(ugen);
+    addToChainOutput(ugen);
   }
   @Override
   public void kill() {
     super.kill();
-    filter.kill();
-    frequency_.kill();
-    q_.kill();
-    gain_.kill();
+    ugen.kill();
+    frequency.kill();
+    q.kill();
+    gain.kill();
   }
   @Override
   protected void onBypass(boolean v) {
-    filter.pause(v);
+    ugen.pause(v);
   }
 }

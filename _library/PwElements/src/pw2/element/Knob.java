@@ -33,10 +33,12 @@ public class Knob extends Element {
   boolean doubleClickReady=false;
   public boolean selected=false;
   public Function<Double, Double> get;
+  public Function<Double, Double> getInv;
   public Runnable doubleClickListener;
   public EventListener adjustListener;
   public EventListener selectListener;
   boolean logScale=false;
+  boolean adjusted;
   public Knob(String s) {
     super(s);
     init();
@@ -67,15 +69,17 @@ public class Knob extends Element {
     initialValue=value;
     return this;
   }
-  public Knob attach(AudioContext ac, UGenW ugen, Task param, Function<Double, Double> get_, double min_, double max_, double center_, double value_) {
+  public Knob attach(AudioContext ac, UGenW ugen, UGenW.Parameter param, Function<Double, Double> get_, Function<Double, Double> getInv_, double min_, double max_, double center_, double value_) {
     get=get_;
+    getInv=getInv_;
     set(min_, max_, center_, value_);
+    param.attacher.accept(this);
     adjustListener=(e) -> {
       ugen.changeParameter(param, get.apply(value).doubleValue());
     };
     return this;
   }
-  public Knob attach(AudioContext ac, UGenW ugen, Task param, double min_, double max_, double center_, double value_, boolean logScale_) {
+  public Knob attach(AudioContext ac, UGenW ugen, UGenW.Parameter param, double min_, double max_, double center_, double value_, boolean logScale_) {
     logScale=logScale_;
     if (logScale) {
       if (min_ <= 0) {
@@ -92,9 +96,13 @@ public class Knob extends Element {
       }
       return attach(ac, ugen, param, (Double in) -> {
         return Math.pow(10, in);
+      }, (Double in) -> {
+        return Math.log10(in);
       }, min_, max_, center_, value_);
     } else {
       return attach(ac, ugen, param, (Double in) -> {
+        return in;
+      }, (Double in) -> {
         return in;
       }, min_, max_, center_, value_);
     }
@@ -179,11 +187,7 @@ public class Knob extends Element {
         value=value + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 20 / (pos.bottom - pos.top);
       }
       if (pressedL || pressedR) {
-        value=Math.min(max, Math.max(min, value));
-        if (adjustListener != null) {
-          adjustListener.onEvent(this);
-        }
-        invalidate();
+        adjust(value);
         return false;
       }
     }
@@ -194,13 +198,20 @@ public class Knob extends Element {
   }
   public void adjust(double value_) {
     value=Math.min(max, Math.max(min, value_));
+    adjusted=true;
     if (adjustListener != null) {
       adjustListener.onEvent(this);
     }
   }
-  //  @Override
-  //  public void update() {
-  //    adjust(PApplet.sin((float)(System.currentTimeMillis() % 100000) / 300));
-  //    invalidate();
-  //  }
+  public boolean hold() {
+    return (pressedL || pressedR) && KyUI.Ref.mousePressed;
+  }
+  @Override
+  public void update() {
+    //adjust(PApplet.sin((float)(System.currentTimeMillis() % 100000) / 300));
+    if (adjusted) {
+      adjusted=false;
+      invalidate();
+    }
+  }
 }

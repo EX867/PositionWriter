@@ -1,20 +1,21 @@
 package pw2.beads;
 import beads.AudioContext;
 import beads.Buffer;
-import beads.Glide;
 import beads.WavePlayer;
-import kyui.util.Task;
+import pw2.element.Knob;
 public class WavePlayerW extends UGenW {
   public WavePlayer player;
-  Glide frequency_;
-  public Task setFrequency=(Object d) -> {//assert d instanceof Double
-    frequency_.setValue(((Double)d).floatValue());
-  };
+  public KnobAutomation frequency;
+  public Parameter setFrequency=new Parameter((Object d) -> {//assert d instanceof Double
+    frequency.setValue(((Double)d).floatValue());
+  }, (Knob target) -> {
+    frequency.target=target;
+  });
   public WavePlayerW(AudioContext ac, Buffer buffer) {
     super(ac, 0, 1);
     player=new WavePlayer(ac, 0, buffer);
-    frequency_=new Glide(ac, 22000, GLIDE_TIME);
-    player.setFrequency(frequency_);
+    frequency=new KnobAutomation(ac, 800);
+    player.setFrequency(frequency);
     //player.setPhase();//not auto set...
     drawFromChainInput(player);
     addToChainOutput(player);
@@ -23,7 +24,7 @@ public class WavePlayerW extends UGenW {
   public void kill() {
     super.kill();
     player.kill();
-    frequency_.kill();
+    frequency.kill();
   }
   @Override
   protected void onBypass(boolean v) {

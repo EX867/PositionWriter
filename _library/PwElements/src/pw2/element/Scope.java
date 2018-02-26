@@ -14,6 +14,7 @@ public class Scope extends Element {
   UGen attachedUGen;
   int fgColor;
   UGenListener power;
+  int size;
   //temp
   boolean canDraw=false;
   boolean changed=false;
@@ -30,6 +31,7 @@ public class Scope extends Element {
   }
   public void attach(UGenW ugen) {
     attachedUGen=ugen;
+    size=ugen.getContext().getBufferSize() / 2;
     power=new UGenListener() {
       private void line(int x, int y1, int y2) {
         if (y1 > y2) {
@@ -46,24 +48,37 @@ public class Scope extends Element {
         if (!canDraw) return;
         image.loadPixels();
         java.util.Arrays.fill(image.pixels, 0);
-        int size=bufOut[0].length;
-        while (size > 0 && PApplet.abs(bufOut[0][bufOut[0].length - size]) > 0.05F) {
-          size--;
+        int start=-1;
+        int startAlter=0;
+        while (startAlter + 1 < bufOut[0].length) {
+          if (PApplet.abs(bufOut[0][startAlter]) < 0.05F) {
+            if (bufOut[0][startAlter] <= bufOut[0][startAlter + 1]) {
+              start=startAlter;
+              break;
+            }
+          }
+          startAlter++;
         }
-        if (size == 0) {
-          size=bufOut[0].length;
+        if (start == -1) {
+          if (startAlter + 1 >= bufOut[0].length) {
+            start=0;
+          } else {
+            start=startAlter;
+          }
         }
         int pvOffset=image.height / 2;
         for (int a=0; a < image.width; a++) {
-          int buffIndex=bufOut[0].length - size + a * size / image.width;
+          int buffIndex=start + a * size / image.width;
+          if (buffIndex >= bufOut[0].length) {
+            break;
+          }
           int vOffset=(int)((1 - bufOut[0][buffIndex]) * image.height / 2);
           vOffset=Math.min(image.height - 1, Math.max(0, vOffset));
           line(a, pvOffset, vOffset);
           pvOffset=vOffset;
         }
-        synchronized (image) {//slowing down...thread safe...
-          image.updatePixels();
-        }
+        //WARNING>>synchronized!
+        image.updatePixels();
         changed=true;
       }
     };
@@ -83,15 +98,18 @@ public class Scope extends Element {
     if (attachedUGen == null) {//no!!
       return;
     }
+    g.stroke(fgColor);
+    g.strokeWeight(strokeWeight);
     g.fill(bgColor);
-    pos.render(g);
+    pos.render(g, -strokeWeight / 2);
+    g.line(pos.left, (pos.top + pos.bottom) / 2, pos.right, (pos.top + pos.bottom) / 2);
+    g.noStroke();
     if (image == null) {
       return;
     }
     g.imageMode(PApplet.CENTER);
-    synchronized (image) {//slowing down...thread safe...
-      g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);
-    }
+    //WARNING>>synchronized!
+    g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);
   }
   @Override
   public void update() {

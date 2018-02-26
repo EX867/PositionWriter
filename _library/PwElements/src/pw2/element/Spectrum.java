@@ -57,9 +57,7 @@ public class Spectrum extends Element {
             pfeatureIndex=featureIndex;
           }
         }
-        synchronized (image) {
-          image.updatePixels();
-        }
+        image.updatePixels();
       }
     });
     ac.out.addDependent(segmenter);
@@ -88,7 +86,7 @@ public class Spectrum extends Element {
       x1=x2;
       x2=temp;
     }
-    if (y1 != y2) {
+    if (y1 < y2) {
       for (int a=y1; a < y2; a++) {
         image.pixels[a * image.width + (x1 + (x2 - x1) * (a - y1) / (y2 - y1))]=fgColor;
       }
@@ -104,13 +102,13 @@ public class Spectrum extends Element {
     g.stroke(fgColor);
     pos.render(g, -strokeWeight / 2);
     g.noStroke();
-    if(image==null){
+    if (image == null) {
       return;
     }
     g.imageMode(PApplet.CENTER);
-    synchronized (image) {
-      g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);
-    }
+    canDraw=false;//WARNING>sometimes of this, spectrum will not be drawn.
+    g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);
+    canDraw=true;
   }
   @Override
   public void update() {

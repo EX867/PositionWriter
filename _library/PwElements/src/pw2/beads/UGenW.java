@@ -2,12 +2,21 @@ package pw2.beads;
 import beads.*;
 import kyui.util.Task;
 import kyui.util.TaskManager;
+import pw2.element.Knob;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 public abstract class UGenW extends UGenChain {//solve synchronization error with task system.
-  public static float GLIDE_TIME=30;
+  public class Parameter {
+    public Task setter;
+    public Consumer<Knob> attacher;
+    public Parameter(Task setter_, Consumer<Knob> attacher_) {
+      setter=setter_;
+      attacher=attacher_;
+    }
+  }
   TaskManager tm=new TaskManager();
   ArrayList<UGenListener> listener=new ArrayList<>();
   boolean bypass=false;
@@ -41,6 +50,9 @@ public abstract class UGenW extends UGenChain {//solve synchronization error wit
   }
   public void changeParameter(Task task, Double value) {
     tm.addTask(task, value);
+  }
+  public void changeParameter(Parameter task, Double value) {
+    tm.addTask(task.setter, value);
   }
   @Override
   protected void preFrame() {

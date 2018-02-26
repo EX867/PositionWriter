@@ -1,48 +1,64 @@
 package pw2.beads;
 import beads.AudioContext;
 import beads.Reverb;
-import kyui.util.Task;
+import pw2.element.Knob;
 public class ReverbW extends UGenW {
-  public Reverb[] reverb;
-  public Task setSize=(Object d) -> {//assert d instanceof Double
-    for (int a=0; a < reverb.length; a++) {
-      reverb[a].setSize(((Double)d).floatValue());
+  public Reverb[] ugen;
+  public KnobAutomation size;
+  public KnobAutomation damping;
+  public KnobAutomation earlyReflection;
+  public KnobAutomation length;
+  public Parameter setSize=new Parameter((Object d) -> {//assert d instanceof Double
+    for (int a=0; a < ugen.length; a++) {
+      ugen[a].setSize(((Double)d).floatValue());
     }
-  };
-  public Task setDamping=(Object d) -> {
-    for (int a=0; a < reverb.length; a++) {
-      reverb[a].setDamping(((Double)d).floatValue());
+  }, (Knob target) -> {
+    size.target=target;
+  });
+  public Parameter setDamping=new Parameter((Object d) -> {
+    for (int a=0; a < ugen.length; a++) {
+      ugen[a].setDamping(((Double)d).floatValue());
     }
-  };
-  public Task setEarlyReflection=(Object d) -> {
-    for (int a=0; a < reverb.length; a++) {
-      reverb[a].setEarlyReflectionsLevel(((Double)d).floatValue());
+  },(Knob target) -> {
+    damping.target=target;
+  });
+  public Parameter setEarlyReflection=new Parameter((Object d) -> {
+    for (int a=0; a < ugen.length; a++) {
+      ugen[a].setEarlyReflectionsLevel(((Double)d).floatValue());
     }
-  };
-  public Task setLength=(Object d) -> {
-    for (int a=0; a < reverb.length; a++) {
-      reverb[a].setLateReverbLevel(((Double)d).floatValue());
+  },(Knob target) -> {
+    earlyReflection.target=target;
+  });
+  public Parameter setLength=new Parameter((Object d) -> {
+    for (int a=0; a < ugen.length; a++) {
+      ugen[a].setLateReverbLevel(((Double)d).floatValue());
     }
-  };
+  },(Knob target) -> {
+    length.target=target;
+  });
   public ReverbW(AudioContext ac, int in, int out) {
     super(ac, in, out);
-    reverb=new Reverb[in];
-    for (int a=0; a < reverb.length; a++) {
-      reverb[a]=new Reverb(ac, out);
-      drawFromChainInput(a, reverb[a]);
-      addToChainOutput(reverb[a]);
+    ugen=new Reverb[in];
+    size=new KnobAutomation(ac,0.5F);
+    damping=new KnobAutomation(ac,0.7F);
+    earlyReflection=new KnobAutomation(ac,1);
+    length=new KnobAutomation(ac,1);
+    for (int a=0; a < ugen.length; a++) {
+      ugen[a]=new Reverb(ac, out);
+      drawFromChainInput(a, ugen[a]);
+      addToChainOutput(ugen[a]);
     }
   }
   @Override
   public void kill() {
-    for (int a=0; a < reverb.length; a++) {
-      reverb[a].kill();
+    for (int a=0; a < ugen.length; a++) {
+      ugen[a].kill();
     }
   }
   @Override
   protected void onBypass(boolean v) {
-    for (int a=0; a < reverb.length; a++) {
-      reverb[a].pause(v);
+    for (int a=0; a < ugen.length; a++) {
+      ugen[a].pause(v);
     }
   }
 }

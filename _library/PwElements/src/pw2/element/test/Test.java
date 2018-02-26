@@ -34,15 +34,25 @@ public class Test extends PApplet {
     rev.addInput(n);
     filter.addInput(rev);
     ac.out.addInput(filter);
+    //ac.out.addInput(n);
     VUMeter k=new VUMeter("asdf");
     k.attach(ac.out);
     ac.out.setGain(0.5F);
     Knob[] b=new Knob[10];
     b[0]=new Knob("b1", "Freq").attach(ac, n, n.setFrequency, 20, 20000, 20, 800, true);
-    b[2]=new Knob("b3", "Size").attach(ac, rev, rev.setSize, 0, 1, 0, 0.2, false);
-    b[3]=new Knob("b4", "Damping").attach(ac, rev, rev.setDamping, 0, 1, 0, 0.5, false);
+    b[2]=new Knob("b3", "Size").attach(ac, rev, rev.setSize, 0, 1, 0, 0.5, false);
+    b[3]=new Knob("b4", "Damping").attach(ac, rev, rev.setDamping, 0, 1, 0, 0.7, false);
     b[4]=new Knob("b5", "Freq").attach(ac, filter, filter.setFrequency, 20, 20000, 20, 20000, true);
     b[5]=new Knob("b6", "Q").attach(ac, filter, filter.setQ, 0.7, 7, 1, 1, true);
+    //
+    n.frequency.setLoop(true);
+    n.frequency.addPoint(0, 800);
+    n.frequency.addPoint(1000, 1);
+    n.frequency.addPoint(2000, 1600);
+    n.frequency.addPoint(3000, 1);
+    n.frequency.addPoint(4000, 800);
+    n.frequency.setLoopStart(0);
+    n.frequency.setLoopStart((float)n.frequency.getLength());
     //
     DivisionLayout dv=new DivisionLayout("dv");
     dv.setPosition(new Rect(0, 0, width, height));
