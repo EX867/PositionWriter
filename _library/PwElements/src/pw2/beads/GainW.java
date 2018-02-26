@@ -23,8 +23,8 @@ public class GainW extends UGenW {
   }
   @Override
   public void kill() {
-    super.kill();
     ugen.kill();
     gain.kill();
+    super.kill();
   }
 }

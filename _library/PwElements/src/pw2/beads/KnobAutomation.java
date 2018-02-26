@@ -45,15 +45,6 @@ public class KnobAutomation extends Glide {
     loopStartEnvelope=new Static(context, 0.0f);
     loopEndEnvelope=new Static(context, 0.0f);
     positionIncrement=context.samplesToMs(1);
-    //test
-    //    loop=true;
-    //    points.add(new Point(0, 800));
-    //    points.add(new Point(1000, 1));
-    //    points.add(new Point(2000, 1600));
-    //    points.add(new Point(3000, 1));
-    //    points.add(new Point(4000, 800));
-    //    loopStartEnvelope=new Static(context, 0);
-    //    loopEndEnvelope=new Static(context, 4000);
   }
   public KnobAutomation attach(Knob target_) {
     target=target_;
