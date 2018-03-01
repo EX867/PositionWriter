@@ -19,13 +19,11 @@ public class Spectrum extends Element {
   boolean canDraw=false;
   @Override
   public void setPosition(Rect rect) {
-    canDraw=false;
-    if (image == null) {
-      image=KyUI.Ref.createImage((int)(rect.right - rect.left), (int)(rect.bottom - rect.top), PApplet.ARGB);
-    } else {
-      image.resize((int)(rect.right - rect.left), (int)(rect.bottom - rect.top));
+    if (rect.left != rect.right && rect.top != rect.bottom) {
+      canDraw=false;
+      image=KyUI.Ref.createImage(Math.max(1, (int)(rect.right - rect.left)), Math.max(1, (int)(rect.bottom - rect.top)), PApplet.ARGB);
+      canDraw=true;
     }
-    canDraw=true;
     super.setPosition(rect);
   }
   public void attach(AudioContext ac, UGen ugen) {

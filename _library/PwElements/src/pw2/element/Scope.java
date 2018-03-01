@@ -20,16 +20,15 @@ public class Scope extends Element {
   boolean changed=false;
   @Override
   public void setPosition(Rect rect) {
-    canDraw=false;
-    if (image == null) {
-      image=KyUI.Ref.createImage((int)(rect.right - rect.left), (int)(rect.bottom - rect.top), PApplet.ARGB);
-    } else {
-      image.resize((int)(rect.right - rect.left), (int)(rect.bottom - rect.top));
+    if (rect.left != rect.right && rect.top != rect.bottom) {
+      canDraw=false;
+      image=KyUI.Ref.createImage(Math.max(1, (int)(rect.right - rect.left)), Math.max(1, (int)(rect.bottom - rect.top)), PApplet.ARGB);
+      canDraw=true;
     }
-    canDraw=true;
     super.setPosition(rect);
   }
   public void attach(UGenW ugen) {
+    setPosition(pos);
     attachedUGen=ugen;
     size=ugen.getContext().getBufferSize() / 2;
     power=new UGenListener() {
@@ -48,23 +47,15 @@ public class Scope extends Element {
         if (!canDraw) return;
         image.loadPixels();
         java.util.Arrays.fill(image.pixels, 0);
-        int start=-1;
-        int startAlter=0;
-        while (startAlter + 1 < bufOut[0].length) {
-          if (PApplet.abs(bufOut[0][startAlter]) < 0.05F) {
-            if (bufOut[0][startAlter] <= bufOut[0][startAlter + 1]) {
-              start=startAlter;
-              break;
-            }
+        int start=0;
+        while (start + 1 < bufOut[0].length) {
+          if (bufOut[0][start] < 0 && bufOut[0][start + 1] >= 0) {
+            break;
           }
-          startAlter++;
+          start++;
         }
-        if (start == -1) {
-          if (startAlter + 1 >= bufOut[0].length) {
-            start=0;
-          } else {
-            start=startAlter;
-          }
+        if (start + 1 >= bufOut[0].length) {
+          start=0;
         }
         int pvOffset=image.height / 2;
         for (int a=0; a < image.width; a++) {
@@ -109,7 +100,9 @@ public class Scope extends Element {
     }
     g.imageMode(PApplet.CENTER);
     //WARNING>>synchronized!
+    canDraw=false;
     g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);
+    canDraw=true;
   }
   @Override
   public void update() {
