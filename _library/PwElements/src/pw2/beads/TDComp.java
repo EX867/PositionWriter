@@ -182,11 +182,9 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
       py=cy;
     }
     graph.noFill();
-    if (sideChain != null) {
-      graph.ellipse(graph.width * Math.min(1, 20 * (float)dvallog / graphSize + 1), -graph.height * 20 * (float)getOutput(dvallog, dvallog) / graphSize, 10, 10);
-    }
-    input=input / 20;
-    graph.ellipse(graph.width * Math.min(1, 20 * (float)input / graphSize + 1), -graph.height * 20 * (float)getOutput(dvallog, input) / graphSize, 10, 10);
+    //if (sideChain != null) {
+    graph.ellipse(graph.width * Math.min(1, 20 * (float)dvallog / graphSize + 1), -graph.height * 20 * (float)getOutput(dvallog, dvallog) / graphSize, 10, 10);
+    //graph.ellipse(graph.width * Math.min(1, 20 * (float)Math.log10(input) / graphSize + 1), -graph.height * 20 * (float)Math.log10(getRMS(bufOut)) / graphSize, 10, 10);
     graph.endDraw();
   }
   float pt=1;
@@ -205,7 +203,7 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     wave.stroke(0x7F40407F);
     wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * output));//output
     if (sideChain != null) {
-      wave.stroke(0x3F000000);
+      wave.stroke(0x1F000000);
       wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * dval));//sideChain
     }
     wave.stroke(0xFF000000);

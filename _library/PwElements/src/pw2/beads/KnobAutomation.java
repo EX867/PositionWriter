@@ -135,16 +135,19 @@ public class KnobAutomation extends Glide {
         index=points.getBeforeIndex(cachePoint) - 1;
         //System.out.println("2 : " + index + " " + position + " " + points.get(index).position);
       }
-    } else if (index < points.size() && points.get(index).position > position) {//also re-calculate, but this is on last index.
-      cachePoint.position=position;
-      index=points.getBeforeIndex(cachePoint) - 1;
-      //System.out.println("3 : " + index);
+    } //else if (index >= 0 && index < points.size() && points.get(index).position > position) {//also re-calculate, but this is on last index.
+    cachePoint.position=position;
+    index=points.getBeforeIndex(cachePoint) - 1;
+    //System.out.println("3 : " + index + " " + position);
+    //}
+    if (index >= points.size()) {
+      index=points.size() - 1;
     }
     //and notifies to counter
-    if (preCounter != null && index >= -1 && index - 1 < points.size() && preCount > points.get(index + 1).position - position) {
+    if (preCounter != null && index >= -1 && index + 1 < points.size() && points.get(index + 1).position > position && preCount + EPSILON > points.get(index + 1).position - position) {
       preCounter.accept(points.get(index + 1));
     }
-    if (postCounter != null && index >= 0 && index < points.size() && position - points.get(index).position < postCount) {
+    if (postCounter != null && index >= 0 && index < points.size() && position > points.get(index).position && position - points.get(index).position < postCount + EPSILON) {
       postCounter.accept(points.get(index));
     }
     //and then finally calculate real value.
@@ -160,7 +163,7 @@ public class KnobAutomation extends Glide {
     if (index < 0) {
       return points.get(0).value;
     }
-    return points.get(points.size() - 1).value;
+    return points.get(points.size() - 1).value;//no!
   }
   protected void calculateNextPosition(int i) {
     if (loop) {

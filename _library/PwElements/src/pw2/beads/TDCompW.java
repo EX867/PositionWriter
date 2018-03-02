@@ -48,11 +48,6 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   }, (Knob target) -> {
     outputGain.attach(target);
   });
-  public Parameter setSideChain=new Parameter((Object d) -> {
-    startSample((Double)d);
-  }, (Knob target) -> {
-    sideChain.attach(target);
-  });
   public SamplePlayer sideChainPlayer;
   public ArrayList<Sample> samples=new ArrayList<>();
   public TDCompW(AudioContext ac, int in) {
@@ -72,6 +67,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
       startSample(p.value);
     };
     setStartPoint(ugen);
+    sideChainPlayer.start();
   }
   public TDCompW(AudioContext ac, int in, int out) {
     super(ac, in, out);
