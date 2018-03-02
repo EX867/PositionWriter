@@ -2,7 +2,7 @@ package pw2.beads;
 import beads.*;
 import processing.core.PApplet;
 import processing.core.PGraphics;
-public class TDComp extends UGenChain {//Time Domain Compressor, formula is from http://smc2017.aalto.fi/media/materials/proceedings/SMC17_p42.pdf
+public class TDComp extends UGen {//Time Domain Compressor, formula is from http://smc2017.aalto.fi/media/materials/proceedings/SMC17_p42.pdf
   enum Method {
     RMS, PEAK
   }
@@ -14,6 +14,7 @@ public class TDComp extends UGenChain {//Time Domain Compressor, formula is from
   float outputGain=1;
   UGen sideChain=null;
   Method method=Method.PEAK;
+  public float graphSize=60;
   //
   protected int attackInSamples;
   protected int releaseInSamples;
@@ -25,87 +26,94 @@ public class TDComp extends UGenChain {//Time Domain Compressor, formula is from
   public boolean canDraw=false;
   //
   boolean triggered;
-  int count=0;
-  double currentValue=0;
-  double pcurrentValue=0;
+  int attackCount=0;
+  int releaseCount=0;
+  double currentValue=1;
+  double maxValue=1;
   public TDComp(AudioContext ac, int channels) {
     super(ac, channels, channels);
     attackInSamples=Math.round((float)context.msToSamples(attack));
     releaseInSamples=Math.round((float)context.msToSamples(release));
   }
-  double[] output=new double[2];
   @Override
-  protected void preFrame() {
+  public void calculateBuffer() {
     if (sideChain != null) {
       sideChain.update();
     }
     if (ins == 0) {
       return;
     }
+    double input=getRMS(bufIn);
+    double inputdval;
     double dvallog;
     double dval;
     if (sideChain == null) {
       dval=getDVal(bufIn);
+      inputdval=dval;
     } else {
       dval=getDVal(sideChain);
+      if (method == Method.PEAK) {
+        inputdval=getDVal(bufIn);
+      } else {//RMS
+        inputdval=input;
+      }
     }
     dvallog=Math.log10(dval);
     if (dvallog > threshold - knee / 2) {//compression start
       if (!triggered) {
         triggered=true;
-        count=0;//attack start
+        if (attackCount >= attackInSamples) {
+          maxValue=0;
+          attackCount=0;//attack start
+        }
       }
     } else if (triggered) {//compression end
       triggered=false;
-      count=0;//release start
+      releaseCount=0;//release start
     }
     for (int a=0; a < bufferSize; a++) {
       double sum=0;
       for (int c=0; c < bufOut.length; c++) {
         if (triggered) {
           double data=Math.log10(Math.abs(bufIn[c][a]));
-          output[c]=getOutput(dvallog, data);
-          sum+=data - output[c];
+          sum+=getOutput(dvallog, data) - data;
         }
       }
-      if (triggered) {
-        if (count < attackInSamples) {//FIX
-          double c=(sum / bufOut.length) * (count / attackInSamples);
-          if (c > currentValue) {
-            currentValue=c;
-          }
-        }else{
-          double c=currentValue * (releaseInSamples - 1) / releaseInSamples;
-          double d=sum / bufOut.length;
-          if (c > d) {
-            currentValue=c;
-          } else {
-            currentValue=d;
-          }
+      double val=Math.pow(10, sum / bufOut.length);
+      if (maxValue < val) {
+        maxValue=val;
+      }
+      if (attackCount < attackInSamples) {
+        double c=currentValue + (maxValue - currentValue) / (attackInSamples - attackCount);
+        if (c < currentValue) {
+          currentValue=c;
         }
+        releaseCount=0;
       } else {
-        if (releaseInSamples > 0 && count < releaseInSamples - 1) {
-          currentValue=Math.max(currentValue * (releaseInSamples - count - 1) / (releaseInSamples - count), 0);
+        if (triggered) {
+          releaseCount=0;
+        }
+        if (releaseInSamples == 0 && triggered) {
+          currentValue=val;
         } else {
-          currentValue=0;
+          if (releaseInSamples > 0 && releaseCount < releaseInSamples - 1) {
+            currentValue=Math.min(currentValue + (val - currentValue) / (releaseInSamples - releaseCount), val);
+          } else {
+            currentValue=1;
+          }
         }
       }
-      count++;
+      attackCount++;
+      releaseCount++;
       for (int c=0; c < bufOut.length; c++) {
-        float absInput=Math.abs(bufIn[c][a]);
-        if (triggered) {
-          bufOut[c][a]=(float)(Math.signum(bufIn[c][a]) * Math.min(Math.pow(10, output[c]), Math.max(0, absInput - currentValue)));
-        } else {
-          bufOut[c][a]=(float)(Math.signum(bufIn[c][a]) * Math.max(0, absInput - currentValue));
-        }
-        bufOut[c][a]*=outputGain;
+        bufOut[c][a]=outputGain * (float)(Math.signum(bufIn[c][a]) * Math.max(0, Math.abs(bufIn[c][a]) * currentValue));
       }
     }
     if (canDraw && graph != null) {
-      visualizeGraph(dval, dvallog);
+      visualizeGraph(inputdval, dvallog);
     }
     if (canDraw && wave != null) {
-      visualizeWave(dval);
+      visualizeWave(input, dval);
     }
   }
   public double getAttack() {
@@ -128,7 +136,7 @@ public class TDComp extends UGenChain {//Time Domain Compressor, formula is from
     return threshold * 20;
   }
   public TDComp setThreshold(double v) {
-    threshold=v / 20;
+    threshold=v * 0.05;
     thresholdPow=(float)Math.pow(10, threshold);
     return this;
   }
@@ -160,44 +168,54 @@ public class TDComp extends UGenChain {//Time Domain Compressor, formula is from
     sideChain=v;
     return this;
   }
-  void visualizeGraph(double dval, double dvallog) {//size=object.height
+  void visualizeGraph(double input, double dvallog) {//size=object.height
+    //linear view. (graphSize to 0db)
     graph.beginDraw();
     graph.stroke(50);
     graph.strokeWeight(2);
     graph.clear();
     float py=graph.height;
     for (int a=1; a < graph.width; a++) {
-      double val=Math.log10((double)a / graph.width);
-      float cy=graph.height - graph.height * (float)Math.pow(10, getOutput(val, val));
+      double db=graphSize * ((double)a / graph.width - 1) / 20;
+      float cy=-graph.height * 20 * (float)getOutput(db, db) / graphSize;
       graph.line(a - 1, py, a, cy);
       py=cy;
     }
     graph.noFill();
-    graph.ellipse(graph.width * Math.min(1, (float)dval), graph.height * (1 - (float)Math.pow(10, getOutput(dvallog, dvallog))), 10, 10);
+    if (sideChain != null) {
+      graph.ellipse(graph.width * Math.min(1, 20 * (float)dvallog / graphSize + 1), -graph.height * 20 * (float)getOutput(dvallog, dvallog) / graphSize, 10, 10);
+    }
+    input=input / 20;
+    graph.ellipse(graph.width * Math.min(1, 20 * (float)input / graphSize + 1), -graph.height * 20 * (float)getOutput(dvallog, input) / graphSize, 10, 10);
     graph.endDraw();
   }
-  void visualizeWave(double dval) {
+  float pt=1;
+  void visualizeWave(double input, double dval) {
     float head=wave.height / 10;
+    float height=wave.height - head;
     wave.beginDraw();
     wave.imageMode(PApplet.CORNER);
-    wave.image(wave, -1, 0);
     wave.strokeWeight(1);
     wave.stroke(127, 127, 127);
+    wave.image(wave, -1, 0);
     wave.line(wave.width - 1, 0, wave.width - 1, wave.height);
-    double input=getDVal(bufIn);
-    double output=getDVal(bufOut);
+    double output=getRMS(bufOut) / (outputGain * outputGain);
     wave.stroke(0x7F7F4040);
-    wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height + head - (int)(wave.height * input));//input
+    wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * input));//input
     wave.stroke(0x7F40407F);
-    wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height + head - (int)(wave.height * output));//output
+    wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * output));//output
     if (sideChain != null) {
       wave.stroke(0x3F000000);
-      wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height + head - (int)(wave.height * dval));//rms sideChain
+      wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * dval));//sideChain
     }
     wave.stroke(0xFF000000);
-    wave.point(wave.width - 1, wave.height - (int)(wave.height * thresholdPow + head));//threshold
+    float ct=wave.height - (float)(height * thresholdPow);
+    wave.line(wave.width - 1, pt, wave.width - 1, ct);//threshold
     wave.stroke(0x3F007F00);
-    wave.line(wave.width - 1, head, wave.width - 1, (int)(wave.height * (input - output)) + head);//rms db(sidechain)
+    if (outputGain != 0) {
+      wave.line(wave.width - 1, head, wave.width - 1, (int)(height * (input - output)) + head);//difference
+    }
+    pt=ct;
     wave.endDraw();
   }
   double getOutput(double sideChain, double input) {
@@ -225,7 +243,7 @@ public class TDComp extends UGenChain {//Time Domain Compressor, formula is from
       for (int i=0; i < bufferSize; i++) {
         sum=0;
         for (int c=0; c < in.getOuts(); c++) {
-          sum+=in.getOutBuffer(c)[i];
+          sum+=Math.abs(in.getOutBuffer(c)[i]);
         }
         sum=sum / in.getOuts();
         if (max < sum) {
@@ -238,20 +256,14 @@ public class TDComp extends UGenChain {//Time Domain Compressor, formula is from
   }
   double getDVal(float[][] buf) {
     if (method == Method.RMS) {
-      float result=0;
-      for (int c=0; c < buf.length; c++) {
-        for (int i=0; i < bufferSize; i++) {
-          result+=buf[c][i] * buf[c][i];
-        }
-      }
-      return Math.sqrt(result / (buf.length * bufferSize));
+      return getRMS(buf);
     } else if (method == Method.PEAK) {
       float max=0;
       float sum=0;
       for (int i=0; i < bufferSize; i++) {
         sum=0;
         for (int c=0; c < buf.length; c++) {
-          sum+=buf[c][i];
+          sum+=Math.abs(buf[c][i]);
         }
         sum=sum / buf.length;
         if (max < sum) {
@@ -261,5 +273,21 @@ public class TDComp extends UGenChain {//Time Domain Compressor, formula is from
       return max;
     }
     return 0;//no!
+  }
+  double getRMS(float[][] buf) {
+    float result=0;
+    for (int c=0; c < buf.length; c++) {
+      for (int i=0; i < bufferSize; i++) {
+        result+=buf[c][i] * buf[c][i];
+      }
+    }
+    return Math.sqrt(result / (buf.length * bufferSize));
+  }
+  float getChannelAverage(float[][] buf, int index) {
+    float sum=0;
+    for (int c=0; c < buf.length; c++) {
+      sum+=buf[c][index];
+    }
+    return sum / buf.length;
   }
 }

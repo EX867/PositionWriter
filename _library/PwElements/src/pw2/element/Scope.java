@@ -7,7 +7,7 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import pw2.beads.UGenListener;
-import pw2.beads.UGenW;
+import beads.UGenW;
 public class Scope extends Element {
   int strokeWeight=4;
   PImage image;

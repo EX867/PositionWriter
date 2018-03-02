@@ -4,11 +4,10 @@ import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.event.EventListener;
 import kyui.util.ColorExt;
-import kyui.util.Task;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.event.MouseEvent;
-import pw2.beads.UGenW;
+import beads.UGenW;
 
 import java.text.DecimalFormat;
 import java.util.function.Function;

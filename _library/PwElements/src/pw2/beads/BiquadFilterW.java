@@ -1,6 +1,8 @@
 package pw2.beads;
 import beads.AudioContext;
 import beads.BiquadFilter;
+import beads.UGen;
+import beads.UGenW;
 import pw2.element.Knob;
 public class BiquadFilterW extends UGenW {
   public BiquadFilter ugen;
@@ -8,17 +10,17 @@ public class BiquadFilterW extends UGenW {
   public KnobAutomation q;//0.7-7
   public KnobAutomation gain;
   public Parameter setFrequency=new Parameter((Object d) -> {
-    frequency.setValue(((Double)d).floatValue());
+    frequency.setValue(((Number)d).floatValue());
   }, (Knob target) -> {
     frequency.attach(target);
   });
   public Parameter setQ=new Parameter((Object d) -> {
-    q.setValue(((Double)d).floatValue());
+    q.setValue(((Number)d).floatValue());
   }, (Knob target) -> {
     q.attach(target);
   });
   public Parameter setGain=new Parameter((Object d) -> {
-    gain.setValue(((Double)d).floatValue());
+    gain.setValue(((Number)d).floatValue());
   }, (Knob target) -> {
     gain.attach(target);
   });
@@ -31,8 +33,13 @@ public class BiquadFilterW extends UGenW {
     ugen.setFrequency(frequency);
     ugen.setQ(q);
     ugen.setGain(gain);
-    drawFromChainInput(ugen);
-    addToChainOutput(ugen);
+    setStartPoint(ugen);
+  }
+  @Override
+  protected UGen updateUGens() {
+    giveInputTo(ugen);
+    ugen.update();
+    return ugen;
   }
   @Override
   public void kill() {
@@ -41,9 +48,5 @@ public class BiquadFilterW extends UGenW {
     frequency.kill();
     q.kill();
     gain.kill();
-  }
-  @Override
-  protected void onBypass(boolean v) {
-    ugen.pause(v);
   }
 }

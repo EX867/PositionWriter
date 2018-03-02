@@ -2,6 +2,8 @@ package pw2.beads;
 import beads.AudioContext;
 import beads.Sample;
 import beads.SamplePlayer;
+import beads.UGen;
+import beads.UGenW;
 import pw2.element.Knob;
 
 import java.io.File;
@@ -17,32 +19,32 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   public KnobAutomation outputGain;
   public KnobAutomation sideChain;
   public Parameter setAttack=new Parameter((Object d) -> {
-    ugen.setAttack(((Double)d).doubleValue());
+    ugen.setAttack(((Number)d).doubleValue());
   }, (Knob target) -> {
     attack.target=target;
   });
   public Parameter setRelease=new Parameter((Object d) -> {
-    ugen.setRelease(((Double)d).doubleValue());
+    ugen.setRelease(((Number)d).doubleValue());
   }, (Knob target) -> {
     release.attach(target);
   });
   public Parameter setKnee=new Parameter((Object d) -> {
-    ugen.setKnee(((Double)d).doubleValue());
+    ugen.setKnee(((Number)d).doubleValue());
   }, (Knob target) -> {
     knee.attach(target);
   });
   public Parameter setRatio=new Parameter((Object d) -> {
-    ugen.setRatio(((Double)d).doubleValue());
+    ugen.setRatio(((Number)d).doubleValue());
   }, (Knob target) -> {
     ratio.attach(target);
   });
   public Parameter setThreshold=new Parameter((Object d) -> {
-    ugen.setThreshold(((Double)d).doubleValue());
+    ugen.setThreshold(((Number)d).doubleValue());
   }, (Knob target) -> {
     threshold.attach(target);
   });
   public Parameter setOutputGain=new Parameter((Object d) -> {
-    ugen.setOutputGain(((Double)d).floatValue());
+    ugen.setOutputGain(((Number)d).floatValue());
   }, (Knob target) -> {
     outputGain.attach(target);
   });
@@ -51,7 +53,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   }, (Knob target) -> {
     sideChain.attach(target);
   });
-  SamplePlayer sideChainPlayer;
+  public SamplePlayer sideChainPlayer;
   public ArrayList<Sample> samples=new ArrayList<>();
   public TDCompW(AudioContext ac, int in) {
     super(ac, in, in);
@@ -66,18 +68,13 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     sideChainPlayer=new SamplePlayer(ac, 2);
     sideChainPlayer.setKillOnEnd(false);
     ugen.setSideChain(sideChainPlayer);
-    drawFromChainInput(ugen);
-    addToChainOutput(ugen);
     sideChain.postCounter=(KnobAutomation.Point p) -> {
       startSample(p.value);
     };
+    setStartPoint(ugen);
   }
   public TDCompW(AudioContext ac, int in, int out) {
     super(ac, in, out);
-  }
-  @Override
-  protected void onBypass(boolean v) {
-    ugen.pause(v);
   }
   @Override
   public void kill() {
@@ -92,9 +89,11 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     super.kill();
   }
   @Override
-  protected void preFrame() {
-    super.preFrame();
+  protected UGen updateUGens() {
+    giveInputTo(ugen);
     sideChain.update();
+    ugen.update();
+    return ugen;
   }
   public void startSample(double v) {
     int index=(int)Math.round(v) - 1;//starts from 1.
