@@ -13,28 +13,28 @@ public class ReverbW extends UGenW {
       ugen[a].setSize(((Double)d).floatValue());
     }
   }, (Knob target) -> {
-    size.target=target;
+    size.attach(target);
   });
   public Parameter setDamping=new Parameter((Object d) -> {
     for (int a=0; a < ugen.length; a++) {
       ugen[a].setDamping(((Double)d).floatValue());
     }
   },(Knob target) -> {
-    damping.target=target;
+    damping.attach(target);
   });
   public Parameter setEarlyReflection=new Parameter((Object d) -> {
     for (int a=0; a < ugen.length; a++) {
       ugen[a].setEarlyReflectionsLevel(((Double)d).floatValue());
     }
   },(Knob target) -> {
-    earlyReflection.target=target;
+    earlyReflection.attach(target);
   });
   public Parameter setLength=new Parameter((Object d) -> {
     for (int a=0; a < ugen.length; a++) {
       ugen[a].setLateReverbLevel(((Double)d).floatValue());
     }
   },(Knob target) -> {
-    length.target=target;
+    length.attach(target);
   });
   public ReverbW(AudioContext ac, int in, int out) {
     super(ac, in, out);

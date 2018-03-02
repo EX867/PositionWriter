@@ -10,10 +10,7 @@ import processing.core.PApplet;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 import pw2.beads.*;
-import pw2.element.Knob;
-import pw2.element.Scope;
-import pw2.element.TDCompWave;
-import pw2.element.VUMeter;
+import pw2.element.*;
 public class Test2 extends PApplet {
   public static void main(String[] args) {
     PApplet.main("pw2.element.test.Test2");
@@ -36,27 +33,26 @@ public class Test2 extends PApplet {
     inputgain.setGain.setter.execute(0.5);
     ac.out.addInput(comp);
     gain.addInput(n2);
-    comp.ugen.setSideChain(gain);
     VUMeter k=new VUMeter("asdf");
-    k.attach(ac.out);
-    ac.out.setGain(0.5F);
+    k.attach(comp);
+    ac.out.setGain(0.2F);
     Knob[] b=new Knob[10];
-    // b[0]=new Knob("b1", "Freq").attach(ac, n, n.setFrequency, 20, 20000, 20, 1600, true);
+    b[0]=new Knob("b1", "Freq").attach(ac, n, n.setFrequency, 20, 20000, 20, 800, true);
     b[1]=new Knob("b2", "Attack").attach(ac, comp, comp.setAttack, 0, 1000, 100, 100, false);
     b[2]=new Knob("b3", "Release").attach(ac, comp, comp.setRelease, 0, 1000, 300, 300, false);
-    b[3]=new Knob("b4", "Threshold").attach(ac, comp, comp.setThreshold, -12, 0, -6, -6, false);
+    b[3]=new Knob("b4", "Threshold").attach(ac, comp, comp.setThreshold, -20, 0, -6, -6, false);
     b[4]=new Knob("b5", "Ratio").attach(ac, comp, comp.setRatio, 1, 12, 2, 2, false);
     b[5]=new Knob("b6", "Knee").attach(ac, comp, comp.setKnee, 0, 0.5, 0.1, 0.1, false);
     b[6]=new Knob("b7", "Gain").attach(ac, gain, gain.setGain, 0, 4, 0.5, 1, false);
     //
-    gain.gain.setLoop(true);
-    gain.gain.addPoint(0, 1);
-    gain.gain.addPoint(1000, 1);
-    gain.gain.addPoint(1001, 0.3);
-    gain.gain.addPoint(2000, 0.3);
-    gain.gain.addPoint(2001, 1);
-    gain.gain.setLoopStart(0);
-    gain.gain.setLoopStart((float)gain.gain.getLength());
+    comp.sideChain.setLoop(true);
+    comp.sideChain.addPoint(0, 1);
+    comp.sideChain.addPoint(500, 2);
+    comp.sideChain.setLoopStart(0);
+    comp.sideChain.setLoopEnd(1000);
+    //
+    comp.addSample("C:\\Users\\user\\Documents\\Studio One\\Samples\\MainDrum\\14.wav");
+    comp.addSample("C:\\Users\\user\\Documents\\Studio One\\Samples\\MainDrum\\1.wav");
     //
     DivisionLayout dv=new DivisionLayout("dv");
     dv.setPosition(new Rect(0, 0, width, height));
@@ -82,7 +78,12 @@ public class Test2 extends PApplet {
     ly.addChild(scope2);
     scope.attach(comp);
     scope2.attach(gain);
-    dv2.addChild(new TDCompWave("wave").attach(comp));
+    DivisionLayout dv3=new DivisionLayout("dv3");
+    dv3.value=height / 2;
+    dv3.rotation=Attributes.Rotation.RIGHT;
+    dv2.addChild(dv3);
+    dv3.addChild(new TDCompWave("wave").attach(comp));
+    dv3.addChild(new TDCompGraph("graph").attach(comp));
     KyUI.add(dv);
     KyUI.changeLayout();
     ac.start();

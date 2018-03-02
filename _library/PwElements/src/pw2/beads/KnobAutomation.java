@@ -7,6 +7,8 @@ import com.karnos.commandscript.Multiset;
 import kyui.util.Task;
 import kyui.util.TaskManager;
 import pw2.element.Knob;
+
+import java.util.function.Consumer;
 public class KnobAutomation extends Glide {
   TaskManager tm=new TaskManager();
   final double EPSILON=Double.longBitsToDouble(971l << 52);//https://stackoverflow.com/questions/25180950/java-double-epsilon
@@ -39,12 +41,19 @@ public class KnobAutomation extends Glide {
   protected float loopEnd;
   protected double positionIncrement;
   private int index;
+  //notifies to counters
+  public Consumer<Point> preCounter;
+  public Consumer<Point> postCounter;
+  public double preCount=0;
+  public double postCount=0;
   public KnobAutomation(AudioContext ac, float currentValue) {
     super(ac, currentValue, GLIDE_TIME);
     points=new Multiset<Point>();
     loopStartEnvelope=new Static(context, 0.0f);
     loopEndEnvelope=new Static(context, 0.0f);
     positionIncrement=context.samplesToMs(1);
+    preCount=ac.samplesToMs(1);
+    postCount=ac.samplesToMs(1);
   }
   public KnobAutomation attach(Knob target_) {
     target=target_;
@@ -53,6 +62,11 @@ public class KnobAutomation extends Glide {
   public void addPoint(double pos, double value) {
     synchronized (points) {
       points.add(new Point(pos, value));
+    }
+  }
+  public void removePoint(int index) {
+    synchronized (points) {
+      points.remove(index);
     }
   }
   public void changePoint(int index, double pos, double value) {
@@ -89,21 +103,21 @@ public class KnobAutomation extends Glide {
   @Override
   public void calculateBuffer() {//use same loop algorithm with beads's SamplePlayer. because I need to synchronized this with SamplePlayer...
     tm.executeAll();
-    if (target == null) {
+    if (points.size() == 0) {
       super.calculateBuffer();
+    } else if (target != null && target.hold()) {
+      super.calculateBuffer();
+      for (int i=0; i < bufferSize; i++) {
+        calculateNextPosition(i);//also check loop in here...
+      }
     } else {
-      if (points.size() == 0 || target.hold()) {
-        super.calculateBuffer();
-        for (int i=0; i < bufferSize; i++) {
-          calculateNextPosition(i);//also check loop in here...
-        }
-      } else {
-        loopStartEnvelope.update();
-        loopEndEnvelope.update();
-        for (int i=0; i < bufferSize; i++) {
-          bufOut[0][i]=(float)getValueIn();//get position's frame
-          calculateNextPosition(i);//check loop
-        }
+      loopStartEnvelope.update();
+      loopEndEnvelope.update();
+      for (int i=0; i < bufferSize; i++) {
+        bufOut[0][i]=(float)getValueIn();//get position's frame
+        calculateNextPosition(i);//check loop
+      }
+      if (target != null) {
         target.adjust(target.getInv.apply((double)bufOut[0][bufferSize - 1]));
       }
     }
@@ -126,6 +140,13 @@ public class KnobAutomation extends Glide {
       index=points.getBeforeIndex(cachePoint) - 1;
       //System.out.println("3 : " + index);
     }
+    //and notifies to counter
+    if (preCounter != null && index >= -1 && index - 1 < points.size() && preCount > points.get(index + 1).position - position) {
+      preCounter.accept(points.get(index + 1));
+    }
+    if (postCounter != null && index >= 0 && index < points.size() && position - points.get(index).position < postCount) {
+      postCounter.accept(points.get(index));
+    }
     //and then finally calculate real value.
     if (index >= 0 && index + 1 < points.size()) {//if in range...
       Point aa=points.get(index);//update.
@@ -136,7 +157,7 @@ public class KnobAutomation extends Glide {
       //assert aa.pos<position<bb.pos
       return (aa.value * (bb.position - position) + bb.value * (position - aa.position)) / (bb.position - aa.position);
     }
-    if (index < 0) {//if out of range...
+    if (index < 0) {
       return points.get(0).value;
     }
     return points.get(points.size() - 1).value;

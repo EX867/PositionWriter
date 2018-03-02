@@ -8,7 +8,7 @@ public class GainW extends UGenW {
   public Parameter setGain=new Parameter((Object d) -> {//assert d instanceof Double
     gain.setValue(((Double)d).floatValue());
   }, (Knob target) -> {
-    gain.target=target;
+    gain.attach(target);
   });
   public GainW(AudioContext ac, int in) {
     super(ac, in, in);

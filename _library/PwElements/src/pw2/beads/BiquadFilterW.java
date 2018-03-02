@@ -10,17 +10,17 @@ public class BiquadFilterW extends UGenW {
   public Parameter setFrequency=new Parameter((Object d) -> {
     frequency.setValue(((Double)d).floatValue());
   }, (Knob target) -> {
-    frequency.target=target;
+    frequency.attach(target);
   });
   public Parameter setQ=new Parameter((Object d) -> {
     q.setValue(((Double)d).floatValue());
   }, (Knob target) -> {
-    q.target=target;
+    q.attach(target);
   });
   public Parameter setGain=new Parameter((Object d) -> {
     gain.setValue(((Double)d).floatValue());
   }, (Knob target) -> {
-    gain.target=target;
+    gain.attach(target);
   });
   public BiquadFilterW(AudioContext ac, int channels, BiquadFilter.Type type) {
     super(ac, channels, channels);

@@ -9,7 +9,7 @@ public class WavePlayerW extends UGenW {
   public Parameter setFrequency=new Parameter((Object d) -> {//assert d instanceof Double
     frequency.setValue(((Double)d).floatValue());
   }, (Knob target) -> {
-    frequency.target=target;
+    frequency.attach(target);
   });
   public WavePlayerW(AudioContext ac, Buffer buffer) {
     super(ac, 0, 1);
