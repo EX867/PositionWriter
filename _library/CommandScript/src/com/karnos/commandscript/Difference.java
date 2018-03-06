@@ -1,8 +1,8 @@
 package com.karnos.commandscript;
 public abstract class Difference<Type>{
   int index=0;
-  Type before;
-  Type after;
+  public Type before;
+  public Type after;
   public Difference(Type before_,Type after_){
     before=before_;
     after=after_;
@@ -11,6 +11,6 @@ public abstract class Difference<Type>{
     index=index_;
     return this;
   }
-  abstract void undo();
-  abstract void redo();
+  public abstract void undo();
+  public abstract void redo();
 }
