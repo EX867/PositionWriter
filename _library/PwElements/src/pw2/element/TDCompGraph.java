@@ -15,7 +15,7 @@ public class TDCompGraph extends Element {
   @Override
   public void setPosition(Rect rect) {
     if (attachedUGen != null) {
-      attachedUGen.canDraw=false;
+      attachedUGen.canDraw=false;//sync error warning
       int size=Math.max(1, (int)Math.min(rect.right - rect.left, rect.bottom - rect.top));
       graph=KyUI.Ref.createGraphics(size, size);
       attachedUGen.graph=graph;
@@ -52,9 +52,13 @@ public class TDCompGraph extends Element {
     g.fill(bgColor);
     pos.render(g, -strokeWeight / 2);
     g.imageMode(PApplet.CORNER);
-    attachedUGen.canDraw=false;
-    g.image(graph, pos.left, pos.top);
-    attachedUGen.canDraw=true;
+    //System.out.println("a");
+    if (attachedUGen.canDraw) {
+      attachedUGen.canDraw=false;
+      g.image(graph, pos.left, pos.top);
+      attachedUGen.canDraw=true;
+    }
+    //System.out.println("b");
     g.strokeWeight(strokeWeight);
     g.noFill();
     g.stroke(fgColor);

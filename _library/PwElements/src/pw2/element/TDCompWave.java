@@ -16,7 +16,7 @@ public class TDCompWave extends Element {
   @Override
   public void setPosition(Rect rect) {
     if (attachedUGen != null) {
-      attachedUGen.canDraw=false;
+      attachedUGen.canDraw=false;//sync error warning
       wave=KyUI.Ref.createGraphics(Math.max(1, (int)(rect.right - rect.left)), Math.max(1, (int)(rect.bottom - rect.top)));
       attachedUGen.wave=wave;
       attachedUGen.canDraw=true;
@@ -52,9 +52,13 @@ public class TDCompWave extends Element {
     g.fill(bgColor);
     pos.render(g, -strokeWeight / 2);
     g.imageMode(PApplet.CORNER);
-    attachedUGen.canDraw=false;
-    g.image(wave, pos.left, pos.top);
-    attachedUGen.canDraw=true;
+    //System.out.println("c");
+    if (attachedUGen.canDraw) {
+      attachedUGen.canDraw=false;
+      g.image(wave, pos.left, pos.top);
+      attachedUGen.canDraw=true;
+    }
+    //System.out.println("d");
     g.strokeWeight(strokeWeight);
     g.noFill();
     g.stroke(fgColor);

@@ -174,6 +174,7 @@ public class Knob extends Element {
         doubleClickReady=true;
       }
       lastClicked=time;
+      return false;
     } else if (e.getAction() == MouseEvent.DRAG) {
       float centerX=(pos.left + pos.right) / 2;
       if (pressedL || pressedR) {

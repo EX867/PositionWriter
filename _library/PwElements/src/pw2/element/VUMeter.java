@@ -48,6 +48,7 @@ public class VUMeter extends Element {
     }
     g.fill(bgColor);
     pos.render(g);
+    //System.out.println("e");
     float interval=(pos.right - pos.left) / power.length;
     for (int a=0; a < power.length; a++) {
       Float features=power[a].getFeatures();
@@ -65,6 +66,7 @@ public class VUMeter extends Element {
         }
       }
     }
+    //System.out.println("f");
   }
   public static double linToDb(double in) {
     return 20 * Math.log10(in);

@@ -100,9 +100,11 @@ public class Scope extends Element {
     }
     g.imageMode(PApplet.CENTER);
     //WARNING>>synchronized!
-    canDraw=false;
-    g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);
-    canDraw=true;
+    if (canDraw) {
+      canDraw=false;
+      g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);
+      canDraw=true;
+    }
   }
   @Override
   public void update() {
