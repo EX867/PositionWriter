@@ -2,6 +2,7 @@ package pw2.element;
 import beads.AudioContext;
 import beads.Sample;
 import beads.SamplePlayer;
+import beads.Static;
 import com.karnos.commandscript.Difference;
 import kyui.core.Attributes;
 import kyui.core.Element;
@@ -14,21 +15,30 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
+import pw2.beads.AutoControlSamplePlayer;
 import pw2.beads.KnobAutomation;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 public class WavEditor extends Element {
   public Sample sample;
-  public SamplePlayer player;
+  public AutoControlSamplePlayer player;
   double scale=1;
   float offsetX=0;
   RangeSlider slider;//add it manually...
-  int fgColor;
+  public int fgColor;
+  public int highlightColor;
   double length;
   public boolean autoscroll=false;
   public boolean snap=false;
-  public boolean automationMode=false;
+  protected boolean automationMode=false;
   public double snapInterval=2000;//milliseconds
   public double snapOffset=0;//milliseconds, mod snapInterval
   public KnobAutomation automation;
+  ArrayList<KnobAutomation.Point> selectedPoints=new ArrayList<>();
+  KnobAutomation.Point clickPoint;
+  double clickPos=0;
+  double clickValue=0;
   public class ChangeData {
   }
   public class Change extends Difference<ChangeData> {
@@ -45,34 +55,50 @@ public class WavEditor extends Element {
   //
   WaveformDraw waveformDraw=new WaveformDraw();
   Rect cacheRect=new Rect();
+  KnobAutomation.Point cachePoint=new KnobAutomation.Point(0, 0);
   boolean doubleClickReady=false;
   long lastClicked=0;
   PGraphics waveformG;
-  boolean waveformInvalidated=true;
+  PGraphics automationG;
+  public boolean waveformInvalid=true;
+  public boolean automationInvalid=true;
   public WavEditor(String s) {
     super(s);
     bgColor=0xFF323232;
     fgColor=0xFF7F7F7F;
+    highlightColor=KyUI.Ref.color(0, 0, 255);
     slider=new RangeSlider(getName() + ":slider");
     slider.direction=Attributes.Direction.HORIZONTAL;
     slider.setAdjustListener((Element e) -> {
-      waveformInvalidated=true;
+      waveformInvalid=true;
+      automationInvalid=true;
       offsetX=slider.getOffset((float)((pos.right - pos.left) * scale));
       invalidate();
     });
+  }
+  public void setAutomationMode(boolean v) {
+    automationInvalid=true;
+    automationMode=v;
+  }
+  public boolean getAutomationMode() {
+    return automationMode;
   }
   @Override
   public void setPosition(Rect rect) {
     super.setPosition(rect);
     waveformG=KyUI.Ref.createGraphics((int)(pos.right - pos.left), (int)(pos.bottom - pos.top));
-    waveformInvalidated=true;
+    automationG=KyUI.Ref.createGraphics((int)(pos.right - pos.left), (int)(pos.bottom - pos.top));
+    waveformInvalid=true;
+    automationInvalid=true;
     setSlider();
   }
   public void initPlayer(AudioContext ac) {
-    player=new SamplePlayer(ac, 2);
+    player=new AutoControlSamplePlayer(ac, 2);
     player.setKillOnEnd(false);
     if (sample != null) {
       player.setSample(sample);
+      player.setLoopStart(new Static(player.getContext(), 0));
+      player.setLoopEnd(new Static(player.getContext(), (float)sample.getLength()));
     }
   }
   public void setSample(Sample sample_) {
@@ -80,6 +106,8 @@ public class WavEditor extends Element {
     length=sample.getLength();
     if (player != null) {
       player.setSample(sample);
+      player.setLoopStart(new Static(player.getContext(), 0));
+      player.setLoopEnd(new Static(player.getContext(), (float)sample.getLength()));
     }
     setSlider();
   }
@@ -100,7 +128,7 @@ public class WavEditor extends Element {
     //draw waveform (complete)
     if (player != null) {
       if (sample != null) {
-        if (waveformInvalidated) {
+        if (waveformInvalid) {
           waveformG.beginDraw();
           waveformG.clear();
           float interval=(pos.bottom - pos.top) / sample.getNumChannels();
@@ -109,15 +137,15 @@ public class WavEditor extends Element {
             waveformDraw.render(waveformG, player.getContext(), cacheRect, sample, fgColor, offsetX, scale, a);
           }
           waveformG.endDraw();
-          waveformInvalidated=false;
+          waveformInvalid=false;
         }
       }
       g.imageMode(PApplet.CORNER);
       g.image(waveformG, pos.left, pos.top);
       float loopHead=(pos.bottom - pos.top) / 12;//8
       //draw vertical grids(snap)
-      //draw loop mark - sampleplayer's loop (complete)
-      if (player.getLoopType() == SamplePlayer.LoopType.LOOP_FORWARDS) {
+      //draw loop mark - sampleplayer's loop
+      if (true) {//player.getLoopType() == SamplePlayer.LoopType.LOOP_FORWARDS
         g.strokeWeight(2);
         g.stroke(255, 0, 0, 150);
         g.fill(g.strokeColor);
@@ -139,7 +167,57 @@ public class WavEditor extends Element {
         }
       }
       //draw automations
-      //draw cursor (complete)
+      if (automation != null && !automation.points.isEmpty()) {
+        if (automationInvalid) {
+          automationG.beginDraw();
+          automationG.clear();
+          automationG.translate(-pos.left, -pos.top);
+          automationG.strokeWeight(1);
+          automationG.fill(255, automationMode ? 200 : 50);
+          automationG.rectMode(PApplet.RADIUS);
+          cachePoint.position=posToTime(0);
+          int start=automation.points.getBeforeIndex(cachePoint);
+          cachePoint.position=posToTime(pos.right - pos.left);
+          int end=automation.points.getBeforeIndex(cachePoint);
+          float beforeValue=0;
+          double beforePos=0;
+          if (start > 0) {
+            beforeValue=(pos.bottom - pos.top) * automation.map(automation.points.get(start - 1).value);
+            beforePos=automation.points.get(start - 1).position;
+          } else {
+            beforeValue=(pos.bottom - pos.top) * automation.map(automation.points.get(0).value);
+            beforePos=0;
+          }
+          for (int a=start; a < end; a++) {
+            KnobAutomation.Point p=automation.points.get(a);
+            automationG.stroke(255, 100);
+            automationG.line(timeToPos(p.position), pos.top + 2, timeToPos(p.position), pos.bottom - 2);
+            automationG.stroke(255);
+            automationG.line(timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), timeToPos(beforePos), beforeValue);
+            automationG.rect(timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), 10, 10);
+            beforePos=p.position;
+            beforeValue=(pos.bottom - pos.top) * automation.map(p.value);
+          }
+          if (end >= automation.points.size()) {//draw until end
+            automationG.line(pos.right, beforeValue, timeToPos(beforePos), beforeValue);
+          } else {
+            automationG.line(timeToPos(automation.points.get(end).position), (pos.bottom - pos.top) * automation.map(automation.points.get(end).value), timeToPos(beforePos), beforeValue);
+          }
+          automationG.endDraw();
+          automationInvalid=false;
+        }
+        g.image(automationG, pos.left, pos.top);
+        g.strokeWeight(3);
+        g.noFill();
+        g.rectMode(PApplet.RADIUS);
+        g.stroke(highlightColor);
+        for (KnobAutomation.Point p : selectedPoints) {
+          g.rect(timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), 10, 10);
+        }
+        g.rectMode(PApplet.CORNERS);
+      }
+      //draw cursor
+      g.strokeWeight(2);
       g.stroke(0, 0, 0, 200);
       float point=timeToPos(player.getPosition());
       if (isInRange(point, pos.left, pos.right)) {
@@ -174,55 +252,141 @@ public class WavEditor extends Element {
       return false;
     });
   }
-  public void setReverse(Button button) {
+  public Button setReverse(Button button) {
     button.setPressListener((MouseEvent e, int index) -> {
       return false;
     });
+    return button;
   }
-  public void setSnapGridPlus(Button button) {
+  public Button setSnapGridPlus(Button button) {
     button.setPressListener((MouseEvent e, int index) -> {
       return false;
     });
+    return button;
   }
-  public void setSnapGridMinus(Button button) {
+  public Button setSnapGridMinus(Button button) {
     button.setPressListener((MouseEvent e, int index) -> {
       return false;
     });
+    return button;
   }
-  public void setToggleSnap(ToggleButton button) {
+  public Button setToggleSnap(ToggleButton button) {
     button.setPressListener((MouseEvent e, int index) -> {
       snap=button.value;
       return false;
     });
+    return button;
   }
-  public void setToggleAutomationMode(ToggleButton button) {
+  public Button setToggleAutomationMode(ToggleButton button) {
     button.setPressListener((MouseEvent e, int index) -> {
       automationMode=button.value;
       return false;
     });
+    return button;
+  }
+  public Button setDeletePoint(Button button) {
+    button.setPressListener((MouseEvent e, int index) -> {
+      for (KnobAutomation.Point p : selectedPoints) {
+        automation.removePoint(p);
+      }
+      selectedPoints.clear();
+      automationInvalid=true;
+      return false;
+    });
+    return button;
   }
   @Override
   public boolean mouseEvent(MouseEvent e, int index) {
+    if (e.getAction() == MouseEvent.RELEASE) {
+      clickPoint=null;
+    }
     if (e.getAction() == MouseEvent.PRESS || e.getAction() == MouseEvent.DRAG) {
       float loopHead=(pos.bottom - pos.top) / 12;//8
-      float y=KyUI.mouseClick.getLast().y;
+      float cy=KyUI.mouseClick.getLast().y;
+      float y=KyUI.mouseGlobal.getLast().y;
+      float cx=KyUI.mouseClick.getLast().x;
       float x=KyUI.mouseGlobal.getLast().x;
       if (pressedL) {
         //snap x
-      }
-      if (pressedL || pressedR) {
-        if (player.getLoopType() == SamplePlayer.LoopType.LOOP_FORWARDS && isInRange(y, pos.top, pos.top + loopHead)) {
-          player.setLoopStart(new beads.Static(player.getContext(), Math.min(player.getLoopEndUGen().getValue(), (float)posToTime(x - pos.left))));
-        } else if (player.getLoopType() == SamplePlayer.LoopType.LOOP_FORWARDS && isInRange(y, pos.bottom - loopHead, pos.bottom)) {
-          player.setLoopEnd(new beads.Static(player.getContext(), Math.max(player.getLoopStartUGen().getValue(), (float)posToTime(x - pos.left))));
+        if(snap){
+
+        }
+        if (automationMode) {
+          if (e.getAction() == MouseEvent.PRESS) {
+            cachePoint.position=posToTime(0);
+            int start=automation.points.getBeforeIndex(cachePoint);
+            cachePoint.position=posToTime(pos.right - pos.left);
+            int end=automation.points.getBeforeIndex(cachePoint);
+            boolean selected=false;
+            int a=start;
+            for (; a < end; a++) {//search if overlay
+              KnobAutomation.Point p=automation.points.get(a);
+              if (Math.abs(timeToPos(p.position) - x) < 10 && Math.abs((pos.bottom - pos.top) * automation.map(p.value) - y) < 10) {
+                selected=true;
+                break;
+              }
+            }
+            selectedPoints.clear();
+            KnobAutomation.Point p;
+            if (selected) {
+              selectedPoints.add(p=automation.points.get(a));
+              clickPoint=p;
+              clickValue=p.value;
+              clickPos=p.position;
+            } else {
+              selectedPoints.add(p=automation.addPoint(posToTime(x), automation.unmap((y - pos.top) / (pos.bottom - pos.top))));
+              clickPoint=p;
+              clickValue=p.value;
+              clickPos=p.position;
+            }
+            automationInvalid=true;
+          } else {//FIX to more cleaner method
+            if (clickPoint != null) {
+              double offsetPos=posToTime(x - cx - offsetX);
+              double offsetV=-automation.unmap(1 - (KyUI.mouseGlobal.getLast().y - cy) / (pos.bottom - pos.top));
+              automation.changePoint(clickPoint, clickPos + offsetPos, clickValue + offsetV);
+              for (KnobAutomation.Point p : selectedPoints) {
+                if (p != clickPoint) {
+                  automation.changePoint(p, p.position + clickPos + offsetPos - clickPoint.position, p.value + clickValue + offsetV - clickPoint.value);
+                }
+              }
+            }
+            automationInvalid=true;
+          }
         } else {
-          player.setPosition((float)posToTime(x - pos.left));
+          clickPoint=null;
+          //player.getLoopType() == SamplePlayer.LoopType.LOOP_FORWARDS
+          if (isInRange(cy, pos.top, pos.top + loopHead)) {
+            player.setLoopStart(new Static(player.getContext(), Math.min(player.getLoopEndUGen().getValue(), Math.max(0, (float)Math.min(length, posToTime(x - pos.left))))));
+          } else if (isInRange(cy, pos.bottom - loopHead, pos.bottom)) {
+            player.setLoopEnd(new Static(player.getContext(), Math.max(player.getLoopStartUGen().getValue(), Math.max(0, (float)Math.min(length, posToTime(x - pos.left))))));
+          } else {
+            player.setPosition((float)posToTime(x - pos.left));
+          }
         }
       }
       if (e.getAction() == MouseEvent.PRESS) {
         long time=System.currentTimeMillis();
-        if (e.getButton() == PApplet.LEFT && doubleClickReady && time - lastClicked < KyUI.DOUBLE_CLICK_INTERVAL) {
-          //set loop range to automation interval
+        if (doubleClickReady && time - lastClicked < KyUI.DOUBLE_CLICK_INTERVAL) {//e.getButton() == PApplet.LEFT
+          AudioContext ac=player.getContext();
+          if (automation.points.isEmpty()) {
+            player.setLoopStart(new Static(ac, 0));
+            player.setLoopEnd(new Static(ac, (float)length));
+          } else {
+            cachePoint.position=posToTime(x);
+            int i=automation.points.getBeforeIndex(cachePoint);
+            if (i <= 0) {
+              player.setLoopStart(new Static(ac, 0));
+              player.setLoopEnd(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(0).position))));
+            } else if (i >= automation.points.size()) {
+              player.setLoopStart(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(automation.points.size() - 1).position))));
+              player.setLoopEnd(new Static(ac, (float)length));
+            } else {
+              player.setLoopStart(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(i - 1).position))));
+              player.setLoopEnd(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(i).position))));
+            }
+            player.setPosition(player.getLoopStartUGen().getValue());
+          }
           doubleClickReady=false;
         } else {
           doubleClickReady=true;
@@ -259,7 +423,8 @@ public class WavEditor extends Element {
         }
         setSlider();
         slider.invalidate();
-        waveformInvalidated=true;
+        waveformInvalid=true;
+        automationInvalid=true;
         invalidate();
         return false;
       }
@@ -277,7 +442,8 @@ public class WavEditor extends Element {
           }
           setSlider();
           slider.invalidate();
-          waveformInvalidated=true;
+          waveformInvalid=true;
+          automationInvalid=true;
           invalidate();
         } else if (e.getKeyCode() == PApplet.RIGHT) {
           offsetX+=8;
@@ -286,7 +452,8 @@ public class WavEditor extends Element {
           }
           setSlider();
           slider.invalidate();
-          waveformInvalidated=true;
+          waveformInvalid=true;
+          automationInvalid=true;
           invalidate();
         }
       }
