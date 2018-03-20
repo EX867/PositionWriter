@@ -100,37 +100,41 @@ public class KnobAutomation extends Glide {
   }
   public void removePoint(Point point) {
     int index=0;
-    for (Point p : points) {
-      if (p == point) {
-        break;
+    synchronized (points) {
+      for (Point p : points) {
+        if (p == point) {
+          break;
+        }
+        index++;
       }
-      index++;
+      removePoint(index);
     }
-    removePoint(index);
   }
   public Point changePoint(int index, double pos, double value) {
     Point p=points.get(index);
-    p.position=pos;
-    p.value=value;
     synchronized (points) {
       points.remove(index);
+      p.position=pos;
+      p.value=value;
       points.add(p);
     }
     return p;
   }
   public Point changePoint(Point point, double pos, double value) {
     //FIX it with making indexOf function in cmdscript.multiset
-    int index=0;
-    for (Point p : points) {
-      if (p == point) {
-        break;
+    synchronized (points) {
+      int index=0;
+      for (Point p : points) {
+        if (p == point) {
+          break;
+        }
+        index++;
       }
-      index++;
+      if (index == points.size()) {
+        return null;//error! error! error!
+      }
+      return changePoint(index, pos, value);
     }
-    if (index == points.size()) {
-      return null;//error! error! error!
-    }
-    return changePoint(index, pos, value);
   }
   Task loopChangeTask=(Object o) -> {//o instanceof boolean
     loop=(boolean)o;
@@ -159,27 +163,29 @@ public class KnobAutomation extends Glide {
   }
   @Override
   public void calculateBuffer() {//use same loop algorithm with beads's SamplePlayer. because I need to synchronized this with SamplePlayer...
-    tm.executeAll();
-    if (points.size() == 0) {
-      super.calculateBuffer();
-    } else if (target != null && target.hold()) {
-      super.calculateBuffer();
-      for (int i=0; i < bufferSize; i++) {
-        calculateNextPosition(i);//also check loop in here...
-      }
-    } else {
-      loopStartEnvelope.update();
-      loopEndEnvelope.update();
-      for (int i=0; i < bufferSize; i++) {
-        bufOut[0][i]=(float)getValueIn();//get position's frame
-        calculateNextPosition(i);//check loop
-      }
-      if (target != null) {
-        target.adjust(target.getInv.apply((double)bufOut[0][bufferSize - 1]));
+    synchronized (points) {
+      tm.executeAll();
+      if (points.size() == 0) {
+        super.calculateBuffer();
+      } else if (target != null && target.hold()) {
+        super.calculateBuffer();
+        for (int i=0; i < bufferSize; i++) {
+          calculateNextPosition(i);//also check loop in here...
+        }
+      } else {
+        loopStartEnvelope.update();
+        loopEndEnvelope.update();
+        for (int i=0; i < bufferSize; i++) {
+          bufOut[0][i]=(float)getValueIn();//get position's frame
+          calculateNextPosition(i);//check loop
+        }
+        if (target != null) {
+          target.adjust(target.getInv.apply((double)bufOut[0][bufferSize - 1]));
+        }
       }
     }
   }
-  double getValueIn() {//a and b should between position. if check fails, re calculate index.  assert points.size()>0
+  protected double getValueIn() {//a and b should between position. if check fails, re calculate index.  assert points.size()>0
     if (index + 1 < points.size() && index >= 0) {
       if (points.get(index + 1).position <= position) {//check if index is too small
         index++;

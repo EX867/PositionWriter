@@ -32,6 +32,7 @@ public class WaveformDraw {
       int interval=Math.max(1, interval=(frame - pframe) / 200);//optimization purpose
       float max=0;
       float min=0;
+      frame=frame-frame % interval;
       for (int b=pframe - pframe % interval; b <= frame; b+=interval) {
         sample.getFrame(b, data);
         if (data[channel] > 0) {
