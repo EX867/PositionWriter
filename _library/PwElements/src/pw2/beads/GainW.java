@@ -16,6 +16,7 @@ public class GainW extends UGenW {
     super(ac, in, in);
     ugen=new Gain(ac, in);
     ugen.setGain(gain=new KnobAutomation(ac, 1));
+    //gain.gridInterval=0.1;test
     setStartPoint(ugen);
   }
   @Override

@@ -23,11 +23,15 @@ public class Test3 extends PApplet {
   public void settings() {
     size(1500, 600);
   }
+  WavEditor w;
   @Override
   public void setup() {
     KyUI.start(this);
     AudioContext ac=new AudioContext();
-    WavEditor w=new WavEditor("wav");
+    w=new WavEditor("wav");
+    w.snapBpm=140;
+    w.snapOffset=1386.05453381616781;//->???
+    w.snapInterval=WavEditor.Beat[7];
     LinearLayout lin1=new LinearLayout("lin1");
     lin1.setDirection(Attributes.Direction.VERTICAL);
     lin1.setMode(LinearLayout.Behavior.STATIC);
@@ -60,15 +64,15 @@ public class Test3 extends PApplet {
     ac.out.addInput(g);
     new Knob("a", "a").attach(ac, g, g.setGain, 0, 2, 1, 1, false);
     w.player.addAuto(g.gain);
-    for (int a=0; a < 10; a++) {
-      g.gain.addPoint(((float)a / 10) * w.sample.getLength(), Math.random());
-    }
+    //    for (int a=0; a < 10; a++) {
+    //      g.gain.addPoint(((float)a / 10) * w.sample.getLength(), Math.random());
+    //    }
     w.automation=g.gain;
     aa=g.gain;
     ac.start();
   }
   @Override
-  public void keyPressed() {
+  public void keyPressed(KeyEvent e) {
     if (keyPressed) {
       if (key == ' ') {
         KyUI.<WavEditor>get2("wav").player.pause(!KyUI.<WavEditor>get2("wav").player.isPaused());
@@ -81,8 +85,10 @@ public class Test3 extends PApplet {
         KyUI.<Button>get2("delete").getPressListener().onEvent(null, 0);
         KyUI.get("wav").invalidate();
       }
-      if (key == 'q') {
-        aa.addPoint(KyUI.<WavEditor>get2("wav").player.getPosition(), 0.5);
+      if (key == 'q') {//processing's limit
+        aa.addPoint(w.snapTime(
+            Math.max(Math.min(w.player.getPosition() + (double)(((java.awt.event.KeyEvent)e.getNative()).getWhen() - System.currentTimeMillis()), w.sample.getLength()), 0)
+        ), 1);
         KyUI.<WavEditor>get2("wav").automationInvalid=true;
         KyUI.get("wav").invalidate();
       }
@@ -91,6 +97,7 @@ public class Test3 extends PApplet {
   @Override
   public void draw() {
     KyUI.render(g);
+    w.selectionMode=keyPressed && key == CODED && keyCode == CONTROL;
   }
   @Override
   protected void handleKeyEvent(KeyEvent event) {

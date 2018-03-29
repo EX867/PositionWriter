@@ -62,15 +62,15 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     sideChain=new KnobAutomation(ac, 0);
     sideChainPlayer=new SamplePlayer(ac, 2);
     sideChainPlayer.setKillOnEnd(false);
+    sideChain.gridOffset=1;
+    sideChain.gridInterval=0;
+    sideChain.setRange(0,0);//usually,sideChain has no knob mapping.
     ugen.setSideChain(sideChainPlayer);
     sideChain.postCounter=(KnobAutomation.Point p) -> {
       startSample(p.value);
     };
     setStartPoint(ugen);
     sideChainPlayer.start();
-  }
-  public TDCompW(AudioContext ac, int in, int out) {
-    super(ac, in, out);
   }
   @Override
   public void kill() {
@@ -104,6 +104,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     if (new File(path).isFile()) {
       try {
         samples.add(new Sample(path));
+        sideChain.setRange(0,samples.size());//usually,sideChain has no knob mapping.
         System.out.println("Sample loaded : " + path);
       } catch (Exception e) {
         e.printStackTrace();

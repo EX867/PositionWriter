@@ -33,6 +33,8 @@ public class KnobAutomation extends Glide {
   Knob target;
   protected double max=1;
   protected double min=0;//used when no target specified
+  public double gridOffset=0;
+  public double gridInterval=0;//usually 0, and if not 0,then this value will draw and snap horizontal grids on WavEdit, or else. this is set by UGenW class.
   public Multiset<Point> points;//but read only, use changePoint or addPoint when modifying this
   Point cachePoint=new Point(0, 0);
   double position=0;//in milliseconds...
@@ -64,15 +66,19 @@ public class KnobAutomation extends Glide {
     return this;
   }
   public float map(double v) {//map v with min and max to 1-0 (to show in screen)
-    //assert max>min
+    if(min>=max){
+      return (float)min;
+    }
     if (target == null) {
       return (float)((max - v) / (max - min));
     } else {
       return (float)((target.max - v) / (target.max - target.min));
     }
   }
-  public double unmap(float p) {
-    //assert max>min
+  public double unmap(double p) {
+    if(min>=max){
+      return min;
+    }
     if (target == null) {
       return max - (max - min) * p;
     } else {
@@ -99,13 +105,17 @@ public class KnobAutomation extends Glide {
     }
   }
   public void removePoint(Point point) {
+    if (points.size() == 0) {
+      return;
+    }
     int index=0;
     synchronized (points) {
-      for (Point p : points) {
-        if (p == point) {
+      cachePoint.position=point.position;
+      index=Math.min(points.size()-1,points.getBeforeIndex(cachePoint));
+      for (; index > 0; index--) {
+        if (points.get(index) == point) {
           break;
         }
-        index++;
       }
       removePoint(index);
     }
@@ -121,14 +131,14 @@ public class KnobAutomation extends Glide {
     return p;
   }
   public Point changePoint(Point point, double pos, double value) {
-    //FIX it with making indexOf function in cmdscript.multiset
+    int index=0;
     synchronized (points) {
-      int index=0;
-      for (Point p : points) {
-        if (p == point) {
+      cachePoint.position=point.position;
+      index=Math.min(points.size()-1,points.getBeforeIndex(cachePoint));
+      for (; index >= 0; index--) {
+        if (points.get(index) == point) {
           break;
         }
-        index++;
       }
       if (index == points.size()) {
         return null;//error! error! error!
