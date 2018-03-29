@@ -6,12 +6,13 @@ import beads.UGen;
 import com.karnos.commandscript.Multiset;
 import kyui.util.Task;
 import kyui.util.TaskManager;
+import processing.core.PApplet;
 import pw2.element.Knob;
 
 import java.util.function.Consumer;
 public class KnobAutomation extends Glide {
   TaskManager tm=new TaskManager();
-  final double EPSILON=Double.longBitsToDouble(971l << 52);//https://stackoverflow.com/questions/25180950/java-double-epsilon
+  public static final double EPSILON=Double.longBitsToDouble(971l << 52);//https://stackoverflow.com/questions/25180950/java-double-epsilon
   public static float GLIDE_TIME=1;
   public static class Point implements Comparable<Point> {
     public double value;
@@ -66,31 +67,57 @@ public class KnobAutomation extends Glide {
     return this;
   }
   public float map(double v) {//map v with min and max to 1-0 (to show in screen)
-    if(min>=max){
-      return (float)min;
-    }
     if (target == null) {
+      if (min >= max) {
+        return (float)min;
+      }
       return (float)((max - v) / (max - min));
     } else {
+      if (target.min >= target.max) {
+        return (float)target.min;
+      }
       return (float)((target.max - v) / (target.max - target.min));
     }
   }
   public double unmap(double p) {
-    if(min>=max){
-      return min;
-    }
     if (target == null) {
+      if (min >= max) {
+        return min;
+      }
       return max - (max - min) * p;
     } else {
+      if (target.min >= target.max) {
+        return (float)min;
+      }
       return target.max - (target.max - target.min) * p;
     }
   }
   public KnobAutomation setRange(double min_, double max_) {//only works when no target specified.
-    if (target != null) {
+    if (target == null) {
       max=max_;
       min=min_;
     }
     return this;
+  }
+  public int indexOf(Point point) {
+    cachePoint.position=point.position + PApplet.EPSILON;
+    index=Math.min(points.size() - 1, points.getBeforeIndex(cachePoint) - 1);
+    for (; index >= 0; index--) {
+      if (points.get(index) == point) {
+        return index;
+      }
+    }
+    return -1;
+  }
+  public int indexOf(double position, double value) {
+    cachePoint.position=(float)position + 2 * PApplet.EPSILON;
+    index=Math.min(points.size() - 1, points.getBeforeIndex(cachePoint));
+    for (; index >= 0; index--) {
+      if (Math.abs(points.get(index).value - value) <= PApplet.EPSILON) {
+        return index;
+      }
+    }
+    return -1;
   }
   public Point addPoint(double pos, double value) {
     Point p=new Point(pos, value);
@@ -100,6 +127,10 @@ public class KnobAutomation extends Glide {
     return p;
   }
   public void removePoint(int index) {
+    if (index < 0) {
+      System.out.println("[KnobAutomation] negative index input.");
+      return;
+    }
     synchronized (points) {
       points.remove(index);
     }
@@ -108,19 +139,25 @@ public class KnobAutomation extends Glide {
     if (points.size() == 0) {
       return;
     }
-    int index=0;
     synchronized (points) {
-      cachePoint.position=point.position;
-      index=Math.min(points.size()-1,points.getBeforeIndex(cachePoint));
-      for (; index > 0; index--) {
-        if (points.get(index) == point) {
-          break;
-        }
-      }
+      int index=indexOf(point);
+      removePoint(index);
+    }
+  }
+  public void removePoint(double pos, double value) {
+    if (points.size() == 0) {
+      return;
+    }
+    synchronized (points) {
+      int index=indexOf(pos, value);
       removePoint(index);
     }
   }
   public Point changePoint(int index, double pos, double value) {
+    if (index < 0) {
+      System.out.println("[KnobAutomation] negative index input.");
+      return null;//warning! nullpointer exception can occur
+    }
     Point p=points.get(index);
     synchronized (points) {
       points.remove(index);
@@ -131,18 +168,8 @@ public class KnobAutomation extends Glide {
     return p;
   }
   public Point changePoint(Point point, double pos, double value) {
-    int index=0;
     synchronized (points) {
-      cachePoint.position=point.position;
-      index=Math.min(points.size()-1,points.getBeforeIndex(cachePoint));
-      for (; index >= 0; index--) {
-        if (points.get(index) == point) {
-          break;
-        }
-      }
-      if (index == points.size()) {
-        return null;//error! error! error!
-      }
+      int index=indexOf(point);
       return changePoint(index, pos, value);
     }
   }

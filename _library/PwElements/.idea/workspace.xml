@@ -12,34 +12,63 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="WavEditor.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="WavEditor.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pw2/element/WavEditor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="469">
-              <caret line="556" column="48" lean-forward="true" selection-start-line="556" selection-start-column="48" selection-end-line="556" selection-end-column="48" />
+            <state relative-caret-position="86">
+              <caret line="521" column="29" lean-forward="false" selection-start-line="521" selection-start-column="29" selection-end-line="521" selection-end-column="29" />
               <folding>
-                <element signature="e#12195#12196#0" expanded="true" />
-                <element signature="e#12291#12292#0" expanded="true" />
+                <element signature="class#ChangeData#0;class#WavEditor#0" expanded="false" />
+                <element signature="class#Change#0;class#WavEditor#0" expanded="false" />
                 <element signature="method#setSnapGridPlus#0;class#WavEditor#0" expanded="false" />
                 <element signature="method#setSnapGridMinus#0;class#WavEditor#0" expanded="false" />
                 <element signature="method#setToggleSnap#0;class#WavEditor#0" expanded="false" />
                 <element signature="method#setToggleAutomationMode#0;class#WavEditor#0" expanded="false" />
-                <element signature="method#setToggleAutoscroll#0;class#WavEditor#0" expanded="false" />
-                <element signature="e#15229#15230#0" expanded="true" />
-                <element signature="e#15289#15290#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Test3.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/pw2/element/test/Test3.java">
+      <file leaf-file-name="WavCut.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/pw2/element/test/WavCut.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="424">
-              <caret line="99" column="20" lean-forward="false" selection-start-line="99" selection-start-column="20" selection-end-line="99" selection-end-column="20" />
+            <state relative-caret-position="209">
+              <caret line="34" column="3" lean-forward="false" selection-start-line="34" selection-start-column="3" selection-end-line="34" selection-end-column="3" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#2921#2983#0" expanded="false" />
+                <element signature="e#3308#3444#0" expanded="false" />
+                <element signature="e#4216#4454#0" expanded="false" />
+                <element signature="e#7310#7324#0" expanded="true" />
+                <element signature="e#7496#7510#0" expanded="true" />
+                <element signature="e#7670#7678#0" expanded="true" />
+                <element signature="e#7844#7852#0" expanded="true" />
+                <element signature="e#7968#7976#0" expanded="true" />
+                <element signature="e#8092#8100#0" expanded="true" />
+                <element signature="e#8218#8226#0" expanded="true" />
+                <element signature="e#8405#8413#0" expanded="true" />
+                <element signature="e#8528#8536#0" expanded="true" />
+                <element signature="e#8651#8659#0" expanded="true" />
+                <element signature="e#8773#8781#0" expanded="true" />
+                <element signature="e#8904#8912#0" expanded="true" />
+                <element signature="e#9029#9037#0" expanded="true" />
+                <element signature="e#9197#9205#0" expanded="true" />
+                <element signature="e#11315#11324#0" expanded="true" />
+                <element signature="e#11497#11506#0" expanded="true" />
+                <element signature="e#12607#12616#0" expanded="true" />
+                <element signature="e#14935#14936#0" expanded="true" />
+                <element signature="e#15018#15019#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/build/WavCut/build.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="324">
+              <caret line="18" column="101" lean-forward="false" selection-start-line="18" selection-start-column="101" selection-end-line="18" selection-end-column="101" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -47,8 +76,8 @@
       <file leaf-file-name="KnobAutomation.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pw2/beads/KnobAutomation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="114" column="34" lean-forward="true" selection-start-line="114" selection-start-column="34" selection-end-line="114" selection-end-column="34" />
+            <state relative-caret-position="427">
+              <caret line="95" column="16" lean-forward="false" selection-start-line="95" selection-start-column="16" selection-end-line="95" selection-end-column="16" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -83,6 +112,8 @@
       <find>setRan</find>
       <find>hori</find>
       <find>10</find>
+      <find>reco</find>
+      <find>snapBpm</find>
     </findStrings>
     <replaceStrings>
       <replace>offsetY</replace>
@@ -137,10 +168,14 @@
         <option value="$PROJECT_DIR$/src/pw2/beads/AutoControlSamplePlayer.java" />
         <option value="$PROJECT_DIR$/src/pw2/element/WaveformDraw.java" />
         <option value="$PROJECT_DIR$/src/pw2/beads/TDCompW.java" />
-        <option value="$PROJECT_DIR$/src/pw2/beads/KnobAutomation.java" />
         <option value="$PROJECT_DIR$/src/pw2/beads/GainW.java" />
-        <option value="$PROJECT_DIR$/src/pw2/element/test/Test3.java" />
+        <option value="$PROJECT_DIR$/src/pw2/beads/KnobAutomation.java" />
         <option value="$PROJECT_DIR$/src/pw2/element/WavEditor.java" />
+        <option value="$PROJECT_DIR$/src/pw2/element/test/Test3.java" />
+        <option value="$PROJECT_DIR$/src/pw2/element/test/WavCut.java" />
+        <option value="$PROJECT_DIR$/src/Main.java" />
+        <option value="$PROJECT_DIR$/src/WavCut.java" />
+        <option value="$PROJECT_DIR$/build/WavCut/build.xml" />
       </list>
     </option>
   </component>
@@ -385,6 +420,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -396,6 +432,12 @@
               <item name="PwElements" type="b2602c69:ProjectViewProjectNode" />
               <item name="PwElements" type="462c0819:PsiDirectoryNode" />
               <item name="build" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PwElements" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PwElements" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="WavCut" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="PwElements" type="b2602c69:ProjectViewProjectNode" />
@@ -436,13 +478,16 @@
               <item name="element" type="462c0819:PsiDirectoryNode" />
               <item name="test" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="PwElements" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
-      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -451,7 +496,7 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/build/build.xml" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/build/WavCut/build.xml" />
   </component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -472,7 +517,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Test3">
+  <component name="RunManager" selected="Application.WavCut">
     <configuration name="Test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pw2.element.test.Test" />
       <option name="VM_PARAMETERS" />
@@ -499,8 +544,8 @@
       <module name="PwElements" />
       <envs />
     </configuration>
-    <configuration name="Test3" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="pw2.element.test.Test3" />
+    <configuration name="WavCut" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="pw2.element.test.WavCut" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -573,11 +618,11 @@
     <list size="3">
       <item index="0" class="java.lang.String" itemvalue="Application.Test" />
       <item index="1" class="java.lang.String" itemvalue="Application.Test2" />
-      <item index="2" class="java.lang.String" itemvalue="Application.Test3" />
+      <item index="2" class="java.lang.String" itemvalue="Application.WavCut" />
     </list>
     <recent_temporary>
       <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Application.Test3" />
+        <item index="0" class="java.lang.String" itemvalue="Application.WavCut" />
         <item index="1" class="java.lang.String" itemvalue="Application.Test2" />
         <item index="2" class="java.lang.String" itemvalue="Application.Test" />
       </list>
@@ -689,38 +734,39 @@
       <workItem from="1522148006926" duration="1668000" />
       <workItem from="1522211447454" duration="6578000" />
       <workItem from="1522311639332" duration="3066000" />
-      <workItem from="1522319786285" duration="7832000" />
+      <workItem from="1522319786285" duration="8082000" />
+      <workItem from="1522328765826" duration="5000" />
+      <workItem from="1522331529890" duration="18476000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="258417000" />
+    <option name="totallyTimeSpent" value="277148000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32801822" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21526197" sideWeight="0.5064447" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975295" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21526197" sideWeight="0.4935553" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21298406" sideWeight="0.4935553" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24758324" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19387755" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32801822" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973147" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39863327" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24973147" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39863327" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3289183" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -751,91 +797,11 @@
       </targetFilters>
       <expanded value="true" />
     </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/build/WavCut/build.xml">
+      <expanded value="true" />
+    </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/pw2/beads/KnobAutomation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2358">
-          <caret line="131" column="49" lean-forward="false" selection-start-line="131" selection-start-column="49" selection-end-line="131" selection-end-column="49" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pw2/element/test/Test2.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="738">
-          <caret line="58" column="33" lean-forward="true" selection-start-line="58" selection-start-column="33" selection-end-line="58" selection-end-column="33" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pw2/beads/AutoFaderW.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="37" column="50" lean-forward="true" selection-start-line="37" selection-start-column="50" selection-end-line="37" selection-end-column="50" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="method#updateUGens#0;class#AutoFaderW#0" expanded="false" />
-            <element signature="method#kill#0;class#AutoFaderW#0" expanded="false" />
-            <element signature="method#setFader#0;class#AutoFader#0;class#AutoFaderW#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pw2/beads/TDComp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3204">
-          <caret line="178" column="63" lean-forward="true" selection-start-line="178" selection-start-column="63" selection-end-line="178" selection-end-column="63" />
-          <folding>
-            <element signature="method#setAttack#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRelease#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRatio#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setKnee#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setSideChain#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#1;class#TDComp#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pw2/beads/TDCompW.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1152">
-          <caret line="73" column="24" lean-forward="false" selection-start-line="73" selection-start-column="24" selection-end-line="73" selection-end-column="24" />
-          <folding>
-            <element signature="method#kill#0;class#TDCompW#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/beads/UGenW.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="34" column="36" lean-forward="false" selection-start-line="34" selection-start-column="36" selection-end-line="34" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pw2/beads/TDComp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3726">
-          <caret line="207" column="21" lean-forward="false" selection-start-line="207" selection-start-column="21" selection-end-line="207" selection-end-column="21" />
-          <folding>
-            <element signature="method#setAttack#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRelease#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRatio#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setKnee#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setSideChain#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#1;class#TDComp#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/pw2/beads/KnobAutomation.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1890">
@@ -850,9 +816,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="504">
           <caret line="45" column="6" lean-forward="false" selection-start-line="45" selection-start-column="6" selection-end-line="45" selection-end-column="6" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -860,12 +823,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
           <caret line="6" column="3" lean-forward="false" selection-start-line="6" selection-start-column="3" selection-end-line="6" selection-end-column="3" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="method#updateUGens#0;class#AutoFaderW#0" expanded="false" />
-            <element signature="method#kill#0;class#AutoFaderW#0" expanded="false" />
-            <element signature="method#setFader#0;class#AutoFader#0;class#AutoFaderW#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -873,9 +830,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1152">
           <caret line="73" column="24" lean-forward="false" selection-start-line="73" selection-start-column="24" selection-end-line="73" selection-end-column="24" />
-          <folding>
-            <element signature="method#kill#0;class#TDCompW#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -883,7 +837,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
           <caret line="34" column="36" lean-forward="false" selection-start-line="34" selection-start-column="36" selection-end-line="34" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -891,15 +844,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3654">
           <caret line="203" column="103" lean-forward="true" selection-start-line="203" selection-start-column="103" selection-end-line="203" selection-end-column="103" />
-          <folding>
-            <element signature="method#setAttack#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRelease#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRatio#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setKnee#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setSideChain#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#1;class#TDComp#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -917,9 +861,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="22" column="3" lean-forward="true" selection-start-line="22" selection-start-column="3" selection-end-line="22" selection-end-column="3" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -927,9 +868,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1458">
           <caret line="102" column="34" lean-forward="false" selection-start-line="102" selection-start-column="34" selection-end-line="102" selection-end-column="34" />
-          <folding>
-            <element signature="method#kill#0;class#TDCompW#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -947,9 +885,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
           <caret line="49" column="33" lean-forward="true" selection-start-line="49" selection-start-column="33" selection-end-line="49" selection-end-column="33" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -964,15 +899,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1278">
           <caret line="71" column="43" lean-forward="false" selection-start-line="71" selection-start-column="43" selection-end-line="71" selection-end-column="43" />
-          <folding>
-            <element signature="method#setAttack#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRelease#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRatio#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setKnee#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setSideChain#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#1;class#TDComp#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -980,9 +906,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1206">
           <caret line="83" column="20" lean-forward="false" selection-start-line="83" selection-start-column="20" selection-end-line="83" selection-end-column="20" />
-          <folding>
-            <element signature="method#kill#0;class#TDCompW#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -990,9 +913,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="324">
           <caret line="36" column="26" lean-forward="true" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1000,15 +920,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="846">
           <caret line="50" column="7" lean-forward="true" selection-start-line="50" selection-start-column="7" selection-end-line="50" selection-end-column="7" />
-          <folding>
-            <element signature="method#setAttack#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRelease#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRatio#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setKnee#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setSideChain#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#1;class#TDComp#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1066,12 +977,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
           <caret line="37" column="50" lean-forward="false" selection-start-line="37" selection-start-column="50" selection-end-line="37" selection-end-column="50" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="method#updateUGens#0;class#AutoFaderW#0" expanded="false" />
-            <element signature="method#kill#0;class#AutoFaderW#0" expanded="false" />
-            <element signature="method#setFader#0;class#AutoFader#0;class#AutoFaderW#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1093,7 +998,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="208">
           <caret line="54" column="6" lean-forward="false" selection-start-line="54" selection-start-column="6" selection-end-line="54" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1101,7 +1005,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="60" column="6" lean-forward="false" selection-start-line="60" selection-start-column="6" selection-end-line="60" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1109,9 +1012,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="137">
           <caret line="47" column="27" lean-forward="true" selection-start-line="47" selection-start-column="27" selection-end-line="47" selection-end-column="27" />
-          <folding>
-            <element signature="method#line#0;class#935:2176" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1119,15 +1019,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
           <caret line="24" column="12" lean-forward="true" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/pw2/element/Knob.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="19" column="22" lean-forward="true" selection-start-line="19" selection-start-column="22" selection-end-line="19" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1135,9 +1026,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="51" column="9" lean-forward="true" selection-start-line="51" selection-start-column="9" selection-end-line="51" selection-end-column="93" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1159,9 +1047,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="235">
           <caret line="39" column="30" lean-forward="true" selection-start-line="39" selection-start-column="30" selection-end-line="39" selection-end-column="30" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1169,9 +1054,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="64">
           <caret line="66" column="26" lean-forward="false" selection-start-line="66" selection-start-column="26" selection-end-line="66" selection-end-column="26" />
-          <folding>
-            <element signature="method#kill#0;class#TDCompW#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1179,15 +1061,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1539">
           <caret line="216" column="19" lean-forward="false" selection-start-line="216" selection-start-column="19" selection-end-line="216" selection-end-column="19" />
-          <folding>
-            <element signature="method#setAttack#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRelease#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setRatio#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setKnee#0;class#TDComp#0" expanded="false" />
-            <element signature="method#setSideChain#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#0;class#TDComp#0" expanded="false" />
-            <element signature="method#getDVal#1;class#TDComp#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1195,9 +1068,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="594">
           <caret line="41" column="5" lean-forward="false" selection-start-line="41" selection-start-column="5" selection-end-line="41" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1205,7 +1075,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="20" lean-forward="false" selection-start-line="0" selection-start-column="20" selection-end-line="0" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1213,24 +1082,56 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="235">
           <caret line="18" column="32" lean-forward="false" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/../../PW2_0/code/KyUI.jar!/kyui/element/Button.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="124" column="14" lean-forward="false" selection-start-line="124" selection-start-column="14" selection-end-line="124" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/pw2/element/test/Test3.java">
+    <entry file="jar://$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar!/com/karnos/commandscript/Difference.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="424">
-          <caret line="99" column="20" lean-forward="false" selection-start-line="99" selection-start-column="20" selection-end-line="99" selection-end-column="20" />
+        <state relative-caret-position="18">
+          <caret line="1" column="22" lean-forward="false" selection-start-line="1" selection-start-column="22" selection-end-line="1" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar!/com/karnos/commandscript/EditRecorder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="369">
+          <caret line="32" column="34" lean-forward="true" selection-start-line="32" selection-start-column="34" selection-end-line="32" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/../../../../Processing/libraries/beads/library/beads.jar!/beads/Sample.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3396">
+          <caret line="222" column="145" lean-forward="false" selection-start-line="222" selection-start-column="145" selection-end-line="222" selection-end-column="145" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#7820#7821#0" expanded="true" />
+            <element signature="e#7881#7882#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pw2/element/Knob.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="28" column="46" lean-forward="false" selection-start-line="28" selection-start-column="46" selection-end-line="28" selection-end-column="46" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pw2/beads/KnobAutomation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="114" column="34" lean-forward="true" selection-start-line="114" selection-start-column="34" selection-end-line="114" selection-end-column="34" />
+        <state relative-caret-position="427">
+          <caret line="95" column="16" lean-forward="false" selection-start-line="95" selection-start-column="16" selection-end-line="95" selection-end-column="16" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1239,19 +1140,72 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pw2/element/WavEditor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="469">
-          <caret line="556" column="48" lean-forward="true" selection-start-line="556" selection-start-column="48" selection-end-line="556" selection-end-column="48" />
+        <state relative-caret-position="86">
+          <caret line="521" column="29" lean-forward="false" selection-start-line="521" selection-start-column="29" selection-end-line="521" selection-end-column="29" />
           <folding>
-            <element signature="e#12195#12196#0" expanded="true" />
-            <element signature="e#12291#12292#0" expanded="true" />
+            <element signature="class#ChangeData#0;class#WavEditor#0" expanded="false" />
+            <element signature="class#Change#0;class#WavEditor#0" expanded="false" />
             <element signature="method#setSnapGridPlus#0;class#WavEditor#0" expanded="false" />
             <element signature="method#setSnapGridMinus#0;class#WavEditor#0" expanded="false" />
             <element signature="method#setToggleSnap#0;class#WavEditor#0" expanded="false" />
             <element signature="method#setToggleAutomationMode#0;class#WavEditor#0" expanded="false" />
-            <element signature="method#setToggleAutoscroll#0;class#WavEditor#0" expanded="false" />
-            <element signature="e#15229#15230#0" expanded="true" />
-            <element signature="e#15289#15290#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/WavCut.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="575">
+          <caret line="39" column="35" lean-forward="true" selection-start-line="39" selection-start-column="35" selection-end-line="39" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pw2/element/test/WavCut.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="34" column="3" lean-forward="false" selection-start-line="34" selection-start-column="3" selection-end-line="34" selection-end-column="3" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2921#2983#0" expanded="false" />
+            <element signature="e#3308#3444#0" expanded="false" />
+            <element signature="e#4216#4454#0" expanded="false" />
+            <element signature="e#7310#7324#0" expanded="true" />
+            <element signature="e#7496#7510#0" expanded="true" />
+            <element signature="e#7670#7678#0" expanded="true" />
+            <element signature="e#7844#7852#0" expanded="true" />
+            <element signature="e#7968#7976#0" expanded="true" />
+            <element signature="e#8092#8100#0" expanded="true" />
+            <element signature="e#8218#8226#0" expanded="true" />
+            <element signature="e#8405#8413#0" expanded="true" />
+            <element signature="e#8528#8536#0" expanded="true" />
+            <element signature="e#8651#8659#0" expanded="true" />
+            <element signature="e#8773#8781#0" expanded="true" />
+            <element signature="e#8904#8912#0" expanded="true" />
+            <element signature="e#9029#9037#0" expanded="true" />
+            <element signature="e#9197#9205#0" expanded="true" />
+            <element signature="e#11315#11324#0" expanded="true" />
+            <element signature="e#11497#11506#0" expanded="true" />
+            <element signature="e#12607#12616#0" expanded="true" />
+            <element signature="e#14935#14936#0" expanded="true" />
+            <element signature="e#15018#15019#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/WavCut/build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="18" column="101" lean-forward="false" selection-start-line="18" selection-start-column="101" selection-end-line="18" selection-end-column="101" />
+          <folding />
         </state>
       </provider>
     </entry>

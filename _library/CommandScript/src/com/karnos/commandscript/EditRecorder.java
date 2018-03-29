@@ -30,10 +30,10 @@ public class EditRecorder{
   }
   public void undo(){
     if (BeforeLog.size()!=0)shiftLog();
-    if (AfterLog.size()<=2)return;
+    if (AfterLog.size()==0)return;
     int index=AfterLog.get(AfterLog.size()-1).index;
     int a=AfterLog.size()-1;
-    while (a>0&&AfterLog.get(AfterLog.size()-1).index==index) {
+    while (a>=0&&AfterLog.get(AfterLog.size()-1).index==index) {
       AfterLog.get(a).undo();
       RedoStack.add(AfterLog.get(a));
       AfterLog.remove(a);

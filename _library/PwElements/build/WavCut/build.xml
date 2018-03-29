@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project default="build_jar" name="Create JAR-file">
+
+    <!-- Configuration -->
+    <property name="built_by" value="${user.name}"/>
+    <property name="version" value="0.1"/>
+
+    <!-- run the ant timestamp task -->
+    <tstamp/>
+    <target name="WavCut" description="Indicates this is wavcut build.xml"/>
+    <!-- Compile the source files -->
+    <target name="compile" description="The compile task">
+        <mkdir dir="../../bin"/>
+        <javac srcdir="../../src" destdir="../../bin" classpath="" encoding="UTF-8" includeantruntime="false" source="1.8" target="1.8">
+            <classpath>
+                <fileset dir="../../../processing" includes="core.jar"/>
+                <fileset dir="../../../../PW2_0/code/" includes="CommandScript.jar"/>
+                <fileset dir="../../../../PW2_0/code/" includes="KyUI.jar"/>
+                <fileset dir="C:/Users/user/Documents/Processing/libraries/beads/library/" includes="beads.jar"/>
+            </classpath>
+            <compilerarg value="-XDignore.symbol.file"/>
+        </javac>
+    </target>
+
+    <!-- Clean the build directory -->
+    <target name="clean" description="Clean the build directory">
+        <delete dir="../../bin"/>
+    </target>
+
+    <!-- Build the jar -->
+    <target name="build_jar" depends="compile" description="Build the launchable JAR">
+
+        <!-- With included source files -->
+        <jar destfile="../WavCut.jar">
+            <manifest>
+                <attribute name="Main-Class" value="WavCut"/>
+                <attribute name="Implementation-Version" value="${version}-${DSTAMP}"/>
+                <attribute name="Built-By" value="${built_by}"/>
+                <attribute name="Created-By" value="${built_by}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+            </manifest>
+            <fileset dir="../../bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="../../../processing/core.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="../../../../PW2_0/code/KyUI.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="../../../../PW2_0/code/CommandScript.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Documents/Processing/libraries/beads/library/beads.jar"/>
+        </jar>
+        <delete dir="../../bin"/>
+    </target>
+</project>
