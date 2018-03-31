@@ -29,7 +29,7 @@ public class WaveformDraw {
     int pframe=Math.round((float)ac.msToSamples(posToTime(0)));
     for (int a=0; a < end; a++) {
       int frame=Math.round((float)ac.msToSamples(posToTime(a)));
-      int interval=Math.max(1, interval=(frame - pframe) / 200);//optimization purpose
+      int interval=Math.max(1, interval=(frame - pframe) / 100);//optimization purpose 200 is fine...
       float max=0;
       float min=0;
       frame=frame-frame % interval;

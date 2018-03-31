@@ -31,7 +31,7 @@ public class WavCut extends PApplet {
   @Override
   public void settings() {
     //size(1500, 600);
-    size(displayWidth - 20, displayHeight * 3 / 5);
+    size(displayWidth - 20, displayHeight * 3 / 5 + 60);
   }
   WavEditor w;
   MouseEventListener evl;
@@ -40,7 +40,7 @@ public class WavCut extends PApplet {
   @Override
   public void setup() {
     surface.setTitle("wavcut");
-    KyUI.start(this);
+    KyUI.start(this, 30, true);
     AudioContext ac=new AudioContext();
     w=new WavEditor("wav");
     //w.snapBpm=140;
@@ -91,7 +91,7 @@ public class WavCut extends PApplet {
     });
     lin1.addChild(b=new Button("cut"));
     b.rotation=Attributes.Rotation.RIGHT;
-    b.text="cut\n[C]";
+    b.text="cut\n[T]";
     b.setPressListener((e, ind) -> {
       audioCut();
       return false;
@@ -130,21 +130,32 @@ public class WavCut extends PApplet {
       }
       return false;
     });
+    lin2.addChild(w.setCopy(b=new Button("copy")));
+    b.rotation=Attributes.Rotation.RIGHT;
+    b.text="copy\n[C]";
+    lin2.addChild(w.setPaste(b=new Button("paste")));
+    b.rotation=Attributes.Rotation.RIGHT;
+    b.text="paste\n[V]";
     //
     KyUI.addDragAndDrop(w, (DropEvent de) -> {
+          surface.setTitle("wavcut - start load...");
           String filename=de.file().getAbsolutePath().replace("\\", "/");
           if (de.file().isFile()) {
             String ext=filename.substring(filename.lastIndexOf(".") + 1, filename.length());
             //System.out.println("extension is : " + ext);
-            if (ext.equals("wav")) {
-              try {
-                w.setSample(new Sample(filename));
+            //if (ext.equals("wav")) {
+            try {
+              w.setSample(new Sample(filename));
+              if (w.sample != null) {
                 loadCuePoints(filename);
-              } catch (IOException e) {
-                e.printStackTrace();
               }
+            } catch (IOException e) {
+              e.printStackTrace();
+              surface.setTitle(e.toString());
             }
+            //}
           }
+          surface.setTitle("wavcut");
         }
     );
     DivisionLayout dv3=new DivisionLayout("dv3");
@@ -186,13 +197,13 @@ public class WavCut extends PApplet {
     //String path="C:\\Users\\user\\Documents\\[Projects]\\PositionWriter\\AlsExtractor\\data\\Love_u1.wav";
     //w.setSample(SampleManager.sample(path));
     //w.player.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
-    GainW g=new GainW(ac, 2);
-    g.addInput(w.player);
-    ac.out.addInput(g);
+    //GainW g=new GainW(ac, 2);
+    //g.addInput(w.player);
+    ac.out.addInput(w.player);
     cuePoint=new KnobAutomation(ac, 1);
     cuePoint.setRange(0, 2);
     //new Knob("a", "a").attach(ac, g, g.setGain, 0, 1, 1, 1, false);
-    w.player.addAuto(g.gain);
+    //w.player.addAuto(g.gain);
     w.player.addAuto(cuePoint);
     w.automation=cuePoint;//g.gain;
     w.player.pause(true);
@@ -255,7 +266,7 @@ public class WavCut extends PApplet {
         Button b=KyUI.<Button>get2("redo");
         b.getPressListener().onEvent(null, 0);
       }
-      if (key == 'c') {
+      if (key == 't') {
         Button b=KyUI.<Button>get2("cut");
         b.getPressListener().onEvent(null, 0);
       }
@@ -277,6 +288,14 @@ public class WavCut extends PApplet {
         Button b=KyUI.<Button>get2("resetloop");
         b.getPressListener().onEvent(null, 0);
       }
+      if (key == 'c') {
+        Button b=KyUI.<Button>get2("copy");
+        b.getPressListener().onEvent(null, 0);
+      }
+      if (key == 'v') {
+        Button b=KyUI.<Button>get2("paste");
+        b.getPressListener().onEvent(null, 0);
+      }
       if (key == 'q') {//processing's limit
         w.addPoint(w.snapTime(
             Math.max(Math.min(w.player.getPosition() + (double)(((java.awt.event.KeyEvent)e.getNative()).getWhen() - System.currentTimeMillis()), w.sample.getLength()), 0)
@@ -290,9 +309,15 @@ public class WavCut extends PApplet {
   public void draw() {
     KyUI.render(g);
     w.selectionMode=keyPressed && key == CODED && keyCode == CONTROL;
-    if(System.currentTimeMillis()>lastSavedTime+30000){//30 seconds
+    if (System.currentTimeMillis() > lastSavedTime + 10000) {//30 seconds
       saveCuePoints();
+      lastSavedTime=System.currentTimeMillis();
     }
+  }
+  @Override
+  public void exit() {
+    saveCuePoints();
+    super.exit();
   }
   @Override
   protected void handleKeyEvent(KeyEvent event) {
@@ -319,9 +344,9 @@ public class WavCut extends PApplet {
     audioname=audioname.substring(audioname.lastIndexOf("/") + 1, audioname.length());
     cuePoint.points.clear();
     String filename=getDocuments() + "/wavcut/" + audioname + ".xml";
-    if(!new File(filename).exists()){
+    if (!new File(filename).exists()) {
       filename=getDocuments() + "/wavcut/" + audioname + ".xml.tmp";
-      if(!new File(filename).exists()) {
+      if (!new File(filename).exists()) {
         return;//no cue point save exists.
       }
     }
@@ -342,39 +367,67 @@ public class WavCut extends PApplet {
     }
   }
   void saveCuePoints() {//documents/wavcut/<wav_title.wav>.xml
-    XML extract=toXML();
-    String filename=w.sample.getFileName().replace("\\", "/");
-    filename=filename.substring(filename.lastIndexOf("/") + 1, filename.length());
-    String realfilename=getDocuments() + "/wavcut/" + filename + ".xml";
-    surface.setTitle("wavcut - saving..." + realfilename);
-    PrintWriter writer=createWriter(realfilename + ".tmp");
-    writer.write(extract.format(2));
-    writer.flush();
-    writer.close();
-    new File(realfilename).delete();
-    new File(realfilename + ".tmp").renameTo(new File(realfilename));
-    new File(realfilename + ".tmp").delete();
-    surface.setTitle("wavcut");
-  }
-  static DecimalFormat xxxx=new DecimalFormat("0000");
-  void audioCut() {//saves toXML() to documents/wavcut/<wav_title.wav>/<count>.wav
-    surface.setTitle("wavcut - start cut...");
     if (w.sample == null) {
       return;
     }
-    Sample sample=w.sample;//, sample
-    XML[] events=toXML().getChildren("Event");
-    TreeSet<Integer> times=new TreeSet<Integer>();
-    for (XML e : events) {
-      times.add((int)Math.floor(sample.msToSamples(Double.parseDouble(e.getString("time")))));
+    new Thread(() -> {
+      XML extract=toXML();
+      String filename=w.sample.getFileName().replace("\\", "/");
+      filename=filename.substring(filename.lastIndexOf("/") + 1, filename.length());
+      String realfilename=getDocuments() + "/wavcut/" + filename + ".xml";
+      surface.setTitle("wavcut - saving..." + realfilename);
+      PrintWriter writer=createWriter(realfilename + ".tmp");
+      writer.write(extract.format(2));
+      writer.flush();
+      writer.close();
+      new File(realfilename).delete();
+      new File(realfilename + ".tmp").renameTo(new File(realfilename));
+      new File(realfilename + ".tmp").delete();
+      surface.setTitle("wavcut");
+    }).start();
+  }
+  static DecimalFormat xxxx=new DecimalFormat("0000");
+  void audioCut() {//saves toXML() to documents/wavcut/<wav_title.wav>/<count>.wav
+    if (w.sample == null) {
+      return;
     }
-    String filename=w.sample.getFileName().replace("\\", "/");
-    filename=filename.substring(filename.lastIndexOf("/") + 1, filename.length());
-    int totalCount=times.size() + 1;
-    int start=0;
-    int count=1;
-    while (!times.isEmpty()) {
-      int time=times.pollFirst();
+    new Thread(() -> {
+      surface.setTitle("wavcut - start cut...");
+      Sample sample=w.sample;//, sample
+      XML[] events=toXML().getChildren("Event");
+      TreeSet<Integer> times=new TreeSet<Integer>();
+      for (XML e : events) {
+        times.add((int)Math.floor(sample.msToSamples(Double.parseDouble(e.getString("time")))));
+      }
+      String filename=w.sample.getFileName().replace("\\", "/");
+      filename=filename.substring(filename.lastIndexOf("/") + 1, filename.length());
+      int totalCount=times.size() + 1;
+      int start=0;
+      int count=1;
+      while (!times.isEmpty()) {
+        int time=times.pollFirst();
+        float[][] buffer=new float[sample.getNumChannels()][time - start];
+        sample.getFrames(start, buffer);
+        Sample split=new Sample(sample.samplesToMs(time - start), sample.getNumChannels(), sample.getSampleRate());
+        split.putFrames(0, buffer);
+        try {
+          File file=new File(getDocuments() + "/wavcut/" + filename + "/" + xxxx.format(count) + ".wav");
+          if (!file.isFile()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+          }
+          println("save audio : " + file.getAbsolutePath() + " length : " + split.getLength() / 1000 + " start : " + start + " end : " + time);
+          surface.setTitle("wavcut - saved..." + file.getAbsolutePath().replace("\\", "/") + " (" + count + "/" + totalCount + ")");
+          split.write(file.getAbsolutePath());
+        } catch (IOException e) {
+          e.printStackTrace();
+          surface.setTitle(e.toString());
+        }
+        count++;
+        start=time;
+      }
+      //
+      int time=(int)Math.floor(sample.msToSamples(w.sample.getLength()));
       float[][] buffer=new float[sample.getNumChannels()][time - start];
       sample.getFrames(start, buffer);
       Sample split=new Sample(sample.samplesToMs(time - start), sample.getNumChannels(), sample.getSampleRate());
@@ -390,32 +443,25 @@ public class WavCut extends PApplet {
         split.write(file.getAbsolutePath());
       } catch (IOException e) {
         e.printStackTrace();
+        surface.setTitle(e.toString());
       }
-      count++;
-      start=time;
-    }
-    //
-    int time=(int)Math.floor(sample.msToSamples(w.sample.getLength()));
-    float[][] buffer=new float[sample.getNumChannels()][time - start];
-    sample.getFrames(start, buffer);
-    Sample split=new Sample(sample.samplesToMs(time - start), sample.getNumChannels(), sample.getSampleRate());
-    split.putFrames(0, buffer);
-    try {
-      File file=new File(getDocuments() + "/wavcut/" + filename + "/" + xxxx.format(count) + ".wav");
-      if (!file.isFile()) {
-        file.getParentFile().mkdirs();
-        file.createNewFile();
-      }
-      println("save audio : " + file.getAbsolutePath() + " length : " + split.getLength() / 1000 + " start : " + start + " end : " + time);
-      surface.setTitle("wavcut - saved..." + file.getAbsolutePath().replace("\\", "/") + " (" + count + "/" + totalCount + ")");
-      split.write(file.getAbsolutePath());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    //
-    surface.setTitle("wavcut");
+      //
+      surface.setTitle("wavcut");
+      openFileExplorer(getDocuments() + "/wavcut/" + filename + "/");
+    }).start();
   }
   String getDocuments() {
     return FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
+  }
+  void openFileExplorer(String path) {//#platform_specific
+    if (platform == WINDOWS) {//https://stackoverflow.com/questions/15875295/open-a-folder-in-explorer-using-java
+      try {
+        java.awt.Desktop.getDesktop().open(new File(path));
+      } catch (Exception e) {
+        e.printStackTrace();
+        surface.setTitle(e.toString());
+      }
+    } else if (platform == LINUX) {
+    }
   }
 }

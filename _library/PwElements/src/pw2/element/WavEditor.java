@@ -44,6 +44,7 @@ public class WavEditor extends Element {
   //
   public KnobAutomation automation;
   public LinkedList<KnobAutomation.Point> selectedPoints=new LinkedList<>();
+  public LinkedList<KnobAutomation.Point> copyPoints=new LinkedList<>();
   KnobAutomation.Point clickPoint;
   public Runnable onAutomationChanged=() -> {
   };
@@ -121,6 +122,7 @@ public class WavEditor extends Element {
     automationInvalid=true;
     clickPoint=null;
     automationMode=v;
+    invalidate();
   }
   public boolean getAutomationMode() {
     return automationMode;
@@ -188,7 +190,7 @@ public class WavEditor extends Element {
     super.render(g);
     if (autoscroll && sample != null && !slider.isPressedL() && !player.isPaused()) {
       //update offset
-      offsetX=offsetX + timeToPos(player.getPosition()) - (pos.right - pos.left) / 2;
+      offsetX=offsetX + (float)timeToPos(player.getPosition()) - (pos.right - pos.left) / 2;
       if (offsetX > (pos.right - pos.left) * (scale - 1)) {
         offsetX=(float)((pos.right - pos.left) * (scale - 1));
       }
@@ -201,8 +203,8 @@ public class WavEditor extends Element {
     }
     if (player != null) {
       //draw vertical grids(snap)
-      float firstPoint=timeToPos(snapOffset);
-      float posInterval=(pos.right - pos.left) * (float)((snapInterval * 240000 / Math.max(1,snapBpm)/*duration*/) * scale / length);
+      float firstPoint=(float)timeToPos(snapOffset);
+      float posInterval=(pos.right - pos.left) * (float)((snapInterval * 240000 / Math.max(1, snapBpm)/*duration*/) * scale / length);
       if (posInterval != 0) {
         while (posInterval < minGridSize) {
           posInterval*=2;
@@ -217,8 +219,8 @@ public class WavEditor extends Element {
         }
       }
       //draw bars
-      firstPoint=timeToPos(snapOffset);
-      posInterval=(pos.right - pos.left) * (float)((240000 / Math.max(1,snapBpm)/*duration*/) * scale / length);
+      firstPoint=(float)timeToPos(snapOffset);
+      posInterval=(pos.right - pos.left) * (float)((240000 / Math.max(1, snapBpm)/*duration*/) * scale / length);
       if (posInterval != 0) {
         while (posInterval < minGridSize) {
           posInterval*=2;
@@ -269,7 +271,7 @@ public class WavEditor extends Element {
         g.strokeWeight(4);
         g.stroke(255, 0, 0, 150);
         g.fill(g.strokeColor);
-        float startPos=timeToPos(player.getLoopStartUGen().getValue());
+        float startPos=(float)timeToPos(player.getLoopStartUGen().getValue());
         if (isInRange(startPos + loopHead, pos.left, pos.right) || isInRange(startPos, pos.left, pos.right)) {
           if (isInRange(startPos, pos.left, pos.right)) {
             g.line(startPos, pos.top + 2, startPos, pos.bottom - 2);
@@ -278,7 +280,7 @@ public class WavEditor extends Element {
         }
         g.stroke(0, 0, 255, 150);
         g.fill(g.strokeColor);
-        float endPos=timeToPos(player.getLoopEndUGen().getValue());
+        float endPos=(float)timeToPos(player.getLoopEndUGen().getValue());
         if (isInRange(endPos - loopHead, pos.left, pos.right) || isInRange(endPos, pos.left, pos.right)) {
           if (isInRange(endPos, pos.left, pos.right)) {
             g.line(endPos, pos.top + 2, endPos, pos.bottom - 2);
@@ -311,18 +313,18 @@ public class WavEditor extends Element {
           for (int a=start; a < end; a++) {
             KnobAutomation.Point p=automation.points.get(a);
             automationG.stroke(255, 100);
-            automationG.line(timeToPos(p.position), pos.top + 2, timeToPos(p.position), pos.bottom - 2);
+            automationG.line((float)timeToPos(p.position), pos.top + 2, (float)timeToPos(p.position), pos.bottom - 2);
             automationG.stroke(255);
-            automationG.line(timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), timeToPos(beforePos), beforeValue);
-            automationG.rect(timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), 10, 10);
+            automationG.line((float)timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), (float)timeToPos(beforePos), beforeValue);
+            automationG.rect((float)timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), 10, 10);
             beforePos=p.position;
             beforeValue=(pos.bottom - pos.top) * automation.map(p.value);
           }
           automationG.stroke(255);
           if (end >= automation.points.size()) {//draw until end
-            automationG.line(pos.right, beforeValue, timeToPos(beforePos), beforeValue);
+            automationG.line(pos.right, beforeValue, (float)timeToPos(beforePos), beforeValue);
           } else {
-            automationG.line(timeToPos(automation.points.get(end).position), (pos.bottom - pos.top) * automation.map(automation.points.get(end).value), timeToPos(beforePos), beforeValue);
+            automationG.line((float)timeToPos(automation.points.get(end).position), (pos.bottom - pos.top) * automation.map(automation.points.get(end).value), (float)timeToPos(beforePos), beforeValue);
           }
           automationInvalid=false;
           //
@@ -331,7 +333,7 @@ public class WavEditor extends Element {
           automationG.stroke(highlightColor);
           for (KnobAutomation.Point p : selectedPoints) {
             if (p != null) {
-              automationG.rect(timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), 10, 10);
+              automationG.rect((float)timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), 10, 10);
             }
           }
           automationG.endDraw();
@@ -342,7 +344,7 @@ public class WavEditor extends Element {
       //draw cursor
       g.strokeWeight(2);
       g.stroke(0, 0, 0, 200);
-      float point=timeToPos(player.getPosition());
+      float point=(float)timeToPos(player.getPosition());
       if (isInRange(point, pos.left, pos.right)) {
         g.line(point, pos.top + 2, point, pos.bottom - 2);
       }
@@ -363,10 +365,10 @@ public class WavEditor extends Element {
     }
     g.noStroke();
   }
-  public float timeToPos(double time) {
-    return (float)((pos.right - pos.left) * (time / length) * scale - offsetX);
+  public double timeToPos(double time) {
+    return ((pos.right - pos.left) * (time / length) * scale - offsetX);
   }
-  public double posToTime(float point) {//pos is relative.
+  public double posToTime(double point) {//pos is relative.
     return length * (point + offsetX) / (scale * (pos.right - pos.left));
   }
   public boolean isInRange(float v, float min, float max) {
@@ -399,6 +401,7 @@ public class WavEditor extends Element {
         if (snapInterval == Beat[a]) {
           snapInterval=Beat[Math.min(Beat.length - 1, a + 1)];
           //System.out.println(snapInterval);
+          invalidate();
           return false;
         }
       }
@@ -412,6 +415,7 @@ public class WavEditor extends Element {
         if (snapInterval == Beat[a]) {
           snapInterval=Beat[Math.max(0, a - 1)];
           //System.out.println(snapInterval);
+          invalidate();
           return false;
         }
       }
@@ -482,11 +486,26 @@ public class WavEditor extends Element {
     });
     return button;
   }
+  public Button setCopy(Button button) {
+    button.setPressListener((MouseEvent e, int index) -> {
+      copy();
+      return false;
+    });
+    return button;
+  }
+  public Button setPaste(Button button) {
+    button.setPressListener((MouseEvent e, int index) -> {
+      paste();
+      return false;
+    });
+    return button;
+  }
   public Button setZoomIn(Button button) {
     button.setPressListener((MouseEvent e, int index) -> {
       double pscale=scale;
       scale=scale * 2;
-      float time=(pos.left + pos.right) / 2;
+      //float time=(pos.left + pos.right) / 2;
+      float time=KyUI.mouseGlobal.getLast().x;//warning. not including transform
       offsetX=(float)((offsetX + (time - pos.left)) * scale / pscale) - (time - pos.left);
       if (offsetX > (pos.right - pos.left) * (scale - 1)) {
         offsetX=(float)((pos.right - pos.left) * (scale - 1));
@@ -510,7 +529,8 @@ public class WavEditor extends Element {
       if (scale < 1) {
         scale=1;
       }
-      float time=(pos.left + pos.right) / 2;
+      //float time=(pos.left + pos.right) / 2;
+      float time=KyUI.mouseGlobal.getLast().x;//warning. not including transform
       offsetX=(float)((offsetX + (time - pos.left)) * scale / pscale) - (time - pos.left);
       if (offsetX > (pos.right - pos.left) * (scale - 1)) {
         offsetX=(float)((pos.right - pos.left) * (scale - 1));
@@ -529,12 +549,12 @@ public class WavEditor extends Element {
   }
   public double snap(double in) {
     if (!snap) return in;
-    float posInterval=(pos.right - pos.left) * (float)((snapInterval * 240000 / Math.max(1,snapBpm)/*duration*/) * scale / length);
+    float posInterval=(pos.right - pos.left) * (float)((snapInterval * 240000 / Math.max(1, snapBpm)/*duration*/) * scale / length);
     if (posInterval != 0) {
       while (posInterval < minGridSize) {
         posInterval*=2;
       }
-      float posLeft=timeToPos(snapOffset);
+      float posLeft=(float)timeToPos(snapOffset);
       return posLeft + posInterval * Math.round((in - posLeft) / posInterval);
     }
     return in;
@@ -561,17 +581,15 @@ public class WavEditor extends Element {
           float maxx=Math.max(KyUI.mouseClick.getLast().x, KyUI.mouseGlobal.getLast().x);
           float miny=(float)automation.unmap((Math.max(KyUI.mouseClick.getLast().y, KyUI.mouseGlobal.getLast().y) - pos.top) / size);
           float maxy=(float)automation.unmap((Math.min(KyUI.mouseClick.getLast().y, KyUI.mouseGlobal.getLast().y) - pos.top) / size);
-          synchronized (automation.points) {
-            cachePoint.position=posToTime(minx - pos.left);
-            int start=automation.points.getBeforeIndex(cachePoint);
-            cachePoint.position=posToTime(maxx - pos.left);
-            int end=automation.points.getBeforeIndex(cachePoint);
-            selectedPoints.clear();
-            for (int a=start; a < end && a < automation.points.size(); a++) {
-              double v=automation.points.get(a).value;
-              if (miny <= v && v <= maxy) {
-                selectedPoints.addLast(automation.points.get(a));
-              }
+          cachePoint.position=posToTime(minx - pos.left);
+          int start=automation.points.getBeforeIndex(cachePoint);
+          cachePoint.position=posToTime(maxx - pos.left);
+          int end=automation.points.getBeforeIndex(cachePoint);
+          selectedPoints.clear();
+          for (int a=start; a < end && a < automation.points.size(); a++) {
+            double v=automation.points.get(a).value;
+            if (miny <= v && v <= maxy) {
+              selectedPoints.addLast(automation.points.get(a));
             }
           }
         }
@@ -597,42 +615,40 @@ public class WavEditor extends Element {
           //if (automationMode) {
           if (e.getAction() == MouseEvent.PRESS) {
             if (automation != null) {
-              synchronized (automation.points) {
-                cachePoint.position=posToTime(-10);
-                int start=automation.points.getBeforeIndex(cachePoint);
-                cachePoint.position=posToTime(pos.right - pos.left + 10);
-                int end=automation.points.getBeforeIndex(cachePoint);
-                int a=start;
-                for (; a < end; a++) {//search if overlay
-                  KnobAutomation.Point p=automation.points.get(a);
-                  if (Math.abs(timeToPos(p.position) - KyUI.mouseGlobal.getLast().x) < 10 && Math.abs((pos.bottom - pos.top) * automation.map(p.value) - y) < 10) {
-                    selected=true;
-                    break;
-                  }
+              cachePoint.position=posToTime(-10);
+              int start=automation.points.getBeforeIndex(cachePoint);
+              cachePoint.position=posToTime(pos.right - pos.left + 10);
+              int end=automation.points.getBeforeIndex(cachePoint);
+              int a=start;
+              for (; a < end; a++) {//search if overlay
+                KnobAutomation.Point p=automation.points.get(a);
+                if (Math.abs(timeToPos(p.position) - KyUI.mouseGlobal.getLast().x) < 10 && Math.abs((pos.bottom - pos.top) * automation.map(p.value) - y) < 10) {
+                  selected=true;
+                  break;
                 }
-                if (!selected || !selectedPoints.contains(automation.points.get(a))) {
-                  selectedPoints.clear();
+              }
+              if (!selected || !selectedPoints.contains(automation.points.get(a))) {
+                selectedPoints.clear();
+              }
+              if (selected) {
+                clickPoint=automation.points.get(a);
+                if (!selectedPoints.contains(automation.points.get(a))) {
+                  selectedPoints.add(clickPoint);
                 }
-                if (selected) {
-                  clickPoint=automation.points.get(a);
-                  if (!selectedPoints.contains(automation.points.get(a))) {
-                    selectedPoints.add(clickPoint);
-                  }
-                  clickValue=clickPoint.value;
-                  clickTime=clickPoint.position;
-                  if (snap) {
-                    clickTime=posToTime((float)snap(timeToPos(clickTime)));
-                    double size=(pos.bottom - pos.top);
-                    clickValue=automation.unmap(1 - snapAutomationGrid(size * (1 - automation.map(clickValue))) / size);
-                  }
-                } else if (automationMode) {
-                  selectedPoints.add(clickPoint=automation.addPoint(posToTime(x), automation.unmap((y - pos.top) / (pos.bottom - pos.top))));
-                  clickValue=clickPoint.value;
-                  clickTime=clickPoint.position;
-                  recorder.add(new Change(null, new ChangeData(clickPoint)));
-                  recorder.recordLog();
-                  onAutomationChanged.run();
+                clickValue=clickPoint.value;
+                clickTime=clickPoint.position;
+                if (snap) {
+                  clickTime=posToTime((float)snap(timeToPos(clickTime)));
+                  double size=(pos.bottom - pos.top);
+                  clickValue=automation.unmap(1 - snapAutomationGrid(size * (1 - automation.map(clickValue))) / size);
                 }
+              } else if (automationMode) {
+                selectedPoints.add(clickPoint=automation.addPoint(posToTime(x), automation.unmap((y - pos.top) / (pos.bottom - pos.top))));
+                clickValue=clickPoint.value;
+                clickTime=clickPoint.position;
+                recorder.add(new Change(null, new ChangeData(clickPoint)));
+                recorder.recordLog();
+                onAutomationChanged.run();
               }
             }
             automationInvalid=true;
@@ -656,24 +672,26 @@ public class WavEditor extends Element {
               } else {
                 clickPoint=automation.changePoint(clickPoint, apos, avalue);
               }
-              recorder.add(new Change(before, new ChangeData(clickPoint)));
-              for (KnobAutomation.Point p : selectedPoints) {
-                if (p != clickPoint) {
-                  before=new ChangeData(p);
-                  double apos2=p.position + apos - origialPos;
-                  if (apos2 < 0) {
-                    p=automation.changePoint(p, 0, p.value + avalue - origialValue);
-                  } else if (apos2 > length) {
-                    p=automation.changePoint(p, length, p.value + avalue - origialValue);
-                  } else {
-                    p=automation.changePoint(p, apos2, p.value + avalue - origialValue);
+              if (clickPoint != null) {
+                recorder.add(new Change(before, new ChangeData(clickPoint)));
+                for (KnobAutomation.Point p : selectedPoints) {
+                  if (p != clickPoint) {
+                    before=new ChangeData(p);
+                    double apos2=p.position + apos - origialPos;
+                    if (apos2 < 0) {
+                      p=automation.changePoint(p, 0, p.value + avalue - origialValue);
+                    } else if (apos2 > length) {
+                      p=automation.changePoint(p, length, p.value + avalue - origialValue);
+                    } else {
+                      p=automation.changePoint(p, apos2, p.value + avalue - origialValue);
+                    }
+                    recorder.add(new Change(before, new ChangeData(p)));
                   }
-                  recorder.add(new Change(before, new ChangeData(p)));
                 }
               }
+              onAutomationChanged.run();
+              automationInvalid=true;
             }
-            onAutomationChanged.run();
-            automationInvalid=true;
           }
           //}
           if (!automationMode && !selected) {
@@ -792,5 +810,55 @@ public class WavEditor extends Element {
         }
       }
     }
+  }
+  void copy() {
+    if (automation == null || selectedPoints.isEmpty()) return;
+    copyPoints.clear();
+    double startTime=Double.MAX_VALUE;
+    double endTime=0;
+    for (KnobAutomation.Point p : selectedPoints) {
+      if (p.position < startTime) {
+        startTime=p.position;
+      }
+      if (p.position > endTime) {
+        endTime=p.position;
+      }
+    }
+    if (snap) {
+      startTime=posToTime(snap(timeToPos(startTime)));
+      endTime=posToTime(snap(timeToPos(endTime)));
+    }
+    for (KnobAutomation.Point p : selectedPoints) {
+      copyPoints.add(new KnobAutomation.Point(p.position - startTime, p.value));
+    }
+    player.setPosition(endTime);
+    invalidate();
+  }
+  void paste() {
+    if (automation == null || copyPoints.isEmpty()) return;
+    recorder.recordLog();
+    double startTime=player.getPosition();
+    selectedPoints.clear();
+    double endTime=0;
+    if (snap) {
+      startTime=posToTime(snap(timeToPos(startTime)));
+    }
+    for (KnobAutomation.Point p : copyPoints) {
+      KnobAutomation.Point point=automation.addPoint(p.position + startTime, p.value);
+      recorder.add(new Change(null, new ChangeData(point)));
+      selectedPoints.add(point);
+    }
+    for (KnobAutomation.Point p : selectedPoints) {
+      if (p.position > endTime) {
+        endTime=p.position;
+      }
+    }
+    if (snap) {
+      endTime=posToTime(snap(timeToPos(endTime)));
+    }
+    recorder.recordLog();
+    automationInvalid=true;
+    player.setPosition(endTime);
+    invalidate();
   }
 }

@@ -33,7 +33,8 @@ public class AutoControlSamplePlayer extends SamplePlayer {
   }
   protected void calculateNextPosition(int i) {//this is pasted from sampleplayer
     super.calculateNextPosition(i);
-    if(loopType==LoopType.NO_LOOP_FORWARDS) {
+    if (loopType == LoopType.NO_LOOP_FORWARDS) {
+      loopStart=loopStartEnvelope.getValue(0, i);
       loopEnd=loopEndEnvelope.getValue(0, i);
       if (position > Math.max(loopStart, loopEnd)) {
         position=Math.max(loopStart, loopEnd);

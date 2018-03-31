@@ -100,23 +100,28 @@ public class KnobAutomation extends Glide {
     return this;
   }
   public int indexOf(Point point) {
-    cachePoint.position=point.position + PApplet.EPSILON;
-    index=Math.min(points.size() - 1, points.getBeforeIndex(cachePoint) - 1);
+    cachePoint.position=point.position + 1;
+    index=Math.min(points.size() - 1, points.getBeforeIndex(cachePoint));
     for (; index >= 0; index--) {
       if (points.get(index) == point) {
         return index;
       }
+      if (position - points.get(index).position >= 1.1) break;
     }
+    System.out.println("[KnobAutomation] negative index input : point");
     return -1;
   }
   public int indexOf(double position, double value) {
-    cachePoint.position=(float)position + 2 * PApplet.EPSILON;
+    cachePoint.position=(float)position + 1;//1 milliseconds is acceptable...?(because of float precision)//PApplet.EPSILON;
     index=Math.min(points.size() - 1, points.getBeforeIndex(cachePoint));
     for (; index >= 0; index--) {
       if (Math.abs(points.get(index).value - value) <= PApplet.EPSILON) {
         return index;
       }
+      //System.out.println(Math.abs(points.get(index).value - value) + " " + Math.abs(points.get(index).position - position));
+      if (position - points.get(index).position >= 1.1) break;
     }
+    System.out.println("[KnobAutomation] negative index input.");
     return -1;
   }
   public Point addPoint(double pos, double value) {
@@ -128,7 +133,6 @@ public class KnobAutomation extends Glide {
   }
   public void removePoint(int index) {
     if (index < 0) {
-      System.out.println("[KnobAutomation] negative index input.");
       return;
     }
     synchronized (points) {
@@ -139,23 +143,18 @@ public class KnobAutomation extends Glide {
     if (points.size() == 0) {
       return;
     }
-    synchronized (points) {
-      int index=indexOf(point);
-      removePoint(index);
-    }
+    int index=indexOf(point);
+    removePoint(index);
   }
   public void removePoint(double pos, double value) {
     if (points.size() == 0) {
       return;
     }
-    synchronized (points) {
-      int index=indexOf(pos, value);
-      removePoint(index);
-    }
+    int index=indexOf(pos, value);
+    removePoint(index);
   }
   public Point changePoint(int index, double pos, double value) {
     if (index < 0) {
-      System.out.println("[KnobAutomation] negative index input.");
       return null;//warning! nullpointer exception can occur
     }
     Point p=points.get(index);
@@ -168,10 +167,8 @@ public class KnobAutomation extends Glide {
     return p;
   }
   public Point changePoint(Point point, double pos, double value) {
-    synchronized (points) {
-      int index=indexOf(point);
-      return changePoint(index, pos, value);
-    }
+    int index=indexOf(point);
+    return changePoint(index, pos, value);
   }
   Task loopChangeTask=(Object o) -> {//o instanceof boolean
     loop=(boolean)o;
