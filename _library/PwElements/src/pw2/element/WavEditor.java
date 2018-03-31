@@ -783,30 +783,36 @@ public class WavEditor extends Element {
     }
     return true;
   }
+  public void left(){
+    offsetX-=20;
+    if (offsetX < 0) {
+      offsetX=0;
+    }
+    setSlider();
+    slider.invalidate();
+    waveformInvalid=true;
+    automationInvalid=true;
+    invalidate();
+  }
+  public void right(){
+    offsetX+=20;
+    if (offsetX > (pos.right - pos.left) * (scale - 1)) {
+      offsetX=(float)((pos.right - pos.left) * (scale - 1));
+    }
+    setSlider();
+    slider.invalidate();
+    waveformInvalid=true;
+    automationInvalid=true;
+    invalidate();
+  }
   @Override
   public void keyEvent(KeyEvent e) {
     if (e.getAction() == KeyEvent.PRESS) {
       if (e.getKey() == PApplet.CODED) {
         if (e.getKeyCode() == PApplet.LEFT) {
-          offsetX-=20;
-          if (offsetX < 0) {
-            offsetX=0;
-          }
-          setSlider();
-          slider.invalidate();
-          waveformInvalid=true;
-          automationInvalid=true;
-          invalidate();
+          left();
         } else if (e.getKeyCode() == PApplet.RIGHT) {
-          offsetX+=20;
-          if (offsetX > (pos.right - pos.left) * (scale - 1)) {
-            offsetX=(float)((pos.right - pos.left) * (scale - 1));
-          }
-          setSlider();
-          slider.invalidate();
-          waveformInvalid=true;
-          automationInvalid=true;
-          invalidate();
+          right();
         }
       }
     }

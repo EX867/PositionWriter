@@ -296,7 +296,13 @@ public class WavCut extends PApplet {
         Button b=KyUI.<Button>get2("paste");
         b.getPressListener().onEvent(null, 0);
       }
-      if (key == 'q') {//processing's limit
+      if (key == '<') {
+        w.left();
+      }
+      if (key == '>') {
+        w.right();
+      }
+      if (key == 'q' || key==17) {//processing's limit
         w.addPoint(w.snapTime(
             Math.max(Math.min(w.player.getPosition() + (double)(((java.awt.event.KeyEvent)e.getNative()).getWhen() - System.currentTimeMillis()), w.sample.getLength()), 0)
         ), 1);
