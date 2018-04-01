@@ -16,6 +16,7 @@
                 <fileset dir="../../../processing" includes="core.jar"/>
                 <fileset dir="../../../../PW2_0/code/" includes="CommandScript.jar"/>
                 <fileset dir="../../../../PW2_0/code/" includes="KyUI.jar"/>
+                <fileset dir="../../../../PW2_0/code/" includes="jave-1.0.2.jar"/>
                 <fileset dir="C:/Users/user/Documents/Processing/libraries/beads/library/" includes="beads.jar"/>
             </classpath>
             <compilerarg value="-XDignore.symbol.file"/>
@@ -43,6 +44,7 @@
             <zipfileset excludes="META-INF/*.SF" src="../../../processing/core.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="../../../../PW2_0/code/KyUI.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="../../../../PW2_0/code/CommandScript.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="../../../../PW2_0/code/jave-1.0.2.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Documents/Processing/libraries/beads/library/beads.jar"/>
         </jar>
         <delete dir="../../bin"/>

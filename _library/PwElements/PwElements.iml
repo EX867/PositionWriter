@@ -13,5 +13,6 @@
     <orderEntry type="library" name="core" level="project" />
     <orderEntry type="library" name="CommandScript" level="project" />
     <orderEntry type="library" name="beads" level="project" />
+    <orderEntry type="library" name="jave-1.0.2" level="project" />
   </component>
 </module>

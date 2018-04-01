@@ -106,7 +106,7 @@ public class KnobAutomation extends Glide {
       if (points.get(index) == point) {
         return index;
       }
-      if (position - points.get(index).position >= 1.1) break;
+      if (point.position - points.get(index).position >= 1.1) break;
     }
     System.out.println("[KnobAutomation] negative index input : point");
     return -1;

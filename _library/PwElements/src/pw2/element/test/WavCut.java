@@ -3,6 +3,7 @@ import beads.AudioContext;
 import beads.Sample;
 import beads.SampleManager;
 import beads.Static;
+import it.sauronsoftware.jave.*;
 import kyui.core.Attributes;
 import kyui.core.KyUI;
 import kyui.element.*;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.TreeSet;
 public class WavCut extends PApplet {
   public static void main(String[] args) {
@@ -63,7 +65,7 @@ public class WavCut extends PApplet {
     dv2.addChild(dv);
     //
     Button b;
-    w.setDeletePoint(b=new Button(""));
+    w.setDeletePoint(b=new Button("delete"));
     evl=b.getPressListener();
     //
     lin1.addChild(w.setToggleSnap((ToggleButton)(b=new ToggleButton("snap"))));
@@ -139,23 +141,88 @@ public class WavCut extends PApplet {
     //
     KyUI.addDragAndDrop(w, (DropEvent de) -> {
           surface.setTitle("wavcut - start load...");
-          String filename=de.file().getAbsolutePath().replace("\\", "/");
           if (de.file().isFile()) {
-            String ext=filename.substring(filename.lastIndexOf(".") + 1, filename.length());
-            //System.out.println("extension is : " + ext);
-            //if (ext.equals("wav")) {
             try {
+              String filename=de.file().getAbsolutePath().replace("\\", "/");
               w.setSample(new Sample(filename));
               if (w.sample != null) {
                 loadCuePoints(filename);
               }
-            } catch (IOException e) {
-              e.printStackTrace();
-              surface.setTitle(e.toString());
+              surface.setTitle("wavcut");
+              return;
+            } catch (Exception e) {
+              System.out.println("beads error : " + e);
             }
-            //}
+            try {
+              if (w.sample == null || !de.file().equals(new java.io.File(w.sample.getFileName()))) {//not loaded : not a wave file. retry.
+                surface.setTitle("wavcut - not loaded. retrying...");
+                Encoder encoder=new Encoder();
+                MultimediaInfo info=encoder.getInfo(de.file());
+                if (!Arrays.asList(encoder.getAudioDecoders()).contains(info.getAudio().getDecoder())) {
+                  throw new Exception("file is not decodable : load failed");
+                }
+                System.out.println(info.getAudio().getBitRate() + " " + info.getAudio().getSamplingRate());
+                AudioAttributes audio=new AudioAttributes();
+                audio.setCodec("pcm_s16le"); // - getAudioEncoders()
+                audio.setBitRate(192000);
+                audio.setChannels(2);
+                audio.setSamplingRate(44100);
+                EncodingAttributes attrs=new EncodingAttributes();
+                attrs.setFormat("wav");
+                attrs.setAudioAttributes(audio);
+                String name=de.filePath().substring(de.filePath().replace("\\", "/").lastIndexOf("/") + 1, de.filePath().length());
+                if (name.contains(".")) {
+                  name=name.substring(0, name.lastIndexOf("."));
+                }
+                String filename=getDocuments() + "/wavcut/temp/" + name + ".wav";
+                File file=new File(filename);
+                if (file.isFile()) {
+                  try {
+                    w.setSample(new Sample(filename));
+                    if (w.sample != null) {
+                      loadCuePoints(filename);
+                    }
+                    surface.setTitle("wavcut");
+                    return;
+                  } catch (Exception e) {
+                    System.err.println("load error : " + e);
+                    surface.setTitle("cannot loaded file : " + e.toString());
+                  }
+                } else {
+                  encoder.encode(de.file(), file, attrs, new EncoderProgressListener() {
+                    @Override
+                    public void sourceInfo(MultimediaInfo multimediaInfo) {
+                    }
+                    @Override
+                    public void progress(int i) {
+                      if (i % 100 == 0) {
+                        surface.setTitle("wavcut - ffmpeg in progress (" + i / 10 + "%)");
+                      }
+                      if (i == 1000) {
+                        try {
+                          w.setSample(new Sample(filename));
+                          if (w.sample != null) {
+                            loadCuePoints(filename);
+                          }
+                          surface.setTitle("wavcut");
+                          return;
+                        } catch (Exception e) {
+                          System.err.println("load error : " + e);
+                          surface.setTitle("cannot loaded file : " + e.toString());
+                        }
+                      }
+                    }
+                    @Override
+                    public void message(String s) {
+                    }
+                  });
+                }
+              }
+            } catch (Exception e) {
+              System.err.println("ffmpeg error : " + e);
+              surface.setTitle("cannot loaded file : " + e.toString());
+            }
           }
-          surface.setTitle("wavcut");
         }
     );
     DivisionLayout dv3=new DivisionLayout("dv3");
@@ -239,7 +306,7 @@ public class WavCut extends PApplet {
         b.invalidate();
         b.getPressListener().onEvent(null, 0);
       }
-      if (key == '+') {
+      if (key == '=') {
         Button b=KyUI.<Button>get2("grid+");
         b.getPressListener().onEvent(null, 0);
       }
@@ -297,12 +364,12 @@ public class WavCut extends PApplet {
         b.getPressListener().onEvent(null, 0);
       }
       if (key == '<') {
-        w.left();
+        w.left(2);
       }
       if (key == '>') {
-        w.right();
+        w.right(2);
       }
-      if (key == 'q' || key==17) {//processing's limit
+      if (key == 'q' || key == 17) {//processing's limit
         w.addPoint(w.snapTime(
             Math.max(Math.min(w.player.getPosition() + (double)(((java.awt.event.KeyEvent)e.getNative()).getWhen() - System.currentTimeMillis()), w.sample.getLength()), 0)
         ), 1);

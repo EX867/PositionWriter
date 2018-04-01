@@ -706,35 +706,35 @@ public class WavEditor extends Element {
           }
         }
         if (e.getAction() == MouseEvent.PRESS) {
-          long time=System.currentTimeMillis();
-          if (doubleClickReady && time - lastClicked < KyUI.DOUBLE_CLICK_INTERVAL) {//e.getButton() == PApplet.LEFT
-            if ((!automationMode || automationMode && e.getButton() == PApplet.RIGHT) && !selected) {
-              AudioContext ac=player.getContext();
-              if (automation.points.isEmpty()) {
+          //long time=System.currentTimeMillis();
+          //if (doubleClickReady && time - lastClicked < KyUI.DOUBLE_CLICK_INTERVAL) {//e.getButton() == PApplet.LEFT
+          if ((/*!automationMode || automationMode &&*/ e.getButton() == PApplet.RIGHT) && !selected) {
+            AudioContext ac=player.getContext();
+            if (automation.points.isEmpty()) {
+              player.setLoopStart(new Static(ac, 0));
+              player.setLoopEnd(new Static(ac, (float)length));
+            } else {
+              cachePoint.position=posToTime(KyUI.mouseGlobal.getLast().x);
+              int i=automation.points.getBeforeIndex(cachePoint);
+              if (i <= 0) {
                 player.setLoopStart(new Static(ac, 0));
+                player.setLoopEnd(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(0).position))));
+              } else if (i >= automation.points.size()) {
+                player.setLoopStart(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(automation.points.size() - 1).position))));
                 player.setLoopEnd(new Static(ac, (float)length));
               } else {
-                cachePoint.position=posToTime(KyUI.mouseGlobal.getLast().x);
-                int i=automation.points.getBeforeIndex(cachePoint);
-                if (i <= 0) {
-                  player.setLoopStart(new Static(ac, 0));
-                  player.setLoopEnd(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(0).position))));
-                } else if (i >= automation.points.size()) {
-                  player.setLoopStart(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(automation.points.size() - 1).position))));
-                  player.setLoopEnd(new Static(ac, (float)length));
-                } else {
-                  player.setLoopStart(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(i - 1).position))));
-                  player.setLoopEnd(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(i).position))));
-                }
-                player.setPosition(player.getLoopStartUGen().getValue());
-                player.pause(false);
+                player.setLoopStart(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(i - 1).position))));
+                player.setLoopEnd(new Static(ac, Math.max(0, (float)Math.min(length, automation.points.get(i).position))));
               }
+              player.setPosition(player.getLoopStartUGen().getValue());
+              player.pause(false);
             }
-            doubleClickReady=false;
-          } else {
-            doubleClickReady=true;
           }
-          lastClicked=time;
+          //  doubleClickReady=false;
+          //} else {
+          //  doubleClickReady=true;
+          //}
+          //lastClicked=time;
           invalidate();
           return false;
         }
@@ -783,8 +783,8 @@ public class WavEditor extends Element {
     }
     return true;
   }
-  public void left(){
-    offsetX-=20;
+  public void left(int mul) {
+    offsetX-=(pos.right+pos.left)*mul/12;
     if (offsetX < 0) {
       offsetX=0;
     }
@@ -794,8 +794,8 @@ public class WavEditor extends Element {
     automationInvalid=true;
     invalidate();
   }
-  public void right(){
-    offsetX+=20;
+  public void right(int mul) {
+    offsetX+=(pos.right+pos.left)*mul/12;
     if (offsetX > (pos.right - pos.left) * (scale - 1)) {
       offsetX=(float)((pos.right - pos.left) * (scale - 1));
     }
@@ -810,9 +810,9 @@ public class WavEditor extends Element {
     if (e.getAction() == KeyEvent.PRESS) {
       if (e.getKey() == PApplet.CODED) {
         if (e.getKeyCode() == PApplet.LEFT) {
-          left();
+          left(1);
         } else if (e.getKeyCode() == PApplet.RIGHT) {
-          right();
+          right(1);
         }
       }
     }
