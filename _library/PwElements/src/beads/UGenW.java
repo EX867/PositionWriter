@@ -32,6 +32,10 @@ public abstract class UGenW extends UGen {//solve synchronization error with tas
     tm.addTask(task.setter, value);
   }
   protected abstract UGen updateUGens();//to output.
+  protected final void updateUGen(UGen ugen){
+    ugen.initializeOuts();
+    ugen.calculateBuffer();
+  }
   protected final void setStartPoint(UGen ugen){
     ugen.outputInitializationRegime = OutputInitializationRegime.RETAIN;
 

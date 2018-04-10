@@ -1,9 +1,5 @@
 package pw2.beads;
-import beads.AudioContext;
-import beads.Sample;
-import beads.SamplePlayer;
-import beads.UGen;
-import beads.UGenW;
+import beads.*;
 import pw2.element.Knob;
 
 import java.io.File;
@@ -18,6 +14,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   public KnobAutomation threshold;
   public KnobAutomation outputGain;
   public KnobAutomation sideChain;
+  protected static Sample emptySample;
   public Parameter setAttack=new Parameter((Object d) -> {
     ugen.setAttack(((Number)d).doubleValue());
   }, (Knob target) -> {
@@ -52,6 +49,9 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   public ArrayList<Sample> samples=new ArrayList<>();
   public TDCompW(AudioContext ac, int in) {
     super(ac, in, in);
+    if (emptySample == null) {
+      emptySample=new Sample(ac.samplesToMs(ac.getBufferSize()), 2);
+    }
     ugen=new TDComp(ac, in);
     attack=new KnobAutomation(ac, 1);
     release=new KnobAutomation(ac, 0.5F);
@@ -60,17 +60,31 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     threshold=new KnobAutomation(ac, -3);
     outputGain=new KnobAutomation(ac, 1);
     sideChain=new KnobAutomation(ac, 0);
-    sideChainPlayer=new SamplePlayer(ac, 2);
-    sideChainPlayer.setKillOnEnd(false);
     sideChain.gridOffset=1;
     sideChain.gridInterval=0;
-    sideChain.setRange(0,0);//usually,sideChain has no knob mapping.
-    ugen.setSideChain(sideChainPlayer);
+    sideChain.setRange(0, 0);//usually,sideChain has no knob mapping.
+    sideChainPlayer=new SamplePlayer(ugen.getContext(), 2);
+    sideChainPlayer.setKillOnEnd(false);
     sideChain.postCounter=(KnobAutomation.Point p) -> {
       startSample(p.value);
     };
+    sideChainPlayer.setEndListener(new Bead() {
+      @Override
+      protected void messageReceived(Bead bead) {
+        sideChainPlayer.setSample(emptySample);
+      }
+    });
+    //addDependent(sideChainPlayer);
     setStartPoint(ugen);
+    sideChainPlayer.setSample(emptySample);
     sideChainPlayer.start();
+  }
+  public void setSideChain(boolean v) {
+    if (v) {
+      ugen.setSideChain(sideChainPlayer);
+    } else {
+      ugen.setSideChain(null);
+    }
   }
   @Override
   public void kill() {
@@ -82,13 +96,22 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     ratio.kill();
     knee.kill();
     outputGain.kill();
+    sideChainPlayer.kill();
     super.kill();
   }
   @Override
   protected UGen updateUGens() {
-    giveInputTo(ugen);
+    //update envelopes, like first part of calculate in other ugens
+    attack.update();
+    release.update();
+    threshold.update();
+    ratio.update();
+    knee.update();
+    outputGain.update();
+    //
     sideChain.update();
-    ugen.update();
+    giveInputTo(ugen);
+    updateUGen(ugen);
     return ugen;
   }
   public void startSample(double v) {
@@ -104,7 +127,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     if (new File(path).isFile()) {
       try {
         samples.add(new Sample(path));
-        sideChain.setRange(0,samples.size());//usually,sideChain has no knob mapping.
+        sideChain.setRange(0, samples.size());//usually,sideChain has no knob mapping.
         System.out.println("Sample loaded : " + path);
       } catch (Exception e) {
         e.printStackTrace();

@@ -23,7 +23,7 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
   UGen input;
   public PGraphics graph;//draws graph
   public PGraphics wave;//draws wave
-  public boolean canDraw=false;
+  public boolean canDraw=true;
   //
   boolean triggered;
   int attackCount=0;
@@ -48,7 +48,11 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     double dvallog;
     double dval;
     if (sideChain == null) {
-      dval=getDVal(bufIn);
+      if (method == Method.PEAK) {
+        dval=getDVal(bufIn);
+      } else {//RMS
+        dval=input;
+      }
       inputdval=dval;
     } else {
       dval=getDVal(sideChain);
@@ -170,51 +174,56 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
   }
   void visualizeGraph(double input, double dvallog) {//size=object.height
     //linear view. (graphSize to 0db)
-    graph.beginDraw();
-    graph.stroke(50);
-    graph.strokeWeight(2);
-    graph.clear();
-    float py=graph.height;
-    for (int a=1; a < graph.width; a++) {
-      double db=graphSize * ((double)a / graph.width - 1) / 20;
-      float cy=-graph.height * 20 * (float)getOutput(db, db) / graphSize;
-      graph.line(a - 1, py, a, cy);
-      py=cy;
+    synchronized (this) {
+      graph.beginDraw();
+      graph.stroke(50);
+      graph.strokeWeight(2);
+      graph.clear();
+      float py=graph.height;
+      for (int a=1; a < graph.width; a++) {
+        double db=graphSize * ((double)a / graph.width - 1) / 20;
+        float cy=-graph.height * 20 * (float)getOutput(db, db) / graphSize;
+        graph.line(a - 1, py, a, cy);
+        py=cy;
+      }
+      graph.noFill();
+      //if (sideChain != null) {
+      graph.ellipse(graph.width * Math.min(1, 20 * (float)dvallog / graphSize + 1), -graph.height * 20 * (float)getOutput(dvallog, dvallog) / graphSize, 10, 10);
+      //graph.ellipse(graph.width * Math.min(1, 20 * (float)Math.log10(input) / graphSize + 1), -graph.height * 20 * (float)Math.log10(getRMS(bufOut)) / graphSize, 10, 10);
+      graph.endDraw();
     }
-    graph.noFill();
-    //if (sideChain != null) {
-    graph.ellipse(graph.width * Math.min(1, 20 * (float)dvallog / graphSize + 1), -graph.height * 20 * (float)getOutput(dvallog, dvallog) / graphSize, 10, 10);
-    //graph.ellipse(graph.width * Math.min(1, 20 * (float)Math.log10(input) / graphSize + 1), -graph.height * 20 * (float)Math.log10(getRMS(bufOut)) / graphSize, 10, 10);
-    graph.endDraw();
   }
   float pt=1;
   void visualizeWave(double input, double dval) {
-    float head=wave.height / 10;
-    float height=wave.height - head;
-    wave.beginDraw();
-    wave.imageMode(PApplet.CORNER);
-    wave.strokeWeight(1);
-    wave.stroke(127, 127, 127);
-    wave.image(wave, -1, 0);
-    wave.line(wave.width - 1, 0, wave.width - 1, wave.height);
-    double output=getRMS(bufOut) / (outputGain * outputGain);
-    wave.stroke(0x7F7F4040);
-    wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * input));//input
-    wave.stroke(0x7F40407F);
-    wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * output));//output
-    if (sideChain != null) {
-      wave.stroke(0x1F000000);
-      wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * dval));//sideChain
+    synchronized (this) {
+      float head=wave.height / 10;
+      float height=wave.height - head;
+      wave.beginDraw();
+      wave.imageMode(PApplet.CORNER);
+      wave.strokeWeight(1);
+      wave.stroke(127, 127, 127);
+      wave.image(wave, -1, 0);
+      wave.line(wave.width - 1, 0, wave.width - 1, wave.height);
+      double output=getRMS(bufOut) / (outputGain * outputGain);
+      wave.stroke(0x7F7F4040);
+      wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * input));//input
+      wave.stroke(0x7F40407F);
+      wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * output));//output
+      if (sideChain != null) {
+        wave.stroke(0x1F000000);
+        wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * dval));//sideChain
+      }
+      wave.stroke(0xFF000000);
+      float ct=wave.height - (float)(height * thresholdPow);
+      wave.line(wave.width - 1, pt, wave.width - 1, ct);//threshold
+      wave.stroke(0x3F007F00);
+      if (outputGain != 0) {
+        output=output / Math.sqrt(outputGain);//correct?
+        wave.line(wave.width - 1, head, wave.width - 1, (int)(height * (input - output)) + head);//difference
+      }
+      pt=ct;
+      wave.endDraw();
     }
-    wave.stroke(0xFF000000);
-    float ct=wave.height - (float)(height * thresholdPow);
-    wave.line(wave.width - 1, pt, wave.width - 1, ct);//threshold
-    wave.stroke(0x3F007F00);
-    if (outputGain != 0) {
-      wave.line(wave.width - 1, head, wave.width - 1, (int)(height * (input - output)) + head);//difference
-    }
-    pt=ct;
-    wave.endDraw();
   }
   double getOutput(double sideChain, double input) {
     if (2 * (sideChain - threshold) <= -knee) {//left

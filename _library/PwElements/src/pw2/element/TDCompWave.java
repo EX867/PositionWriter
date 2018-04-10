@@ -17,8 +17,11 @@ public class TDCompWave extends Element {
   public void setPosition(Rect rect) {
     if (attachedUGen != null) {
       attachedUGen.canDraw=false;//sync error warning
-      wave=KyUI.Ref.createGraphics(Math.max(1, (int)(rect.right - rect.left)), Math.max(1, (int)(rect.bottom - rect.top)));
-      attachedUGen.wave=wave;
+      synchronized (attachedUGen) {
+        PGraphics waveOld=wave;
+        wave=KyUI.Ref.createGraphics(Math.max(1, (int)(rect.right - rect.left)), Math.max(1, (int)(rect.bottom - rect.top)));
+        attachedUGen.wave=wave;
+      }
       attachedUGen.canDraw=true;
     }
     super.setPosition(rect);

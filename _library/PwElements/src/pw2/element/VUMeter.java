@@ -12,7 +12,7 @@ public class VUMeter extends Element {
   int highlightColor;
   int errorColor;
   float head=20;
-  public void attach(UGen ugen) {
+  public VUMeter attach(UGen ugen) {
     attachedUGen=ugen;
     segmenter=new ShortFrameSegmenter[ugen.getIns()];
     power=new Power[ugen.getIns()];
@@ -23,6 +23,7 @@ public class VUMeter extends Element {
       segmenter[a].addInput(0, ugen, a);
       segmenter[a].addListener(power[a]);
     }
+    return this;
   }
   public void deattach() {
     for (int a=0; a < power.length; a++) {

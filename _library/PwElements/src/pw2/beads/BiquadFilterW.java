@@ -38,7 +38,7 @@ public class BiquadFilterW extends UGenW {
   @Override
   protected UGen updateUGens() {
     giveInputTo(ugen);
-    ugen.update();
+    updateUGen(ugen);
     return ugen;
   }
   @Override

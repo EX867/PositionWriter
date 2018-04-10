@@ -110,6 +110,12 @@ public class Knob extends Element {
   public void render(PGraphics g) {
     g.fill(bgColor);
     pos.render(g);
+    indicatorWidth=12;
+    strokeWeight=6;
+    if (pos.right - pos.left < 240) {
+      indicatorWidth=Math.max(1, (int)((pos.right - pos.left) / 20));
+      strokeWeight=Math.max(1, (int)((pos.right - pos.left) / 40));
+    }
     float radius;
     float offsetX=pos.left + padding;
     float offsetY=pos.top + padding;
@@ -153,7 +159,7 @@ public class Knob extends Element {
     g.stroke(bgColor);
     g.rect(-indicatorWidth, indicatorWidth, radius + strokeWeight, -indicatorWidth);
     g.popMatrix();
-    g.textSize(pointRadius * 4 / 3);
+    g.textSize(Math.max(1, Math.abs(pointRadius * 4 / 3)));
     g.noStroke();
     g.text(label, offsetX + radius, offsetY + radius - pointRadius * 2 - 2);
     g.text(cut2.format(get.apply(value)), offsetX + radius, offsetY + radius + pointRadius * 2 - 2);

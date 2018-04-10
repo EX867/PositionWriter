@@ -22,7 +22,7 @@ public class GainW extends UGenW {
   @Override
   protected UGen updateUGens() {
     giveInputTo(ugen);
-    ugen.calculateBuffer();
+    updateUGen(ugen);
     return ugen;
   }
   @Override

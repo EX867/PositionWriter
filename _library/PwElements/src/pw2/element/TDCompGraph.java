@@ -16,9 +16,12 @@ public class TDCompGraph extends Element {
   public void setPosition(Rect rect) {
     if (attachedUGen != null) {
       attachedUGen.canDraw=false;//sync error warning
-      int size=Math.max(1, (int)Math.min(rect.right - rect.left, rect.bottom - rect.top));
-      graph=KyUI.Ref.createGraphics(size, size);
-      attachedUGen.graph=graph;
+      synchronized(attachedUGen) {
+        int size=Math.max(1, (int)Math.min(rect.right - rect.left, rect.bottom - rect.top));
+        PGraphics graphOld=graph;
+        graph=KyUI.Ref.createGraphics(size, size);
+        attachedUGen.graph=graph;
+      }
       attachedUGen.canDraw=true;
     }
     super.setPosition(rect);

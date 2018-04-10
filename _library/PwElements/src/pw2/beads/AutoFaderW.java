@@ -49,8 +49,8 @@ public class AutoFaderW extends UGenW {
   @Override
   protected UGen updateUGens() {
     giveInputTo(ugen);
-    gain.update();
-    ugen.update();
+    updateUGen(gain);
+    updateUGen(ugen);
     return ugen;
   }
   @Override
