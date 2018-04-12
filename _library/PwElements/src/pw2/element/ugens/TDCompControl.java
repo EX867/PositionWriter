@@ -1,11 +1,14 @@
 package pw2.element.ugens;
 import beads.AudioContext;
 import kyui.core.Attributes;
+import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.element.*;
+import kyui.event.DropEventListener;
 import kyui.util.Rect;
 import pw2.beads.TDCompW;
 import pw2.element.*;
+import sojamo.drop.DropEvent;
 public class TDCompControl extends UGenViewer {
   //views
   protected DivisionLayout layout;
@@ -16,23 +19,33 @@ public class TDCompControl extends UGenViewer {
   protected LinearLayout knob2;//
   protected TDCompWave wave;
   protected TDCompGraph graph;
-  protected DivisionLayout buttons;
+  protected LinearLayout buttons;
   protected ToggleButton sideChain;
   protected ToggleButton showList;
+  protected ToggleButton bypass;
+  protected DivisionLayout samplesDv;
+  protected Button delete;
   protected LinearList samples;
   //
-  public TDCompW comp;
+  public TDCompW comp;//do not add samples directly using this member!!
   public TDCompControl(String name) {
     super(name);
     knob=new Knob[6];
     layout=new DivisionLayout(name + ":layout");
     layout.addChild(lin=new AlterLinearLayout(name + ":lin"));
-    layout.addChild(samples=new LinearList(name + ":samples"));
+    layout.addChild(samplesDv=new DivisionLayout(name + ":samplesDv"));
+    samplesDv.rotation=Attributes.Rotation.UP;
+    samplesDv.value=60;
+    samplesDv.addChild(delete=new Button(name + ":delete"));
+    delete.text="DELETE";
+    samplesDv.addChild(samples=new LinearList(name + ":samples"));
     layout.rotation=Attributes.Rotation.RIGHT;
-    buttons=new DivisionLayout(name + ":buttons");
-    buttons.mode=DivisionLayout.Behavior.PROPORTIONAL;
-    buttons.value=0.5F;
-    buttons.rotation=Attributes.Rotation.UP;
+    buttons=new LinearLayout(name + ":buttons");
+    buttons.setMode(LinearLayout.Behavior.STATIC);
+    buttons.setDirection(Attributes.Direction.VERTICAL);
+    buttons.addChild(bypass=new ToggleButton(name + ":bypass"));
+    bypass.rotation=Attributes.Rotation.RIGHT;
+    bypass.text="BYPASS";
     buttons.addChild(sideChain=new ToggleButton(name + ":sideChain"));
     sideChain.rotation=Attributes.Rotation.RIGHT;
     sideChain.text="SIDECHAIN";
@@ -44,6 +57,12 @@ public class TDCompControl extends UGenViewer {
       comp.reorderSample(a, b);
       return true;
     };
+    bypass.setPressListener((e, index) -> {
+      if (comp != null) {
+        comp.bypass(bypass.value);
+      }
+      return false;
+    });
     sideChain.setPressListener((e, index) -> {
       if (comp != null) {
         comp.setSideChain(sideChain.value);
@@ -51,18 +70,24 @@ public class TDCompControl extends UGenViewer {
       return false;
     });
     showList.setPressListener((e, index) -> {
-      samples.setEnabled(showList.value);
+      samplesDv.setEnabled(showList.value);
       localLayout();
       return false;
     });
-    samples.setEnabled(false);
+    delete.setPressListener((e, index) -> {
+      if ((samples.getSelection()) != null) {
+        samples.removeItem(samples.getItems().indexOf(samples.getSelection()));
+      }
+      return false;
+    });
+    showList.value=true;
+    //samplesDv.setEnabled(false);
     addChild(layout);
+    //add drag and drop
+    KyUI.addDragAndDrop(this, (DropEvent de) -> {
+      addSample(de.filePath());
+    });
   }
-  //ADD file dragAndDrop to list, element draganddrop to list
-  //ADD delete button!!!
-  //ADD bypass button!!!
-  //ADD fix linearlayout issues!!!
-
   public TDCompControl initialize(TDCompW comp_) {
     comp=comp_;
     sideChain.value=false;
@@ -79,7 +104,7 @@ public class TDCompControl extends UGenViewer {
     knob1.addChild(knob[2]=new Knob(getName() + ":attack", "Attack").attach(ac, comp, comp.setAttack, 0, 1000, 100, 100, false));
     knob2.addChild(knob[3]=new Knob(getName() + ":release", "Release").attach(ac, comp, comp.setRelease, 0, 1000, 300, 300, false));
     knob1.addChild(knob[4]=new Knob(getName() + ":knee", "Knee").attach(ac, comp, comp.setKnee, 0, 1, 0.1, 0.1, false));
-    knob2.addChild(knob[5]=new Knob(getName() + ":gain", "Gain").attach(ac, comp, comp.setOutputGain, 0, 2, 1, 1, false));
+    knob2.addChild(knob[5]=new Knob(getName() + ":gain", "Gain").attach(ac, comp, comp.setOutputGain, 0, 10, 1, 1, false));//fix
     lin.addChild(wave=new TDCompWave(getName() + ":wave").attach(comp));
     lin.addChild(graph=new TDCompGraph(getName() + ":graph").attach(comp));
     lin.addChild(buttons);
@@ -101,8 +126,9 @@ public class TDCompControl extends UGenViewer {
     layout.onLayout();
   }
   public void addSample(String path) {
-    samples.addItem(path.substring(path.replace("\\", "/").lastIndexOf("/") + 1, path.length()));
-    comp.addSample(path);
+    if (comp.addSample(path)) {
+      samples.addItem(path.substring(path.replace("\\", "/").lastIndexOf("/") + 1, path.length()));
+    }
   }
   public void removeSample(int index) {
     comp.removeSample(index);

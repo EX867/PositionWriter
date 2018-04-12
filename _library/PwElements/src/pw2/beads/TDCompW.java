@@ -1,5 +1,6 @@
 package pw2.beads;
 import beads.*;
+import kyui.core.KyUI;
 import pw2.element.Knob;
 
 import java.io.File;
@@ -123,7 +124,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
       System.out.println("[TDCompW] sample out of range");
     }
   }
-  public void addSample(String path) {
+  public boolean addSample(String path) {
     if (new File(path).isFile()) {
       try {
         samples.add(new Sample(path));
@@ -131,7 +132,11 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
         System.out.println("Sample loaded : " + path);
       } catch (Exception e) {
         e.printStackTrace();
+        return false;
       }
+      return true;
+    }else{
+      return false;
     }
   }
   public void removeSample(int index) {

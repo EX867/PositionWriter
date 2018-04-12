@@ -383,7 +383,7 @@ public class WavEditor extends Element {
       }
     }
   }
-  public void cutSelection(Button button) {//ADD
+  private void cutSelection(Button button) {//no add
     button.setPressListener((MouseEvent e, int index) -> {
       player.pause(true);
       Sample cutSample=new Sample(1);//selection length

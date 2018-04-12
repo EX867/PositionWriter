@@ -104,7 +104,7 @@ public class Spectrum extends Element {
       return;
     }
     g.imageMode(PApplet.CENTER);
-    canDraw=false;//WARNING>sometimes of this, spectrum will not be drawn.
+    canDraw=false;//???
     g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);
     canDraw=true;
   }

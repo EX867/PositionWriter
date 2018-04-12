@@ -25,7 +25,7 @@ public class Test3 extends PApplet {
     KyUI.start(this, 30, true);
     surface.setResizable(true);
     AudioContext ac=new AudioContext();
-    WavePlayerW n=new WavePlayerW(ac, Buffer.SAW);
+    //WavePlayerW n=new WavePlayerW(ac, Buffer.SAW);
     String path="C:\\Users\\user\\Documents\\[Projects]\\PositionWriter\\AlsExtractor\\data\\Love_u1.wav";
     SamplePlayer p=null;
     p=new SamplePlayer(ac,2);
@@ -60,6 +60,10 @@ public class Test3 extends PApplet {
       dv.value=h;
       KyUI.changeLayout();
     });
+    comp.sideChain.addPoint(0,1);
+    comp.sideChain.addPoint((float)60000/140,2);
+    comp.sideChain.setLoopEnd((float)60000/70);
+    comp.sideChain.setLoop(true);
     ac.start();
     p.start();
   }

@@ -5,7 +5,7 @@ import beads.UGenW;
 import pw2.element.Knob;
 public class AutoFaderW extends UGenW {
   public AutoFader ugen;
-  public KnobAutomation gain;
+  protected KnobAutomation gain;
   public KnobAutomation preCount;
   public KnobAutomation postCount;
   public Parameter setPreCount=new Parameter((Object d) -> {

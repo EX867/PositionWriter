@@ -112,19 +112,19 @@ public class Knob extends Element {
     pos.render(g);
     indicatorWidth=12;
     strokeWeight=6;
-    if (pos.right - pos.left < 240) {
-      indicatorWidth=Math.max(1, (int)((pos.right - pos.left) / 20));
-      strokeWeight=Math.max(1, (int)((pos.right - pos.left) / 40));
-    }
     float radius;
     float offsetX=pos.left + padding;
     float offsetY=pos.top + padding;
     if (pos.right - pos.left > pos.bottom - pos.top) {//width is longer than height
-      radius=(pos.bottom - pos.top - padding * 2) / 2;
-      offsetX=(pos.left + pos.right - pos.bottom + pos.top + padding * 2) / 2 + padding;
+      radius=(pos.bottom - pos.top) / 2 - padding;
+      offsetX=(pos.left + pos.right - pos.bottom + pos.top) / 2 + padding;
     } else {
-      radius=(pos.right - pos.left - padding * 2) / 2;
-      offsetY=(pos.top + pos.bottom - pos.right + pos.left + padding * 2) / 2 + padding;
+      radius=(pos.right - pos.left) / 2 - padding;
+      offsetY=(pos.top + pos.bottom - pos.right + pos.left) / 2 + padding;
+    }
+    if (radius < 120) {
+      indicatorWidth=Math.max(1, (int)(radius / 10));
+      strokeWeight=Math.max(1, (int)(radius / 20));
     }
     float innerRadius=radius * 2 / 3;
     float pointRadius=radius / 6;

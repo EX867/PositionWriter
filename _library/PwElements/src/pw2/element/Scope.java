@@ -68,7 +68,7 @@ public class Scope extends Element {
           line(a, pvOffset, vOffset);
           pvOffset=vOffset;
         }
-        //WARNING>>synchronized!
+        //synchronized!
         image.updatePixels();
         changed=true;
       }
@@ -99,7 +99,7 @@ public class Scope extends Element {
       return;
     }
     g.imageMode(PApplet.CENTER);
-    //WARNING>>synchronized!
+    //synchronized!
     if (canDraw) {
       canDraw=false;
       g.image(image, (pos.right + pos.left) / 2, (pos.bottom + pos.top) / 2);

@@ -204,7 +204,7 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
       wave.stroke(127, 127, 127);
       wave.image(wave, -1, 0);
       wave.line(wave.width - 1, 0, wave.width - 1, wave.height);
-      double output=getRMS(bufOut) / (outputGain * outputGain);
+      double output=getRMS(bufOut);
       wave.stroke(0x7F7F4040);
       wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * input));//input
       wave.stroke(0x7F40407F);
@@ -218,7 +218,7 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
       wave.line(wave.width - 1, pt, wave.width - 1, ct);//threshold
       wave.stroke(0x3F007F00);
       if (outputGain != 0) {
-        output=output / Math.sqrt(outputGain);//correct?
+        output=output / outputGain;
         wave.line(wave.width - 1, head, wave.width - 1, (int)(height * (input - output)) + head);//difference
       }
       pt=ct;
