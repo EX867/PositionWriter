@@ -183,7 +183,7 @@ public class MidiMapDevice implements Receiver {//this module ignores channel.
         String path_=path+"/"+name+".xml";//check if this device is supported...
         if (new File(path_).isFile()==false) {
           ret+=name+"(X), ";
-          System.out.println(" - Ignored");
+          System.out.println(" - Ignored - "+path_+" not exists");
           continue;
         }
 

@@ -10,10 +10,11 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 import pw2.beads.*;
 import pw2.element.*;
+import pw2.element.ugens.AutoFaderControl;
 import pw2.element.ugens.TDCompControl;
-public class Test3 extends PApplet {
+public class Test4 extends PApplet {
   public static void main(String[] args) {
-    PApplet.main("pw2.element.test.Test3");
+    PApplet.main("pw2.element.test.Test4");
   }
   int h=400;
   @Override
@@ -25,24 +26,24 @@ public class Test3 extends PApplet {
     KyUI.start(this, 30, true);
     surface.setResizable(true);
     AudioContext ac=new AudioContext();
-    //WavePlayerW n=new WavePlayerW(ac, Buffer.SAW);
-    String path="C:\\Users\\user\\Documents\\[Projects]\\PositionWriter\\AlsExtractor\\data\\Love_u1.wav";
-    SamplePlayer p=null;
-    p=new SamplePlayer(ac,2);
-    p.setKillOnEnd(false);
-    Sample sample;
-    try {
-      p.setSample(sample=new Sample(path));
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    WavePlayerW n=new WavePlayerW(ac, Buffer.SAW);
+    //String path="C:\\Users\\user\\Documents\\[Projects]\\PositionWriter\\AlsExtractor\\data\\Love_u1.wav";
+    //SamplePlayer p=null;
+    //p=new SamplePlayer(ac, 2);
+    //p.setKillOnEnd(false);
+    //Sample sample;
+    //try {
+    //  p.setSample(sample=new Sample(path));
+    //} catch (Exception e) {
+    //  e.printStackTrace();
+    //}
     //
-    UGen u=p;
+    UGen u=n;
     //tdcomp test
-    TDCompW comp=new TDCompW(ac, 2);
-    TDCompControl c=new TDCompControl("control").initialize(comp);
-    comp.addInput(u);
-    ac.out.addInput(comp);
+    AutoFaderW fader=new AutoFaderW(ac, 2);
+    AutoFaderControl f=new AutoFaderControl("control").initialize(fader);
+    fader.addInput(u);
+    ac.out.addInput(fader);
     ac.out.setGain(0.2F);
     //
     //
@@ -52,7 +53,7 @@ public class Test3 extends PApplet {
     dv.rotation=Attributes.Rotation.LEFT;
     dv.value=h;
     //dv.addChild(freq);
-    dv.addChild(c);
+    dv.addChild(f);
     KyUI.add(dv);
     KyUI.changeLayout();
     KyUI.addResizeListener((int w, int h) -> {
@@ -60,12 +61,12 @@ public class Test3 extends PApplet {
       dv.value=h;
       KyUI.changeLayout();
     });
-    comp.sideChain.addPoint(0,1);
-    comp.sideChain.addPoint((float)60000/140,2);
-    comp.sideChain.setLoopEnd((float)60000/70);
-    comp.sideChain.setLoop(true);
+    //    comp.sideChain.addPoint(0,1);
+    //    comp.sideChain.addPoint((float)60000/140,2);
+    //    comp.sideChain.setLoopEnd((float)60000/70);
+    //    comp.sideChain.setLoop(true);
     ac.start();
-    p.start();
+    //p.start();
   }
   @Override
   public void draw() {

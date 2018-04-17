@@ -53,6 +53,29 @@ public class TDCompControl extends UGenViewer {
     showList.rotation=Attributes.Rotation.RIGHT;
     showList.text="SAMPLES";
     samples.setFixedSize(50);
+    lin.addChild(meter=new VUMeter(getName() + ":meter"));
+    lin.addChild(knob1=new LinearLayout(getName() + ":knob1"));
+    lin.addChild(knob2=new LinearLayout(getName() + ":knob2"));
+    knob1.setDirection(Attributes.Direction.VERTICAL);
+    knob1.setMode(LinearLayout.Behavior.STATIC);
+    knob2.setDirection(Attributes.Direction.VERTICAL);
+    knob2.setMode(LinearLayout.Behavior.STATIC);
+    knob1.addChild(knob[0]=new Knob(getName() + ":threshold", "Threshold"));
+    knob2.addChild(knob[1]=new Knob(getName() + ":ratio", "Ratio"));
+    knob1.addChild(knob[2]=new Knob(getName() + ":attack", "Attack"));
+    knob2.addChild(knob[3]=new Knob(getName() + ":release", "Release"));
+    knob1.addChild(knob[4]=new Knob(getName() + ":knee", "Knee"));
+    knob2.addChild(knob[5]=new Knob(getName() + ":gain", "Gain"));//fix
+    lin.addChild(wave=new TDCompWave(getName() + ":wave"));
+    lin.addChild(graph=new TDCompGraph(getName() + ":graph"));
+    lin.addChild(buttons);
+    KyUI.taskManager.executeAll();
+    lin.set(meter, AlterLinearLayout.LayoutType.FIXED, 40);
+    lin.set(knob1, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1 / 3F);
+    lin.set(knob2, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1 / 3F);
+    lin.set(wave, AlterLinearLayout.LayoutType.STATIC, 1);//value do not affect layout
+    lin.set(graph, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1);
+    lin.set(buttons, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1 / 6F);
     samples.reorderListener=(Integer a, Integer b) -> {
       comp.reorderSample(a, b);
       return true;
@@ -92,30 +115,16 @@ public class TDCompControl extends UGenViewer {
     comp=comp_;
     sideChain.value=false;
     AudioContext ac=comp.getContext();
-    lin.addChild(meter=new VUMeter(getName() + ":meter").attach(comp));
-    lin.addChild(knob1=new LinearLayout(getName() + ":knob1"));
-    lin.addChild(knob2=new LinearLayout(getName() + ":knob2"));
-    knob1.setDirection(Attributes.Direction.VERTICAL);
-    knob1.setMode(LinearLayout.Behavior.STATIC);
-    knob2.setDirection(Attributes.Direction.VERTICAL);
-    knob2.setMode(LinearLayout.Behavior.STATIC);
-    knob1.addChild(knob[0]=new Knob(getName() + ":threshold", "Threshold").attach(ac, comp, comp.setThreshold, -60, 0, -6, -6, false));
-    knob2.addChild(knob[1]=new Knob(getName() + ":ratio", "Ratio").attach(ac, comp, comp.setRatio, 1, 12, 2, 2, false));
-    knob1.addChild(knob[2]=new Knob(getName() + ":attack", "Attack").attach(ac, comp, comp.setAttack, 0, 1000, 100, 100, false));
-    knob2.addChild(knob[3]=new Knob(getName() + ":release", "Release").attach(ac, comp, comp.setRelease, 0, 1000, 300, 300, false));
-    knob1.addChild(knob[4]=new Knob(getName() + ":knee", "Knee").attach(ac, comp, comp.setKnee, 0, 1, 0.1, 0.1, false));
-    knob2.addChild(knob[5]=new Knob(getName() + ":gain", "Gain").attach(ac, comp, comp.setOutputGain, 0, 10, 1, 1, false));//fix
-    lin.addChild(wave=new TDCompWave(getName() + ":wave").attach(comp));
-    lin.addChild(graph=new TDCompGraph(getName() + ":graph").attach(comp));
-    lin.addChild(buttons);
+    knob[0].attach(ac, comp, comp.setThreshold, -60, 0, -6, -6, false);
+    knob[1].attach(ac, comp, comp.setRatio, 1, 12, 2, 2, false);
+    knob[2].attach(ac, comp, comp.setAttack, 0, 1000, 100, 100, false);
+    knob[3].attach(ac, comp, comp.setRelease, 0, 1000, 300, 300, false);
+    knob[4].attach(ac, comp, comp.setKnee, 0, 1, 0.1, 0.1, false);
+    knob[5].attach(ac, comp, comp.setOutputGain, 0, 10, 1, 1, false);
+    meter.attach(comp);
+    wave.attach(comp);
+    graph.attach(comp);
     comp.sideChain.setLoop(false);
-    KyUI.taskManager.executeAll();
-    lin.set(meter, AlterLinearLayout.LayoutType.FIXED, 40);
-    lin.set(knob1, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1 / 3F);
-    lin.set(knob2, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1 / 3F);
-    lin.set(wave, AlterLinearLayout.LayoutType.STATIC, 1);//value do not affect layout
-    lin.set(graph, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1);
-    lin.set(buttons, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1 / 6F);
     return this;
   }
   @Override

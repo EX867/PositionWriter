@@ -139,7 +139,7 @@ void setup_ev1() {//setup small listeners
   );
   ((ImageButton)KyUI.get("set_midi")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      MidiCommand.reloadDevices(joinPath(path_global, "midi"));//#Change
+      println(MidiCommand.reloadDevices(joinPath(getDataPath(), "midi")));//change
       return false;
     }
   }

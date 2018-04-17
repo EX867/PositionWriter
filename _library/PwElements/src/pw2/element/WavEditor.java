@@ -694,7 +694,7 @@ public class WavEditor extends Element {
             }
           }
           //}
-          if (!automationMode && !selected) {
+          if (!automationMode && !selected && player != null) {
             //player.getLoopType() == SamplePlayer.LoopType.LOOP_FORWARDS
             if (isInRange(cy, pos.top, pos.top + loopHead)) {
               player.setLoopStart(new Static(player.getContext(), Math.min(player.getLoopEndUGen().getValue(), Math.max(0, (float)Math.min(length, posToTime(x - pos.left))))));
@@ -705,7 +705,7 @@ public class WavEditor extends Element {
             }
           }
         }
-        if (e.getAction() == MouseEvent.PRESS) {
+        if (e.getAction() == MouseEvent.PRESS && player != null) {
           //long time=System.currentTimeMillis();
           //if (doubleClickReady && time - lastClicked < KyUI.DOUBLE_CLICK_INTERVAL) {//e.getButton() == PApplet.LEFT
           if ((/*!automationMode || automationMode &&*/ e.getButton() == PApplet.RIGHT) && !selected) {
@@ -784,7 +784,7 @@ public class WavEditor extends Element {
     return true;
   }
   public void left(int mul) {
-    offsetX-=(pos.right+pos.left)*mul/12;
+    offsetX-=(pos.right + pos.left) * mul / 12;
     if (offsetX < 0) {
       offsetX=0;
     }
@@ -795,7 +795,7 @@ public class WavEditor extends Element {
     invalidate();
   }
   public void right(int mul) {
-    offsetX+=(pos.right+pos.left)*mul/12;
+    offsetX+=(pos.right + pos.left) * mul / 12;
     if (offsetX > (pos.right - pos.left) * (scale - 1)) {
       offsetX=(float)((pos.right - pos.left) * (scale - 1));
     }

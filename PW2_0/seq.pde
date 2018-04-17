@@ -209,6 +209,7 @@ class LightThread implements Runnable {
                     led.script.setFrameByTime();
                   }
                   led.active=false;
+                  midiControl(velDisplay);
                   //println(" -> end");
                 }
               }
@@ -278,10 +279,11 @@ class LightThread implements Runnable {
                 velDisplay[a-1][b-1]=onCmd.vel;
               }
             } else if (onCmd.htmlc==COLOR_RND) {//random
-              velDisplay[a-1][b-1]=floor(random(0, 128));
+              velDisplay[a-1][b-1]=floor(random(1, 128));
               display[a-1][b-1]=color_vel[velDisplay[a-1][b-1]];
-            } else {
+            } else {//there are people off with on auto 0.
               display[a-1][b-1]=onCmd.htmlc;
+              velDisplay[a-1][b-1]=COLOR_OFF;
             }
           }
         }
