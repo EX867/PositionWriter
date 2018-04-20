@@ -117,7 +117,6 @@ void main_draw() {
   }
   KyUI.render(g); 
   pushMatrix(); 
-  scale(KyUI.scaleGlobal);
   strokeWeight(1);
   textAlign(LEFT, TOP);
   textSize(12);

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+  <layout>
+    <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="PROPORTIONAL" name="wv_dv3" overlayOnDrag="0" padding="0" pos="[(0.0, 40.0)~(960.0, 900.0)]" rotation="DOWN" value="0.3" visible="true">
+      <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="FIXED" name="wv_dv4" overlayOnDrag="0" padding="0" pos="[(0.0, 40.0)~(960.0, 642.0)]" rotation="UP" value="60.0" visible="true">
+        <kyui.element.LinearLayout active="true" bgColor="0" desc="" direction="HORIZONTAL" draggable="false" enabled="true" fixedSize="50" intervalSize="0" margin="0" mode="LEAVE" name="wv_lin1" offset="0.0" overlayOnDrag="0" padding="5" pos="[(0.0, 40.0)~(960.0, 100.0)]" visible="true">
+          <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@473a6a87" margin="0" name="wv_playstop" overlayOnDrag="0" padding="7" path="playstop.png" pos="[(5.0, 45.0)~(55.0, 95.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+          <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@18912bb6" margin="0" name="wv_stop" overlayOnDrag="0" padding="7" path="stop.png" pos="[(60.0, 45.0)~(110.0, 95.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+          <kyui.element.ImageToggleButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@2b1a21fd" margin="0" name="wv_loop" overlayOnDrag="0" padding="7" path="loop.png" pos="[(115.0, 45.0)~(165.0, 95.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" value="false" visible="true"/>
+          <kyui.element.Slider active="true" bgColor="-8421505" desc="" direction="HORIZONTAL" enabled="true" fgColor="50" margin="0" max="10.0" min="0.0" name="wv_slider" overlayOnDrag="0" padding="6" pos="[(170.0, 45.0)~(860.0, 95.0)]" sliderSize="3" value="0.0" visible="true"/>
+          <kyui.element.Button active="true" bgColor="-13487566" desc="" enabled="true" margin="10" name="wv_time" overlayOnDrag="0" padding="10" pos="[(865.0, 55.0)~(955.0, 85.0)]" rotation="UP" text="10:36/11:23" textColor="-1" textSize="12" visible="true"/>
+        </kyui.element.LinearLayout>
+        <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="FIXED" name="wv_dv5" overlayOnDrag="0" padding="0" pos="[(0.0, 100.0)~(960.0, 642.0)]" rotation="LEFT" value="60.0" visible="true">
+          <kyui.element.LinearLayout active="true" bgColor="0" desc="" direction="VERTICAL" draggable="false" enabled="true" fixedSize="50" intervalSize="0" margin="0" mode="FIXED" name="wv_lin2" offset="0.0" overlayOnDrag="0" padding="5" pos="[(0.0, 100.0)~(60.0, 642.0)]" visible="true">
+            <kyui.element.ImageToggleButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@2ef4fdad" margin="0" name="wv_autoscroll" overlayOnDrag="0" padding="7" path="autoscroll.png" pos="[(5.0, 105.0)~(55.0, 155.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" value="false" visible="true"/>
+            <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@5d698d4c" margin="0" name="wv_save" overlayOnDrag="0" padding="7" path="save.png" pos="[(5.0, 160.0)~(55.0, 210.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+            <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@372f1e16" margin="0" name="wv_changetitle" overlayOnDrag="0" padding="7" path="changetitle.png" pos="[(5.0, 215.0)~(55.0, 265.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+            <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@69064a58" margin="0" name="wv_cut" overlayOnDrag="0" padding="7" path="cutwav.png" pos="[(5.0, 270.0)~(55.0, 320.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+            <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@6444ee0e" margin="0" name="wv_remove" overlayOnDrag="0" padding="7" path="removewav.png" pos="[(5.0, 325.0)~(55.0, 375.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+            <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@625d93f6" margin="0" name="wv_normalize" overlayOnDrag="0" padding="7" path="normalize.png" pos="[(5.0, 380.0)~(55.0, 430.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+            <kyui.element.ImageButton active="true" bgColor="-13487566" desc="" enabled="true" image="processing.core.PImage@2e2750b1" margin="0" name="wv_reverse" overlayOnDrag="0" padding="7" path="reverse.png" pos="[(5.0, 435.0)~(55.0, 485.0)]" rotation="UP" scaled="true" text="Button" textColor="-1" textSize="15" visible="true"/>
+          </kyui.element.LinearLayout>
+          <pw2.element.WavEditor active="true" bgColor="-13487566" desc="" enabled="true" margin="0" name="wv_editor" overlayOnDrag="0" padding="0" pos="[(60.0, 100.0)~(960.0, 642.0)]" visible="true"/>
+        </kyui.element.DivisionLayout>
+      </kyui.element.DivisionLayout>
+      <kyui.element.FrameLayout active="true" bgColor="0" desc="" enabled="true" margin="0" name="wv_frame" overlayOnDrag="0" padding="0" pos="[(0.0, 642.0)~(960.0, 900.0)]" visible="true">
+        <kyui.element.TabLayout active="true" bgColor="0" buttonEdgeRotation="UP" buttonRotation="UP" desc="" edgeSize="8" enableAdd="true" enableX="true" enabled="true" fixedSize="60" intervalSize="0" margin="0" mode="DYNAMIC" name="wv_fxtabs" overlayOnDrag="0" padding="3" pos="[(0.0, 642.0)~(960.0, 900.0)]" rotation="UP" tabBgColor="-13487566" tabColor1="-16111416" tabColor2="-14803361" tabPadding="10" tabSize="50" textColor="-1" textSize="20" visible="true">
+          <!--<pw2.element.UGenViewer active="true" bgColor="-11711155" desc="" enabled="true" margin="0" name="wv_ugen1" overlayOnDrag="0" padding="0" pos="[(3.0, 695.0)~(957.0, 897.0)]" visible="true"/>-->
+        </kyui.element.TabLayout>
+      </kyui.element.FrameLayout>
+    </kyui.element.DivisionLayout>
+    <kyui.element.Slider active="true" bgColor="-8421505" desc="" direction="VERTICAL" enabled="true" fgColor="50" margin="0" max="10.0" min="0.0" name="wv_ratio" overlayOnDrag="0" padding="6" pos="[(960.0, 40.0)~(1000.0, 900.0)]" sliderSize="3" value="5.6469836" visible="true"/>
+  </layout>
+  <color/>
+</Data>

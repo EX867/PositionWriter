@@ -31,8 +31,10 @@ public class Knob extends Element {
   long lastClicked=0;
   boolean doubleClickReady=false;
   public boolean selected=false;
-  public Function<Double, Double> get;
-  public Function<Double, Double> getInv;
+  public Function<Double, Double> get=(Double d)->{return d;};
+  public Function<Double, Double> getInv=(Double d)->{
+    return d;
+  };
   public Runnable doubleClickListener;
   public EventListener adjustListener;
   public EventListener selectListener;
@@ -142,7 +144,7 @@ public class Knob extends Element {
     arc(g, offsetX + radius, offsetY + radius, radius, radius, minAngle - paddingAngle, minAngle + totalAngle + paddingAngle, PApplet.PIE);
     g.noStroke();
     g.fill(highlightColor);
-    arc(g, offsetX + radius, offsetY + radius, radius - strokeWeight + 3, radius - strokeWeight + 3, minAngle + totalAngle * (center - min) / (max - min), minAngle + totalAngle * (value - min) / (max - min), PApplet.PIE);
+    arc(g, offsetX + radius, offsetY + radius, radius - strokeWeight, radius - strokeWeight, minAngle + totalAngle * (center - min) / (max - min), minAngle + totalAngle * (value - min) / (max - min), PApplet.PIE);
     g.strokeWeight(strokeWeight);
     g.stroke(color);
     g.fill(color);

@@ -116,7 +116,9 @@ public class WavEditor extends Element {
       offsetX=slider.getOffset((float)((pos.right - pos.left) * scale));
       invalidate();
     });
+    clipping=true;
     setSlider();
+    setPosition(pos);
   }
   public void setAutomationMode(boolean v) {
     automationInvalid=true;
@@ -152,20 +154,23 @@ public class WavEditor extends Element {
   @Override
   public void setPosition(Rect rect) {
     super.setPosition(rect);
-    waveformG=KyUI.Ref.createGraphics((int)(pos.right - pos.left), (int)(pos.bottom - pos.top));
-    automationG=KyUI.Ref.createGraphics((int)(pos.right - pos.left), (int)(pos.bottom - pos.top));
+    waveformG=KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)));
+    automationG=KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)));
     waveformInvalid=true;
     automationInvalid=true;
     setSlider();
   }
-  public void initPlayer(AudioContext ac) {
-    player=new AutoControlSamplePlayer(ac, 2);
-    player.setKillOnEnd(false);
-    if (sample != null) {
-      player.setSample(sample);
-      player.setLoopStart(new Static(player.getContext(), 0));
-      player.setLoopEnd(new Static(player.getContext(), (float)sample.getLength()));
+  public WavEditor initPlayer(AudioContext ac) {
+    if (player == null) {
+      player=new AutoControlSamplePlayer(ac, 2);
+      player.setKillOnEnd(false);
+      if (sample != null) {
+        player.setSample(sample);
+        player.setLoopStart(new Static(player.getContext(), 0));
+        player.setLoopEnd(new Static(player.getContext(), (float)sample.getLength()));
+      }
     }
+    return this;
   }
   public void setSample(Sample sample_) {
     sample=sample_;
@@ -211,6 +216,9 @@ public class WavEditor extends Element {
         }
         if (firstPoint < pos.left) {
           firstPoint=pos.left - (pos.left - firstPoint) % posInterval;
+          if (firstPoint < pos.left) {
+            firstPoint+=posInterval;
+          }
         }
         g.strokeWeight(1);
         g.stroke(snapGridColor);
@@ -227,6 +235,9 @@ public class WavEditor extends Element {
         }
         if (firstPoint < pos.left) {
           firstPoint=pos.left - (pos.left - firstPoint) % posInterval;
+          if (firstPoint < pos.left) {
+            firstPoint+=posInterval;
+          }
         }
         g.strokeWeight(2);
         g.stroke(snapGridColor);
@@ -241,7 +252,7 @@ public class WavEditor extends Element {
           waveformG.clear();
           float interval=(pos.bottom - pos.top) / sample.getNumChannels();
           for (int a=0; a < sample.getNumChannels(); a++) {
-            cacheRect.set(pos.left, pos.top + a * interval + 1, pos.right, pos.top + (a + 1) * interval - 1);
+            cacheRect.set(0, a * interval + 1, pos.right - pos.left, (a + 1) * interval - 1);
             waveformDraw.render(waveformG, player.getContext(), cacheRect, sample, fgColor, offsetX, scale, a);
           }
           waveformG.endDraw();
@@ -271,7 +282,7 @@ public class WavEditor extends Element {
         g.strokeWeight(4);
         g.stroke(255, 0, 0, 150);
         g.fill(g.strokeColor);
-        float startPos=(float)timeToPos(player.getLoopStartUGen().getValue());
+        float startPos=pos.left + (float)timeToPos(player.getLoopStartUGen().getValue());
         if (isInRange(startPos + loopHead, pos.left, pos.right) || isInRange(startPos, pos.left, pos.right)) {
           if (isInRange(startPos, pos.left, pos.right)) {
             g.line(startPos, pos.top + 2, startPos, pos.bottom - 2);
@@ -280,7 +291,7 @@ public class WavEditor extends Element {
         }
         g.stroke(0, 0, 255, 150);
         g.fill(g.strokeColor);
-        float endPos=(float)timeToPos(player.getLoopEndUGen().getValue());
+        float endPos=pos.left + (float)timeToPos(player.getLoopEndUGen().getValue());
         if (isInRange(endPos - loopHead, pos.left, pos.right) || isInRange(endPos, pos.left, pos.right)) {
           if (isInRange(endPos, pos.left, pos.right)) {
             g.line(endPos, pos.top + 2, endPos, pos.bottom - 2);
@@ -293,7 +304,7 @@ public class WavEditor extends Element {
         if (automationInvalid) {
           automationG.beginDraw();
           automationG.clear();
-          automationG.translate(-pos.left, -pos.top);
+          //automationG.translate(-pos.left, -pos.top);
           automationG.strokeWeight(1);
           automationG.fill(255, automationMode ? 200 : 50);
           automationG.rectMode(PApplet.RADIUS);
@@ -344,7 +355,7 @@ public class WavEditor extends Element {
       //draw cursor
       g.strokeWeight(2);
       g.stroke(0, 0, 0, 200);
-      float point=(float)timeToPos(player.getPosition());
+      float point=(float)timeToPos(player.getPosition()) + pos.left;
       if (isInRange(point, pos.left, pos.right)) {
         g.line(point, pos.top + 2, point, pos.bottom - 2);
       }
@@ -622,7 +633,7 @@ public class WavEditor extends Element {
               int a=start;
               for (; a < end; a++) {//search if overlay
                 KnobAutomation.Point p=automation.points.get(a);
-                if (Math.abs(timeToPos(p.position) - KyUI.mouseGlobal.getLast().x) < 10 && Math.abs((pos.bottom - pos.top) * automation.map(p.value) - y) < 10) {
+                if (Math.abs(timeToPos(p.position) - KyUI.mouseGlobal.getLast().x + pos.left) < 10 && Math.abs((pos.bottom - pos.top) * automation.map(p.value) - y + pos.top) < 10) {
                   selected=true;
                   break;
                 }
@@ -643,7 +654,7 @@ public class WavEditor extends Element {
                   clickValue=automation.unmap(1 - snapAutomationGrid(size * (1 - automation.map(clickValue))) / size);
                 }
               } else if (automationMode) {
-                selectedPoints.add(clickPoint=automation.addPoint(posToTime(x), automation.unmap((y - pos.top) / (pos.bottom - pos.top))));
+                selectedPoints.add(clickPoint=automation.addPoint(posToTime(x - pos.left), automation.unmap((y - pos.top) / (pos.bottom - pos.top))));
                 clickValue=clickPoint.value;
                 clickTime=clickPoint.position;
                 recorder.add(new Change(null, new ChangeData(clickPoint)));
@@ -701,11 +712,11 @@ public class WavEditor extends Element {
             } else if (isInRange(cy, pos.bottom - loopHead, pos.bottom)) {
               player.setLoopEnd(new Static(player.getContext(), Math.max(player.getLoopStartUGen().getValue(), Math.max(0, (float)Math.min(length, posToTime(x - pos.left))))));
             } else {
-              player.setPosition((float)posToTime(x - pos.left));
+              player.setPosition(Math.max(0, (float)Math.min(length, (float)posToTime(x - pos.left))));
             }
           }
         }
-        if (e.getAction() == MouseEvent.PRESS && player != null) {
+        if (e.getAction() == MouseEvent.PRESS && player != null && automation != null) {
           //long time=System.currentTimeMillis();
           //if (doubleClickReady && time - lastClicked < KyUI.DOUBLE_CLICK_INTERVAL) {//e.getButton() == PApplet.LEFT
           if ((/*!automationMode || automationMode &&*/ e.getButton() == PApplet.RIGHT) && !selected) {
@@ -714,7 +725,7 @@ public class WavEditor extends Element {
               player.setLoopStart(new Static(ac, 0));
               player.setLoopEnd(new Static(ac, (float)length));
             } else {
-              cachePoint.position=posToTime(KyUI.mouseGlobal.getLast().x);
+              cachePoint.position=posToTime(KyUI.mouseGlobal.getLast().x - pos.left);
               int i=automation.points.getBeforeIndex(cachePoint);
               if (i <= 0) {
                 player.setLoopStart(new Static(ac, 0));

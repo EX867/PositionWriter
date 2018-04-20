@@ -4,6 +4,7 @@ import kyui.core.Attributes;
 import kyui.core.KyUI;
 import kyui.element.DivisionLayout;
 import kyui.element.LinearLayout;
+import kyui.element.ToggleButton;
 import kyui.util.Rect;
 import processing.core.PApplet;
 import processing.event.KeyEvent;
@@ -27,32 +28,35 @@ public class Test4 extends PApplet {
     surface.setResizable(true);
     AudioContext ac=new AudioContext();
     WavePlayerW n=new WavePlayerW(ac, Buffer.SAW);
-    //String path="C:\\Users\\user\\Documents\\[Projects]\\PositionWriter\\AlsExtractor\\data\\Love_u1.wav";
-    //SamplePlayer p=null;
-    //p=new SamplePlayer(ac, 2);
-    //p.setKillOnEnd(false);
-    //Sample sample;
-    //try {
-    //  p.setSample(sample=new Sample(path));
-    //} catch (Exception e) {
-    //  e.printStackTrace();
-    //}
-    //
+    String path="C:\\Users\\user\\Documents\\[Projects]\\PositionWriter\\AlsExtractor\\data\\Love_u1.wav";
+    //    SamplePlayer p=null;
+    //    p=new SamplePlayer(ac, 2);
+    //    p.setKillOnEnd(false);
+    Sample sample=null;
+    //    try {
+    //      p.setSample(sample=new Sample(path));
+    //    } catch (Exception e) {
+    //      e.printStackTrace();
+    //    }
     UGen u=n;
     //tdcomp test
     AutoFaderW fader=new AutoFaderW(ac, 2);
     AutoFaderControl f=new AutoFaderControl("control").initialize(fader);
-    fader.addInput(u);
-    ac.out.addInput(fader);
-    ac.out.setGain(0.2F);
     //
+    WavEditor v=new WavEditor("VV").initPlayer(ac);
+    try {
+      v.setSample(sample=new Sample(path));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     //
+    f.setAsMirror(v);
     //Knob freq=new Knob("freq").attach(ac, n, n.setFrequency, 1, 20000, 0, 400, true);
     DivisionLayout dv=new DivisionLayout("dv");
     dv.setPosition(new Rect(0, 0, width, height));
     dv.rotation=Attributes.Rotation.LEFT;
-    dv.value=h;
-    //dv.addChild(freq);
+    dv.value=30;
+    dv.addChild(new VUMeter("v").attach(ac.out));
     dv.addChild(f);
     KyUI.add(dv);
     KyUI.changeLayout();
@@ -61,16 +65,34 @@ public class Test4 extends PApplet {
       dv.value=h;
       KyUI.changeLayout();
     });
-    //    comp.sideChain.addPoint(0,1);
-    //    comp.sideChain.addPoint((float)60000/140,2);
-    //    comp.sideChain.setLoopEnd((float)60000/70);
-    //    comp.sideChain.setLoop(true);
+    //
+    v.player.addAuto(fader.preCount);
+    v.player.addAuto(fader.postCount);
+    v.player.addAuto(fader.cuePoint);
+    fader.addInput(v.player);//do not use f.view.player...
+    ac.out.addInput(fader);
+    ac.out.setGain(0.5F);
     ac.start();
-    //p.start();
+    v.player.start();
   }
   @Override
   public void draw() {
     KyUI.render(g);
+  }
+  public void keyPressed() {
+    if (key == 'a') {
+      WavEditor c=KyUI.<AutoFaderControl>get2("control").view;
+      c.setAutomationMode(!c.getAutomationMode());
+    }
+    if (key == ' ') {
+      WavEditor w=KyUI.<WavEditor>get2("VV");
+      if (w.player.getPosition() == w.player.getLoopEndUGen().getValue()) {
+        w.player.setPosition(w.player.getLoopStartUGen().getValue());
+        w.player.pause(false);
+      } else {
+        w.player.pause(!w.player.isPaused());
+      }
+    }
   }
   @Override
   protected void handleKeyEvent(KeyEvent event) {

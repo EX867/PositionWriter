@@ -1,11 +1,14 @@
 package pw2.element.ugens;
 import beads.AudioContext;
+import beads.Sample;
+import beads.SamplePlayer;
 import kyui.core.Attributes;
 import kyui.core.Element;
 import kyui.core.KyUI;
+import kyui.core.MirrorView;
 import kyui.element.*;
-import kyui.util.Rect;
 import pw2.beads.AutoFaderW;
+import pw2.beads.KnobAutomation;
 import pw2.element.Knob;
 import pw2.element.UGenViewer;
 import pw2.element.WavEditor;
@@ -13,15 +16,15 @@ import pw2.element.WavEditor;
 import javax.swing.filechooser.FileSystemView;
 public class AutoFaderControl extends UGenViewer {
   //views
-  protected Knob preCount;
-  protected Knob postCount;
-  protected TextBox path;
-  protected Button export;
-  protected ToggleButton exportMode;//toggle normal<->overlay fade
-  protected Button previous;//FIX>> change to imagebutton
-  protected Button center;
-  protected Button next;
-  protected WavEditor view;
+  public Knob preCount;
+  public Knob postCount;
+  public TextBox path;
+  public Button export;
+  public ToggleButton exportMode;//toggle normal<->overlay fade
+  public Button previous;//FIX>> change to imagebutton
+  public Button center;
+  public Button next;
+  public WavEditor view;//but don't use view.player please...
   //
   protected DivisionLayout layout;
   protected DivisionLayout dvl;
@@ -29,6 +32,7 @@ public class AutoFaderControl extends UGenViewer {
   protected DivisionLayout dvlu;
   protected AlterLinearLayout dvld;
   protected AlterLinearLayout dv;
+  protected DivisionLayout sliderLayout;
   //
   public AutoFaderW fader;
   public AutoFaderControl(String name) {
@@ -59,8 +63,12 @@ public class AutoFaderControl extends UGenViewer {
     exportMode.value=true;
     dvr.rotation=Attributes.Rotation.DOWN;
     dvr.value=60;
-    dvr.addChild(view=new WavEditor(name + ":view"));
+    dvr.addChild(sliderLayout=new DivisionLayout(name + ":sliderLayout"));
     dvr.addChild(dv=new AlterLinearLayout(name=":dv"));
+    sliderLayout.rotation=Attributes.Rotation.DOWN;
+    sliderLayout.value=30;
+    sliderLayout.addChild(view=new WavEditor(name + ":view"));
+    sliderLayout.addChild(view.getSlider());
     Element interval1;
     Element interval2;
     dv.addChild(previous=new Button(name + ":previous"));
@@ -82,15 +90,18 @@ public class AutoFaderControl extends UGenViewer {
     dv.set(interval2, AlterLinearLayout.LayoutType.STATIC, 1);
     dv.set(next, AlterLinearLayout.LayoutType.DYNAMIC, 1);
   }
-  String getDocuments() {
+  static String getDocuments() {
     return FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
   }
   public AutoFaderControl initialize(AutoFaderW fader_) {
     fader=fader_;
     AudioContext ac=fader.getContext();
     view.initPlayer(ac);
-    preCount.attach(ac, fader, fader.setPreCount, 0, 50, 20, 20, false);
-    postCount.attach(ac, fader, fader.setPostCount, 0, 50, 20, 20, false);
+    //    preCount.attach(ac, fader, fader.setPreCount, 0, 50, 20, 20, false);
+    //    postCount.attach(ac, fader, fader.setPostCount, 0, 50, 20, 20, false);;
+    preCount.attach(ac, fader, fader.setPreCount, 0, 5000, 20, 20, false);
+    postCount.attach(ac, fader, fader.setPostCount, 0, 5000, 20, 20, false);
+    view.automation=fader.cuePoint;
     return this;
   }
   @Override
@@ -98,5 +109,17 @@ public class AutoFaderControl extends UGenViewer {
     dvlu.padding=(int)(pos.bottom - pos.top) / 10;
     layout.setPosition(pos.clone());
     layout.onLayout();
+  }
+  public KnobAutomation getCuePoint() {
+    return fader.cuePoint;
+  }
+  public void setSample(Sample sample) {//call when every new sample loaded. but in pw, waveditor loads only one files!
+    view.setSample(sample);
+  }
+  public void setAsMirror(WavEditor e) {
+    SamplePlayer p=view.player;
+    view.player=e.player;
+    setSample(e.sample);
+    p.kill();
   }
 }

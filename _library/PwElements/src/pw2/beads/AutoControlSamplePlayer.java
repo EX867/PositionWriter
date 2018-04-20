@@ -2,6 +2,7 @@ package pw2.beads;
 import beads.AudioContext;
 import beads.Sample;
 import beads.SamplePlayer;
+import beads.UGen;
 
 import java.util.ArrayList;
 public class AutoControlSamplePlayer extends SamplePlayer {
@@ -15,6 +16,40 @@ public class AutoControlSamplePlayer extends SamplePlayer {
   public void addAuto(KnobAutomation a) {
     synchronized (this) {
       autos.add(a);
+    }
+  }
+  @Override
+  public void setLoopEnd(UGen u) {
+    for (KnobAutomation a : autos) {
+      a.setLoopEnd(u.getValue());
+    }
+    super.setLoopEnd(u);
+  }
+  @Override
+  public void setLoopStart(UGen u) {
+    for (KnobAutomation a : autos) {
+      a.setLoopStart(u.getValue());
+    }
+    super.setLoopStart(u);
+  }
+  //  @Override
+  //  public void setPosition(UGen u) {
+  //    for (KnobAutomation a : autos) {
+  //      a.setPosition(u.getValue());
+  //    }
+  //    super.setPosition(u);
+  //  }
+  @Override
+  public void setLoopType(LoopType l) {
+    super.setLoopType(l);
+    if (loopType == LoopType.NO_LOOP_FORWARDS || loopType == LoopType.NO_LOOP_BACKWARDS) {
+      for (KnobAutomation a : autos) {
+        a.setLoop(false);
+      }
+    } else {//all is loop.
+      for (KnobAutomation a : autos) {
+        a.setLoop(true);
+      }
     }
   }
   @Override
