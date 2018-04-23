@@ -246,9 +246,9 @@ void setup_ev2() {
         for (LedTab tab : ledTabs) {
           saveLed(tab.led.script);
         }
-      }else if(mainTabs_selected==KS_EDITOR){
-        for(KsSession tab : ksTabs){
-          saveKs(tab,true);
+      } else if (mainTabs_selected==KS_EDITOR) {
+        for (KsSession tab : ksTabs) {
+          saveKs(tab, true);
         }
       }
     }
@@ -299,6 +299,15 @@ void setup_ev2() {
         }
         info=info_;
         currentKs.textControl();
+      }
+    }
+  }
+  );
+  KyUI.addDragAndDrop(KyUI.get("wv_layout"), new FileDropEventListener() {
+    public void onEvent(DropEvent de) {
+      String filename=de.file().getAbsolutePath().replace("\\", "/");
+      if (de.file().isFile()) {
+        addWavFileTab(filename);
       }
     }
   }
@@ -369,6 +378,18 @@ void setup_ev2() {
         currentKs.get(currentKs.chain, coord.x, coord.y).loadSound(filename, 1);
       } else {
         currentKs.get(currentKs.chain, coord.x, coord.y).loadLed(filename, 1);
+      }
+    }
+  }
+  );
+  KyUI.addDragAndDrop(KyUI.get("wv_files"), KyUI.get("wv_frame"), new DropEventListener() {
+    public void onEvent(DropMessenger d, MouseEvent e, int index) {
+      final String filename=((FileSelectorButton)((LinearList)KyUI.get("wv_files")).getItems().get(d.startIndex)).file.getAbsolutePath().replace("\\", "/");
+      if (!new File(filename).isFile()) {
+        return;
+      }
+      if (isSoundFile(new File(filename))) {
+        addWavFileTab(filename);
       }
     }
   }

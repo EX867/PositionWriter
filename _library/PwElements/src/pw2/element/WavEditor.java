@@ -9,6 +9,7 @@ import kyui.core.Attributes;
 import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.element.Button;
+import kyui.element.ImageToggleButton;
 import kyui.element.RangeSlider;
 import kyui.element.ToggleButton;
 import kyui.util.Rect;
@@ -160,6 +161,15 @@ public class WavEditor extends Element {
     automationInvalid=true;
     setSlider();
   }
+  @Override
+  public void setPositionWithoutInvalidate(Rect rect) {
+    super.setPositionWithoutInvalidate(rect);
+    waveformG=KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)));
+    automationG=KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)));
+    waveformInvalid=true;
+    automationInvalid=true;
+    setSlider();
+  }
   public WavEditor initPlayer(AudioContext ac) {
     if (player == null) {
       player=new AutoControlSamplePlayer(ac, 2);
@@ -208,7 +218,7 @@ public class WavEditor extends Element {
     }
     if (player != null) {
       //draw vertical grids(snap)
-      float firstPoint=(float)timeToPos(snapOffset);
+      float firstPoint=pos.left + (float)timeToPos(snapOffset);
       float posInterval=(pos.right - pos.left) * (float)((snapInterval * 240000 / Math.max(1, snapBpm)/*duration*/) * scale / length);
       if (posInterval != 0) {
         while (posInterval < minGridSize) {
@@ -227,7 +237,7 @@ public class WavEditor extends Element {
         }
       }
       //draw bars
-      firstPoint=(float)timeToPos(snapOffset);
+      firstPoint=pos.left + (float)timeToPos(snapOffset);
       posInterval=(pos.right - pos.left) * (float)((240000 / Math.max(1, snapBpm)/*duration*/) * scale / length);
       if (posInterval != 0) {
         while (posInterval < minGridSize) {
@@ -362,7 +372,7 @@ public class WavEditor extends Element {
       //draw snap cursor
       if (snap) {
         g.stroke(20, 20, 20);
-        point=(float)snap(KyUI.mouseGlobal.getLast().x);
+        point=pos.left+(float)snap(KyUI.mouseGlobal.getLast().x-pos.left);
         if (isInRange(point, pos.left, pos.right)) {
           g.line(point, pos.top + 2, point, pos.bottom - 2);
         }
@@ -393,6 +403,12 @@ public class WavEditor extends Element {
         slider.invalidate();
       }
     }
+  }
+  @Override
+  public void onLayout() {
+    KyUI.taskManager.addTask((o)->{
+      setSlider();
+    },null);
   }
   private void cutSelection(Button button) {//no add
     button.setPressListener((MouseEvent e, int index) -> {
@@ -441,7 +457,21 @@ public class WavEditor extends Element {
     });
     return button;
   }//no undo
+  public Button setToggleSnap(ImageToggleButton button) {
+    button.setPressListener((MouseEvent e, int index) -> {
+      snap=button.value;
+      return false;
+    });
+    return button;
+  }//no undo
   public Button setToggleAutomationMode(ToggleButton button) {
+    button.setPressListener((MouseEvent e, int index) -> {
+      setAutomationMode(button.value);
+      return false;
+    });
+    return button;
+  }//no undo
+  public Button setToggleAutomationMode(ImageToggleButton button) {
     button.setPressListener((MouseEvent e, int index) -> {
       setAutomationMode(button.value);
       return false;
@@ -455,7 +485,25 @@ public class WavEditor extends Element {
     });
     return button;
   }//no undo
+  public Button setToggleAutoscroll(ImageToggleButton button) {
+    button.setPressListener((MouseEvent e, int index) -> {
+      autoscroll=button.value;
+      return false;
+    });
+    return button;
+  }//no undo
   public Button setToggleLoop(ToggleButton button) {
+    button.setPressListener((MouseEvent e, int index) -> {
+      if (button.value) {
+        player.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
+      } else {
+        player.setLoopType(SamplePlayer.LoopType.NO_LOOP_FORWARDS);
+      }
+      return false;
+    });
+    return button;
+  }//no undo
+  public Button setToggleLoop(ImageToggleButton button) {
     button.setPressListener((MouseEvent e, int index) -> {
       if (button.value) {
         player.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
@@ -620,7 +668,7 @@ public class WavEditor extends Element {
         boolean selected=false;
         if (pressedL) {
           //snap x
-          x=(float)snap(x);
+          x=pos.left+(float)snap(x-pos.left);
           //snap y
           y=(float)snapAutomationGrid(y);
           //if (automationMode) {

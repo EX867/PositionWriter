@@ -37,11 +37,13 @@ int tipsIndex=0;
 LedScript currentLedEditor;//equivalent to currentLed.led.script
 LedTab currentLed;
 KsSession currentKs;
+WavTab currentWav;//warning. this can be null!
 //===Paths===//
 String path_global=joinPath(getDocuments(), "PositionWriter");
 String path_projects="projects";
 String path_led="led";
 String path_export="export";
+String path_tempSamples="temp/samples";
 color[] color_lp;
 color[] color_mf;
 //===hashmap elements caching===//
@@ -54,6 +56,7 @@ PadButton ks_pad;
 PadButton ks_chain;
 TextBox ks_soundindex;
 TextBox ks_ledindex;
+TabLayout wv_filetabs;
 //==Additional frames===//
 CachingFrame frame_main;
 CachingFrame frame_changetitle;
@@ -83,6 +86,7 @@ class LedTab {
 }
 ArrayList<LedTab> ledTabs=new ArrayList<LedTab>();//tab order.
 ArrayList<KsSession> ksTabs=new ArrayList<KsSession>();
+ArrayList<WavTab> wavTabs=new ArrayList<WavTab>();
 long lastAutoSaved=System.currentTimeMillis();
 void autoSave() {
   if (AutoSave) {

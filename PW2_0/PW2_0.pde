@@ -2,7 +2,7 @@ import pw2.element.*;
 //PositionWriter 2.0.pde
 //===ADD list===//
 //led=(undo,redo),stop
-//shortcuts = ,ksclear,delay value edit,macros,export
+//shortcuts = ,ksclear,delay value edit,macros,export| resetloop undo redo rewind zoomin zoomout
 //add ziploader
 //note on highlight
 //add custom velocity selector
@@ -152,6 +152,7 @@ void main_setup() {
   textTransfer=new TextTransfer();
   //load default data
   layout_led_frame_xml=loadXML("layout_led_frame.xml");
+  layout_wv_frame_xml=loadXML("layout_wv_frame.xml");
   KyUI.start(this, 30, true);//mono is secure...only multi when needs high performance.
   ElementLoader.loadOnStart();
   ElementLoader.loadExternal(joinPath(getCodePath(), "PwElements.jar"));
@@ -185,11 +186,13 @@ void main_setup() {
   ((TabLayout)KyUI.get("ks_control")).setTabNames(new String[]{"CT", "AP"});
   ((TabLayout)KyUI.get("ks_filelist")).setTabNames(new String[]{"SOUND", "LED"});
   ((TabLayout)KyUI.get("set_lists")).setTabNames(new String[]{"SHORTCUTS", "COLORS"});
-  ((TabLayout)KyUI.get("wv_list")).setTabNames(new String[]{"LIBS", "POINTS"});
+  ((TabLayout)KyUI.get("wv_list")).setTabNames(new String[]{"FILE", "AUTO"});
   ((TabLayout)KyUI.get("main_tabs")).selectTab(1);
   ((TabLayout)KyUI.get("led_vellayout")).selectTab(1);
   ((TabLayout)KyUI.get("ks_control")).selectTab(1);
   ((TabLayout)KyUI.get("led_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("led_frame"));
+  ((TabLayout)KyUI.get("wv_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("wv_frame"));
+  ((TabLayout)KyUI.get("wv_list")).selectTab(1);
   KyUI.get("led_consolelayout").setEnabled(false);
   KyUI.get("led_findlr").setEnabled(false);
   ui_attachSlider((ConsoleEdit)KyUI.get("led_console"));
@@ -254,6 +257,7 @@ void main_setup() {
   load_settings();
   led_setup();
   ks_setup();
+  wav_setup();
   midi_setup();
   MidiCommand.setState("8x8");//#TEST
   au_setup();
@@ -264,8 +268,10 @@ void main_setup() {
   } else {
     addLedTab(createNewLed());
     addKsTab(createNewKs());
+    //addWavTab(null);//no files loaded first.
   }
   ((LinearList)KyUI.get("ks_fileview")).setFixedSize(30);
+  ((LinearList)KyUI.get("wv_files")).setFixedSize(30);
   ((LinearList)KyUI.get("mp3_input")).setFixedSize(30);
   FileSelectorButton.listDirectory(((LinearList)KyUI.get("ks_fileview")), new File(path_global), new java.util.function.Consumer<File>() {
     public void accept(File file) {
@@ -276,6 +282,14 @@ void main_setup() {
         LedScript script=loadLedScript(file.getName(), readLed(file.getAbsolutePath()));
         script.displayPad=ks_pad;
         currentKs.light.start(currentKs.light.addTrack(script), 0);
+      }
+    }
+  }
+  );
+  FileSelectorButton.listDirectory(((LinearList)KyUI.get("wv_files")), new File(path_global), new java.util.function.Consumer<File>() {
+    public void accept(File file) {
+      if (isSoundFile(file)) {
+        globalSamplePlayerPlay(file.getAbsolutePath());
       }
     }
   }
