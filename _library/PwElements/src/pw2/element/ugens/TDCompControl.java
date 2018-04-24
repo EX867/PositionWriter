@@ -35,7 +35,7 @@ public class TDCompControl extends UGenViewer {
     layout.addChild(lin=new AlterLinearLayout(name + ":lin"));
     layout.addChild(samplesDv=new DivisionLayout(name + ":samplesDv"));
     samplesDv.rotation=Attributes.Rotation.UP;
-    samplesDv.value=60;
+    samplesDv.value=40;
     samplesDv.addChild(delete=new Button(name + ":delete"));
     delete.text="DELETE";
     samplesDv.addChild(samples=new LinearList(name + ":samples"));
@@ -48,7 +48,7 @@ public class TDCompControl extends UGenViewer {
     bypass.text="BYPASS";
     buttons.addChild(sideChain=new ToggleButton(name + ":sideChain"));
     sideChain.rotation=Attributes.Rotation.RIGHT;
-    sideChain.text="SIDECHAIN";
+    sideChain.text="  SIDECHAIN   ";
     buttons.addChild(showList=new ToggleButton(name + ":showList"));
     showList.rotation=Attributes.Rotation.RIGHT;
     showList.text="SAMPLES";

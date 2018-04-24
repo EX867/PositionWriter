@@ -2,12 +2,14 @@ package beads;
 import beads.*;
 import kyui.util.Task;
 import kyui.util.TaskManager;
+import pw2.beads.KnobAutomation;
 import pw2.beads.UGenListener;
 import pw2.element.Knob;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 public abstract class UGenW extends UGen {//solve synchronization error with task system.
   public class Parameter {
@@ -32,13 +34,12 @@ public abstract class UGenW extends UGen {//solve synchronization error with tas
     tm.addTask(task.setter, value);
   }
   protected abstract UGen updateUGens();//to output.
-  protected final void updateUGen(UGen ugen){
+  protected final void updateUGen(UGen ugen) {
     ugen.initializeOuts();
     ugen.calculateBuffer();
   }
-  protected final void setStartPoint(UGen ugen){
-    ugen.outputInitializationRegime = OutputInitializationRegime.RETAIN;
-
+  protected final void setStartPoint(UGen ugen) {
+    ugen.outputInitializationRegime=OutputInitializationRegime.RETAIN;
   }
   protected final void giveInputTo(UGen ugen, int inputIndex, int ugenInputIndex) {
     ugen.bufIn[ugenInputIndex]=bufIn[inputIndex];
@@ -82,5 +83,9 @@ public abstract class UGenW extends UGen {//solve synchronization error with tas
     tm.addTask((o) -> {
       bypass=v;
     }, null);
+  }
+  public abstract List<KnobAutomation> getAutomations();
+  public void removeAutomationsFrom(List<KnobAutomation> list) {
+    list.removeAll(getAutomations());
   }
 }

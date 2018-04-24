@@ -4,6 +4,9 @@ import beads.BiquadFilter;
 import beads.UGen;
 import beads.UGenW;
 import pw2.element.Knob;
+
+import java.util.Arrays;
+import java.util.List;
 public class BiquadFilterW extends UGenW {
   public BiquadFilter ugen;
   public KnobAutomation frequency;
@@ -48,5 +51,9 @@ public class BiquadFilterW extends UGenW {
     frequency.kill();
     q.kill();
     gain.kill();
+  }
+  @Override
+  public List<KnobAutomation> getAutomations() {
+    return Arrays.asList(new KnobAutomation[]{frequency, q, gain});
   }
 }

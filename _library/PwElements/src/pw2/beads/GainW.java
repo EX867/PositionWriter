@@ -4,6 +4,9 @@ import beads.Gain;
 import beads.UGen;
 import beads.UGenW;
 import pw2.element.Knob;
+
+import java.util.Arrays;
+import java.util.List;
 public class GainW extends UGenW {
   public Gain ugen;
   public KnobAutomation gain;
@@ -30,5 +33,9 @@ public class GainW extends UGenW {
     ugen.kill();
     gain.kill();
     super.kill();
+  }
+  @Override
+  public List<KnobAutomation> getAutomations() {
+    return Arrays.asList(new KnobAutomation[]{gain});
   }
 }

@@ -5,7 +5,9 @@ import pw2.element.Knob;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 public class TDCompW extends UGenW {//this is a class for positionwriter only...
   public TDComp ugen;
   public KnobAutomation attack;
@@ -135,7 +137,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
         return false;
       }
       return true;
-    }else{
+    } else {
       return false;
     }
   }
@@ -163,5 +165,9 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
         sideChain.changePoint(c, point.position, a);
       }
     }
+  }
+  @Override
+  public List<KnobAutomation> getAutomations() {
+    return Arrays.asList(new KnobAutomation[]{attack, release, knee, threshold, ratio, outputGain, sideChain});
   }
 }

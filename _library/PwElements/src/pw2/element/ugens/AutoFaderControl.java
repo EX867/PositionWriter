@@ -99,8 +99,8 @@ public class AutoFaderControl extends UGenViewer {
     view.initPlayer(ac);
     //    preCount.attach(ac, fader, fader.setPreCount, 0, 50, 20, 20, false);
     //    postCount.attach(ac, fader, fader.setPostCount, 0, 50, 20, 20, false);;
-    preCount.attach(ac, fader, fader.setPreCount, 0, 5000, 20, 20, false);
-    postCount.attach(ac, fader, fader.setPostCount, 0, 5000, 20, 20, false);
+    preCount.attach(ac, fader, fader.setPreCount, 0, 50, 10, 10, false);
+    postCount.attach(ac, fader, fader.setPostCount, 0, 50, 5, 5, false);
     view.automation=fader.cuePoint;
     return this;
   }

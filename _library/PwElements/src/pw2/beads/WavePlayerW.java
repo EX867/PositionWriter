@@ -5,6 +5,9 @@ import beads.UGen;
 import beads.WavePlayer;
 import beads.UGenW;
 import pw2.element.Knob;
+
+import java.util.Arrays;
+import java.util.List;
 public class WavePlayerW extends UGenW {
   public WavePlayer player;
   public KnobAutomation frequency;
@@ -32,5 +35,9 @@ public class WavePlayerW extends UGenW {
     super.kill();
     player.kill();
     frequency.kill();
+  }
+  @Override
+  public List<KnobAutomation> getAutomations() {
+    return Arrays.asList(new KnobAutomation[]{frequency});
   }
 }

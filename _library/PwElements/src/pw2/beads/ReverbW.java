@@ -1,6 +1,9 @@
 package pw2.beads;
 import beads.*;
 import pw2.element.Knob;
+
+import java.util.Arrays;
+import java.util.List;
 public class ReverbW extends UGenW {
   public Throughput chainOut;
   public Reverb[] ugen;
@@ -63,5 +66,9 @@ public class ReverbW extends UGenW {
     for (int a=0; a < ugen.length; a++) {
       ugen[a].kill();
     }
+  }
+  @Override
+  public List<KnobAutomation> getAutomations() {
+    return Arrays.asList(new KnobAutomation[]{size, damping, earlyReflection, length});
   }
 }

@@ -146,24 +146,54 @@ public class FFmpegConverter {//play with globalSamplePlayer
     }
   }
 }
-void wav_setup(WavEditor editor, DivisionLayout wv_dv2) {//add listeners (with crazy children.get uses)
+void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (with crazy children.get uses)
   LinearLayout wv_lin1=(LinearLayout)wv_dv2.children.get(0).children.get(0).children.get(0);
   LinearLayout wv_lin2=(LinearLayout)wv_dv2.children.get(0).children.get(0).children.get(1).children.get(0);
-  KyUI.addDragAndDrop(KyUI.get("wv_fxlib"), wv_dv2.children.get(0).children.get(1), new DropEventListener() {
-    public void onEvent(DropMessenger d, MouseEvent e, int index) {
-      final String filename=((FileSelectorButton)((LinearList)KyUI.get("ks_fileview")).getItems().get(d.startIndex)).file.getAbsolutePath().replace("\\", "/");
-      addWavFileTab(filename);
+  TabLayout wv_fxtabs=(TabLayout)wv_dv2.children.get(0).children.get(1);
+  //KyUI.addDragAndDrop(KyUI.get("wv_fxlib"), wv_dv2.children.get(0).children.get(1), new DropEventListener() {
+  //  public void onEvent(DropMessenger d, MouseEvent e, int index) {
+  //    //add new plugin
+  //  }
+  //}
+  //);
+  //wv_fxtabs.tabRemoveListener=new ItemSelectListener() {
+  //  public void onEvent(int index) {
+  //    tab.editor.player.removeUGenAndAutos(index, tab.autos);
+  //  }
+  //};
+  final Slider ratio=((Slider)wv_dv2.children.get(1));
+  ratio.setMin(0);
+  ratio.setMax(1);
+  final DivisionLayout wv_dv3=((DivisionLayout)wv_dv2.children.get(0));
+  ratio.set(1-wv_dv3.value);
+  ratio.setAdjustListener(new EventListener() {
+    public void onEvent(Element e) {
+      wv_dv3.value=1-ratio.value;
+      wv_dv3.localLayout();
     }
   }
   );
   //add play
   //add stop
-  editor.setToggleLoop((ImageToggleButton)wv_lin1.children.get(2));
-  editor.setToggleSnap((ImageToggleButton)wv_lin2.children.get(0));
-  editor.setToggleAutoscroll((ImageToggleButton)wv_lin2.children.get(1));
-  editor.setToggleAutomationMode((ImageToggleButton)wv_lin2.children.get(2));
-  editor.setSnapGridPlus((Button)wv_lin2.children.get(5));
-  editor.setSnapGridMinus((Button)wv_lin2.children.get(6));
+  tab.editor.setToggleLoop((ImageToggleButton)wv_lin1.children.get(2));
+  tab.editor.setToggleSnap((ImageToggleButton)wv_lin2.children.get(0));
+  tab.editor.setToggleAutoscroll((ImageToggleButton)wv_lin2.children.get(1));
+  tab.editor.setToggleAutomationMode((ImageToggleButton)wv_lin2.children.get(2));
+  tab.editor.setSnapGridPlus((Button)wv_lin2.children.get(5));
+  tab.editor.setSnapGridMinus((Button)wv_lin2.children.get(6));
+  //add defualt plugin (current version only)
+  AudioContext ac=tab.editor.player.getContext();
+  TDCompW comp=new TDCompW(ac, tab.editor.sample.getNumChannels());
+  AutoFaderW fader=new AutoFaderW(ac, tab.editor.sample.getNumChannels());
+  wv_fxtabs.addTab("TDComp", new TDCompControl("wv_tdcomp").initialize(comp));
+  wv_fxtabs.addTab("Wavcut", new AutoFaderControl("wv_autofader").initialize(fader));
+  wv_fxtabs.localLayout();
+  AutoControlSamplePlayer sp=tab.editor.player;
+  sp.addInputTo(ac.out);
+  sp.addUGenAndGetAutos(comp);
+  sp.addUGenAndGetAutos(fader);
+  KyUI.taskManager.executeAll();
+  wv_fxtabs.selectTab(1);
 }
 void wav_setup() {
   ((TabLayout)KyUI.get("wv_filetabs")).tabSelectListener=new ItemSelectListener() {
@@ -186,6 +216,7 @@ void wav_setup() {
 static class WavTab {
   AudioContext wvac=new AudioContext();//so we have 1+kstabs_count+wavtabs_count audiocontexts...is it okay???(or I can optimize it to 2+kstabs_count...)
   WavEditor editor;
+  public ArrayList<KnobAutomation> autos=new ArrayList<KnobAutomation>();
   WavTab(WavEditor editor_) {
     editor=editor_;
     editor.initPlayer(wvac);
@@ -213,7 +244,7 @@ void addWavTab(final String filename) {//no null filename!
       tabs.onLayout();
       KyUI.get("wv_frame").onLayout();
       tabs.selectTab(wavTabs.size());
-      wav_setup(editor, (DivisionLayout)e.children.get(0));
+      wav_setup(tab, (DivisionLayout)e.children.get(0));
     }
   }
   , null, null);//ADD tell user why this audio is not loaded

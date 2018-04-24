@@ -368,6 +368,7 @@ void setup_ev2() {
   );
   KyUI.addDragAndDrop(KyUI.get("ks_fileview"), ks_pad, new DropEventListener() {
     public void onEvent(DropMessenger d, MouseEvent e, int index) {
+      if (d.startIndex<0)return;
       final String filename=((FileSelectorButton)((LinearList)KyUI.get("ks_fileview")).getItems().get(d.startIndex)).file.getAbsolutePath().replace("\\", "/");
       if (!new File(filename).isFile()) {
         return;
@@ -384,6 +385,7 @@ void setup_ev2() {
   );
   KyUI.addDragAndDrop(KyUI.get("wv_files"), KyUI.get("wv_frame"), new DropEventListener() {
     public void onEvent(DropMessenger d, MouseEvent e, int index) {
+      if (d.startIndex<0)return;
       final String filename=((FileSelectorButton)((LinearList)KyUI.get("wv_files")).getItems().get(d.startIndex)).file.getAbsolutePath().replace("\\", "/");
       if (!new File(filename).isFile()) {
         return;

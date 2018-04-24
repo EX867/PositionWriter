@@ -3,6 +3,9 @@ import beads.AudioContext;
 import beads.UGen;
 import beads.UGenW;
 import pw2.element.Knob;
+
+import java.util.List;
+import java.util.Arrays;
 public class AutoFaderW extends UGenW {
   public AutoFader ugen;
   public KnobAutomation cuePoint;
@@ -81,5 +84,9 @@ public class AutoFaderW extends UGenW {
       }
       pos=1;
     }
+  }
+  @Override
+  public List<KnobAutomation> getAutomations() {
+    return Arrays.asList(new KnobAutomation[]{preCount, postCount, cuePoint});
   }
 }
