@@ -53,7 +53,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   public TDCompW(AudioContext ac, int in) {
     super(ac, in, in);
     if (emptySample == null) {
-      emptySample=new Sample(ac.samplesToMs(ac.getBufferSize()), 2);
+      emptySample=new Sample(ac.samplesToMs(ac.getBufferSize()), in);
     }
     ugen=new TDComp(ac, in);
     attack=new KnobAutomation(ac, 1);

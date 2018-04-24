@@ -173,7 +173,19 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
     }
   }
   );
-  //add play
+  ((Button)wv_lin1.children.get(0)).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      WavEditor editor=tab.editor;
+      if (editor.player.getPosition() == editor.player.getLoopEndUGen().getValue()) {
+        editor.player.setPosition(editor.player.getLoopStartUGen().getValue());
+        editor.player.pause(false);
+      } else {
+        editor.player.pause(!editor.player.isPaused());
+      }
+      return false;
+    }
+  }
+  );
   //add stop
   tab.editor.setToggleLoop((ImageToggleButton)wv_lin1.children.get(2));
   tab.editor.setToggleSnap((ImageToggleButton)wv_lin2.children.get(0));
@@ -182,12 +194,14 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
   tab.editor.setSnapGridPlus((Button)wv_lin2.children.get(5));
   tab.editor.setSnapGridMinus((Button)wv_lin2.children.get(6));
   //add defualt plugin (current version only)
-  AudioContext ac=tab.editor.player.getContext();
+  AudioContext ac=tab.wvac;
   TDCompW comp=new TDCompW(ac, tab.editor.sample.getNumChannels());
   AutoFaderW fader=new AutoFaderW(ac, tab.editor.sample.getNumChannels());
   wv_fxtabs.addTab("TDComp", new TDCompControl("wv_tdcomp").initialize(comp));
-  wv_fxtabs.addTab("Wavcut", new AutoFaderControl("wv_autofader").initialize(fader));
+  AutoFaderControl control=null;
+  wv_fxtabs.addTab("Wavcut", control=new AutoFaderControl("wv_autofader").initialize(fader));
   wv_fxtabs.localLayout();
+  control.setAsMirror(tab.editor);
   AutoControlSamplePlayer sp=tab.editor.player;
   sp.addInputTo(ac.out);
   sp.addUGenAndGetAutos(comp);
@@ -220,7 +234,8 @@ static class WavTab {
   WavTab(WavEditor editor_) {
     editor=editor_;
     editor.initPlayer(wvac);
-    wvac.out.addInput(editor.player);
+    //setup finished in wav_setup()
+    wvac.start();
   }
   void close() {
     editor.player.kill();
