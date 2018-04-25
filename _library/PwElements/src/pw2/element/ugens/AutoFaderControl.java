@@ -7,6 +7,9 @@ import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.core.MirrorView;
 import kyui.element.*;
+import kyui.util.Rect;
+import processing.core.PGraphics;
+import processing.event.MouseEvent;
 import pw2.beads.AutoFaderW;
 import pw2.beads.KnobAutomation;
 import pw2.element.Knob;
@@ -21,9 +24,10 @@ public class AutoFaderControl extends UGenViewer {
   public TextBox path;
   public Button export;
   public ToggleButton exportMode;//toggle normal<->overlay fade
-  public Button previous;//FIX>> change to imagebutton
+  public Button previous;
   public Button center;
   public Button next;
+  public ToggleButton bypass;
   public WavEditor view;//but don't use view.player please...
   //
   protected DivisionLayout layout;
@@ -35,6 +39,7 @@ public class AutoFaderControl extends UGenViewer {
   protected DivisionLayout sliderLayout;
   //
   public AutoFaderW fader;
+  KnobAutomation.Point cachePoint=new KnobAutomation.Point(0, 0);
   public AutoFaderControl(String name) {
     super(name);
     layout=new DivisionLayout(name + ":layout");
@@ -59,8 +64,8 @@ public class AutoFaderControl extends UGenViewer {
     path.hint=export.text;
     path.title="Export path";
     export.text="Export";
-    exportMode.text="Nor\nmal";
-    exportMode.value=true;
+    exportMode.text="cross\nover";
+    //exportMode.value=true;
     dvr.rotation=Attributes.Rotation.DOWN;
     dvr.value=60;
     dvr.addChild(sliderLayout=new DivisionLayout(name + ":sliderLayout"));
@@ -76,9 +81,11 @@ public class AutoFaderControl extends UGenViewer {
     dv.addChild(center=new Button(name + ":center"));
     dv.addChild(interval2=new Element(name + ":interval2"));
     dv.addChild(next=new Button(name + ":next"));
+    dv.addChild(bypass=new ToggleButton(name + ":bypass"));
     previous.text="Prev";
     center.text="Center";
     next.text="Next";
+    bypass.text="Bypass";
     addChild(layout);
     KyUI.taskManager.executeAll();
     dvld.set(path, AlterLinearLayout.LayoutType.STATIC, 1);
@@ -89,6 +96,36 @@ public class AutoFaderControl extends UGenViewer {
     dv.set(center, AlterLinearLayout.LayoutType.DYNAMIC, 1);
     dv.set(interval2, AlterLinearLayout.LayoutType.STATIC, 1);
     dv.set(next, AlterLinearLayout.LayoutType.DYNAMIC, 1);
+    dv.set(bypass, AlterLinearLayout.LayoutType.DYNAMIC, 1);
+    bypass.setPressListener((MouseEvent e, int index) -> {
+      if (fader != null) {
+        fader.bypass(bypass.value);
+      }
+      return false;
+    });
+    previous.setPressListener((MouseEvent e, int index) -> {
+      view.left(2);
+      view.invalidate();
+      return false;
+    });
+    center.setPressListener((MouseEvent e, int index) -> {
+      view.autoscroll();
+      view.invalidate();
+      return false;
+    });
+    next.setPressListener((MouseEvent e, int index) -> {
+      view.right(2);
+      view.invalidate();
+      return false;
+    });
+    export.setPressListener((MouseEvent e, int index) -> {
+      if (exportMode.value) {
+        //cut with postCount fade out.
+      } else {
+        //cut normally.
+      }
+      return false;
+    });
   }
   static String getDocuments() {
     return FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
@@ -97,11 +134,32 @@ public class AutoFaderControl extends UGenViewer {
     fader=fader_;
     AudioContext ac=fader.getContext();
     view.initPlayer(ac);
-    //    preCount.attach(ac, fader, fader.setPreCount, 0, 50, 20, 20, false);
-    //    postCount.attach(ac, fader, fader.setPostCount, 0, 50, 20, 20, false);;
     preCount.attach(ac, fader, fader.setPreCount, 0, 50, 10, 10, false);
     postCount.attach(ac, fader, fader.setPostCount, 0, 50, 5, 5, false);
     view.automation=fader.cuePoint;
+    preCount.adjustListener.add((Element e) -> {
+      view.invalidate();
+    });
+    postCount.adjustListener.add((Element e) -> {
+      view.invalidate();
+    });
+    view.optional=(PGraphics g) -> {
+      //if (fader == null) return;
+      cachePoint.position=view.posToTime(-10) - fader.getPreCount();
+      int start=view.automation.points.getBeforeIndex(cachePoint);
+      cachePoint.position=view.posToTime(view.pos.right - view.pos.left + 10) + fader.getPostCount();
+      int end=view.automation.points.getBeforeIndex(cachePoint);
+      g.strokeWeight(2);
+      for (int a=start; a < end; a++) {
+        KnobAutomation.Point p=view.automation.points.get(a);
+        float x=view.pos.left + (float)view.timeToPos(p.position - fader.getPreCount());
+        g.stroke(255, 0, 0, 150);
+        g.line(x, view.pos.top, x, view.pos.bottom);
+        x=view.pos.left + (float)view.timeToPos(p.position + fader.getPostCount());
+        g.stroke(0, 0, 255, 150);
+        g.line(x, view.pos.top, x, view.pos.bottom);
+      }
+    };
     return this;
   }
   @Override
@@ -121,5 +179,9 @@ public class AutoFaderControl extends UGenViewer {
     view.player=e.player;
     setSample(e.sample);
     p.kill();
+  }
+  @Override
+  public void render(PGraphics g) {
+    super.render(g);
   }
 }

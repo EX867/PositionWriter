@@ -12,6 +12,7 @@ import kyui.element.Button;
 import kyui.element.ImageToggleButton;
 import kyui.element.RangeSlider;
 import kyui.element.ToggleButton;
+import kyui.event.ExtendedRenderer;
 import kyui.util.Rect;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -42,12 +43,15 @@ public class WavEditor extends Element {
   public float snapBpm=120;
   public double snapInterval=Beat[7];
   public double snapOffset=0;//milliseconds, mod snapInterval
+  public boolean globalKeyFocus=true;
   //
   public KnobAutomation automation;
   public LinkedList<KnobAutomation.Point> selectedPoints=new LinkedList<>();
   public LinkedList<KnobAutomation.Point> copyPoints=new LinkedList<>();
   KnobAutomation.Point clickPoint;
   public Runnable onAutomationChanged=() -> {
+  };
+  public ExtendedRenderer optional=(g) -> {
   };
   double clickTime=0;
   double clickValue=0;
@@ -199,22 +203,25 @@ public class WavEditor extends Element {
     slider.setLength((float)((pos.right - pos.left) * scale), pos.right - pos.left);
     slider.setOffset((float)((pos.right - pos.left) * scale), offsetX);
   }
+  public void autoscroll() {
+    //update offset
+    offsetX=offsetX + (float)timeToPos(player.getPosition()) - (pos.right - pos.left) / 2;
+    if (offsetX > (pos.right - pos.left) * (scale - 1)) {
+      offsetX=(float)((pos.right - pos.left) * (scale - 1));
+    }
+    if (offsetX < 0) {
+      offsetX=0;
+    }
+    setSlider();
+    waveformInvalid=true;
+    automationInvalid=true;
+  }
   @Override
   public void render(PGraphics g) {
     //draw background
     super.render(g);
     if (autoscroll && sample != null && !slider.isPressedL() && !player.isPaused()) {
-      //update offset
-      offsetX=offsetX + (float)timeToPos(player.getPosition()) - (pos.right - pos.left) / 2;
-      if (offsetX > (pos.right - pos.left) * (scale - 1)) {
-        offsetX=(float)((pos.right - pos.left) * (scale - 1));
-      }
-      if (offsetX < 0) {
-        offsetX=0;
-      }
-      setSlider();
-      waveformInvalid=true;
-      automationInvalid=true;
+      autoscroll();
     }
     if (player != null) {
       //draw vertical grids(snap)
@@ -334,7 +341,7 @@ public class WavEditor extends Element {
           for (int a=start; a < end; a++) {
             KnobAutomation.Point p=automation.points.get(a);
             automationG.stroke(255, 100);
-            automationG.line((float)timeToPos(p.position), pos.top + 2, (float)timeToPos(p.position), pos.bottom - 2);
+            automationG.line((float)timeToPos(p.position), 2, (float)timeToPos(p.position), pos.bottom - pos.top + 2);
             automationG.stroke(255);
             automationG.line((float)timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), (float)timeToPos(beforePos), beforeValue);
             automationG.rect((float)timeToPos(p.position), (pos.bottom - pos.top) * automation.map(p.value), 10, 10);
@@ -372,7 +379,7 @@ public class WavEditor extends Element {
       //draw snap cursor
       if (snap) {
         g.stroke(20, 20, 20);
-        point=pos.left+(float)snap(KyUI.mouseGlobal.getLast().x-pos.left);
+        point=pos.left + (float)snap(KyUI.mouseGlobal.getLast().x - pos.left);
         if (isInRange(point, pos.left, pos.right)) {
           g.line(point, pos.top + 2, point, pos.bottom - 2);
         }
@@ -384,6 +391,7 @@ public class WavEditor extends Element {
         g.rect(KyUI.mouseClick.getLast().x, KyUI.mouseClick.getLast().y, KyUI.mouseGlobal.getLast().x, KyUI.mouseGlobal.getLast().y);
       }
     }
+    optional.render(g);
     g.noStroke();
   }
   public double timeToPos(double time) {
@@ -406,9 +414,9 @@ public class WavEditor extends Element {
   }
   @Override
   public void onLayout() {
-    KyUI.taskManager.addTask((o)->{
+    KyUI.taskManager.addTask((o) -> {
       setSlider();
-    },null);
+    }, null);
   }
   private void cutSelection(Button button) {//no add
     button.setPressListener((MouseEvent e, int index) -> {
@@ -668,7 +676,7 @@ public class WavEditor extends Element {
         boolean selected=false;
         if (pressedL) {
           //snap x
-          x=pos.left+(float)snap(x-pos.left);
+          x=pos.left + (float)snap(x - pos.left);
           //snap y
           y=(float)snapAutomationGrid(y);
           //if (automationMode) {
@@ -866,12 +874,14 @@ public class WavEditor extends Element {
   }
   @Override
   public void keyEvent(KeyEvent e) {
-    if (e.getAction() == KeyEvent.PRESS) {
-      if (e.getKey() == PApplet.CODED) {
-        if (e.getKeyCode() == PApplet.LEFT) {
-          left(1);
-        } else if (e.getKeyCode() == PApplet.RIGHT) {
-          right(1);
+    if (globalKeyFocus || pos.contains(KyUI.mouseGlobal.getLast().x, KyUI.mouseGlobal.getLast().y)) {
+      if (e.getAction() == KeyEvent.PRESS) {
+        if (e.getKey() == PApplet.CODED) {
+          if (e.getKeyCode() == PApplet.LEFT) {
+            left(1);
+          } else if (e.getKeyCode() == PApplet.RIGHT) {
+            right(1);
+          }
         }
       }
     }

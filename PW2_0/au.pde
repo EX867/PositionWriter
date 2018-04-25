@@ -198,16 +198,37 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
   TDCompW comp=new TDCompW(ac, tab.editor.sample.getNumChannels());
   AutoFaderW fader=new AutoFaderW(ac, tab.editor.sample.getNumChannels());
   wv_fxtabs.addTab("TDComp", new TDCompControl("wv_tdcomp").initialize(comp));
-  AutoFaderControl control=null;
+  final AutoFaderControl control;
   wv_fxtabs.addTab("Wavcut", control=new AutoFaderControl("wv_autofader").initialize(fader));
   wv_fxtabs.localLayout();
   control.setAsMirror(tab.editor);
+  control.view.onAutomationChanged=new Runnable() {//why two times??
+    public void run() {
+      tab.editor.automationInvalid=true;
+      tab.editor.invalidate();
+    }
+  };
+  control.view.snap=false;
+  tab.editor.onAutomationChanged=new Runnable() {
+    public void run() {
+      control.view.automationInvalid=true;
+      control.view.invalidate();
+    }
+  };
   AutoControlSamplePlayer sp=tab.editor.player;
   sp.addInputTo(ac.out);
-  sp.addUGenAndGetAutos(comp);
-  sp.addUGenAndGetAutos(fader);
+  List<KnobAutomation> autos;
+  autos=sp.addUGenAndGetAutos(fader);
+  for (KnobAutomation auto : autos) {
+    sp.addAuto(auto);
+  }
+  autos=sp.addUGenAndGetAutos(comp);
+  for (KnobAutomation auto : autos) {
+    sp.addAuto(auto);
+  }
   KyUI.taskManager.executeAll();
   wv_fxtabs.selectTab(1);
+  tab.editor.automation=fader.cuePoint;
 }
 void wav_setup() {
   ((TabLayout)KyUI.get("wv_filetabs")).tabSelectListener=new ItemSelectListener() {
@@ -220,10 +241,10 @@ void wav_setup() {
       wavTabs.get(index).close();
       wavTabs.remove(index);
       if (ksTabs.size()==0) {
-        //instead of adding new tab, just set current to null. it can be done because waveditor has no extra sharing state.
-        currentWav=null;
+        //instead of adding new tab, just set current to null. it can be done becauase waveditor has no extra sharing state.
+        selectWavTab(-1);
       }
-      ((TabLayout)KyUI.get("wv_filetabs")).onLayout();
+      KyUI.get("wv_filetabs").localLayout();
     }
   };
 }
@@ -239,6 +260,7 @@ static class WavTab {
   }
   void close() {
     editor.player.kill();
+    wvac.stop();
   }
 }
 void addWavTab(final String filename) {//no null filename!
@@ -254,6 +276,8 @@ void addWavTab(final String filename) {//no null filename!
       dv11.addChild(editor.getSlider());
       WavTab tab=new WavTab(editor);
       editor.setSample(sample);
+      tab.wvac.out.setGain((float)1/sample.getNumChannels());
+      editor.globalKeyFocus=false;
       wavTabs.add(tab);
       tabs.onLayout();
       tabs.onLayout();
@@ -276,6 +300,11 @@ void addWavFileTab(String filename) {
   /*WavTab tab=*/  addWavTab(filename);
 }
 void selectWavTab(int index) {
-  currentWav=wavTabs.get(index);
+  if (index<0||index>=wavTabs.size()) {
+    currentWav=null;
+    KyUI.get("wv_text").setEnabled(true);
+  } else {
+    currentWav=wavTabs.get(index);
+  }
   KyUI.get("wv_frame").invalidate();
 }

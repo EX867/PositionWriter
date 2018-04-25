@@ -10,6 +10,7 @@ import processing.event.MouseEvent;
 import beads.UGenW;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.function.Function;
 public class Knob extends Element {
   public int strokeWeight=6;
@@ -31,12 +32,14 @@ public class Knob extends Element {
   long lastClicked=0;
   boolean doubleClickReady=false;
   public boolean selected=false;
-  public Function<Double, Double> get=(Double d)->{return d;};
-  public Function<Double, Double> getInv=(Double d)->{
+  public Function<Double, Double> get=(Double d) -> {
+    return d;
+  };
+  public Function<Double, Double> getInv=(Double d) -> {
     return d;
   };
   public Runnable doubleClickListener;
-  public EventListener adjustListener;
+  public ArrayList<EventListener> adjustListener=new ArrayList<>();
   public EventListener selectListener;
   boolean logScale=false;
   boolean adjusted;
@@ -75,9 +78,10 @@ public class Knob extends Element {
     getInv=getInv_;
     set(min_, max_, center_, value_);
     param.attacher.accept(this);
-    adjustListener=(e) -> {
+    adjustListener.add((e) -> {
       ugen.changeParameter(param, get.apply(value).doubleValue());
-    };
+    });
+    ugen.changeParameter(param, get.apply(value).doubleValue());
     return this;
   }
   public Knob attach(AudioContext ac, UGenW ugen, UGenW.Parameter param, double min_, double max_, double center_, double value_, boolean logScale_) {
@@ -208,7 +212,9 @@ public class Knob extends Element {
     value=Math.min(max, Math.max(min, value_));
     adjusted=true;
     if (adjustListener != null) {
-      adjustListener.onEvent(this);
+      for (EventListener e : adjustListener) {
+        e.onEvent(this);
+      }
     }
   }
   public boolean hold() {

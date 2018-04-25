@@ -85,7 +85,7 @@ public class AutoControlSamplePlayer extends SamplePlayer {
   input -> ugenBefore[0] -> ugenBefore[1] -> ... -> this
   */
   public List<KnobAutomation> addUGenAndGetAutos(UGen u) {
-    return addUGenAndGetAutos(autos.size(), u);
+    return addUGenAndGetAutos(ugensBefore.size(), u);
   }
   public List<KnobAutomation> addUGenAndGetAutos(int index, UGen u) {//add ugen to before ugen list.
     if (index == 0) {

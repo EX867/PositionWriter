@@ -115,12 +115,12 @@ public class TDCompControl extends UGenViewer {
     comp=comp_;
     sideChain.value=false;
     AudioContext ac=comp.getContext();
-    knob[0].attach(ac, comp, comp.setThreshold, -60, 0, -6, -6, false);
+    knob[0].attach(ac, comp, comp.setThreshold, -60, 0, -6, 0, false);
     knob[1].attach(ac, comp, comp.setRatio, 1, 12, 2, 2, false);
     knob[2].attach(ac, comp, comp.setAttack, 0, 1000, 100, 100, false);
     knob[3].attach(ac, comp, comp.setRelease, 0, 1000, 300, 300, false);
     knob[4].attach(ac, comp, comp.setKnee, 0, 1, 0.1, 0.1, false);
-    knob[5].attach(ac, comp, comp.setOutputGain, 0, 10, 1, 1, false);
+    knob[5].attach(ac, comp, comp.setOutputGain, 0, 4, 1, 1, false);
     meter.attach(comp);
     wave.attach(comp);
     graph.attach(comp);

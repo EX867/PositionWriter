@@ -9,6 +9,7 @@ import pw2.element.*;
 //script updater and file downloader(and midi preset) frame
 //add rnd view
 //colors drag and drop in settings
+//PUT COMPRESSOR LABEL TEXT BELOW KNOB*******
 //
 //===ADD list - not now===//
 //
@@ -193,6 +194,7 @@ void main_setup() {
   ((TabLayout)KyUI.get("led_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("led_frame"));
   ((TabLayout)KyUI.get("wv_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("wv_frame"));
   ((TabLayout)KyUI.get("wv_list")).selectTab(1);
+  KyUI.get("wv_text").setEnabled(true);
   KyUI.get("led_consolelayout").setEnabled(false);
   KyUI.get("led_findlr").setEnabled(false);
   ui_attachSlider((ConsoleEdit)KyUI.get("led_console"));

@@ -51,6 +51,7 @@ public class KnobAutomation extends Glide {
   public Consumer<Point> postCounter;
   public double preCount=0;
   public double postCount=0;
+  public int bufferIndex=0;
   public KnobAutomation(AudioContext ac, float currentValue) {
     super(ac, currentValue, GLIDE_TIME);
     points=new Multiset<Point>();
@@ -210,6 +211,7 @@ public class KnobAutomation extends Glide {
         loopStartEnvelope.update();
         loopEndEnvelope.update();
         for (int i=0; i < bufferSize; i++) {
+          bufferIndex=i;
           bufOut[0][i]=(float)getValueIn();//get position's frame
           calculateNextPosition(i);//check loop
         }

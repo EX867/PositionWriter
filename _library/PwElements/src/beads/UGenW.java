@@ -58,11 +58,12 @@ public abstract class UGenW extends UGen {//solve synchronization error with tas
       }
     } else {
       UGen out=updateUGens();
-      for (int c=0; c < out.outs; c++) {
-        //for (int a=0; a < bufferSize; a++) {
-        bufOut[c]=out.bufOut[c];
-        //}
-      }
+      bufOut=out.bufOut;
+//      for (int c=0; c < out.outs; c++) {//this is error code. why????
+//        //for (int a=0; a < bufferSize; a++) {
+//        bufOut[c]=out.bufOut[c];
+//        //}
+//      }
     }
     for (int a=0; a < listener.size(); a++) {
       UGenListener l=listener.get(a);
@@ -81,8 +82,8 @@ public abstract class UGenW extends UGen {//solve synchronization error with tas
   }
   public void bypass(boolean v) {
     tm.addTask((o) -> {
-      bypass=v;
-    }, null);
+      bypass=(boolean)o;
+    }, v);
   }
   public abstract List<KnobAutomation> getAutomations();
   public void removeAutomationsFrom(List<KnobAutomation> list) {
