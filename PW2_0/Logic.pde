@@ -1,4 +1,6 @@
 //===Global vars===// - whole program will depends on these vars! especially command processing...
+boolean optimize=true;//TEST
+//
 UnipackInfo info;//buttonX, chain and global things...
 CommandEdit editor;//led editor
 KsSession ks;//ks editor

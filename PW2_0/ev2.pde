@@ -254,6 +254,18 @@ void setup_ev2() {
     }
   }
   ));
+  KyUI.addShortcut(new KyUI.Shortcut("exportAll", true, true, true, 65535, 83, new EventListener() {//Ctrl+Alt+Shift+S
+    //TEST alert
+    public void onEvent(Element e) {
+      println("export all");
+      if (mainTabs_selected==LED_EDITOR) {
+        for (LedTab tab : ledTabs) {
+          exportLed(tab.led.script);
+        }
+      }
+    }
+  }
+  ));
   //and...finally drag and drop!
   KyUI.addDragAndDrop(KyUI.get("led_layout"), new FileDropEventListener() {
     public void onEvent(DropEvent de) {

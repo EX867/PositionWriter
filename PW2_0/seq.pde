@@ -174,6 +174,9 @@ class LightThread implements Runnable {
               notEnd=notEnd&&led.script.displayTime<led.loopEnd;//led.script.getTimeByFrame(led.script.displayFrame+1)
             }
             if (notEnd) {//not end
+              if (mainTabs_selected==LED_EDITOR&&led==currentLed.led) {
+                updateFs(currentLedEditor.displayTime);//led.script.displayTime
+              }
               led.script.displayTime=led.script.getTimeByFrame(led.script.displayFrame+1);
               if (led.loopStart<led.loopEnd) {
                 led.script.displayTime=Math.min(led.script.displayTime, led.loopEnd);
@@ -181,9 +184,6 @@ class LightThread implements Runnable {
               int frame=led.script.getFrameByTime(led.script.displayTime);
               led.script.displayFrame=frame;
               //led.script.displayFrame=min(led.script.displayFrame+1, frame);
-              if (mainTabs_selected==LED_EDITOR&&led==currentLed.led) {
-                updateFs(currentLedEditor.displayTime);//led.script.displayTime
-              }
               //println(" -> continue");
               queue.remove(led);
               queue.add(led);

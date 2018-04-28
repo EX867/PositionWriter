@@ -447,6 +447,54 @@ String ToUnipadLed(LedScript script) {
   }
   return builder.toString();
 }
+String ToUnipadLedOptimize(LedScript script) {
+  StringBuilder builder=new StringBuilder();
+  TreeMap<Integer, Integer> htmlToVel=new TreeMap<Integer, Integer>();
+  for (int a=0; a<color_lp.length; a++) {
+    htmlToVel.put(color_lp[a], a);
+  }
+  for (int c=0; c<script.LED.size(); c++) {
+    if (c!=0) {//test indifferernce
+      for (int b=0; b<script.info.buttonY; b++) {
+        for (int a=0; a<script.info.buttonX; a++) {
+          if (script.LED.get(c)[a][b]!=script.LED.get(c-1)[a][b]) {
+            if (script.LED.get(c)[a][b]==COLOR_RND) {
+              continue;
+            }
+            Integer vel=htmlToVel.get(script.LED.get(c)[a][b]);
+            if (script.LED.get(c)[a][b]==COLOR_OFF||(vel!=null&&((int)vel)==0)) {
+              builder.append("f "+(b+1)+" "+(a+1)).append('\n');
+            } else if (vel==null) {
+              builder.append("o "+(b+1)+" "+(a+1)+" "+hex(script.LED.get(c)[a][b], 6).toUpperCase()).append('\n');
+            } else {                
+              builder.append("o "+(b+1)+" "+(a+1)+" a "+vel).append('\n');
+            }
+          }
+        }
+      }
+    } else {
+      for (int b=0; b<script.info.buttonY; b++) {
+        for (int a=0; a<script.info.buttonX; a++) {
+          if (script.LED.get(c)[a][b]==COLOR_RND) {
+            continue;
+          }
+          if (script.LED.get(c)[a][b]!=COLOR_OFF) {
+            Integer vel=htmlToVel.get(script.LED.get(c)[a][b]);
+            if (vel==null) {
+              builder.append("o "+(b+1)+" "+(a+1)+" "+hex(script.LED.get(c)[a][b], 6).toUpperCase()).append('\n');
+            } else if (((int)vel)!=0) {
+              builder.append("o "+(b+1)+" "+(a+1)+" a "+vel).append('\n');
+            }
+          }
+        }
+      }
+    }
+    if (c!=script.LED.size()-1) {
+      builder.append("d "+script.getDelayValue(script.DelayPoint.get(c+1))).append('\n');//includes multi line
+    }
+  }
+  return builder.toString();
+}
 String PngToLed(PImage image) {
   image.loadPixels();
   StringBuilder str=new StringBuilder();
@@ -563,7 +611,7 @@ String MidiToLed(String path) {//default changed to 10x10...
         double val=(set.first().time-m.time)*60000/(ppq*bpm);//milliseconds
         //println(val);
         IntVector2 fr=toFraction((double)(set.first().time-m.time)/(4*ppq), 1024);
-        //println((double)(set.first().time-m.time)/(4*ppq));
+        //println((double)(set.first().time-m.time)/(4*ppq)+" "+set.first().time+" "+m.time);
         cmds.add(new DelayCommand(abs(fr.x), abs(fr.y)));
       }
     }
@@ -625,7 +673,6 @@ public static IntVector2 toFraction(double d, int factor) {//https://stackoverfl
     d = -d;
   }
   long l = (long) d;
-  if (l != 0) sb.append(l);
   d -= l;
   double error = Math.abs(d);
   int bestDenominator = 1;
@@ -636,7 +683,11 @@ public static IntVector2 toFraction(double d, int factor) {//https://stackoverfl
       bestDenominator = i;
     }
   }
-  return new IntVector2((int)Math.round(d * bestDenominator), bestDenominator);
+  IntVector2 ret=new IntVector2((int)(l+Math.round(d * bestDenominator)), bestDenominator);
+  //if(ret.x==0&&d>0){//for near-0 value...
+  //  return new IntVector2(1,factor);
+  //}
+  return ret;
 }
 int getTempo(MetaMessage event) {
   byte[] message = event.getData();

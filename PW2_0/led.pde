@@ -297,6 +297,9 @@ void saveLed(final LedScript led) {
   if (led.changed) {
     final String filename=led.file.getAbsolutePath();
     final String ext=getFileExtension(filename);
+    if (ext.equals("png")||ext.equals("gif")||ext.equals("mid")) {//you cant save these. export it then save it.
+      return;
+    }
     saveFileTo(filename, new Runnable() {
       public void run() {
         if (ext.equals("png")) {
@@ -304,7 +307,7 @@ void saveLed(final LedScript led) {
         } else if (ext.equals("gif")) {
           LedToGif(filename, led);
         } else if (ext.equals("mid")) {
-          LedToMidi(filename, led);
+          LedToMidi(filename, led);//TEST
         } else {
           writeFile(filename, led.toString());
         }
@@ -315,11 +318,21 @@ void saveLed(final LedScript led) {
     led.lastSaveTime=new File(filename).lastModified();
   }
 }
-void exportLed(final LedScript led) {
-  final String filename=getNotDuplicatedFilename(joinPath(joinPath(path_global, path_led), getFileName(led.file.getAbsolutePath())));
+void exportLed(final LedScript led) {//save as led for now. FIX to file name based file type save
+  String filename_=getNotDuplicatedFilename(joinPath(joinPath(path_global, path_led), getFileName(led.file.getAbsolutePath())));
+  final String filename;
+  if (filename_.endsWith(".mid")||filename_.endsWith(".png")||filename_.endsWith(".gif")) {
+    filename=filename_.substring(0, filename_.length()-3)+"led";
+  } else {
+    filename=filename_;
+  }
   saveFileTo(filename, new Runnable() {
     public void run() {
-      writeFile(filename, ToUnipadLed(led));
+      if (optimize) {
+        writeFile(filename, ToUnipadLedOptimize(led));
+      } else {
+        writeFile(filename, ToUnipadLed(led));
+      }
     }
   }
   );
