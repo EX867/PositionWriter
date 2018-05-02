@@ -2,7 +2,11 @@ import java.nio.channels.FileChannel;
 import java.util.*;
 import java.io.*;
 void setup() {
-  convert("C:/Users/user/Documents/PositionWriter/led/ll", "C:/Users/user/Documents/PositionWriter/led/llcc", false);
+  String input=readFile("path.txt").replace("\\", "/");
+  if (input.endsWith("/")) {
+    input=input.substring(0, input.length()-1);
+  }
+  convert(input, input+"/converted", false);
   exit();
 }
 //d<element id="122" type="TYPE_TEXTBOX" x="400" y="50" w="380" h="35" description="" title="input path (folder)" text="" hint="C:/Users/user/Documents..." numberonly="false" textsize="20">MC_INPUT</element>
@@ -658,4 +662,26 @@ boolean copyFile(String source, String target) {
     }
   }
   return true;
+}
+String readFile(String path) {
+  BufferedReader read=createReader(path);
+  StringBuilder builder = new StringBuilder();
+  try {
+    String line=read.readLine();
+    while (line!=null) {
+      builder.append("\n").append(line);
+      line=read.readLine();
+    }
+    builder.delete(0, 1);
+  }
+  catch(Exception e) {
+  }
+  try {
+    if (read!=null) {
+      read.close();
+    }
+  }
+  catch(Exception e) {
+  }
+  return builder.toString();
 }

@@ -117,7 +117,9 @@ void main_draw() {
       }
     }
   }
-  KyUI.render(g); 
+  if (g!=null) {
+    KyUI.render(g);
+  }
   pushMatrix(); 
   strokeWeight(1);
   textAlign(LEFT, TOP);
@@ -135,7 +137,7 @@ void main_draw() {
   autoSave();
 }
 void main_setup() {
-  surface.setResizable(true);
+  //surface.setResizable(true);
   //debug switches
   //Analyzer.debug=true;
   //
@@ -144,7 +146,7 @@ void main_setup() {
   textAlign(CENTER, CENTER);
   strokeCap(PROJECT);//set KyUI?
   imageMode(CENTER);
-  textFont(createFont("fonts/SourceCodePro-Bold.ttf", 30));
+  //textFont(createFont("fonts/SourceCodePro-Bold.ttf", 30));
   noStroke();
   frameRate(50);
   vs_detectProcessing();
@@ -156,6 +158,7 @@ void main_setup() {
   layout_led_frame_xml=loadXML("layout_led_frame.xml");
   layout_wv_frame_xml=loadXML("layout_wv_frame.xml");
   KyUI.start(this, 30, true);//mono is secure...only multi when needs high performance.
+  textFont(KyUI.fontMain);
   ElementLoader.loadOnStart();
   ElementLoader.loadExternal(joinPath(getCodePath(), "PwElements.jar"));
   ElementLoader.loadExternal(joinPath(getCodePath(), "CommandScript.jar"));
@@ -303,12 +306,12 @@ void main_setup() {
     registerFileType();
     new File(joinPath(dataPath, "Initial")).delete();
   }
-  new Thread(new Runnable() {
-    public void run() {
-      vs_checkVersion();
-    }
-  }
-  ).start();
+  //new Thread(new Runnable() {
+  //  public void run() {
+  //    vs_checkVersion();
+  //  }
+  //}
+  //).start();
   KyUI.taskManager.executeAll();
   KyUI.getRoot().invalidate();//invalidate all!
   //add shortcuts

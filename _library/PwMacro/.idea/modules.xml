@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/PwMacro.iml" filepath="$PROJECT_DIR$/PwMacro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/processing/processing.iml" filepath="$PROJECT_DIR$/processing/processing.iml" />
+    </modules>
+  </component>
+</project>

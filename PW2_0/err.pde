@@ -13,6 +13,14 @@ void displayError(Exception e) {
   logs.add("Error occurred!");
   logs.add(e.toString());
   //#ADD add error layer
+  if (!DEVELOPER_BUILD) {
+    PrintWriter write=createWriter("err.txt");
+    for (String s : logs) {
+      write.write(s+"\n");
+    }
+    write.flush();
+    write.close();
+  }
 }
 void log(String tag, String content) {
   println("["+tag+"] : "+content);

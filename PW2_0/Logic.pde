@@ -110,6 +110,9 @@ void load_settings() {
     ((Button)KyUI.get("led_printe")).text=userMacro2.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
     ((ToggleButton)KyUI.get("set_autosave")).value=false;
     return;
+  } else {//also!
+    ((Button)KyUI.get("led_printq")).text=userMacro1.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
+    ((Button)KyUI.get("led_printe")).text=userMacro2.replace("\\", "\\\\").replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
   }
   if (!new File(path).isFile()) {
     return;
