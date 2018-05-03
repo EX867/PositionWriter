@@ -2,16 +2,91 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8e9be9d5-d74c-49b3-8b4f-ea4822ab3658" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/build.bat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/Primitives.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../../PW2_0/code/ecj-4.6.2.jar" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/bin/production/processing/processing/mode/java/preproc/JavaLexer.smap" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/bin/production/processing/processing/mode/java/preproc/JavaRecognizer.smap" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/bin/production/processing/processing/mode/java/preproc/PdeLexer.smap" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/bin/production/processing/processing/mode/java/preproc/PdeRecognizer.smap" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/bin/production/processing/processing/mode/java/preproc/expandedpde.g" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/bin/production/processing/processing/mode/java/preproc/java15.g" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/bin/production/processing/processing/mode/java/preproc/pde.g" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/AutoFormat.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/Commander.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/Compiler.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/Debugger.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/JavaBuild.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/JavaEditor.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/JavaInputHandler.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/JavaMode.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/JavaToolbar.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/VariableInspector.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/debug/ArrayFieldNode.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/debug/ClassLoadListener.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/debug/FieldNode.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/debug/LineBreakpoint.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/debug/LineHighlight.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/debug/LineID.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/debug/LocalVariableNode.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/debug/VariableNode.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/ASTUtils.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/CompletionCandidate.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/CompletionGenerator.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/CompletionPanel.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/ErrorMessageSimplifier.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/ImportStatement.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/JavaProblem.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/JavaTextArea.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/JavaTextAreaPainter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/PDEX.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/PreprocessedSketch.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/PreprocessingService.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/SourceUtils.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/pdex/TextTransform.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/JavaLexer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/JavaLexer.smap" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/JavaRecognizer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/JavaRecognizer.smap" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/JavaTokenTypes.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/PdeEmitter.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/PdeLexer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/PdeLexer.smap" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/PdePartialTokenTypes.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/PdePreprocessor.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/PdeRecognizer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/PdeRecognizer.smap" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/PdeTokenTypes.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/PreprocessorResult.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/SurfaceInfo.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/TokenUtil.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/expandedpde.g" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/java15.g" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/preproc/pde.g" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/runner/MessageConsumer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/runner/MessageSiphon.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/runner/MessageStream.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/runner/Runner.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/tweak/ColorControlBox.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/tweak/ColorMode.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/tweak/ColorScheme.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/tweak/ColorSelector.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/tweak/HProgressBar.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/tweak/Handle.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/tweak/Settings.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/tweak/SketchParser.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing/mode/java/tweak/TweakClient.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar" afterPath="$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/code/KyUI.jar" afterPath="$PROJECT_DIR$/../../PW2_0/code/KyUI.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/Logic.pde" afterPath="$PROJECT_DIR$/../../PW2_0/Logic.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../.gitignore" afterPath="$PROJECT_DIR$/../../.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/PW2_0.pde" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/PW2_0_old.pde" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/PW2_0_old.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/err.pde" afterPath="$PROJECT_DIR$/../../PW2_0/err.pde" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwMacro/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../PwMacro/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwMacro/PwMacro.iml" afterPath="$PROJECT_DIR$/../PwMacro/PwMacro.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwMacro/bin/production/processing/processing.iml" afterPath="$PROJECT_DIR$/../PwMacro/bin/production/processing/processing.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwMacro/processing/processing.iml" afterPath="$PROJECT_DIR$/../PwMacro/processing/processing.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwMacro.java" afterPath="$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwMacro.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwMacroPreproc.java" afterPath="$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwMacroPreproc.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwMacroRun.java" afterPath="$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwMacroRun.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -22,12 +97,22 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="Test2.java" pinned="false" current-in-tab="true">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
+      <file leaf-file-name="Test2.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test2.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="18" column="45" lean-forward="true" selection-start-line="18" selection-start-column="45" selection-end-line="18" selection-end-column="45" />
+            <state relative-caret-position="252">
+              <caret line="25" column="10" lean-forward="false" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CommandEdit.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="98" column="59" lean-forward="false" selection-start-line="98" selection-start-column="59" selection-end-line="98" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -137,12 +222,12 @@
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java" />
-        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/Primitives.java" />
         <option value="$PROJECT_DIR$/src/Primitives.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/Difference.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/EditRecorder.java" />
+        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
       </list>
     </option>
   </component>
@@ -249,7 +334,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -290,6 +374,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -532,14 +617,18 @@
       <workItem from="1522339164903" duration="103000" />
       <workItem from="1524202605785" duration="199000" />
       <workItem from="1525233498433" duration="868000" />
+      <workItem from="1525344641413" duration="200000" />
+      <workItem from="1525344873887" duration="37000" />
+      <workItem from="1525345120534" duration="76000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="153534000" />
+    <option name="totallyTimeSpent" value="153847000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -547,9 +636,9 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2593819" sideWeight="0.78489584" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32915717" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32915717" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16863587" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17293233" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24973147" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -591,8 +680,56 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="18" column="45" lean-forward="true" selection-start-line="18" selection-start-column="45" selection-end-line="18" selection-end-column="45" />
+        <state relative-caret-position="252">
+          <caret line="25" column="10" lean-forward="false" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="15" column="8" lean-forward="false" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test2.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="25" column="10" lean-forward="false" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="39" column="77" lean-forward="true" selection-start-line="39" selection-start-column="77" selection-end-line="39" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test2.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test2.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="25" column="10" lean-forward="false" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="98" column="59" lean-forward="false" selection-start-line="98" selection-start-column="59" selection-end-line="98" selection-end-column="59" />
           <folding />
         </state>
       </provider>

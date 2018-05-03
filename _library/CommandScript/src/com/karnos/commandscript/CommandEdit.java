@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class CommandEdit extends TextEdit {
   private Rect cacheRect=new Rect();
   public CommandScript script;//this == content;
-  private HashMap<String, Integer> keywords;
+  public HashMap<String, Integer> keywords;
   @Attribute(type=Attribute.COLOR)
   public int errorColor;
   @Attribute(type=Attribute.COLOR)
