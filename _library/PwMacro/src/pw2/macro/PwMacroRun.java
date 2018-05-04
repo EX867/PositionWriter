@@ -18,6 +18,7 @@ import processing_mode_java.preproc.PdePreprocessor;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -26,18 +27,15 @@ import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.*;
 public class PwMacroRun {
-  AutoFormat formatter;
+  static AutoFormat formatter;
   static ASTParser parser=ASTParser.newParser(AST.JLS8);
-  IProgressMonitor a;
-  public PwMacroRun() {
-    formatter=new AutoFormat();
-  }
-  public String autoFormat(String source) {
+  public static String autoFormat(String source) {
     return formatter.format(source);
   }
   public static void run(Class<? extends PwMacro> extendClass, String macroName, String source,//generation
-                         Object param, PrintWriter logger,//runtime
-                         String buildPath/*, String libraryPath*/) throws Exception {//for now, log and err is same.
+                         Object param, PrintStream out,//runtime
+                         String buildPath, String[] classPaths) throws Exception {//for now, log and err is same.
+    out.println("\n\npreparing run...");
     //
     // 0. preprocess it.
     //
@@ -46,16 +44,11 @@ public class PwMacroRun {
     //
     // get classpaths from code folder
     //
-    ArrayList<String> classPathArray_=new ArrayList<>();
+    //ArrayList<String> classPathArray_=new ArrayList<>();
     //classPathArray_.add(joinPath(buildPath, "bin"));
-    classPathArray_.add(new File("bin\\production\\PwMacro").getAbsolutePath());//pass positionwriter classpath.
-    //
-    //    File[] codeFolder=new File(libraryPath).listFiles(); //want libraries? no no for now
-    //    for(File f : codeFolder){
-    //      classPathArray_.add(f.getAbsolutePath());
-    //    }
-    //
-    String[] classPathArray=classPathArray_.toArray(new String[]{});
+    //classPathArray_.add(new File("C:\\Users\\user\\Documents\\[Projects]\\PositionWriter\\PW2_0\\code").getAbsolutePath());//pass positionwriter classpath.
+    //String[] classPathArray=classPathArray_.toArray(new String[]{});
+    String[] classPathArray=classPaths;
     //
     // build ast
     //
@@ -66,6 +59,7 @@ public class PwMacroRun {
     // do advanced transforms which operate on AST and get compilable source
     String compilableStage=new TextTransform(source).addAll(SourceUtils.preprocessAST(parsableCU)).apply();
     char[] compilableStageChars=compilableStage.toCharArray();
+    System.out.println("ast processing applied.");
     //
     // Create compilable AST to get syntax problems
     CompilationUnit compilableCU=makeAST(parser, compilableStageChars, COMPILER_OPTIONS);
@@ -77,25 +71,35 @@ public class PwMacroRun {
     // 'missing type' errors when there are syntax problems
     //
     if (hasSyntaxErrors) {//error1
+      Arrays.asList(compilableCU.getProblems()).stream().forEach((IProblem problem) -> {
+        out.println("ecj>" + problem.getMessage());
+      });
+      out.println("syntax errors exist.");
+      return;
     }
     //
-    CompilationUnit bindingsCU=makeASTWithBindings(parser, compilableStageChars, COMPILER_OPTIONS, macroName, classPathArray);
+    // infinite loop???
     //
+    //    System.out.println("search for binding errors...");
+    //    CompilationUnit bindingsCU=makeASTWithBindings(parser, compilableStageChars, COMPILER_OPTIONS, macroName, classPathArray);
+    //
+    //    System.out.println("next??");
     // Get compilation problems
-    boolean hasCompilationErrors=Arrays.asList(bindingsCU.getProblems()).stream().anyMatch(IProblem::isError);
+    //    boolean hasCompilationErrors=Arrays.asList(bindingsCU.getProblems()).stream().anyMatch(IProblem::isError);
     //
-    //    bindingsProblems.stream().forEach((IProblem problem) -> {
-    //      logger.println("Compile problem : "+problem.getMessage());
-    //    });
-    //
-    if (hasCompilationErrors) {//error2
-    }
+    //    if (hasCompilationErrors) {//error2
+    //      Arrays.asList(bindingsCU.getProblems()).stream().forEach((IProblem problem) -> {
+    //        out.println("ecj>" + problem.getMessage());
+    //      });
+    //      out.println("binding errors exist.");
+    //      return;
+    //    }
     //
     // Update builder
-    boolean hasError=hasSyntaxErrors || hasCompilationErrors;//merge
     String javaCode=compilableStage;
-    CompilationUnit compilationUnit=bindingsCU;
+    //CompilationUnit compilationUnit=bindingsCU;
     writeFile(joinPath(buildPath, "src/" + macroName + ".java"), javaCode);
+    out.println("created java file");
     //
     //1. compile it to one jar (with library references).
     //
@@ -122,15 +126,22 @@ public class PwMacroRun {
     String[] command=(String[])command_.toArray(new String[]{});
     //processing.core.PApplet.println(command);
     //2. load it. and also load dependencies.
-    boolean success=Main.compile(command, logger, logger, null);
-    File classPathFile=new File("C:\\Users\\user\\Documents\\[Projects]\\PositionWriter\\_library\\PwMacro\\bin\\bin");
+    boolean success=Main.compile(command, new PrintWriter(out), new PrintWriter(out), null);
+    if (!success) {
+      out.println("PwMacroRun - compile failed.");
+      return;
+    } else {
+      out.println("PwMacroRun - successfully compiled.");
+    }
+    File classPathFile=new File(joinPath(buildPath, "bin"));
     if (!classPathFile.isDirectory()) {
-      System.err.println("PwMacroRun - failed to locate build path (bin folder)");
+      out.println("PwMacroRun - failed to locate build path (bin folder)");
       return;
     }
     URLClassLoader loader=URLClassLoader.newInstance(new URL[]{classPathFile.toURI().toURL()}, PwMacro.class.getClassLoader());
     //load code folder jars to new classloader here??
     //4. run initialize
+    out.println("loading class...");
     try {
       Class<? extends PwMacro> c=(Class)Class.forName(macroName, true, loader);//must no ClassCastException here!!
       PwMacro macro=c.getConstructor().newInstance();
@@ -138,6 +149,7 @@ public class PwMacroRun {
       macro.initialize(param);
       macro.setup();
       loader.close();///do this on x button (or macro end) in positionwriter.
+      out.println("macro finished.");
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       System.err.println("generated macro class not found.");

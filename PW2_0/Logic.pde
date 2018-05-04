@@ -36,10 +36,10 @@ String userMacro2="\ndelay 30";
 PImage[] tips;
 int tipsIndex=0;
 //===Current editors===//
-LedScript currentLedEditor;//equivalent to currentLed.led.script
-LedTab currentLed;
-KsSession currentKs;
-WavTab currentWav;//warning. this can be null!
+public LedScript currentLedEditor;//equivalent to currentLed.led.script
+public LedTab currentLed;
+public KsSession currentKs;
+public WavTab currentWav;//warning. this can be null!
 //===Paths===//
 String path_global=joinPath(getDocuments(), "PositionWriter");
 String path_projects="projects";

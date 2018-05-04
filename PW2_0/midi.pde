@@ -2,6 +2,7 @@ import com.karnos.midimap.MidiCommand;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 import com.karnos.midimap.InputBehavior;
+
 void midi_setup() {
   MidiCommand.setBase(this);
   MidiCommand.addInput("press", new PadPressCommand());

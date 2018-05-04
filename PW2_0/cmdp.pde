@@ -9,31 +9,31 @@ public LedScript loadApScript(String name_, String text) {
   ledScript.insert(0, 0, text);
   return ledScript;
 }
-class LedScript extends CommandScript {
-  CommandEdit editor;//linked editor
+public class LedScript extends CommandScript {
+  public CommandEdit editor;//linked editor
   //file management
-  File file;
-  boolean changed=false;
+  public File file;
+  public boolean changed=false;
   long lastSaveTime;
-  LedTab tab;//if this is led editor, linke to this! then change name will work.
+  public LedTab tab;//if this is led editor, linke to this! then change name will work.
   private boolean tabchanged=false;
   //
-  UnipackInfo info=new UnipackInfo(((TextBox)KyUI.get("set_dbuttony")).valueI, ((TextBox)KyUI.get("set_dbuttonx")).valueI);
-  ArrayList<color[][]> LED;
-  ArrayList<int[][]> velLED;
-  Multiset<Integer> DelayPoint;
-  Multiset<Integer> BpmPoint;
-  Multiset<Integer> ChainPoint;
-  Multiset<Long> delayValue=new Multiset<Long>();//updated frequently. this delayValue array contains accumulated delay value from frame 0.
-  boolean delayValueInvalidated=true;
-  LineCommandType cmdset;
-  LedProcessor processor;
-  PadButton displayPad;
-  boolean bypass=false;//used when speed is required.
-  boolean ignoreUnitorCmd=false;
-  int displayFrame=0;
-  long displayTime=0;
-  long FrameSliderBackup;//backup time.used in startfromcursor and autostop.
+  public UnipackInfo info=new UnipackInfo(((TextBox)KyUI.get("set_dbuttony")).valueI, ((TextBox)KyUI.get("set_dbuttonx")).valueI);
+  public ArrayList<color[][]> LED;
+  public ArrayList<int[][]> velLED;
+  public Multiset<Integer> DelayPoint;
+  public Multiset<Integer> BpmPoint;
+  public Multiset<Integer> ChainPoint;
+  public Multiset<Long> delayValue=new Multiset<Long>();//updated frequently. this delayValue array contains accumulated delay value from frame 0.
+  public boolean delayValueInvalidated=true;
+  public LineCommandType cmdset;
+  public LedProcessor processor;
+  public PadButton displayPad;
+  public boolean bypass=false;//used when speed is required.
+  public boolean ignoreUnitorCmd=false;
+  public int displayFrame=0;
+  public long displayTime=0;
+  public long FrameSliderBackup;//backup time.used in startfromcursor and autostop.
   public LedScript(String name_, CommandEdit editor_, PadButton displayPad_) {//editor,displayPad is nullable.
     super(getFileName(name_), null);
     file=new File(name_);

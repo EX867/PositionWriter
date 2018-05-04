@@ -4,7 +4,7 @@ import com.karnos.commandscript.Multiset;
 UnipackCommands ledCommands;
 UnipackCommands ksCommands;
 UnipackCommands apCommands;//#ADD
-class UnipackCommands extends LineCommandType {
+public class UnipackCommands extends LineCommandType {
   public Command getCommand(Analyzer analyzer, int line, String location, String text, String commandName, ArrayList<String> params) {
     //add additional errors to analyzer
     //println("[line "+line+", result : "+commandName+"]");

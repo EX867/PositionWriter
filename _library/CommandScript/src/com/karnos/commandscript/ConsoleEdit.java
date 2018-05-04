@@ -94,11 +94,18 @@ public class ConsoleEdit extends TextEdit {
       super.keyTyped(e);
     }
   }
+  public void insert(String text){
+    int line_=content.lines()-1;
+    int point_=content.getLine(content.lines()-1).length();
+    content.insert(line_, point_, text);
+    moveTo(line_);
+    updateSlider();
+  }
   public void insert(int point_, int line_, String text) {
     if (point_ < header.length() || line_ != editingLine) {
       return;
     }
-    content.insert(point_, line_, text);
+    content.insert(line_, point_, text);
     moveTo(line_);
     updateSlider();
   }

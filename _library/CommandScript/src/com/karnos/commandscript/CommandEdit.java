@@ -20,6 +20,8 @@ public class CommandEdit extends TextEdit {
   public int warningColor;
   @Attribute(type=Attribute.COLOR)
   public int commentColor;
+  @Attribute
+  public boolean commentEnabled=true;
   protected ArrayList<MarkRange> markRanges;
   public static class MarkRange {// slider marker is startLine.
     public int color;
@@ -122,16 +124,20 @@ public class CommandEdit extends TextEdit {
     } else {
       for (int a=Math.max(0, start - 1); a < content.lines() && a < end + 1; a++) {
         String line=content.getLine(a);
-        int index=line.indexOf("//");
-        boolean comment=true;
-        if (index == -1) {
-          comment=false;
-          index=line.length();
-        }
-        drawLine(g, line.substring(0, index), a);
-        if (comment) {
-          g.fill(commentColor);
-          g.text(line.substring(index, line.length()), g.textWidth(line.substring(0, index)) + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
+        if (commentEnabled) {
+          int index=line.indexOf("//");
+          boolean comment=true;
+          if (index == -1) {
+            comment=false;
+            index=line.length();
+          }
+          drawLine(g, line.substring(0, index), a);
+          if (comment) {
+            g.fill(commentColor);
+            g.text(line.substring(index, line.length()), g.textWidth(line.substring(0, index)) + pos.left + lineNumSize + padding, pos.top + (a + 0.5F) * textSize - offsetY + padding);
+          }
+        } else {
+          drawLine(g, line, a);
         }
       }
     }

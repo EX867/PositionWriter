@@ -4,16 +4,15 @@ public class PwMacroPreproc {
   //process string or ast
   //
   //in pw2, call addHeaderToSource(PW2_0.Macro.class,"testMacro",source)
-  public static String addHeaderToSource(Class<? extends PwMacro> extendClass, String macroName, String source,PdePreprocessor.Mode mode) {
-    if(mode== PdePreprocessor.Mode.STATIC) {
-      return "import " + extendClass.getCanonicalName() + ";" +
-          "public class " + macroName + " extends " + extendClass.getCanonicalName() + " {" +
-          "  void setup(){"+
+  public static String addHeaderToSource(Class<? extends PwMacro> extendClass, String macroName, String source, PdePreprocessor.Mode mode) {
+    //importClass is seperated because importing no package class fails.
+    if (mode == PdePreprocessor.Mode.STATIC) {
+      return "public class " + macroName + " extends " + extendClass.getCanonicalName() + " {" +
+          "  void setup(){" +
           source +
           "}}";
-    }else{//including java and active
-      return "import " + extendClass.getCanonicalName() + ";" +
-          "public class " + macroName + " extends " + extendClass.getCanonicalName() + " {" +
+    } else {//including java and active
+      return "public class " + macroName + " extends " + extendClass.getCanonicalName() + " {" +
           source +
           "}";
     }

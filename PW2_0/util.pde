@@ -113,6 +113,26 @@ void imageChangeColor(PImage image, int c) {
   }
 }
 //===Directory utils===//
+String getClassPath() {
+  //System.getProperty("java.class.path");//this will give you real file names...
+  if (DEVELOPER_BUILD) {
+    ClassLoader loader = this.getClass().getClassLoader();
+    return new File(loader.getResource(getClass().getTypeName()+".class").getFile()).getParentFile().getAbsolutePath();//only works in processing.
+  } else {
+    return new File(getClass().getResource("").getFile()).getAbsolutePath();
+  }
+}
+String[] getClassPaths() {
+  String[] ss=split(System.getProperty("java.class.path"), ";");
+  ArrayList<String> list=new ArrayList<String>();
+  for (String s : ss) {
+    if (new File(s).exists()) {
+      list.add(s);
+    }
+  }
+  list.add(System.getProperty("java.home")+"/lib/rt.jar");
+  return list.toArray(new String[]{});
+}
 String getDocuments() {
   return FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 }

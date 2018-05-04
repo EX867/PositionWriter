@@ -178,5 +178,6 @@ public interface PdeTokenTypes {
 	int CONSTRUCTOR_CAST = 174;
 	int EMPTY_FIELD = 175;
 	int WEBCOLOR_LITERAL = 176;
-	int LITERAL_color = 177;
+  int LITERAL_color = 177;
+  int BAD_TOKEN = 178;
 }

@@ -1,10 +1,10 @@
 XML layout_led_frame_xml;
 XML layout_wv_frame_xml;
-void ui_attachSlider(CommandEdit e) {
+public void ui_attachSlider(CommandEdit e) {
   e.parents.get(0).addChild(e.getSlider());
   e.updateSlider();
 }
-void ui_attachSlider(ConsoleEdit e) {
+public void ui_attachSlider(ConsoleEdit e) {
   e.parents.get(0).addChild(e.getSlider());
   e.updateSlider();
 }
