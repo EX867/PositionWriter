@@ -19,30 +19,67 @@ public class PwHighlighter implements CommandEdit.TextRenderer {
   CommandEdit edit;
   public PwHighlighter(CommandEdit edit_, Class<? extends PwMacro> cl) {//add keywords!!
     edit=edit_;
+    //no used
+    edit.keywords.put("const", 0xFFFF0000);
+    edit.keywords.put("goto", 0xFFFF0000);
+    edit.keywords.put("package", 0xFFFF0000);
+    //commands
+    edit.keywords.put("import", 0xFF33997E);
+    edit.keywords.put("assert", 0xFF33997E);
+    edit.keywords.put("break", 0xFF33997E);
+    edit.keywords.put("continue", 0xFF33997E);
+    edit.keywords.put("return", 0xFF33997E);
+    edit.keywords.put("throw", 0xFF33997E);
+    //primitive types
     edit.keywords.put("int", 0xFF33997E);
+    edit.keywords.put("byte", 0xF33997E);
+    edit.keywords.put("short", 0xFF33997E);
     edit.keywords.put("float", 0xF33997E);
     edit.keywords.put("char", 0xFF33997E);
     edit.keywords.put("double", 0xFF33997E);
     edit.keywords.put("long", 0xFF33997E);
+    edit.keywords.put("boolean", 0xFF33997E);
     edit.keywords.put("void", 0xFF33997E);
+    //modifiers
     edit.keywords.put("public", 0xFF33997E);
     edit.keywords.put("private", 0xFF33997E);
     edit.keywords.put("protected", 0xFF33997E);
-    edit.keywords.put("class", 0xFF33997E);
-    edit.keywords.put("extends", 0xFF33997E);
-    edit.keywords.put("implements", 0xFF33997E);
+    edit.keywords.put("abstract", 0xFF33997E);
     edit.keywords.put("final", 0xFF33997E);
     edit.keywords.put("static", 0xFF33997E);
+    edit.keywords.put("volitile", 0xFF33997E);
+    edit.keywords.put("strictfp", 0xFF33997E);
+    edit.keywords.put("native", 0xFF33997E);
+    edit.keywords.put("transient", 0xFF33997E);
+    //basic structure
+    edit.keywords.put("class", 0xFF33997E);
+    edit.keywords.put("interface", 0xFF33997E);
+    edit.keywords.put("enum", 0xFF33997E);
+    edit.keywords.put("extends", 0xFF33997E);
+    edit.keywords.put("implements", 0xFF33997E);
+    edit.keywords.put("throws", 0xFF33997E);
+    edit.keywords.put("new", 0xFF33997E);
+    edit.keywords.put("instanceof", 0xFF33997E);
+    edit.keywords.put("this", 0xFF33997E);
+    edit.keywords.put("super", 0xFF33997E);
+    //values
     edit.keywords.put("true", 0xFF33997E);
     edit.keywords.put("false", 0xFF33997E);
     edit.keywords.put("null", 0xFF33997E);
+    //control statements
     edit.keywords.put("while", 0xFF669900);
     edit.keywords.put("if", 0xFF669900);
+    edit.keywords.put("else", 0xFF669900);
     edit.keywords.put("for", 0xFF669900);
     edit.keywords.put("do", 0xFF669900);
     edit.keywords.put("try", 0xFF669900);
     edit.keywords.put("catch", 0xFF669900);
     edit.keywords.put("finally", 0xFF669900);
+    edit.keywords.put("switch", 0xFF669900);
+    edit.keywords.put("case", 0xFF669900);
+    edit.keywords.put("default", 0xFF669900);
+    edit.keywords.put("synchronized", 0xFF669900);
+    //
     edit.keywords.put("__method", 0xFF336699);
     edit.keywords.put("__string", 0xFF7D4793);
     Method[] methods=cl.getDeclaredMethods();//only contains api.
@@ -93,9 +130,9 @@ public class PwHighlighter implements CommandEdit.TextRenderer {
       if (fill == cmd.textColor) {//not a keyword.
         if (isFunction) {
           g.fill(cmd.keywords.getOrDefault("__method", cmd.textColor));
-        } else if (token.getText().length() >= 1 && token.getText().charAt(0) == '\"') {
+        } else if (token.getText().length() >= 1 && (token.getText().charAt(0) == '\"' || token.getText().charAt(0) == '\'')) {
           g.fill(cmd.keywords.getOrDefault("__string", cmd.textColor));
-        } else if (token.getText().startsWith("//") || token.getText().startsWith("/*")) {//comment
+        } else if (token.getText().startsWith("//")) {//|| token.getText().startsWith("/*")) {//comment
           //multiline comment add
           g.fill(cmd.commentColor);
         }

@@ -10,9 +10,13 @@ public static class PW2_0Param {
     console=console_;
   }
 }
+// default presets :
+// - mc converter with gui
+// - remove unitor commands
+//- api : led utils
 public static class PwMacroApi extends PwMacro {
-  public PW2_0 __parent;//you can use it...
-  public PrintStream __console;
+  protected PW2_0 __parent;//you can use it...
+  protected PrintStream __console;
   //you can do no constructor
   @Override
     public final void initialize(Object param) {
@@ -22,13 +26,10 @@ public static class PwMacroApi extends PwMacro {
   public void println(Object o) {
     __console.println(o);
   }
+  public void print(Object o) {
+    __console.print(o);
+  }
+  public void send(MidiDevice device, byte note, byte vel) {
+    //device.sendMessage();
+  }
 }
-/*
-kyui.element.Button b;
-kyui.core.KyUI.get("m_lin1").addChild(b=new kyui.element.Button("asdf"));
-b.setPressListener((e,i)->{
-  println(__parent.frameCount+" button pressed.");
-  return false;
-});
-kyui.core.KyUI.changeLayout();
-*/

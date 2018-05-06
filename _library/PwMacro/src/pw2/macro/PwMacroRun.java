@@ -12,6 +12,7 @@ import org.eclipse.jdt.internal.compiler.problem.ProblemReporter;
 import processing.app.Util;
 import processing.core.PApplet;
 import processing_mode_java.AutoFormat;
+import processing_mode_java.pdex.ImportStatement;
 import processing_mode_java.pdex.SourceUtils;
 import processing_mode_java.TextTransform;
 import processing_mode_java.preproc.PdePreprocessor;
@@ -39,8 +40,14 @@ public class PwMacroRun {
     //
     // 0. preprocess it.
     //
+    //extract imports
+    ArrayList<ImportStatement> imports=new ArrayList<>();
+    source=new TextTransform(source).addAll(SourceUtils.parseProgramImports(source, imports)).apply();
+    //
     PdePreprocessor.Mode sketchMode=PdePreprocessor.parseMode(SourceUtils.scrubCommentsAndStrings(source));
     source=PwMacroPreproc.addHeaderToSource(extendClass, macroName, source, sketchMode);
+    //
+    source=new TextTransform(source).addAll(SourceUtils.insertImports(imports)).apply();
     //
     // get classpaths from code folder
     //

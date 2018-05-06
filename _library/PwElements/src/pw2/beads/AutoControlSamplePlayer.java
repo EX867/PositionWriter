@@ -20,16 +20,16 @@ public class AutoControlSamplePlayer extends SamplePlayer {
   }
   @Override
   public void setLoopEnd(UGen u) {
-    for (KnobAutomation a : autos) {
-      a.setLoopEnd(u.getValue());
-    }
+    //    for (KnobAutomation a : autos) {
+    //      a.setLoopEnd(u.getValue());
+    //    }
     super.setLoopEnd(u);
   }
   @Override
   public void setLoopStart(UGen u) {
-    for (KnobAutomation a : autos) {
-      a.setLoopStart(u.getValue());
-    }
+    //    for (KnobAutomation a : autos) {
+    //      a.setLoopStart(u.getValue());
+    //    }
     super.setLoopStart(u);
   }
   //  @Override
@@ -42,29 +42,31 @@ public class AutoControlSamplePlayer extends SamplePlayer {
   @Override
   public void setLoopType(LoopType l) {
     super.setLoopType(l);
-    if (loopType == LoopType.NO_LOOP_FORWARDS || loopType == LoopType.NO_LOOP_BACKWARDS) {
-      for (KnobAutomation a : autos) {
-        a.setLoop(false);
-      }
-    } else {//all is loop.
-      for (KnobAutomation a : autos) {
-        a.setLoop(true);
-      }
-    }
+    //    if (loopType == LoopType.NO_LOOP_FORWARDS || loopType == LoopType.NO_LOOP_BACKWARDS) {
+    //      for (KnobAutomation a : autos) {
+    //        a.setLoop(false);
+    //      }
+    //    } else {//all is loop.
+    //      for (KnobAutomation a : autos) {
+    //        a.setLoop(true);
+    //      }
+    //    }
   }
   @Override
   public void calculateBuffer() {
+    super.calculateBuffer();
     synchronized (this) {
-      for (int a=0; a < autos.size(); a++) {//disable KnobAutomation's position contro ability! (synchronize with me)
+      for (int a=0; a < autos.size(); a++) {//disable KnobAutomation's position control ability! (synchronize with me)
+        //or you later optimize this to only do this at setPosition.
         if (autos.get(a).isDeleted()) {
           autos.remove(a);
           a--;
         } else {
           autos.get(a).setPosition(position);
+          autos.get(a).setLoopEnd(getLoopEndUGen().getValue());//don't forget to do this every sample change if you set auto's loops in set event.
         }
       }
     }
-    super.calculateBuffer();
   }
   public void addInputTo(UGen out) {//sampleplayer cannot add input.
     out.addInput(this);

@@ -111,6 +111,7 @@ public class AutoFaderControl extends UGenViewer {
     center.setPressListener((MouseEvent e, int index) -> {
       view.autoscroll();
       view.invalidate();
+      view.getSlider().invalidate();
       return false;
     });
     next.setPressListener((MouseEvent e, int index) -> {

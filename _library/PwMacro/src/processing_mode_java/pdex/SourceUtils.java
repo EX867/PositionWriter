@@ -37,8 +37,10 @@ public class SourceUtils {
       int len=matcher.end(1) - idx;
       // Remove the import from the main program
       // Substitute with white spaces
-      result.add(TextTransform.Edit.move(idx, len, 0));
-      result.add(TextTransform.Edit.insert(0, "\n"));
+      //System.out.println("import : <"+source.subSequence(idx,idx+len)+">");
+      result.add(TextTransform.Edit.delete(idx, len));
+      //result.add(TextTransform.Edit.move(idx, len, 0));
+      //result.add(TextTransform.Edit.insert(0, "\n"));
     }
     return result;
   }

@@ -3,7 +3,7 @@ import java.util.TreeMap;
 //PositionWriter 2.0.pde
 //===ADD list===//
 //led=(undo,redo),stop
-//shortcuts = ,ksclear,delay value edit,macros,export| resetloop undo redo rewind zoomin zoomout
+//shortcuts = ,ksclear,delay value edit,macros,export| resetloop undo redo rewind zoomin zoomout moveToCursorLed
 //add ziploader
 //note on highlight
 //add custom velocity selector
@@ -137,10 +137,10 @@ void main_draw() {
   autoSave();
 }
 void main_setup() {
-  KyUI.log=false;
-  //surface.setResizable(true);
+  surface.setResizable(true);
   //debug switches
   //Analyzer.debug=true;
+  KyUI.log=false;
   //
   rectMode(RADIUS);
   ellipseMode(RADIUS);
@@ -209,6 +209,8 @@ void main_setup() {
   {//TEST
     final CommandEdit ce=(CommandEdit)KyUI.get("m_editor");
     final ConsoleEdit coe=(ConsoleEdit)KyUI.get("m_console");
+    ui_attachSlider(ce);
+    ui_attachSlider(coe);
     coe.textSize=15;
     ce.keyEventPost=new BiConsumer<TextEdit, KeyEvent>() {
       public void accept(TextEdit edit_, KeyEvent e) {
