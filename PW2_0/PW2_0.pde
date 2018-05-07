@@ -158,6 +158,7 @@ void main_setup() {
   //load default data
   layout_led_frame_xml=loadXML("layout_led_frame.xml");
   layout_wv_frame_xml=loadXML("layout_wv_frame.xml");
+  layout_m_frame_xml=loadXML("layout_m_frame.xml");
   KyUI.start(this, 30, true);//mono is secure...only multi when needs high performance.
   textFont(KyUI.fontMain);
   ElementLoader.loadOnStart();
@@ -179,6 +180,7 @@ void main_setup() {
   statusR=(StatusBar)KyUI.get("main_statusR");
   led_filetabs=((TabLayout)KyUI.get("led_filetabs"));
   ks_filetabs=((TabLayout)KyUI.get("ks_filetabs"));
+  macro_filetabs=((TabLayout)KyUI.get("m_filetabs"));
   led_pad=((PadButton)KyUI.get("led_pad"));
   ks_pad=((PadButton)KyUI.get("ks_pad"));
   ks_chain=((PadButton)KyUI.get("ks_chain"));
@@ -198,6 +200,7 @@ void main_setup() {
   ((TabLayout)KyUI.get("ks_control")).selectTab(1);
   ((TabLayout)KyUI.get("led_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("led_frame"));
   ((TabLayout)KyUI.get("wv_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("wv_frame"));
+  ((TabLayout)KyUI.get("m_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("m_frame"));
   ((TabLayout)KyUI.get("wv_list")).selectTab(1);
   KyUI.get("wv_text").setEnabled(true);
   KyUI.get("led_consolelayout").setEnabled(false);
@@ -206,85 +209,6 @@ void main_setup() {
   ui_attachSlider((ConsoleEdit)KyUI.get("log_content"));
   ((DropDown)KyUI.get("set_mode")).addItem("AUTOINPUT");
   ((DropDown)KyUI.get("set_mode")).addItem("RIGHT OFF MODE");
-  {//TEST
-    final CommandEdit ce=(CommandEdit)KyUI.get("m_editor");
-    final ConsoleEdit coe=(ConsoleEdit)KyUI.get("m_console");
-    ui_attachSlider(ce);
-    ui_attachSlider(coe);
-    coe.textSize=15;
-    ce.keyEventPost=new BiConsumer<TextEdit, KeyEvent>() {
-      public void accept(TextEdit edit_, KeyEvent e) {
-        CommandEdit edit=(CommandEdit)edit_;
-        if (edit.script.line-1>=0&&edit.script.line-1<edit.script.lines()) {
-          if (e.getKey()=='\n') {
-            if (edit.getLine(edit.script.line-1).endsWith("{")) {
-              edit.script.insert("  ");
-              edit.script.point+=2;
-            } else {
-              String line=edit.getLine(edit.script.line-1);
-              int count=0;
-              for (count=0; count<line.length(); count++) {
-                if (line.charAt(count)!=' ') {
-                  break;
-                }
-              }
-              if (count>0) {
-                String insert="";
-                for (int a=0; a<count; a++) {
-                  insert=insert+" ";
-                }
-                edit.script.insert(insert);
-                edit.script.point+=insert.length();
-              }
-            }
-          } else if (e.getKey()=='}') {//dedent 2
-            String line=edit.getLine(edit.script.line);
-            if (line.endsWith("  }")) {
-              edit.script.delete(edit.script.line, edit.script.point-3, edit.script.line, edit.script.point);
-              edit.script.point=edit.script.point-3;
-              edit.script.insert("}");
-              edit.script.point=edit.script.point+1;
-            }
-          }
-        }
-      }
-    };
-    ((ImageButton)KyUI.get("m_run")).setPressListener(new MouseEventListener() {
-      public boolean onEvent(MouseEvent e, int index) {
-        final PrintStream stream=new PrintStream(new OutputStream() {
-          @Override
-            public void write(int b) throws IOException {
-            if (b=='\n') {
-              coe.addLine("");
-              coe.invalidate();
-            } else {
-              coe.insert(((Object)((char)b)).toString());
-            }
-          }
-        }
-        );
-        final String[] paths=getClassPaths();
-        new Thread(new Runnable() {
-          public void run() {
-            //println((Object[])paths);
-            try {
-              PwMacroRun.run(PwMacroApi.class, "NewMacro", ce.getText(), new PW2_0Param(PW2_0.this, stream), stream, "C:\\Users\\user\\Documents\\PositionWriter\\temp\\pwmacro", paths);
-            }
-            catch(Exception ee) {
-              ee.printStackTrace();//here comes script errors.
-              //ADD redirect to coe.
-            }
-          }
-        }
-        ).start();
-        return false;
-      }
-    }
-    );
-    ce.textFont=KyUI.fontMain;
-    ce.commentEnabled=false;
-    ce.textRenderer=new PwHighlighter(ce, PwMacroApi.class);
-  }//TEST END
   //load shortcuts
   //add events
   ((TabLayout)KyUI.get("main_tabs")).tabSelectListener=new ItemSelectListener() {
@@ -344,6 +268,7 @@ void main_setup() {
   led_setup();
   ks_setup();
   wav_setup();
+  macro_setup();
   midi_setup();
   MidiCommand.setState("8x8");//#TEST
   au_setup();
@@ -354,11 +279,13 @@ void main_setup() {
   } else {
     addLedTab(createNewLed());
     addKsTab(createNewKs());
+    addMacroTab(createNewMacro());
     //addWavTab(null);//no files loaded first.
   }
   ((LinearList)KyUI.get("ks_fileview")).setFixedSize(30);
   ((LinearList)KyUI.get("wv_files")).setFixedSize(30);
   ((LinearList)KyUI.get("mp3_input")).setFixedSize(30);
+  ((LinearList)KyUI.get("m_filelist")).setFixedSize(30);
   FileSelectorButton.listDirectory(((LinearList)KyUI.get("ks_fileview")), new File(path_global), new java.util.function.Consumer<File>() {
     public void accept(File file) {
       //println("file accept : "+file.getAbsolutePath());
@@ -376,6 +303,14 @@ void main_setup() {
     public void accept(File file) {
       if (isSoundFile(file)) {
         globalSamplePlayerPlay(file.getAbsolutePath());
+      }
+    }
+  }
+  );
+  FileSelectorButton.listDirectory(((LinearList)KyUI.get("m_filelist")), new File(path_global), new java.util.function.Consumer<File>() {
+    public void accept(File file) {
+      if (isMacroFile(file)) {
+        addMacroFileTab(file.getAbsolutePath());
       }
     }
   }

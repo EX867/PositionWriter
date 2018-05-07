@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -80,20 +81,28 @@ public class PwHighlighter implements CommandEdit.TextRenderer {
     edit.keywords.put("default", 0xFF669900);
     edit.keywords.put("synchronized", 0xFF669900);
     //
-    edit.keywords.put("__method", 0xFF336699);
+    edit.keywords.put("__method", 0xFF3388BB);
     edit.keywords.put("__string", 0xFF7D4793);
     Method[] methods=cl.getDeclaredMethods();//only contains api.
     for (Method m : methods) {
-      edit.keywords.put(m.getName(), 0xFF006699);
+      if (!Modifier.isPrivate(m.getModifiers())) {
+        edit.keywords.put(m.getName(), 0xFF228899);
+      }
     }
     Field[] fields=cl.getDeclaredFields();
     for (Field f : fields) {
-      edit.keywords.put(f.getName(), 0xFFD94A7A);
+      if (!Modifier.isPrivate(f.getModifiers())) {
+        edit.keywords.put(f.getName(), 0xFFD94A7A);
+      }
     }
     Class[] classes=cl.getDeclaredClasses();
     for (Class c : classes) {
-      edit.keywords.put(c.getName(), 0xFFE2661A);
+      if (!Modifier.isPrivate(c.getModifiers())) {
+        edit.keywords.put(c.getCanonicalName(), 0xFFE2661A);
+        edit.keywords.put(c.getSimpleName(), 0xFFE2661A);
+      }
     }
+    edit.keywords.put("__parent", 0xFFFF0000);//for discourage use (overwrite)
   }
   //lexing happens every frame. only lex visible area of text. lexing can be done per line.
   //higlighter only highlights keywords, predefined functions,variables so it is fast!
@@ -137,6 +146,7 @@ public class PwHighlighter implements CommandEdit.TextRenderer {
           g.fill(cmd.commentColor);
         }
       }
+      //ADD if still default color and it is identifier, check if it is type. (be aware that scope can hide things!)
       g.text(token.getText(), width + cmd.pos.left + cmd.lineNumSize + cmd.padding, cmd.pos.top + (line + 0.5F) * cmd.textSize - cmd.offsetY + cmd.padding);
       width=width + g.textWidth(token.getText());
     }

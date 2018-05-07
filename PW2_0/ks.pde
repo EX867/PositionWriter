@@ -94,6 +94,7 @@ class KsSession {//
         }
       }
     }
+    setChanged(true, false);
   }
   void selectChain(int c) {
     chain=c;
@@ -169,9 +170,11 @@ class KsButton {
   }
   void setSoundIndex(int index) {
     soundIndex=max(0, min(index, sound.size()-1));
+    session.setChanged(true, false);
   }
   void setLedIndex(int index) {
     ledIndex=max(0, min(index, led.size()-1));
+    session.setChanged(true, false);
   }
   void loadSound(String path, int loop) {
     loadSound(sound.size(), path, loop);
@@ -211,9 +214,11 @@ class KsButton {
       , null);
     }
     session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
+    session.setChanged(true, false);
   }
   void reorderSound(int a, int b) {//must in range!
     Collections.swap(sound, a, b);
+    session.setChanged(true, false);
   }
   void removeSound(int index) {//must in range!
     MultiSamplePlayer.SampleState sample=sound.get(index);
@@ -235,6 +240,7 @@ class KsButton {
       }
       , null);
     }
+    session.setChanged(true, false);
   }
   String getSound(int index) {
     return sound.get(index).sample.getFileName();
@@ -242,6 +248,7 @@ class KsButton {
   void setSoundLoop(int index, int loop) {
     //println("set loop to "+loop);
     sound.get(index).loopCount=loop;
+    session.setChanged(true, false);
   }
   int getSoundLoop(int index) {
     return sound.get(index).loopCount;
@@ -283,9 +290,11 @@ class KsButton {
       , null);
     }
     session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
+    session.setChanged(true, false);
   }
   void reorderLed(int a, int b) {
     Collections.swap(led, a, b);
+    session.setChanged(true, false);
   }
   void removeLed(int index) {
     session.light.removeTrack(led.get(index));
@@ -300,12 +309,14 @@ class KsButton {
       }
       , null);
     }
+    session.setChanged(true, false);
   }
   LedScript getLed(int index) {
     return led.get(index).script;
   }
   void setLedLoop(int index, int loop) {
     led.get(index).loopCount=loop;
+    session.setChanged(true, false);
   }
   int getLedLoop(int index) {
     return led.get(index).loopCount;
@@ -656,10 +667,10 @@ KsSession loadKs(String filename) {
   return null;
 }
 void saveKs(KsSession ks, boolean canonical) {
-  if (ks.changed||!canonical) {
+  if (ks.changed||canonical) {
     String path=joinPath(path_global, path_projects+"/"+filterString(ks.file.getAbsolutePath(), new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}));
     //new File(joinPath(path,"sounds")).mkdirs();
-    //setting canonical to true copies all sounds and led, and
+    //setting canonical to true copies all sounds and led. unipack export is canonical true.
     String text="";
     String ledtext="";
     int a=0;
@@ -709,6 +720,7 @@ void saveKs(KsSession ks, boolean canonical) {
     if (canonical==false)writeFile(joinPath(path, "keyLED"), ledtext);
     writeFile(joinPath(path, "info"), ks.info.toString());
   }
+  ks.setChanged(false, false);
 }
 KsSession addKsTab(String filename) {
   TabLayout tabs=((TabLayout)KyUI.get("ks_filetabs"));

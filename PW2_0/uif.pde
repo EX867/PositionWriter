@@ -1,5 +1,6 @@
 XML layout_led_frame_xml;
 XML layout_wv_frame_xml;
+XML layout_m_frame_xml;
 public void ui_attachSlider(CommandEdit e) {
   e.parents.get(0).addChild(e.getSlider());
   e.updateSlider();

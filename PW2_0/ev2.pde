@@ -31,6 +31,7 @@ void setup_ev2() {
           textTransfer.setClipboardContents(edit.getSelection());
           edit.deleteSelection();
           edit.resetSelection();
+          ((TextEdit)e).onTextChangeListener.onEvent(e);
           ((TextEdit)e).recordHistory();
           e.invalidate();
         }
@@ -57,6 +58,7 @@ void setup_ev2() {
             edit.point=lines[lines.length-1].length();
           }
         }
+        ((TextEdit)e).onTextChangeListener.onEvent(e);
         ((TextEdit)e).recordHistory();
         e.invalidate();
       }

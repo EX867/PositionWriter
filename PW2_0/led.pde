@@ -235,7 +235,29 @@ void led_setup() {
       //synchronized(currentLedEditor) {
       currentLed.led.loopStart=fs.valueS;
       currentLed.led.loopEnd=fs.valueE;
+      if (currentLed.led.loopStart>=currentLed.led.loopEnd) {//no loop range
+        currentLedEditor.loopStartRange.startLine=0;
+        currentLedEditor.loopStartRange.endLine=0;
+        currentLedEditor.loopEndRange.startLine=0;
+        currentLedEditor.loopEndRange.endLine=0;
+      } else {
+        int startFrame=currentLedEditor.getFrameByTime(fs.valueS);
+        int endFrame=currentLedEditor.getFrameByTime(fs.valueE);
+        currentLedEditor.loopStartRange.startLine=currentLedEditor.DelayPoint.get(startFrame)+1;
+        if (startFrame+1<currentLedEditor.DelayPoint.size()) {
+          currentLedEditor.loopStartRange.endLine=currentLedEditor.DelayPoint.get(startFrame+1)+1;
+        } else {
+          currentLedEditor.loopStartRange.endLine=currentLedEditor.editor.script.lines();
+        }
+        currentLedEditor.loopEndRange.startLine=currentLedEditor.DelayPoint.get(endFrame)+1;
+        if (endFrame+1<currentLedEditor.DelayPoint.size()) {
+          currentLedEditor.loopEndRange.endLine=currentLedEditor.DelayPoint.get(endFrame+1)+1;
+        } else {
+          currentLedEditor.loopEndRange.endLine=currentLedEditor.editor.script.lines();
+        }
+      }
       //}
+      currentLedEditor.editor.getSlider().invalidate();
     }
   };
   fs.frameMarker=new ExtendedRenderer() {
@@ -359,7 +381,7 @@ LedTab addLedTab(String filename) {
         statusR.setError(true);
         setStatusR(script.getErrors().get(index).toString());
       } else if (script.getErrors().size()>0) {
-        statusR.tabColor2=(script.getErrors().get(index).type==LineError.ERROR)?edit.errorColor:edit.warningColor;
+        statusR.tabColor2=(script.getErrors().get(0).type==LineError.ERROR)?edit.errorColor:edit.warningColor;
         statusR.setError(true);
         setStatusR(script.getErrors().get(0).toString());
       } else {
@@ -379,7 +401,7 @@ LedTab addLedTab(String filename) {
 void addLedFileTab(String filename) {
   for (int a=0; a<ledTabs.size(); a++) {//anti duplication
     LedTab t=ledTabs.get(a);
-    if (t.led.script.file.getAbsolutePath().replace("\\", "/").equals(filename)) {
+    if (t.led.script.file.equals(new File(filename))) {
       led_filetabs.selectTab(a+1);
       return;
     }

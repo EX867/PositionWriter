@@ -240,7 +240,7 @@ void wav_setup() {
     public void onEvent(int index) {
       wavTabs.get(index).close();
       wavTabs.remove(index);
-      if (ksTabs.size()==0) {
+      if (wavTabs.size()==0) {
         //instead of adding new tab, just set current to null. it can be done becauase waveditor has no extra sharing state.
         selectWavTab(-1);
       }

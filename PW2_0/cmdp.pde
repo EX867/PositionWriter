@@ -14,7 +14,7 @@ public class LedScript extends CommandScript {
   //file management
   public File file;
   public boolean changed=false;
-  long lastSaveTime;
+  long lastSaveTime=System.currentTimeMillis();
   public LedTab tab;//if this is led editor, linke to this! then change name will work.
   private boolean tabchanged=false;
   //
@@ -33,6 +33,9 @@ public class LedScript extends CommandScript {
   public boolean ignoreUnitorCmd=false;
   public int displayFrame=0;
   public long displayTime=0;
+  CommandEdit.MarkRange loopStartRange;
+  CommandEdit.MarkRange loopEndRange;
+  CommandEdit.MarkRange frameSliderRange;
   public long FrameSliderBackup;//backup time.used in startfromcursor and autostop.
   public LedScript(String name_, CommandEdit editor_, PadButton displayPad_) {//editor,displayPad is nullable.
     super(getFileName(name_), null);
@@ -45,6 +48,9 @@ public class LedScript extends CommandScript {
     setCmdSet(ledCommands);
     readAll();
     setChanged(false, false);
+    loopStartRange=editor.addMarkRange(0x3FFF0000);
+    loopEndRange=editor.addMarkRange(0x3F0000FF);
+    frameSliderRange=editor.addMarkRange(0x3F000000);
   }
   void setCmdSet(LineCommandType cmdset_) {
     cmdset=cmdset_;
@@ -259,7 +265,6 @@ public class LedScript extends CommandScript {
           DelayPoint.remove(index);
           LED.remove(frame);//assert frame>=1
           velLED.remove(frame);
-          if (displayFrame>LED.size()-1)displayFrame--;
         } else if (before instanceof BpmCommand) {
           int index=BpmPoint.getBeforeIndex(line-1);
           //assert BpmCommand.get(index)==line
@@ -291,13 +296,13 @@ public class LedScript extends CommandScript {
         } else if (after instanceof BpmCommand) {
           BpmPoint.add(line);
         } else if (after instanceof ChainCommand) {
-          if (!(cmdset==apCommands||!ignoreUnitorCmd)) {//chain is duplication so add error manually...
+          if (cmdset!=apCommands) {//chain is duplication so add error manually...
             addError(new LineError(LineError.WARNING, line, 0, getLine(line).length(), name, "you can't use chain command in normal led."));
           }
           ChainPoint.add(line);
         }
       }
-      if (displayFrame> DelayPoint.size()) {
+      if (displayFrame>= DelayPoint.size()) {
         displayFrame=DelayPoint.size()-1;
         setTimeByFrame(displayFrame);
       }

@@ -77,6 +77,12 @@ String createNewKs() {
   java.text.SimpleDateFormat dayTime = new java.text.SimpleDateFormat("yyyy_MM_dd_");
   return joinPath(path_global, joinPath(path_projects, dayTime.format(new java.util.Date(time))+hex((int)(time%86400000))));
 }
+String createNewMacro() {
+  long time = System.currentTimeMillis(); 
+  java.text.SimpleDateFormat dayTime = new java.text.SimpleDateFormat("yyyy_MM_dd_");
+  String macroName=dayTime.format(new java.util.Date(time))+hex((int)(time%86400000));
+  return joinPath(path_global, joinPath(path_macro, macroName+"/"+macroName+".pwm"));
+}
 void saveFileTo(String path, Runnable r) {
   String rename="";
   File file=new File(path);
@@ -311,6 +317,11 @@ boolean isLedFile(File file) {//.led
   String ext=getFileExtension(file.getName());
   if (ext.equals("led")||ext.equals("mid"))return true;
   if (isImageFile(file))return true;
+  return false;
+}
+boolean isMacroFile(File file) {//.led
+  String ext=getFileExtension(file.getName());
+  if (ext.equals("pwm"))return true;
   return false;
 }
 String readFile(String path) {

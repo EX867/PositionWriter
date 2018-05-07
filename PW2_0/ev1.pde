@@ -307,6 +307,7 @@ void setup_ev1() {//setup small listeners
   ((Button)KyUI.get("led_printq")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       action_print.accept(userMacro1.replace("\\r", "\r").replace("\\t", "\t").replace("\\n", "\n").replace("\\\\", "\\"));
+      currentLedEditor.editor.onTextChangeListener.onEvent(currentLedEditor.editor);
       currentLedEditor.editor.invalidate();
       return false;
     }
@@ -315,6 +316,7 @@ void setup_ev1() {//setup small listeners
   ((Button)KyUI.get("led_printe")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       action_print.accept(userMacro2);
+      currentLedEditor.editor.onTextChangeListener.onEvent(currentLedEditor.editor);
       currentLedEditor.editor.invalidate();
       return false;
     }

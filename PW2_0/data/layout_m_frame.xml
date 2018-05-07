@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+  <layout>
+    <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="3.0" inverse="false" margin="0" mode="PROPORTIONAL" name="m_tabItem" overlayOnDrag="0" padding="0" pos="[(0.0, 100.0)~(960.0, 820.0)]" rotation="DOWN" value="0.3" visible="true">
+      <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="FIXED" name="m_ediitorlayout" overlayOnDrag="0" padding="0" pos="[(0.0, 100.0)~(960.0, 620.0)]" rotation="RIGHT" value="24.0" visible="true">
+        <com.karnos.commandscript.CommandEdit active="true" bgColor="50" blankLines="6" commentColor="-8224126" commentEnabled="true" desc="" enabled="true" errorColor="-6419958" hint="" hintColor="-1932998456" lineNumBgColor="40" lineNumColor="-1" lineNumSize="56" margin="0" name="m_editor" overlayOnDrag="0" padding="8" pos="[(0.0, 100.0)~(960.0, 620.0)]" selectionColor="-13487411" text="" textColor="-3618616" textSize="20" visible="true" warningColor="-3491054"/>
+      </kyui.element.DivisionLayout>
+      <kyui.element.DivisionLayout active="true" bgColor="0" desc="" enabled="true" interval="0.0" inverse="false" margin="0" mode="FIXED" name="m_consolelayout" overlayOnDrag="0" padding="0" pos="[(0.0, 623.0)~(960.0, 820.0)]" rotation="RIGHT" value="24.0" visible="true">
+        <com.karnos.commandscript.ConsoleEdit active="true" bgColor="50" blankLines="6" desc="" enabled="true" hint="" hintColor="-1932998456" lineNumBgColor="40" lineNumColor="-1" lineNumSize="56" margin="0" name="m_console" overlayOnDrag="0" padding="8" pos="[(0.0, 623.0)~(960.0, 820.0)]" selectionColor="-13487411" text="" textColor="-3618616" textSize="20" visible="true"/>
+      </kyui.element.DivisionLayout>
+    </kyui.element.DivisionLayout>
+  </layout>
+  <color/>
+</Data>
