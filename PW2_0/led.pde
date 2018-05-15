@@ -388,6 +388,7 @@ LedTab addLedTab(String filename) {
         statusR.setError(false);
         setStatusR("no errors.");
       }
+      ledFindReplace.textChanged=true;
     }
   };
   edit.setTextChangeListener(ev);
@@ -429,4 +430,5 @@ void selectLedTab(int index) {
   setInfoLed(currentLedEditor.info);
   currentLedEditor.displayPad.size.set(info.buttonX, info.buttonY);
   currentLedEditor.displayPad.invalidate();
+  ledFindReplace.textChanged=true;
 }

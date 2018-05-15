@@ -35,6 +35,7 @@ String userMacro1="\ndelay 50";//#TEST 20
 String userMacro2="\ndelay 30";
 PImage[] tips;
 int tipsIndex=0;
+LedFindReplace ledFindReplace=new LedFindReplace();
 //===Current editors===//
 public LedScript currentLedEditor;//equivalent to currentLed.led.script
 public LedTab currentLed;

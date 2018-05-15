@@ -324,55 +324,60 @@ void setup_ev1() {//setup small listeners
   );
   ((ImageButton)KyUI.get("led_next")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      //if (findData.size()!=0) {
-      //  if (patternMatcher.findUpdated==false)findData=patternMatcher.findAll( keyled_textEditor.current.toString());
-      //  findIndex=findIndex+1;
-      //  if (findIndex>=findData.size())findIndex=0;
-      //  if (findData.size()>0) {
-      //    currentLedEditor.setCursorByIndex(findData.get(findIndex).startpoint);
-      //    currentLedEditor.selectFromCursor(findData.get(findIndex).text.length());
-      //    currentLedEditor.editor.moveToCursor();
-      //  }
-      //}
+      LedFindReplace f=ledFindReplace;
+      if (f.textChanged) {
+        f.findAll(currentLedEditor.editor.getText());
+      }
+      if (f.findData.size()!=0) {
+        f.findIndex=f.findIndex+1;
+        if (f.findIndex>=f.findData.size())f.findIndex=0;
+        if (f.findData.size()>0) {
+          currentLedEditor.setCursorByIndex(f.findData.get(f.findIndex).start);
+          currentLedEditor.selectFromCursor(f.findData.get(f.findIndex).text.length());
+          currentLedEditor.editor.moveToCursor();
+          currentLedEditor.editor.invalidate();
+        }
+      }
       return false;
     }
   }
   );
   ((ImageButton)KyUI.get("led_previous")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      //if (findData.size()!=0) {
-      //  if (patternMatcher.findUpdated==false)findData=patternMatcher.findAll(keyled_textEditor.current.toString());
-      //  findIndex=findIndex-1;
-      //  if (findIndex<0)findIndex=findData.size()-1;
-      //  if (findData.size()>0) {
-      //    keyled_textEditor.current.setCursorByIndex(findData.get(findIndex).startpoint);
-      //    keyled_textEditor.current.selectFromCursor(findData.get(findIndex).text.length());
-      //    focus=keyled_textEditor.ID;
-      //    keyled_textEditor.moveToCursor();
-      //  }
-      //}
+      LedFindReplace f=ledFindReplace;
+      if (f.textChanged) {
+        f.findAll(currentLedEditor.editor.getText());
+      }
+      if (f.findData.size()!=0) {
+        f.findIndex=f.findIndex-1;
+        if (f.findIndex<0)f.findIndex=f.findData.size()-1;
+        if (f.findData.size()>0) {
+          currentLedEditor.setCursorByIndex(f.findData.get(f.findIndex).start);
+          currentLedEditor.selectFromCursor(f.findData.get(f.findIndex).text.length());
+          currentLedEditor.editor.moveToCursor();
+          currentLedEditor.editor.invalidate();
+        }
+      }
       return false;
     }
   }
   );
   ((ImageButton)KyUI.get("led_replaceall")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      //patternMatcher.registerFind(((TextBox)UI[getUIid("I_FINDTEXTBOX")]).text, value);
-      //patternMatcher.registerReplace(((TextBox)UI[getUIid("I_REPLACETEXTBOX")]).text, value);
-      //findData=patternMatcher.findAll(keyled_textEditor.current.toString());//WARNING!!!
-      //RecordLog();
-      //keyled_textEditor.setText(patternMatcher.replaceAll(keyled_textEditor.current.toString(), ((TextBox)UI[getUIid("I_REPLACETEXTBOX")]).text, findData));
-      //RecordLog();
-      //title_edited="*";
+      if (ledFindReplace.textChanged) {
+        ledFindReplace.findAll(currentLedEditor.editor.getText());
+      }
+      currentLedEditor.editor.recordHistory();
+      currentLedEditor.editor.setText(ledFindReplace.replaceAll(currentLedEditor.editor.getText()));
+      currentLedEditor.editor.recordHistory();
       return false;
     }
   }
   );
   ((ImageToggleButton)KyUI.get("led_calcmode")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      //patternMatcher.registerFind(((TextBox)I[getUIid("I_FINDTEXTBOX")]).text, value);
-      //patternMatcher.registerReplace(((TextBox)UI[getUIid("I_REPLACETEXTBOX")]).text, value);
-      //findData=patternMatcher.findAll(keyled_textEditor.current.toString());//WARNING!!!
+      ((TextBox)KyUI.get("led_findtext")).onTextChangeListener.onEvent(KyUI.get("led_findtext"));
+      ((TextBox)KyUI.get("led_replacetext")).onTextChangeListener.onEvent(KyUI.get("led_replacetext"));
       return false;
     }
   }
@@ -453,183 +458,20 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
-  //if () {
-  //} else if (name.equals("I_FINDTEXTBOX")) {
-  //  patternMatcher.findUpdated=false;
-  //  patternMatcher.registerFind(text, ((Button)UI[getUIidRev("I_CALCULATE")]).value);
-  //  findData=patternMatcher.findAll(keyled_textEditor.current.toString());//WARNING!!!
-  //} else if (name.equals("I_REPLACETEXTBOX")) {
-  //  patternMatcher.registerReplace(text, ((Button)UI[getUIidRev("I_CALCULATE")]).value);
-  //} else if (name.equals("KS_SOUNDMULTI")) {
-  //  KS.get(ksChain)[ksX][ksY].multiSound=min(max(1, value), KS.get(ksChain)[ksX][ksY].ksSound.size())-1;
-  //} else if (name.equals("KS_LEDMULTI")) {
-  //  KS.get(ksChain)[ksX][ksY].multiLed=min(max(1, value), KS.get(ksChain)[ksX][ksY].ksLedFile.size())-1;
-  //  KS.get(ksChain)[ksX][ksY].multiLedBackup=KS.get(ksChain)[ksX][ksY].multiLed;
-  //} else if (name.equals("KS_LOOP")) {
-  //  if (soundLoopEdit) {
-  //    if (((ScrollList)UI[getUIid("I_SOUNDVIEW")]).selected==-1)return;
-  //    KS.get(ksChain)[ksX][ksY].ksSoundLoop.set(((ScrollList)UI[getUIid("I_SOUNDVIEW")]).selected, value);
-  //  } else {
-  //    if (((ScrollList)UI[getUIid("I_LEDVIEW")]).selected==-1)return;
-  //    KS.get(ksChain)[ksX][ksY].ksLedLoop.set(((ScrollList)UI[getUIid("I_LEDVIEW")]).selected, value);
-  //  }
-  //} else if (name.equals("SKIN_PACKAGE")) {
-  //  description.content="com.kimjisub.launchpad.theme."+text;
-  //}
-  //if () {
-  //} else if (name.equals("I_CLEARKEYSOUND")) {
-  //  int a=0;
-  //  while (a<ksDisplay.length) {
-  //    int b=0;
-  //    while (b<ksDisplay[a].length) {
-  //      ksDisplay[a][b]=OFFCOLOR;
-  //      b=b+1;
-  //    }
-  //    a=a+1;
-  //  }
-  //  while (ledstack.size()>0) {
-  //    ledstack.get(ledstack.size()-1).isInStack=false;
-  //    ledstack.remove(ledstack.size()-1);
-  //  }
-  //  a=0;
-  //  while (a<ButtonX) {
-  //    int b=0;
-  //    while (b<ButtonY) {
-  //      KS.get(ksChain)[a][b].stopSound();
-  //      b=b+1;
-  //    }
-  //    a=a+1;
-  //  }
-  //  midiOffAll();
-  //  int id=getUIidRev("KS_SOUNDMULTI");
-  //  ((TextBox)UI[id]).value=max(1, min(KS.get(ksChain)[X][Y].multiSound, KS.get(ksChain)[X][Y].ksSound.size()));
-  //  ((TextBox)UI[id]).text=""+((TextBox)UI[id]).value;
-  //  UI[id].render();
-  //  id=getUIidRev("KS_LEDMULTI");
-  //  ((TextBox)UI[id]).value=max(1, min(KS.get(ksChain)[X][Y].multiLed, KS.get(ksChain)[X][Y].ksLedFile.size()));
-  //  ((TextBox)UI[id]).text=""+((TextBox)UI[id]).value;
-  //  UI[id].render();
-  //  UI[getUIid("KEYSOUND_PAD")].render();
-  //  setStatusR("Cleared");
-  //} else if (name.equals("I_RELOADKEYSOUND")) {
-  //  for (int a=0; a<Chain; a++) {
-  //    for (int b=0; b<ButtonX; b++) {
-  //      for (int c=0; c<ButtonY; c++) {
-  //        KS.get(a)[b][c].reloadLeds();
-  //      }
-  //    }
-  //  }
-  //  setStatusR("Reloaded");
-  //} else if (name.equals("MP3_CONVERT")) {
-  //  int a=0;
-  //  boolean valid=true;
-  //  File file=new File(((TextBox)UI[getUIidRev("MP3_OUTPUT")]).text);
-  //  if (file.isDirectory()==false) {
-  //    if (file.mkdirs()) {
-  //    } else valid=false;
-  //  }
-  //  if (((ScrollList)UI[getUIidRev("MP3_FORMAT")]).selected==-1)valid=false;
-  //  if (((ScrollList)UI[getUIidRev("MP3_CODEC")]).selected==-1)valid=false;
-  //  ScrollList input=(ScrollList)UI[getUIidRev("MP3_INPUT")];
-  //  if (valid) {//outputFormat, outputCodec, outputBitRate, outputChannels, outputSampleRate
-  //    UI[getUIid("LOG_EXIT")].disabled=true;
-  //    ((Logger)UI[getUIid("LOG_LOG")]).logs.clear();
-  //    Frames[getFrameid("F_LOG")].prepare(currentFrame);
-  //    int channels=2;
-  //    if (((Button)UI[getUIidRev("MP3_STEREO")]).value==false)channels=1;
-  //    //println("ready to convert");
-  //    converter.convertAll(input.View, ((TextBox)UI[getUIidRev("MP3_OUTPUT")]).text, ((ScrollList)UI[getUIidRev("MP3_FORMAT")]).getSelection(), ((ScrollList)UI[getUIidRev("MP3_CODEC")]).getSelection(), ((TextBox)UI[getUIidRev("MP3_BITRATE")]).value, channels, ((TextBox)UI[getUIidRev("MP3_SAMPLERATE")]).value);
-  //  } else printLog("convert()", "file is not convertable");
-  //} else if (name.equals("MP3_PLAY")) {
-  //  if (((ScrollList)UI[getUIid("MP3_INPUT")]).selected!=-1) {//inefficient!!!
-  //    if (converter.converterPlayer.fileLoaded)SampleManager.removeSample(converter.converterPlayer.sample);
-  //    converter.converterPlayer.load(((ScrollList)UI[getUIid("MP3_INPUT")]).getSelection());
-  //    converter.converterPlayer.setValue(converter.converterPlayer.slider.valueF);
-  //  }
-  //  if (converter.converterPlayer.fileLoaded) {
-  //    converter.converterPlayer.loop(converter.converterPlayer.loop);
-  //    converter.converterPlayer.play();
-  //  }
-  //} else if (name.equals("MP3_STOP")) {
-  //  converter.converterPlayer.stop();
-  //} else if (name.equals("MP3_LOOP")) {
-  //  converter.converterPlayer.setLoopStart(0);
-  //  converter.converterPlayer.setLoopEnd(converter.converterPlayer.length);
-  //  converter.converterPlayer.loop(value);
-  //} else if (name.equals("MP3_EXIT")) {
-  //  ((ScrollList)UI[getUIid("MP3_INPUT")]).setItems(new String[0]);
-  //  Frames[currentFrame].returnBack();
-  //} else if (name.equals("LOG_EXIT")) {
-  //  ((ScrollList)UI[getUIid("MP3_INPUT")]).setItems(new String[0]);
-  //  Frames[currentFrame].returnBack();
-  //} else if (name.equals("ERROR_EXIT")) {
-  //  Frames[currentFrame].returnBack();
-  //} else if (name.equals("INFO_EXIT")) {
-  //  Frames[currentFrame].returnBack();
-  //} else if (name.equals("INFO_GITHUBLINK")) {
-  //  link ("https://github.com/EX867/PositionWriter");
-  //} else if (name.equals("INFO_PROCESSINGLINK")) {
-  //  link ("https://processing.org");
-  //} else if (name.equals("INFO_DEVELOPERLINK")) {
-  //  link ("https://blog.naver.com/ghh2000");
-  //} else if (name.equals("INFO_JEONJEHONGLINK")) {
-  //  link ("https://blog.naver.com/jehongjeon");
-  //} else if (name.equals("INFO_ASDFLINK")) {
-  //  link ("https://EX867.github.io/PositionWriter/asdf");
-  //} else if (name.equals("UN_LOGIN")) {
-  //  resetFocusBeforeFrame();
-  //  Frames[getFrameid("F_LOGIN")].prepare(currentFrame);
-  //} else if (name.equals("UN_PRIVATE")) {
-  //  //do nothing=
-  //} else if (name.equals("UN_EXIT")) {
-  //  Frames[currentFrame].returnBack();
-  //} else if (name.equals("UN_UPLOAD")) {
-  //  resetFocusBeforeFrame();
-  //  tempCode=DIALOG_UPLOAD;
-  //  Frames[getFrameid("F_DIALOG")].prepare(currentFrame);
-  //} else if (name.equals("UN_UPDATE")) {
-  //  resetFocusBeforeFrame();
-  //  tempCode=DIALOG_UPDATE;
-  //  Frames[getFrameid("F_DIALOG")].prepare(currentFrame);
-  //} else if (name.equals("UN_DELETE")) {
-  //  resetFocusBeforeFrame();
-  //  tempCode=DIALOG_DELETE;
-  //  Frames[getFrameid("F_DIALOG")].prepare(currentFrame);
-  //} else if (name.equals("UN_DOWNLOAD")) {
-  //  resetFocusBeforeFrame();
-  //  tempCode=DIALOG_DOWNLOAD;
-  //  Frames[getFrameid("F_DIALOG")].prepare(currentFrame);
-  //} else if (name.equals("DIALOG_EXIT")) {
-  //  tempCode=0;//no happens
-  //  Frames[currentFrame].returnBack();
-  //} else if (name.equals("DIALOG_OK")) {
-  //  if (tempCode==DIALOG_UPLOAD) {
-  //    uncloud_upload(((ScrollList)UI[getUIidRev("UN_LIST")]).selected);
-  //  } else if (tempCode==DIALOG_UPDATE) {
-  //    uncloud_update(((ScrollList)UI[getUIidRev("UN_LIST")]).selected);
-  //  } else if (tempCode==DIALOG_DELETE) {
-  //    uncloud_delete(((ScrollList)UI[getUIidRev("UN_LIST")]).selected);
-  //  } else if (tempCode==DIALOG_DOWNLOAD) {
-  //    uncloud_download(((ScrollList)UI[getUIidRev("UN_LIST")]).selected);
-  //  }
-  //  tempCode=0;
-  //  Frames[currentFrame].returnBack();
-  //} else if (name.equals("UPDATE_UPDATE")) {
-  //  link("https://github.com/EX867/PositionWriter/releases");
-  //  Frames[currentFrame].returnBack();
-  //} else if (name.equals("UPDATE_EXIT")) {
-  //  Frames[currentFrame].returnBack();
-  //} else if (name.equals("SKIN_BUILD")) {
-  //  String packageText="com.kimjisub.launchpad.theme."+((TextBox)UI[getUIidRev("SKIN_PACKAGE")]).text;
-  //  String appnameText=filterString(((TextBox)UI[getUIidRev("SKIN_APPNAME")]).text, new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"});
-  //  if (appnameText.equals("")==false&&isValidPackageName(packageText)) {
-  //    resetFocusBeforeFrame();
-  //    Frames[getFrameid("F_ERROR")].prepare(currentFrame);
-  //    build_windows(packageText, appnameText, ((TextBox)UI[getUIidRev("SKIN_AUTHOR")]).text, ((TextBox)UI[getUIidRev("SKIN_DESCRIPTION")]).text, ((TextBox)UI[getUIidRev("SKIN_TITLE")]).text, ((TextBox)UI[getUIidRev("SKIN_VERSION")]).text, ((Button)UI[getUIidRev("SKIN_TEXT1")]).colorInfo);
-  //  }
-  //} else if (name.equals("SKIN_EXIT")) {
-  //  Frames[currentFrame].returnBack();
-  //} else if (name.equals("INITIAL_HOWTOUSE")) {
-  //  link("https://github.com/EX867/PositionWriter/wiki/How-to-use-v2-(english)");
-  //}
+  ((TextBox)KyUI.get("led_findtext")).setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      ledFindReplace.compileFind(((TextBox)e).getText(), ((ImageToggleButton)KyUI.get("led_calcmode")).value, currentLedEditor.editor.getText());
+      ((TextBox)e).error=ledFindReplace.patternFind.error;
+      e.invalidate();
+    }
+  }
+  );
+  ((TextBox)KyUI.get("led_replacetext")).setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      ledFindReplace.compileReplace(((TextBox)e).getText(), ((ImageToggleButton)KyUI.get("led_calcmode")).value);
+      ((TextBox)e).error=ledFindReplace.patternReplace.error;
+      e.invalidate();
+    }
+  }
+  );
 }

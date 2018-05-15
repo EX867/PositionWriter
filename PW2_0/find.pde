@@ -1,12 +1,13 @@
 //find replace for only led editor.
 static final String REGEX_NUMBER="(-?\\d+)";
-class FindReplace {
-  LinkedList<FindData> findData=new LinkedList<FindData>();
+class LedFindReplace {
+  ArrayList<FindData> findData=new ArrayList<FindData>();
   int findIndex=0;//index iterator for next/prev
   Pattern patternFindRegex;
   FindReplacePattern patternFind;
   FindReplacePattern patternReplace;
-  Calculator calculator;
+  boolean textChanged=false;//if true, do findall in next/previous.
+  Calculator calculator=new Calculator();
   void compileFind(String findText, boolean isRegex, String text) {//use this in change find text.
     patternFindRegex = Pattern.compile(getRegex(findText, isRegex));
     if (isRegex) {
@@ -17,7 +18,7 @@ class FindReplace {
     }
     findAll(text);
   }
-  private void compileReplace(String replaceText, boolean isRegex) {
+  void compileReplace(String replaceText, boolean isRegex) {
     if (isRegex) {
       patternReplace=FindReplacePattern.compile(replaceText);
     } else {
@@ -53,15 +54,17 @@ class FindReplace {
         }
       }
       if (match) {
-        findData.addLast(result);
+        findData.add(result);
       }
     }
     calculator.vars.put("index", groupCount);
     calculator.vars.put("frame", groupCount+1);
     findIndex=min(findData.size()-1, findIndex);
+    //println("matches : "+findData.size());
+    textChanged=true;
   }
-  String replaceAll(String replaceText, boolean isRegex, String text) {
-    compileReplace(replaceText, isRegex);
+  String replaceAll(String text) {
+    //compileReplace(replaceText, isRegex);
     if (patternFind.error||patternReplace.error) {
       return text;
     }
