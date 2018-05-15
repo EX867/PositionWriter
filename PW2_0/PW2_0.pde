@@ -2,15 +2,15 @@ import pw2.element.*;
 import java.util.TreeMap;
 //PositionWriter 2.0.pde
 //===ADD list===//
-//led=(undo,redo),stop
-//shortcuts = ,ksclear,delay value edit,macros,export| resetloop undo redo rewind zoomin zoomout moveToCursorLed
+//shortcuts=undo,redo,stop,ksclear,delay value edit,macros,resetloop,undo,redo,rewind zoomin zoomout moveToCursorLed*
 //add ziploader
 //note on highlight
 //add custom velocity selector
-//script updater and file downloader(and midi preset) frame
+//script updater and file downloader(and midi preset) frame*
 //add rnd view
 //colors drag and drop in settings
 //PUT COMPRESSOR LABEL TEXT BELOW KNOB*******
+//macro real time error checking
 //
 //===ADD list - not now===//
 //
@@ -205,6 +205,7 @@ void main_setup() {
   KyUI.get("wv_text").setEnabled(true);
   KyUI.get("led_consolelayout").setEnabled(false);
   KyUI.get("led_findlr").setEnabled(false);
+  KyUI.get("m_dv5").setEnabled(false);//I should name this m_findlr...
   ui_attachSlider((ConsoleEdit)KyUI.get("led_console"));
   ui_attachSlider((ConsoleEdit)KyUI.get("log_content"));
   ((DropDown)KyUI.get("set_mode")).addItem("AUTOINPUT");

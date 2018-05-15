@@ -2,7 +2,7 @@
 static final String REGEX_NUMBER="(-?\\d+)";
 class LedFindReplace {
   ArrayList<FindData> findData=new ArrayList<FindData>();
-  int findIndex=0;//index iterator for next/prev
+  int findIndex=-1;//index iterator for next/prev
   Pattern patternFindRegex;
   FindReplacePattern patternFind;
   FindReplacePattern patternReplace;

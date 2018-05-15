@@ -15,14 +15,14 @@
       <file leaf-file-name="AutoFaderControl.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pw2/element/ugens/AutoFaderControl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="41">
+            <state relative-caret-position="1296">
               <caret line="89" column="32" lean-forward="false" selection-start-line="89" selection-start-column="32" selection-end-line="89" selection-end-column="32" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AutoControlSamplePlayer.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="AutoControlSamplePlayer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pw2/beads/AutoControlSamplePlayer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="18">
@@ -32,11 +32,21 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="PadButton.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/pw2/element/PadButton.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="216">
+              <caret line="70" column="35" lean-forward="false" selection-start-line="70" selection-start-column="35" selection-end-line="70" selection-end-column="35" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="AutoFaderW.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pw2/beads/AutoFaderW.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="783">
-              <caret line="78" column="13" lean-forward="true" selection-start-line="78" selection-start-column="13" selection-end-line="78" selection-end-column="13" />
+            <state relative-caret-position="1188">
+              <caret line="78" column="13" lean-forward="false" selection-start-line="78" selection-start-column="13" selection-end-line="78" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -45,8 +55,8 @@
       <file leaf-file-name="WavEditor.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pw2/element/WavEditor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
-              <caret line="518" column="67" lean-forward="true" selection-start-line="518" selection-start-column="67" selection-end-line="518" selection-end-column="67" />
+            <state relative-caret-position="7380">
+              <caret line="518" column="67" lean-forward="false" selection-start-line="518" selection-start-column="67" selection-end-line="518" selection-end-column="67" />
               <folding>
                 <element signature="method#setSnapGridPlus#0;class#WavEditor#0" expanded="false" />
                 <element signature="method#setSnapGridMinus#0;class#WavEditor#0" expanded="false" />
@@ -65,8 +75,8 @@
       <file leaf-file-name="KnobAutomation.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/pw2/beads/KnobAutomation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="77">
-              <caret line="154" column="23" lean-forward="true" selection-start-line="154" selection-start-column="23" selection-end-line="154" selection-end-column="23" />
+            <state relative-caret-position="2592">
+              <caret line="154" column="23" lean-forward="false" selection-start-line="154" selection-start-column="23" selection-end-line="154" selection-end-column="23" />
               <folding>
                 <element signature="e#5613#5614#0" expanded="true" />
                 <element signature="e#5645#5646#0" expanded="true" />
@@ -199,10 +209,11 @@
       <select />
     </treeState>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-23" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-709" />
+    <option name="y" value="66" />
     <option name="width" value="1066" />
-    <option name="height" value="1036" />
+    <option name="height" value="1035" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -427,7 +438,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -494,6 +504,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -813,11 +824,12 @@
       <workItem from="1524668865578" duration="990000" />
       <workItem from="1524929129960" duration="5000" />
       <workItem from="1525605715779" duration="1592000" />
+      <workItem from="1526402638145" duration="524000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="384951000" />
+    <option name="totallyTimeSpent" value="385475000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -829,7 +841,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
+    <frame x="-709" y="66" width="1066" height="1035" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32915717" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -837,9 +850,9 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975295" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25854215" sideWeight="0.4914071" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22095671" sideWeight="0.4935553" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22427745" sideWeight="0.4935553" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20515575" sideWeight="0.4908884" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32020202" sideWeight="0.4908884" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19871107" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29967776" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -893,14 +906,6 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/build/WavCut/build.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="864">
-          <caret line="48" column="14" lean-forward="false" selection-start-line="48" selection-start-column="14" selection-end-line="48" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/pw2/beads/TDComp.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1836">
@@ -1196,16 +1201,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="200">
           <caret line="285" column="0" lean-forward="true" selection-start-line="285" selection-start-column="0" selection-end-line="285" selection-end-column="0" />
-          <folding>
-            <element signature="e#6744#6745#0" expanded="true" />
-            <element signature="e#6782#6783#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pw2/element/ugens/AutoFaderControl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="41">
+        <state relative-caret-position="1296">
           <caret line="89" column="32" lean-forward="false" selection-start-line="89" selection-start-column="32" selection-end-line="89" selection-end-column="32" />
           <folding />
         </state>
@@ -1213,8 +1214,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pw2/beads/AutoFaderW.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="783">
-          <caret line="78" column="13" lean-forward="true" selection-start-line="78" selection-start-column="13" selection-end-line="78" selection-end-column="13" />
+        <state relative-caret-position="1188">
+          <caret line="78" column="13" lean-forward="false" selection-start-line="78" selection-start-column="13" selection-end-line="78" selection-end-column="13" />
           <folding />
         </state>
       </provider>
@@ -1229,8 +1230,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pw2/element/WavEditor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="518" column="67" lean-forward="true" selection-start-line="518" selection-start-column="67" selection-end-line="518" selection-end-column="67" />
+        <state relative-caret-position="7380">
+          <caret line="518" column="67" lean-forward="false" selection-start-line="518" selection-start-column="67" selection-end-line="518" selection-end-column="67" />
           <folding>
             <element signature="method#setSnapGridPlus#0;class#WavEditor#0" expanded="false" />
             <element signature="method#setSnapGridMinus#0;class#WavEditor#0" expanded="false" />
@@ -1247,8 +1248,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/pw2/beads/KnobAutomation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="77">
-          <caret line="154" column="23" lean-forward="true" selection-start-line="154" selection-start-column="23" selection-end-line="154" selection-end-column="23" />
+        <state relative-caret-position="2592">
+          <caret line="154" column="23" lean-forward="false" selection-start-line="154" selection-start-column="23" selection-end-line="154" selection-end-column="23" />
           <folding>
             <element signature="e#5613#5614#0" expanded="true" />
             <element signature="e#5645#5646#0" expanded="true" />
@@ -1260,6 +1261,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
           <caret line="4" column="22" lean-forward="false" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/pw2/element/PadButton.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="70" column="35" lean-forward="false" selection-start-line="70" selection-start-column="35" selection-end-line="70" selection-end-column="35" />
           <folding />
         </state>
       </provider>

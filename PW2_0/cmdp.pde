@@ -113,6 +113,7 @@ public class LedScript extends CommandScript {
   void resize(int x, int y) {//resize to ButtonX,ButtonY.
     info.buttonX=x;
     info.buttonY=y;
+    displayPad.resizePad(x,y);
     analyzer.clear();
     readAll();
   }

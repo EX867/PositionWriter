@@ -33,8 +33,79 @@ void macro_setup() {
       addMacroTab(createNewMacro());
     }
   };
+  ((ImageToggleButton)KyUI.get("m_findreplace")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.get("m_dv5").setEnabled(((ImageToggleButton)KyUI.get("m_findreplace")).value);
+      KyUI.get("m_dv3").localLayout();
+      return false;
+    }
+  }
+  );
+  //((ImageButton)KyUI.get("m_stop")).setPressListener(new MouseEventListener() {
+  //  public boolean onEvent(MouseEvent e, int index) {
+  //    //you can't do anything!! don't use thread.stop().
+  //    return false;
+  //  }
+  //}
+  //);
+  final TextBox changetitle_edit=((TextBox)KyUI.get("changetitle_edit"));
+  final ImageButton changetitle_exit=((ImageButton)KyUI.get("changetitle_exit"));
+  ((ImageButton)KyUI.get("m_changetitle")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      if (currentMacro==null) {
+        return false;
+      }
+      externalFrame=MACRO_CHANGETITLE;
+      KyUI.addLayer(frame_changetitle);
+      changetitle_edit.setText(getFileName(currentMacro.file.getAbsolutePath()));
+      final String before=currentMacro.file.getAbsolutePath();
+      changetitle_edit.onTextChangeListener=new EventListener() {
+        public void onEvent(Element e) {
+          String text=changetitle_edit.getText();
+          boolean er=!isValidFileName(text);
+          if (text.contains("/")||text.contains("\\")) {
+            er=true;
+          }
+          File[] files=new File(joinPath(path_global, path_macro)).listFiles();
+          text=getExtensionElse(text);
+          for (File f : files) {//anti duplication
+            if (getExtensionElse(getFileName(f.getAbsolutePath())).equals(text)) {
+              er=true;
+              break;
+            }
+          }
+          changetitle_edit.error=er;
+        }
+      };
+      changetitle_exit.setPressListener(new MouseEventListener() {
+        public boolean onEvent(MouseEvent e, int index) {
+          if (!changetitle_edit.error) {
+            String text=changetitle_edit.getText();
+            currentMacro.file=new File(joinPath(path_global, path_macro+"/"+getExtensionElse(text)+"/"+text));
+            String after=currentMacro.file.getAbsolutePath();
+            if (!before.equals(after)) {
+              if (!currentMacro.file.isFile()&&currentMacro.editor.script.empty()) {
+                currentMacro.setChanged(false, true);
+              } else {
+                currentMacro.setChanged(true, true);
+              }
+            }
+            KyUI.removeLayer();
+            externalFrame=NONE;
+          }
+          return false;
+        }
+      }
+      );
+      return false;
+    }
+  }
+  );
   ((ImageButton)KyUI.get("m_run")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
+      if (currentMacro==null) {
+        return false;
+      }
       final CommandEdit editor=currentMacro.editor;
       if (editor.getText().isEmpty()) {
         return false;
@@ -240,25 +311,11 @@ public static class PwMacroApi extends PwMacro {
   protected PW2_0 __parent;//you can['t] use it...
   protected PrintStream __console;
   public String name;//this is originlly "__this".
-  //paivate vars are not part of api.
-  private Analyzer __analyzer;
-  public class SimpleFile {
-    public File file;
-    public void write(String text) {
-      __parent.writeFile(file.getAbsolutePath(), text);
-    }
-    public String read() {
-      return __parent.readFile(file.getAbsolutePath());
-    }
-    public List<Command> delimitParse(LineCommandProcessor proc, LineCommandType type) {
-      __analyzer= new DelimiterParser(type, proc);//re calculate...because file can be change.
-      __analyzer.readAll((ArrayList<String>)Arrays.asList(PApplet.split(read(), '\n')));
-      return __analyzer.lines;
-    }
-    public Multiset<LineError> delimitParseError(LineCommandProcessor proc, LineCommandType type) {
-      __analyzer= new DelimiterParser(type, proc);
-      __analyzer.readAll((ArrayList<String>)Arrays.asList(PApplet.split(read(), '\n')));
-      return __analyzer.errors;
+  //private vars are not part of api.
+  public class Led {
+    LedScript led;
+    public Led(LedScript led_) {
+      led=led_;
     }
   }
   //you can do no constructor
@@ -274,23 +331,16 @@ public static class PwMacroApi extends PwMacro {
   public void print(Object o) {
     __console.print(o);
   }
+  public void writeFile(String path, String text) {
+    __parent.writeFile(path, text);
+  }
+  public String readFile(String path) {
+    return __parent.readFile(path);
+  }
+  public Led led(String text) {
+    return new Led(__parent.loadLedScript(__parent.createNewLed(), text));
+  }
   public void send(MidiDevice device, byte note, byte vel) {
     //device.sendMessage();
   }
 }
-/*
-void setup(){
- goto a; // no use
- SimpleFile file; // api class
- name; //api variable
- initialize(); // api method
- someMethod(); // method
- int a; // keyword
- if (a == 0) // block statement
- file.delimitParse(PW2_0.ledCommands,new LedProcessor());
- __parent.doNotUseThis();
- }
- void function(){
- println("do something");
- }
- */

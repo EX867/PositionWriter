@@ -13,9 +13,11 @@ static final int VEL=1;
 static final int HTML=2;
 static final int LED_EDITOR=1;//equals tab index
 static final int KS_EDITOR=2;
+static final int MACRO_EDITOR=5;
 static final int NONE=0;
 static final int LED_CHANGETITLE=1;
 static final int KS_INFO=2;
+static final int MACRO_CHANGETITLE=3;
 //===Tabs===//
 int mainTabs_selected=LED_EDITOR;
 int externalFrame=NONE;

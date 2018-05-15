@@ -338,6 +338,8 @@ void setup_ev1() {//setup small listeners
           currentLedEditor.editor.invalidate();
         }
       }
+      ((TextBox)KyUI.get("led_findtext")).rightText="("+(ledFindReplace.findIndex+1)+"/"+ledFindReplace.findData.size()+")";
+      KyUI.get("led_findtext").invalidate();
       return false;
     }
   }
@@ -358,6 +360,8 @@ void setup_ev1() {//setup small listeners
           currentLedEditor.editor.invalidate();
         }
       }
+      ((TextBox)KyUI.get("led_findtext")).rightText="("+(ledFindReplace.findIndex+1)+"/"+ledFindReplace.findData.size()+")";
+      KyUI.get("led_findtext").invalidate();
       return false;
     }
   }
@@ -462,6 +466,8 @@ void setup_ev1() {//setup small listeners
     public void onEvent(Element e) {
       ledFindReplace.compileFind(((TextBox)e).getText(), ((ImageToggleButton)KyUI.get("led_calcmode")).value, currentLedEditor.editor.getText());
       ((TextBox)e).error=ledFindReplace.patternFind.error;
+      ((TextBox)KyUI.get("led_findtext")).rightText="("+(ledFindReplace.findIndex+1)+"/"+ledFindReplace.findData.size()+")";
+      KyUI.get("led_findtext").invalidate();
       e.invalidate();
     }
   }

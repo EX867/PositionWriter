@@ -113,6 +113,10 @@ void setup_ev2() {
         ImageButton btn=((ImageButton)KyUI.get("led_findreplace"));
         btn.onPress();
         btn.getPressListener().onEvent(null, 0);
+      } else if (mainTabs_selected==MACRO_EDITOR) {
+        ImageButton btn=((ImageButton)KyUI.get("m_findreplace"));
+        btn.onPress();
+        btn.getPressListener().onEvent(null, 0);
       }
     }
   }
@@ -236,34 +240,37 @@ void setup_ev2() {
   ));
   KyUI.addShortcut(new KyUI.Shortcut("save", true, false, false, 19, java.awt.event.KeyEvent.VK_S, new EventListener() {//Ctrl+S
     public void onEvent(Element e) {
+      println("shortcut : save");
       if (mainTabs_selected==LED_EDITOR) {
         saveLed(currentLedEditor);
+      } else if (mainTabs_selected==KS_EDITOR) {
+        saveKs(currentKs, false);
       }
     }
   }
   ));
   KyUI.addShortcut(new KyUI.Shortcut("saveAll", true, false, true, 19, java.awt.event.KeyEvent.VK_S, new EventListener() {//Ctrl+Shift+S
     public void onEvent(Element e) {
+      println("shortcut : saveAll");
       if (mainTabs_selected==LED_EDITOR) {
         for (LedTab tab : ledTabs) {
           saveLed(tab.led.script);
         }
       } else if (mainTabs_selected==KS_EDITOR) {
         for (KsSession tab : ksTabs) {
-          saveKs(tab, true);
+          saveKs(tab, false);
         }
       }
     }
   }
   ));
-  KyUI.addShortcut(new KyUI.Shortcut("exportAll", true, true, true, 65535, 83, new EventListener() {//Ctrl+Alt+Shift+S
-    //TEST alert
+  KyUI.addShortcut(new KyUI.Shortcut("export", true, true, false, 65535, 83, new EventListener() {//Ctrl+Alt+S
     public void onEvent(Element e) {
-      println("export all");
+      println("shortcut : export");
       if (mainTabs_selected==LED_EDITOR) {
-        for (LedTab tab : ledTabs) {
-          exportLed(tab.led.script);
-        }
+        exportLed(currentLedEditor);
+      } else if (mainTabs_selected==KS_EDITOR) {
+        saveKs(currentKs, true);
       }
     }
   }

@@ -94,6 +94,7 @@ class KsSession {//
         }
       }
     }
+    textControl();
     setChanged(true, false);
   }
   void selectChain(int c) {
@@ -448,8 +449,8 @@ void ks_setup() {
             } else if (!beforeEdit.equals(currentKs.file.getAbsolutePath())) {
               currentKs.setChanged(true, true);
             }
+            ks_pad.resizePad(currentKs.info.buttonX, currentKs.info.buttonY);
             currentKs.resize( currentKs.info.buttonX, currentKs.info.buttonY, currentKs.info.chain);
-            ks_pad.size.set(currentKs.info.buttonX, currentKs.info.buttonY);
             ((PadButton)KyUI.get("ks_chain")).size.set(1, currentKs.info.chain);
             ks_pad.invalidate();
             KyUI.removeLayer();
@@ -668,7 +669,10 @@ KsSession loadKs(String filename) {
 }
 void saveKs(KsSession ks, boolean canonical) {
   if (ks.changed||canonical) {
-    String path=joinPath(path_global, path_projects+"/"+filterString(ks.file.getAbsolutePath(), new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}));
+    String path=ks.file.getAbsolutePath();
+    if (canonical) {
+      path=joinPath(path_global, path_projects+"/"+filterString(getFileName(path), new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"}));
+    }
     //new File(joinPath(path,"sounds")).mkdirs();
     //setting canonical to true copies all sounds and led. unipack export is canonical true.
     String text="";
