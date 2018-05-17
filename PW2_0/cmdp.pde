@@ -1,10 +1,10 @@
 public LedScript loadLedScript(String name_, String text) {//line ending have to be normalized.
-  LedScript ledScript=new LedScript(name_, null, null);
+  LedScript ledScript=new LedScript(name_, null);
   ledScript.insert(0, 0, text);
   return ledScript;
 }
 public LedScript loadApScript(String name_, String text) {
-  LedScript ledScript=new LedScript(name_, null, null);
+  LedScript ledScript=new LedScript(name_, null);
   ledScript.setCmdSet(apCommands);
   ledScript.insert(0, 0, text);
   return ledScript;
@@ -37,17 +37,20 @@ public class LedScript extends CommandScript {
   CommandEdit.MarkRange loopEndRange;
   CommandEdit.MarkRange frameSliderRange;
   public long FrameSliderBackup;//backup time.used in startfromcursor and autostop.
-  public LedScript(String name_, CommandEdit editor_, PadButton displayPad_) {//editor,displayPad is nullable.
+  public LedScript(String name_, PadButton displayPad_) {//editor,displayPad is nullable.
     super(getFileName(name_), null);
     file=new File(name_);
     lastSaveTime=file.lastModified();
-    editor=editor_;
     displayPad=displayPad_;
     processor=new LedProcessor();
     processor.clear(null);
     setCmdSet(ledCommands);
     readAll();
     setChanged(false, false);
+  }
+  public void setEditor(CommandEdit editor_) {    
+    editor=editor_;
+    setCmdSet(ledCommands);//???
     loopStartRange=editor.addMarkRange(0x3FFF0000);
     loopEndRange=editor.addMarkRange(0x3F0000FF);
     frameSliderRange=editor.addMarkRange(0x3F000000);
@@ -58,6 +61,7 @@ public class LedScript extends CommandScript {
       setAnalyzer(new DelimiterParser(cmdset, processor));
     } else {
       editor.setContent(this);
+      processor.clear(null);
       editor.setAnalyzer(new DelimiterParser(cmdset, processor));
     }
   }
@@ -113,7 +117,9 @@ public class LedScript extends CommandScript {
   void resize(int x, int y) {//resize to ButtonX,ButtonY.
     info.buttonX=x;
     info.buttonY=y;
-    displayPad.resizePad(x,y);
+    if (displayPad!=null) {
+      displayPad.resizePad(x, y);
+    }
     analyzer.clear();
     readAll();
   }

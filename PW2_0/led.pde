@@ -288,7 +288,7 @@ void led_setup() {
   };
   ((TabLayout)KyUI.get("led_filetabs")).tabRemoveListener=new ItemSelectListener() {
     public void onEvent(int index) {
-      ledTabs.get(index).light.active=false;
+      ledTabs.get(index).close();
       println("remove : "+ledTabs.get(index).led.script.name);
       ledTabs.remove(index);
       if (ledTabs.size()==0) {
@@ -361,17 +361,22 @@ void exportLed(final LedScript led) {//save as led for now. FIX to file name bas
 }
 LineError cacheError=new LineError(LineError.ERROR, 0, 0, 0, "", "");
 LedTab addLedTab(String filename) {
+  final LedScript script=new LedScript(filename, (PadButton)KyUI.get("led_pad"));
+  //add actual tab.
   TabLayout tabs=((TabLayout)KyUI.get("led_filetabs"));
-  Element e=tabs.addTabFromXmlPath(getFileName(filename), layout_led_frame_xml, "layout_led_frame.xml", null);
+  Element e=tabs.addTabFromXmlPath(getFileName(script.file.getAbsolutePath()), layout_led_frame_xml, "layout_led_frame.xml", null);
   KyUI.taskManager.executeAll();//add elements
+  //set editor
   final CommandEdit edit=(CommandEdit)e.children.get(0).children.get(0);
   edit.textSize=((TextBox)KyUI.get("set_textsize")).valueI;
   ui_attachSlider(edit);
-  final LedScript script=new LedScript(filename, edit, (PadButton)KyUI.get("led_pad"));
-  edit.setContent(script);
+  //edit.setContent(script);
+  //set script
+  script.setEditor(edit);
   LedTab tab=new LedTab(script);
   println("added : "+script.name);
   ledTabs.add(tab);
+  //
   EventListener ev=new EventListener() {
     public void onEvent(Element e) {
       cacheError.line=edit.getCursorLine()-1;
@@ -413,11 +418,10 @@ void addLedFileTab(String filename) {
   tab.led.script.tab=tab;
   tab.led.script.setChanged(false, false);
 }
+void addLedFileTab(LedScript script) {
+  addLedFileTab(script.file.getAbsolutePath());
+}
 void selectLedTab(int index) {
-  if (index<0||index>=ledTabs.size()) {//???
-    println(index+"??");
-    return;
-  }
   currentLed=ledTabs.get(index);
   currentLedEditor=currentLed.led.script;
   currentLedEditor.updateSlider();

@@ -13,6 +13,7 @@ static final int VEL=1;
 static final int HTML=2;
 static final int LED_EDITOR=1;//equals tab index
 static final int KS_EDITOR=2;
+static final int WAV_EDITOR=4;
 static final int MACRO_EDITOR=5;
 static final int NONE=0;
 static final int LED_CHANGETITLE=1;
@@ -89,6 +90,10 @@ class LedTab {
     led=light.addTrack(script);
     script.tab=this;
     thread.start();
+  }
+  public void close() {
+    light.active=false;
+    led.script.tab=null;
   }
 }
 ArrayList<LedTab> ledTabs=new ArrayList<LedTab>();//tab order.

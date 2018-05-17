@@ -204,6 +204,13 @@ class KsButton {
       }
     }
     );
+    ins.setDoubleClickListener(new EventListener() {
+      public void onEvent(Element e) {
+        addWavFileTab(sample.sample.getFileName());
+        ((TabLayout)KyUI.get("main_tabs")).selectTab(WAV_EDITOR);
+      }
+    }
+    );
     ins.set(loop);
     ins.text=getFileName(path);
     if (this==currentKs.getSelected()) {
@@ -266,7 +273,7 @@ class KsButton {
   void loadLed(LedScript script, int loop) {
     loadLed(led.size(), script, loop);
   }
-  void loadLed(final int index, LedScript script, int loop) {
+  void loadLed(final int index, final LedScript script, int loop) {
     script.displayPad=ks_pad;
     led.add(index, session.light.addTrack(script));
     led.get(index).link=this;
@@ -277,6 +284,13 @@ class KsButton {
     ins.setDataChangeListener(new EventListener() {
       public void onEvent(Element e) {
         setLedLoop(led.indexOf(led.get(index)), (int)ins.get());
+      }
+    }
+    );
+    ins.setDoubleClickListener(new EventListener() {
+      public void onEvent(Element e) {
+        addLedFileTab(script);
+        ((TabLayout)KyUI.get("main_tabs")).selectTab(LED_EDITOR);
       }
     }
     );
@@ -300,7 +314,7 @@ class KsButton {
   void removeLed(int index) {
     session.light.removeTrack(led.get(index));
     led.remove(index);
-    soundList.remove(index);
+    ledList.remove(index);
     session.countText.get(pos.z)[pos.x][pos.y]=sound.size()+"\n"+led.size();
     if (this==currentKs.getSelected()) {
       KyUI.taskManager.addTask(new Task() {
