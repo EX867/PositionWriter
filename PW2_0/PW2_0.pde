@@ -287,6 +287,7 @@ void main_setup() {
   ((LinearList)KyUI.get("wv_files")).setFixedSize(30);
   ((LinearList)KyUI.get("mp3_input")).setFixedSize(30);
   ((LinearList)KyUI.get("m_filelist")).setFixedSize(30);
+  ((ConsoleEdit)KyUI.get("led_console")).textSize=15;
   FileSelectorButton.listDirectory(((LinearList)KyUI.get("ks_fileview")), new File(path_global), new java.util.function.Consumer<File>() {
     public void accept(File file) {
       //println("file accept : "+file.getAbsolutePath());

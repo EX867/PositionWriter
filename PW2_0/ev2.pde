@@ -31,7 +31,9 @@ void setup_ev2() {
           textTransfer.setClipboardContents(edit.getSelection());
           edit.deleteSelection();
           edit.resetSelection();
-          ((TextEdit)e).onTextChangeListener.onEvent(e);
+          if (((TextEdit)e).onTextChangeListener!=null) {
+            ((TextEdit)e).onTextChangeListener.onEvent(e);
+          }
           ((TextEdit)e).recordHistory();
           e.invalidate();
         }
@@ -47,6 +49,15 @@ void setup_ev2() {
           edit.deleteSelection();
           edit.resetSelection();
         }
+        if (e instanceof ConsoleEdit) {
+          ConsoleEdit c=(ConsoleEdit)e;
+          if (c.getContent().line < c.editingLine) {
+            c.getContent().line = c.editingLine;
+            c.getContent().point = Math.min(c.header.length(), c.getLine(c.editingLine).length());
+          } else if (c.getContent().point > c.getLine(c.editingLine).length()) {
+            c.getContent().point = c.getLine(c.editingLine).length();
+          }
+        }
         String pasteString=textTransfer.getClipboardContents().replace("\r\n", "\n").replace("\r", "\n");
         if (pasteString.length()>0) {
           edit.insert(pasteString);
@@ -58,7 +69,9 @@ void setup_ev2() {
             edit.point=lines[lines.length-1].length();
           }
         }
-        ((TextEdit)e).onTextChangeListener.onEvent(e);
+        if (((TextEdit)e).onTextChangeListener!=null) {
+          ((TextEdit)e).onTextChangeListener.onEvent(e);
+        }
         ((TextEdit)e).recordHistory();
         e.invalidate();
       }

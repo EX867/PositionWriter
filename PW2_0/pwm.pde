@@ -6,10 +6,12 @@ public static class PW2_0Param {
   public PW2_0 sketch;
   public String tab;//I originally passed MacroTab here, but It seems it is unsafe. instead if that, send macro's name to identify it.
   public PrintStream console;
-  public PW2_0Param(PW2_0 sketch_, String tab_, PrintStream console_) {
+  public String param;
+  public PW2_0Param(PW2_0 sketch_, String tab_, PrintStream console_, String param_) {
     sketch=sketch_;
     tab=tab_;
     console=console_;
+    param=param_;
   }
 }
 void macro_setup() {
@@ -63,7 +65,7 @@ void macro_setup() {
         public void onEvent(Element e) {
           String text=changetitle_edit.getText();
           boolean er=!isValidFileName(text);
-          if (text.contains("/")||text.contains("\\")) {
+          if (text.contains("/")||text.contains("\\")||text.contains(" ")) {
             er=true;
           }
           File[] files=new File(joinPath(path_global, path_macro)).listFiles();
@@ -107,23 +109,12 @@ void macro_setup() {
         return false;
       }
       final CommandEdit editor=currentMacro.editor;
-      if (editor.getText().isEmpty()) {
+      if (editor.getText().isEmpty()) {//not null
         return false;
       }
-      final ConsoleEdit console=currentMacro.console;
       final MacroTab macro=currentMacro;
-      final PrintStream stream=new PrintStream(new OutputStream() {
-        public void write(int b) throws IOException {
-          if (b=='\n') {
-            console.addLine("");
-          } else {
-            console.insert(((Object)((char)b)).toString());
-          }
-          console.invalidate();
-        }
-      }
-      );
       final String[] paths=getClassPaths();
+      final PrintStream stream=macro.getConsoleStream();
       new Thread(new Runnable() {
         public void run() {
           //println((Object[])paths);
@@ -133,7 +124,8 @@ void macro_setup() {
           catch(Exception e) {
           }
           try {
-            PwMacroRun.run(PwMacroApi.class, "NewMacro", editor.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream), stream, macro.getBuildPath(), paths);//so build path is parent/src and bin.
+            //default run with no paramters
+            PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, ""), stream, macro.getBuildPath(), paths, true);//so build path is parent/src and bin.
             stream.close();
           }
           catch(Exception ee) {
@@ -162,8 +154,8 @@ void macro_setup() {
   );
 }
 public class MacroTab {
-  File file;//null.
-  CommandEdit editor;
+  File file;
+  CommandEdit editor;//nullable.
   ConsoleEdit console;
   boolean changed=false;
   long lastSaveTime=System.currentTimeMillis();
@@ -172,6 +164,33 @@ public class MacroTab {
     file=new File(name);
     editor=editor_;
     console=console_;
+  }
+  MacroTab(String name, ConsoleEdit console_) {
+    file=new File(name);
+    console=console_;
+  }
+  PrintStream getConsoleStream() {
+    return new PrintStream(new OutputStream() {
+      public void write(int b) throws IOException {
+        if (b=='\n') {
+          console.addLine("");
+        } else {
+          console.insert(((Object)((char)b)).toString());
+        }
+        console.invalidate();
+      }
+    }
+    );
+  }
+  String getTitle() {
+    return getExtensionElse(getFileName(file.getAbsolutePath()));
+  }
+  String getText() {
+    if (editor==null) {
+      return readFile(file.getAbsolutePath());
+    } else {
+      return editor.getText();
+    }
   }
   void setChanged(boolean v, boolean force) {
     if (v) {
@@ -311,6 +330,7 @@ public static class PwMacroApi extends PwMacro {
   protected PW2_0 __parent;//you can['t] use it...
   protected PrintStream __console;
   public String name;//this is originlly "__this".
+  public String param;
   //private vars are not part of api.
   public class Led {
     LedScript led;
@@ -324,6 +344,7 @@ public static class PwMacroApi extends PwMacro {
     __parent=((PW2_0Param)param).sketch;
     __console=((PW2_0Param)param).console;
     name=((PW2_0Param)param).tab;
+    this.param=((PW2_0Param)param).param;
   }
   public void println(Object o) {
     __console.println(o);

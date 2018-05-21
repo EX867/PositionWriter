@@ -16,6 +16,7 @@ class SkinEditView extends Element {
   ImageDrop skin_chain;
   ImageDrop skin_chainSelected;
   ImageDrop skin_chainNext;
+  ImageDrop skin_chainCover;
   ImageDrop skin_play;
   ImageDrop skin_playPressed;
   ImageDrop skin_pause;
@@ -49,6 +50,7 @@ class SkinEditView extends Element {
     addChild(skin_chain=new ImageDrop("skin_chain", new Rect(1360, 160, 1440, 240)));
     addChild(skin_chainSelected=new ImageDrop("skin_chainSelected", new Rect(1360, 260, 1440, 340)));
     addChild(skin_chainNext=new ImageDrop("skin_chainNext", new Rect(1360, 360, 1440, 440)));
+    addChild(skin_chainCover=new ImageDrop("skin_chainCover", new Rect(1360, 460, 1440, 540)));
     //controls
     addChild(skin_play=new ImageDrop("skin_play", new Rect(260, 30, 340, 110)));
     addChild(skin_playPressed=new ImageDrop("skin_playPressed", new Rect(360, 30, 440, 110)));
@@ -82,6 +84,7 @@ class SkinEditView extends Element {
     skin_chain.image=loadImage("external/skin/chain.png");
     skin_chainSelected.image=loadImage("external/skin/chain_.png");
     skin_chainNext.image=loadImage("external/skin/chain__.png");
+    skin_chainCover.image=loadImage("external/skin/chainled.png");
     skin_play.image=loadImage("external/skin/play.png");
     skin_playPressed.image=loadImage("external/skin/play_.png");
     skin_pause.image=loadImage("external/skin/pause.png");
@@ -232,6 +235,7 @@ class SkinEditView extends Element {
         float x=-((float)info.buttonX-1)*90+info.buttonY*180;
         float y=-((float)info.buttonY-1)*90+b*180;
         g.translate(x, y);
+        g.pushMatrix();
         if (mousePressed&&new Rect(x-90, y-90, x+90, y+90).contains(mouse2.x, mouse2.y)) {
           g.scale((float)180/skin_chainNext.image.width, (float)180/skin_chainNext.image.height);
           g.image(skin_chainNext.image, 0, 0);
@@ -244,6 +248,9 @@ class SkinEditView extends Element {
             g.image(skin_chain.image, 0, 0);
           }
         }
+        g.popMatrix();
+        g.scale((float)180/skin_chainCover.image.width, (float)180/skin_chainCover.image.height);
+        g.image(skin_chainCover.image, 0, 0);
         g.popMatrix();
       }
     }
@@ -448,6 +455,7 @@ void build_windows(final String packageName, final String appName, final String 
         ((ImageDrop)KyUI.get("skin_chain")).image.save(drawable+"chain.png");
         ((ImageDrop)KyUI.get("skin_chainSelected")).image.save(drawable+"chain_.png");
         ((ImageDrop)KyUI.get("skin_chainNext")).image.save(drawable+"chain__.png");
+        ((ImageDrop)KyUI.get("skin_chainCover")).image.save(drawable+"chainled.png");
         ((ImageDrop)KyUI.get("skin_play")).image.save(drawable+"play.png");
         ((ImageDrop)KyUI.get("skin_playPressed")).image.save(drawable+"play_.png");
         ((ImageDrop)KyUI.get("skin_pause")).image.save(drawable+"pause.png");

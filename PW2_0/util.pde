@@ -39,12 +39,16 @@ String filterString(String original, String[] filter) {
   }
   return original;
 }
+static Pattern identPattern=Pattern.compile("a-zA-Z_$(a-zA-Z0-9_$)*");
 boolean isValidPackageName(String content) {
   String[] tokens=split(content, ".");
   for (String token : tokens) {
-    if (token.equals("")||Analyzer.isInt(token.substring(0, 1)))return false;
-    token=token.replaceAll("[a-zA-Z0-9_]", "");
-    if (token.equals("")==false)return false;
+    if (!identPattern.matcher(token).matches()) {
+      return false;
+    }
+    //if (token.equals("")||Analyzer.isInt(token.substring(0, 1)))return false;
+    //token=token.replaceAll("[a-zA-Z0-9_]", "");
+    //if (token.equals("")==false)return false;
   }
   return true;
 }

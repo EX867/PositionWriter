@@ -302,6 +302,60 @@ void led_setup() {
       addLedTab(createNewLed());
     }
   };
+  final ConsoleEdit led_console=(ConsoleEdit)KyUI.get2("led_console");
+  led_console.processor=new Consumer<String>() {
+    public void accept(String s) {
+      if (s.equals("cls")) {
+        led_console.clearScreen();
+      } else if (!s.isEmpty()) {
+        String commandName=s;
+        final String parameter;
+        if (s.contains(" ")) {
+          commandName=s.substring(0, s.indexOf(" "));
+          parameter=s.substring(s.indexOf(" ")+1, s.length());
+        } else {
+          parameter="";
+        }
+        String path=joinPath(path_global, path_macro)+"/"+commandName+"/"+commandName+".pwm";
+        if (new File(path).exists()) {
+          final MacroTab macro=new MacroTab(path, led_console);
+          final PrintStream stream=macro.getConsoleStream();
+          if (new File(joinPath(macro.getClassPath(), commandName+".class")).isFile()) {
+            new Thread(new Runnable() {
+              public void run() {
+                try {
+                  //
+                  PwMacroRun.runClassFile(macro.getTitle(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, parameter), stream, macro.getBuildPath(), false);
+                  stream.close();
+                }
+                catch(Exception ee) {
+                  ee.printStackTrace();//here comes script errors.
+                  //ADD redirect to coe.
+                }
+              }
+            }
+            ).start();
+          } else {
+            final String[] paths=getClassPaths();
+            new Thread(new Runnable() {
+              public void run() {
+                try {
+                  //
+                  PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, ""), stream, macro.getBuildPath(), paths, true);//so build path is parent/src and bin.
+                  stream.close();
+                }
+                catch(Exception ee) {
+                  ee.printStackTrace();//here comes script errors.
+                  //ADD redirect to coe.
+                }
+              }
+            }
+            ).start();
+          }
+        }
+      }
+    }
+  };
 }
 String readLed(String filename) {//must file exists.
   final String ext=getFileExtension(filename);
