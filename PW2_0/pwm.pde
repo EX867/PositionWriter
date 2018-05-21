@@ -176,12 +176,9 @@ public class ConsoleInputStream extends InputStream {
       }
       catch(InterruptedException e) {
       }
-      //return 0;
     }
     char ret=buffer.charAt(0);
-    print("returned "+ret);
     buffer.delete(0, 1);
-    println(" /size : "+buffer.length());
     return ret;
   }
   public void clear() {
@@ -191,6 +188,30 @@ public class ConsoleInputStream extends InputStream {
   }
   public void close() {
     buffer=null;
+  }
+  public int read(byte b[], int off, int len) throws IOException {
+    if (b == null) {
+      throw new NullPointerException();
+    } else if (off < 0 || len < 0 || len > b.length - off) {
+      throw new IndexOutOfBoundsException();
+    } else if (len == 0) {
+      return 0;
+    }
+    int c = read();
+    if (c == -1) {
+      return -1;
+    }
+    b[off] = (byte)c;
+    int i = 1;
+    len=Math.min(len, available());
+    for (; i < len; i++) {
+      c = read();
+      if (c == -1) {
+        break;
+      }
+      b[off + i] = (byte)c;
+    }
+    return i;
   }
 }
 public class MacroTab {
