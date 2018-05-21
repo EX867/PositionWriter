@@ -319,14 +319,15 @@ void led_setup() {
         String path=joinPath(path_global, path_macro)+"/"+commandName+"/"+commandName+".pwm";
         if (new File(path).exists()) {
           final MacroTab macro=new MacroTab(path, led_console);
-          final PrintStream stream=macro.getConsoleStream();
+          final ConsoleInputStream input=macro.newInputStream();
+          final PrintStream stream=macro.newPrintStream(input);
           if (new File(joinPath(macro.getClassPath(), commandName+".class")).isFile()) {
             new Thread(new Runnable() {
               public void run() {
                 try {
                   //
-                  PwMacroRun.runClassFile(macro.getTitle(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, parameter), stream, macro.getBuildPath(), false);
-                  stream.close();
+                  PwMacroRun.runClassFile(macro.getTitle(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, parameter), stream, macro.getBuildPath(), false);
+                  macro.onMacroEnd();
                 }
                 catch(Exception ee) {
                   ee.printStackTrace();//here comes script errors.
@@ -341,8 +342,8 @@ void led_setup() {
               public void run() {
                 try {
                   //
-                  PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, ""), stream, macro.getBuildPath(), paths, true);//so build path is parent/src and bin.
-                  stream.close();
+                  PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, ""), stream, macro.getBuildPath(), paths, true);//so build path is parent/src and bin.
+                  macro.onMacroEnd();
                 }
                 catch(Exception ee) {
                   ee.printStackTrace();//here comes script errors.

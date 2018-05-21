@@ -83,8 +83,8 @@ String createNewKs() {
 }
 String createNewMacro() {
   long time = System.currentTimeMillis(); 
-  java.text.SimpleDateFormat dayTime = new java.text.SimpleDateFormat("yyyy_MM_dd_");
-  String macroName=dayTime.format(new java.util.Date(time))+hex((int)(time%86400000));
+  java.text.SimpleDateFormat dayTime = new java.text.SimpleDateFormat("yy_MM_dd_");
+  String macroName="m"+dayTime.format(new java.util.Date(time))+hex((int)(time%86400000));
   return joinPath(path_global, joinPath(path_macro, macroName+"/"+macroName+".pwm"));
 }
 void saveFileTo(String path, Runnable r) {

@@ -155,19 +155,30 @@ public class PwMacroRun {
     //load code folder jars to new classloader here??
     //4. run initialize
     if (debug) out.println("loading class...");
+    PwMacro macro = null;
     try {
       Class<? extends PwMacro> c = (Class)Class.forName(macroName, true, loader);//must no ClassCastException here!!
-      PwMacro macro = c.getConstructor().newInstance();
+      macro = c.getConstructor().newInstance();
       //5. run setup
       macro.initialize(param);
-      macro.setup();
-      loader.close();///do this on x button (or macro end) in positionwriter.
-      if (debug) out.println("macro finished.");
+      try {
+        macro.setup();
+      } catch (Throwable e) {
+        e.printStackTrace();
+      }
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       System.err.println("generated macro class not found.");
-      return;
     }
+    loader.close();
+    if (macro != null) {
+      try {
+        macro.exit();
+      } catch (Throwable e) {
+        e.printStackTrace();
+      }
+    }
+    if (debug) out.println("macro finished.");
   }
   static private final Map<String, String> COMPILER_OPTIONS;
   static {//copied from processing.mode.java.pdex.PreProcessingService

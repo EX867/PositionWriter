@@ -6,11 +6,13 @@ public static class PW2_0Param {
   public PW2_0 sketch;
   public String tab;//I originally passed MacroTab here, but It seems it is unsafe. instead if that, send macro's name to identify it.
   public PrintStream console;
+  public InputStream input;
   public String param;
-  public PW2_0Param(PW2_0 sketch_, String tab_, PrintStream console_, String param_) {
+  public PW2_0Param(PW2_0 sketch_, String tab_, PrintStream console_, InputStream input_, String param_) {
     sketch=sketch_;
     tab=tab_;
     console=console_;
+    input=input_;
     param=param_;
   }
 }
@@ -114,7 +116,8 @@ void macro_setup() {
       }
       final MacroTab macro=currentMacro;
       final String[] paths=getClassPaths();
-      final PrintStream stream=macro.getConsoleStream();
+      final ConsoleInputStream input=macro.newInputStream();
+      final PrintStream stream=macro.newPrintStream(input);
       new Thread(new Runnable() {
         public void run() {
           //println((Object[])paths);
@@ -125,8 +128,9 @@ void macro_setup() {
           }
           try {
             //default run with no paramters
-            PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, ""), stream, macro.getBuildPath(), paths, true);//so build path is parent/src and bin.
+            PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, ""), stream, macro.getBuildPath(), paths, true);//so build path is parent/src and bin.        
             stream.close();
+            macro.onMacroEnd();
           }
           catch(Exception ee) {
             ee.printStackTrace();//here comes script errors.
@@ -153,6 +157,42 @@ void macro_setup() {
   }
   );
 }
+public class ConsoleInputStream extends InputStream {
+  StringBuilder buffer=new StringBuilder();//commands go into here. and clear on print.
+  public int available() {
+    if (buffer==null) {
+      return 0;
+    }
+    return buffer.length();
+  }
+  public int read() {
+    if (buffer==null) {
+      return -1;
+    }
+    //println("blocked...");
+    while (buffer.length()==0) {
+      try {
+        Thread.sleep(1);
+      }
+      catch(InterruptedException e) {
+      }
+      //return 0;
+    }
+    char ret=buffer.charAt(0);
+    print("returned "+ret);
+    buffer.delete(0, 1);
+    println(" /size : "+buffer.length());
+    return ret;
+  }
+  public void clear() {
+    if (buffer!=null&&buffer.length()>0) {
+      buffer=new StringBuilder();
+    }
+  }
+  public void close() {
+    buffer=null;
+  }
+}
 public class MacroTab {
   File file;
   CommandEdit editor;//nullable.
@@ -160,6 +200,7 @@ public class MacroTab {
   boolean changed=false;
   long lastSaveTime=System.currentTimeMillis();
   private boolean tabchanged=false;
+  Consumer<String> originalCommandProcessor;
   MacroTab(String name, CommandEdit editor_, ConsoleEdit console_) {
     file=new File(name);
     editor=editor_;
@@ -169,7 +210,7 @@ public class MacroTab {
     file=new File(name);
     console=console_;
   }
-  PrintStream getConsoleStream() {
+  PrintStream newPrintStream(final ConsoleInputStream input) {
     return new PrintStream(new OutputStream() {
       public void write(int b) throws IOException {
         if (b=='\n') {
@@ -177,10 +218,32 @@ public class MacroTab {
         } else {
           console.insert(((Object)((char)b)).toString());
         }
+        //if (input!=null) {
+        //  input.clear();
+        //}
         console.invalidate();
       }
     }
     );
+  }
+  ConsoleInputStream newInputStream() {
+    if (originalCommandProcessor==null) {
+      originalCommandProcessor=console.processor;
+    }
+    final ConsoleInputStream input=new ConsoleInputStream();
+    console.processor=new Consumer<String>() {
+      public void accept(String s) {
+        if (input.buffer!=null) {
+          input.buffer.append(s);
+          input.buffer.append('\n');
+        }
+      }
+    };
+    return input;
+  }
+  void onMacroEnd() {//close not do anything...?
+    console.processor=originalCommandProcessor;
+    originalCommandProcessor=null;
   }
   String getTitle() {
     return getExtensionElse(getFileName(file.getAbsolutePath()));
@@ -328,7 +391,8 @@ void saveMacro(final MacroTab macro) {
 //- api : led utils
 public static class PwMacroApi extends PwMacro {
   protected PW2_0 __parent;//you can['t] use it...
-  protected PrintStream __console;
+  protected PrintStream out;
+  protected InputStream in;
   public String name;//this is originlly "__this".
   public String param;
   //private vars are not part of api.
@@ -342,15 +406,24 @@ public static class PwMacroApi extends PwMacro {
   @Override
     public final void initialize(Object param) {
     __parent=((PW2_0Param)param).sketch;
-    __console=((PW2_0Param)param).console;
+    out=((PW2_0Param)param).console;
+    in=((PW2_0Param)param).input;
     name=((PW2_0Param)param).tab;
     this.param=((PW2_0Param)param).param;
   }
+  @Override
+    public void exit() {
+    try {
+      in.close();
+    }
+    catch(IOException e) {
+    }
+  }
   public void println(Object o) {
-    __console.println(o);
+    out.println(o);
   }
   public void print(Object o) {
-    __console.print(o);
+    out.print(o);
   }
   public void writeFile(String path, String text) {
     __parent.writeFile(path, text);
