@@ -19,6 +19,7 @@ static final int NONE=0;
 static final int LED_CHANGETITLE=1;
 static final int KS_INFO=2;
 static final int MACRO_CHANGETITLE=3;
+static final int DIALOG=4;
 //===Tabs===//
 int mainTabs_selected=LED_EDITOR;
 int externalFrame=NONE;
@@ -75,6 +76,7 @@ CachingFrame frame_mp3;
 CachingFrame frame_log;
 CachingFrame frame_update;
 CachingFrame frame_skinedit;
+CachingFrame frame_dialog;
 //
 interface TitleChangeTarget {
   String getTitle();

@@ -172,6 +172,7 @@ void main_setup() {
   LayoutLoader.loadXML(frame_mp3=KyUI.getNewLayer().setAlpha(100), loadXML("ffmpeg.xml"));
   LayoutLoader.loadXML(frame_log=KyUI.getNewLayer().setAlpha(100), loadXML("logger.xml"));
   LayoutLoader.loadXML(frame_update=KyUI.getNewLayer().setAlpha(100), loadXML("update.xml"));
+  LayoutLoader.loadXML(frame_dialog=KyUI.getNewLayer().setAlpha(100), loadXML("dialog.xml"));
   frame_skinedit=KyUI.getNewLayer().setAlpha(180);
   frame_skinedit.addChild(new SkinEditView("skin_edit", new Rect(0, 0, 1460, 960)));
   KyUI.taskManager.executeAll();//add all element
@@ -280,7 +281,7 @@ void main_setup() {
   } else {
     addLedTab(createNewLed());
     addKsTab(createNewKs());
-    addMacroTab(createNewMacro());
+    //addMacroTab(createNewMacro());
     //addWavTab(null);//no files loaded first.
   }
   ((LinearList)KyUI.get("ks_fileview")).setFixedSize(30);

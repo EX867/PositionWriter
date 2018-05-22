@@ -480,4 +480,11 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
+  ((Button)KyUI.get("dialog_cancel")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.removeLayer();
+      return false;
+    }
+  }
+  );
 }

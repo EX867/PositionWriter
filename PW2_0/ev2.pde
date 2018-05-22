@@ -258,6 +258,10 @@ void setup_ev2() {
         saveLed(currentLedEditor);
       } else if (mainTabs_selected==KS_EDITOR) {
         saveKs(currentKs, false);
+      } else if (mainTabs_selected==WAV_EDITOR) {
+        saveWav(currentWav);
+      } else if (mainTabs_selected==MACRO_EDITOR) {
+        saveMacro(currentMacro);
       }
     }
   }
@@ -272,6 +276,14 @@ void setup_ev2() {
       } else if (mainTabs_selected==KS_EDITOR) {
         for (KsSession tab : ksTabs) {
           saveKs(tab, false);
+        }
+      } else if (mainTabs_selected==WAV_EDITOR) {
+        for (WavTab tab : wavTabs) {
+          saveWav(tab);
+        }
+      } else if (mainTabs_selected==MACRO_EDITOR) {
+        for (MacroTab tab : macroTabs) {
+          saveMacro(tab);
         }
       }
     }

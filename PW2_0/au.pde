@@ -237,14 +237,40 @@ void wav_setup() {
     }
   };
   ((TabLayout)KyUI.get("wv_filetabs")).tabRemoveListener=new ItemSelectListener() {
-    public void onEvent(int index) {
-      wavTabs.get(index).close();
-      wavTabs.remove(index);
-      if (wavTabs.size()==0) {
-        //instead of adding new tab, just set current to null. it can be done becauase waveditor has no extra sharing state.
-        selectWavTab(-1);
+    public void onEvent(final int index) {
+      final Runnable run=new Runnable() {
+        public void run() {
+          wavTabs.get(index).close();
+          wavTabs.remove(index);
+          if (wavTabs.size()==0) {
+            //instead of adding new tab, just set current to null. it can be done becauase waveditor has no extra sharing state.
+            selectWavTab(-1);
+          }
+          KyUI.get("wv_filetabs").localLayout();
+          ((TabLayout)KyUI.get("wv_filetabs")).removeTab(index);
+        }
+      };
+      externalFrame=DIALOG;
+      ((Button)KyUI.get("dialog_yes")).setPressListener(new MouseEventListener() {
+        public boolean onEvent(MouseEvent e, int i) {
+          KyUI.removeLayer();
+          externalFrame=NONE;
+          saveWav(wavTabs.get(index));
+          run.run();
+          return false;
+        }
       }
-      KyUI.get("wv_filetabs").localLayout();
+      );
+      ((Button)KyUI.get("dialog_no")).setPressListener(new MouseEventListener() {
+        public boolean onEvent(MouseEvent e, int i) {
+          KyUI.removeLayer();
+          externalFrame=NONE;
+          run.run();
+          return false;
+        }
+      }
+      );
+      KyUI.addLayer(frame_dialog);
     }
   };
 }
@@ -307,4 +333,10 @@ void selectWavTab(int index) {
     currentWav=wavTabs.get(index);
   }
   KyUI.get("wv_frame").invalidate();
+}
+void saveWav(WavTab wav) {
+  if (wav==null) {
+    return;
+  }
+  //ADD
 }

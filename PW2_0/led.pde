@@ -287,14 +287,43 @@ void led_setup() {
     }
   };
   ((TabLayout)KyUI.get("led_filetabs")).tabRemoveListener=new ItemSelectListener() {
-    public void onEvent(int index) {
-      ledTabs.get(index).close();
-      println("remove : "+ledTabs.get(index).led.script.name);
-      ledTabs.remove(index);
-      if (ledTabs.size()==0) {
-        addLedTab(createNewLed());
+    public void onEvent(final int index) {
+      final Runnable run=new Runnable() {
+        public void run() {
+          ledTabs.get(index).close();
+          ledTabs.remove(index);
+          if (ledTabs.size()==0) {
+            addLedTab(createNewLed());
+          }
+          led_filetabs.onLayout();
+          ((TabLayout)KyUI.get("led_filetabs")).removeTab(index);
+        }
+      };
+      if (ledTabs.get(index).led.script.changed) {
+        externalFrame=DIALOG;
+        ((Button)KyUI.get("dialog_yes")).setPressListener(new MouseEventListener() {
+          public boolean onEvent(MouseEvent e, int i) {
+            KyUI.removeLayer();
+            externalFrame=NONE;
+            saveLed(ledTabs.get(index).led.script);
+            run.run();
+            return false;
+          }
+        }
+        );
+        ((Button)KyUI.get("dialog_no")).setPressListener(new MouseEventListener() {
+          public boolean onEvent(MouseEvent e, int i) {
+            KyUI.removeLayer();
+            externalFrame=NONE;
+            run.run();
+            return false;
+          }
+        }
+        );
+        KyUI.addLayer(frame_dialog);
+      } else {
+        run.run();
       }
-      led_filetabs.onLayout();
     }
   };
   ((TabLayout)KyUI.get("led_filetabs")).addTabListener=new EventListener() {

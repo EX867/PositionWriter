@@ -23,13 +23,43 @@ void macro_setup() {
     }
   };
   ((TabLayout)KyUI.get("m_filetabs")).tabRemoveListener=new ItemSelectListener() {
-    public void onEvent(int index) {
-      macroTabs.remove(index);
-      if (macroTabs.size()==0) {
-        //instead of adding new tab, just set current to null. it can be done becauase waveditor has no extra sharing state.
-        selectMacroTab(-1);
+    public void onEvent(final int index) {
+      final Runnable run=new Runnable() {
+        public void run() {
+          macroTabs.remove(index);
+          if (macroTabs.size()==0) {
+            //instead of adding new tab, just set current to null. it can be done becauase waveditor has no extra sharing state.
+            selectMacroTab(-1);
+          }
+          macro_filetabs.localLayout();
+          ((TabLayout)KyUI.get("m_filetabs")).removeTab(index);
+        }
+      };
+      if (macroTabs.get(index).changed) {
+        externalFrame=DIALOG;
+        ((Button)KyUI.get("dialog_yes")).setPressListener(new MouseEventListener() {
+          public boolean onEvent(MouseEvent e, int i) {
+            KyUI.removeLayer();
+            externalFrame=NONE;
+            saveMacro(macroTabs.get(index));
+            run.run();
+            return false;
+          }
+        }
+        );
+        ((Button)KyUI.get("dialog_no")).setPressListener(new MouseEventListener() {
+          public boolean onEvent(MouseEvent e, int i) {
+            KyUI.removeLayer();
+            externalFrame=NONE;
+            run.run();
+            return false;
+          }
+        }
+        );
+        KyUI.addLayer(frame_dialog);
+      } else {
+        run.run();
       }
-      macro_filetabs.localLayout();
     }
   };
   ((TabLayout)KyUI.get("m_filetabs")).addTabListener=new EventListener() {
@@ -232,12 +262,23 @@ public class MacroTab {
     console=console_;
   }
   PrintStream newPrintStream(final ConsoleInputStream input) {
+    textFont(console.textFont);
+    textSize(console.textSize);
+    final int max_=(int)((console.pos.right-console.pos.left-console.lineNumSize-console.padding*2)/textWidth("A"))-console.header.length()-2;
     return new PrintStream(new OutputStream() {
+      int count=0;
+      int max=max_;
       public void write(int b) throws IOException {
         if (b=='\n') {
           console.addLine("");
+          count=0;
         } else {
           console.insert(((Object)((char)b)).toString());
+          count++;
+          if (count>=max) {
+            console.addLine("");
+            count=0;
+          }
         }
         //if (input!=null) {
         //  input.clear();
@@ -315,6 +356,7 @@ MacroTab addMacroTab(final String filename) {//no null filename!
   ui_attachSlider(editor);
   ui_attachSlider(console);
   editor.textFont=KyUI.fontMain;
+  console.textFont=KyUI.fontMain;
   editor.commentEnabled=false;
   editor.textRenderer=new PwHighlighter(editor, PwMacroApi.class);
   final MacroTab tab=new MacroTab(filename, editor, console);
@@ -394,6 +436,9 @@ void selectMacroTab(int index) {
   KyUI.get("m_dv4").localLayout();
 }
 void saveMacro(final MacroTab macro) { 
+  if (macro==null) {
+    return;
+  }
   if (macro.changed) {
     final String filename=macro.file.getAbsolutePath();
     saveFileTo(filename, new Runnable() {

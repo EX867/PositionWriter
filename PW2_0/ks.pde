@@ -571,13 +571,43 @@ void ks_setup() {
     }
   };
   ((TabLayout)KyUI.get("ks_filetabs")).tabRemoveListener=new ItemSelectListener() {
-    public void onEvent(int index) {
-      ksTabs.get(index).close();
-      ksTabs.remove(index);
-      if (ksTabs.size()==0) {
-        addKsTab(createNewKs());
+    public void onEvent(final int index) {
+      final Runnable run=new Runnable() {
+        public void run() {
+          ((TabLayout)KyUI.get("ks_filetabs")).removeTab(index);
+          ksTabs.get(index).close();
+          ksTabs.remove(index);
+          if (ksTabs.size()==0) {
+            addKsTab(createNewKs());
+          }
+          ((TabLayout)KyUI.get("ks_filetabs")).onLayout();
+        }
+      };
+      if (ksTabs.get(index).changed) {
+        externalFrame=DIALOG;
+        ((Button)KyUI.get("dialog_yes")).setPressListener(new MouseEventListener() {
+          public boolean onEvent(MouseEvent e, int i) {
+            KyUI.removeLayer();
+            externalFrame=NONE;
+            saveKs(ksTabs.get(index), false);
+            run.run();
+            return false;
+          }
+        }
+        );
+        ((Button)KyUI.get("dialog_no")).setPressListener(new MouseEventListener() {
+          public boolean onEvent(MouseEvent e, int i) {
+            KyUI.removeLayer();
+            externalFrame=NONE;
+            run.run();
+            return false;
+          }
+        }
+        );
+        KyUI.addLayer(frame_dialog);
+      } else {
+        run.run();
       }
-      ((TabLayout)KyUI.get("ks_filetabs")).onLayout();
     }
   };
   ((TabLayout)KyUI.get("ks_filetabs")).addTabListener=new EventListener() {
