@@ -75,10 +75,11 @@ CachingFrame frame_ksinfo;
 CachingFrame frame_info;
 CachingFrame frame_tips;
 CachingFrame frame_mp3;
-CachingFrame frame_log;
 CachingFrame frame_update;
 CachingFrame frame_skinedit;
 CachingFrame frame_dialog;
+CachingFrame frame_error;
+CachingFrame frame_log;
 //
 interface TitleChangeTarget {
   String getTitle();

@@ -429,16 +429,21 @@ public class CommandScript extends EditorString {
     }
   }
   static public String[] split(String value, String delim) {//processing split
-    List<String> items=new ArrayList<>();
+    List<String> items = new ArrayList<>();
     int index;
-    int offset=0;
-    while ((index=value.indexOf(delim, offset)) != -1) {
+    int offset = 0;
+    while ((index = value.indexOf(delim, offset)) != -1) {
       items.add(value.substring(offset, index));
-      offset=index + delim.length();
+      offset = index + delim.length();
     }
     items.add(value.substring(offset));
-    String[] outgoing=new String[items.size()];
+    String[] outgoing = new String[items.size()];
     items.toArray(outgoing);
     return outgoing;
+  }
+  @Override protected boolean isSpaceChar(char c) {
+    return c=='.'||c=='('||c==')'||c=='{'||c=='}'||c=='<'||c=='>'||c==','||c=='+'||c=='-'||c=='*'||c=='&'||c=='|'
+        ||c=='/'||c=='^'||c=='%'||c=='@'||c=='!'||c=='='||c=='\"'||c=='\''||c=='~'||c=='?'||c==':'||c==';'
+        ||super.isSpaceChar(c);
   }
 }

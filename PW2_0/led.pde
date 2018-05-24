@@ -333,15 +333,15 @@ void led_setup() {
           if (new File(joinPath(macro.getClassPath(), commandName+".class")).isFile()) {
             new Thread(new Runnable() {
               public void run() {
+                //
                 try {
-                  //
-                  PwMacroRun.runClassFile(macro.getTitle(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, parameter), stream, macro.getBuildPath(), false);
-                  macro.onMacroEnd();
+                  PwMacroRun.runClassFile(macro.getTitle(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, parameter), stream, macro.getBuildPath(), false, internalError, externalError);
                 }
-                catch(Exception ee) {
-                  ee.printStackTrace();//here comes script errors.
-                  //ADD redirect to coe.
+                catch(Exception e) {
+                  internalError.accept(e);
                 }
+                macro.onMacroEnd();
+                stream.close();
               }
             }
             ).start();
@@ -349,15 +349,10 @@ void led_setup() {
             final String[] paths=getClassPaths();
             new Thread(new Runnable() {
               public void run() {
-                try {
-                  //
-                  PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, ""), stream, macro.getBuildPath(), paths, true);//so build path is parent/src and bin.
-                  macro.onMacroEnd();
-                }
-                catch(Exception ee) {
-                  ee.printStackTrace();//here comes script errors.
-                  //ADD redirect to coe.
-                }
+                //
+                PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, ""), stream, macro.getBuildPath(), paths, true, internalError, externalError);//so build path is parent/src and bin.
+                macro.onMacroEnd();
+                stream.close();
               }
             }
             ).start();
@@ -405,7 +400,7 @@ void saveLed(final LedScript led) {
   }
 }
 void exportLed(final LedScript led) {//save as led for now. FIX to file name based file type save
-  String filename_=getNotDuplicatedFilename(joinPath(joinPath(path_global, path_led), getFileName(led.file.getAbsolutePath())));
+  String filename_=getNotDuplicatedFileName(joinPath(joinPath(path_global, path_led), getFileName(led.file.getAbsolutePath())));
   final String filename;
   if (filename_.endsWith(".mid")||filename_.endsWith(".png")||filename_.endsWith(".gif")) {
     filename=filename_.substring(0, filename_.length()-3)+"led";

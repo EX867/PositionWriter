@@ -529,34 +529,6 @@ class Pos {
     return "["+x+" "+y+"]";
   }
 }
-void test() {
-  int a=1;
-  while (a<=10) {
-    int b=1;
-    while (b<=10) {
-      print(TenToMc(new Pos(b, a, false))+" ");
-      b=b+1;
-    }
-    println();
-    a=a+1;
-  }
-  println();
-  a=1;
-  while (a<=8) {
-    int b=1;
-    while (b<=8) {
-      print(McToTen(new Pos(b, a, false))+" ");
-      b=b+1;
-    }
-    println();
-    a=a+1;
-  }
-  a=1;
-  while (a<=32) {
-    print(McToTen(new Pos(a, 0, true))+" ");
-    a=a+1;
-  }
-}
 Pos TenToMc(Pos in) {
   if (2<=in.x&&in.x<=9&&2<=in.y&&in.y<=9) {
     return new Pos(in.x-1, in.y-1, false);

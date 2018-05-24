@@ -1,22 +1,36 @@
 //error handling.pde
+Consumer<Throwable> internalError=new Consumer<Throwable>() {
+  public void accept(Throwable e) {
+    displayError(e);
+  }
+};
+BiConsumer<PrintStream, Throwable> externalError=new BiConsumer<PrintStream, Throwable>() {
+  public void accept(PrintStream s, Throwable e) {
+    println("macro had an error :");
+    displayError(s, e);
+  }
+};
+void displayError(PrintStream writer, Throwable e) {
+  writer.println("");
+  for (java.lang.StackTraceElement ee : e.getStackTrace()) {
+    String str=ee.toString();
+    writer.println(str);
+  }
+  writer.println("Error occurred!");
+  writer.println(e.toString());
+}
 void displayError(String content) {
   displayError(new RuntimeException(content));
 }
-void displayError(Exception e) {
+void displayError(Throwable e) {
   e.printStackTrace();
-  ArrayList<String> logs=new ArrayList<String>();
-  logs.add("");
-  for (java.lang.StackTraceElement ee : e.getStackTrace()) {
-    String str=ee.toString();
-    logs.add(str);
-  }
-  logs.add("Error occurred!");
-  logs.add(e.toString());
-  //#ADD add error layer
+  KyUI.addLayer(frame_error); 
+  PrintStream write=newPrintStream((ConsoleEdit)KyUI.get("err_text"));
+  displayError(write, e);
   if (!DEVELOPER_BUILD) {
-    PrintWriter write=createWriter("err.txt");
-    for (String s : logs) {
-      write.write(s+"\n");
+    PrintWriter writer=createWriter("err.txt");
+    for (java.lang.StackTraceElement ee : e.getStackTrace()) {
+      writer.println(ee.toString());
     }
     write.flush();
     write.close();

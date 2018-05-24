@@ -13,13 +13,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.TreeSet;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 public class PwHighlighter implements CommandEdit.TextRenderer {
   CommandEdit edit;
+  TreeSet<String> apiMethods = new TreeSet<>();
+  static final int NONE = 0;
+  static final int FUNCTION = 1;
+  static final int API_FUNCTION = 2;
   public PwHighlighter(CommandEdit edit_, Class<? extends PwMacro> cl) {//add keywords!!
-    edit=edit_;
+    edit = edit_;
     //no used
     edit.keywords.put("const", 0xFFFF0000);
     edit.keywords.put("goto", 0xFFFF0000);
@@ -82,20 +87,22 @@ public class PwHighlighter implements CommandEdit.TextRenderer {
     edit.keywords.put("synchronized", 0xFF669900);
     //
     edit.keywords.put("__method", 0xFF3388BB);
+    edit.keywords.put("__apimethod", 0xFF228899);
     edit.keywords.put("__string", 0xFF7D4793);
-    Method[] methods=cl.getDeclaredMethods();//only contains api.
+    Method[] methods = cl.getDeclaredMethods();//only contains api.
     for (Method m : methods) {
-      if (!Modifier.isPrivate(m.getModifiers())) {
-        edit.keywords.put(m.getName(), 0xFF228899);
-      }
+      //      if (!Modifier.isPrivate(m.getModifiers())) {
+      //        edit.keywords.put(m.getName(), 0xFF228899);
+      //      }
+      apiMethods.add(m.getName());
     }
-    Field[] fields=cl.getDeclaredFields();
+    Field[] fields = cl.getDeclaredFields();
     for (Field f : fields) {
       if (!Modifier.isPrivate(f.getModifiers())) {
         edit.keywords.put(f.getName(), 0xFFD94A7A);
       }
     }
-    Class[] classes=cl.getDeclaredClasses();
+    Class[] classes = cl.getDeclaredClasses();
     for (Class c : classes) {
       if (!Modifier.isPrivate(c.getModifiers())) {
         edit.keywords.put(c.getCanonicalName(), 0xFFE2661A);
@@ -106,39 +113,53 @@ public class PwHighlighter implements CommandEdit.TextRenderer {
   }
   //lexing happens every frame. only lex visible area of text. lexing can be done per line.
   //higlighter only highlights keywords, predefined functions,variables so it is fast!
-  static Pattern identifier=Pattern.compile("[a-zA-Z_\\$]([a-zA-Z0-9_\\$])*");
+  static Pattern identifier = Pattern.compile("[a-zA-Z_\\$]([a-zA-Z0-9_\\$])*");
   @Override
   public void render(PGraphics g, String text, int line, CommandEdit cmd) {
-    final ArrayList<Token> tokens=new ArrayList<Token>();
-    final PdeLexer lexer=new PdeLexer(new ByteArrayInputStream(text.getBytes()));
+    final ArrayList<Token> tokens = new ArrayList<Token>();
+    final PdeLexer lexer = new PdeLexer(new ByteArrayInputStream(text.getBytes()));
     try {
-      for (Token token=lexer.nextToken(); token.getType() != Token.EOF_TYPE; token=lexer.nextToken()) {
+      for (Token token = lexer.nextToken(); token.getType() != Token.EOF_TYPE; token = lexer.nextToken()) {
         //got token!
         tokens.add(token);
       }
     } catch (TokenStreamException e) {
       e.printStackTrace();
     }
-    float width=0;
-    for (int a=0; a < tokens.size(); a++) {
-      Token token=tokens.get(a);
-      boolean isFunction=false;
-      if (identifier.matcher(token.getText()).matches()) {
-        for (int b=a + 1; b < tokens.size(); b++) {
+    float width = 0;
+    for (int a = 0; a < tokens.size(); a++) {
+      Token token = tokens.get(a);
+      int functionType = NONE;
+      if (apiMethods.contains(token.getText())) {
+        for (int b = a + 1; b < tokens.size(); b++) {
           if (tokens.get(b).getText().equals("(")) {
-            isFunction=true;
+            functionType = API_FUNCTION;
             break;//it is function!
           }
           if (tokens.get(b).getText().trim().length() != 0) {
             break;
           }
         }
+      } else {
+        if (identifier.matcher(token.getText()).matches()) {
+          for (int b = a + 1; b < tokens.size(); b++) {
+            if (tokens.get(b).getText().equals("(")) {
+              functionType = FUNCTION;
+              break;//it is function!
+            }
+            if (tokens.get(b).getText().trim().length() != 0) {
+              break;
+            }
+          }
+        }
       }
       int fill;
-      g.fill(fill=cmd.keywords.getOrDefault(token.getText(), cmd.textColor));
+      g.fill(fill = cmd.keywords.getOrDefault(token.getText(), cmd.textColor));
       if (fill == cmd.textColor) {//not a keyword.
-        if (isFunction) {
+        if (functionType == FUNCTION) {
           g.fill(cmd.keywords.getOrDefault("__method", cmd.textColor));
+        } else if (functionType == API_FUNCTION) {
+          g.fill(cmd.keywords.getOrDefault("__apimethod", cmd.textColor));
         } else if (token.getText().length() >= 1 && (token.getText().charAt(0) == '\"' || token.getText().charAt(0) == '\'')) {
           g.fill(cmd.keywords.getOrDefault("__string", cmd.textColor));
         } else if (token.getText().startsWith("//")) {//|| token.getText().startsWith("/*")) {//comment
@@ -148,7 +169,7 @@ public class PwHighlighter implements CommandEdit.TextRenderer {
       }
       //ADD if still default color and it is identifier, check if it is type. (be aware that scope can hide things!)
       g.text(token.getText(), width + cmd.pos.left + cmd.lineNumSize + cmd.padding, cmd.pos.top + (line + 0.5F) * cmd.textSize - cmd.offsetY + cmd.padding);
-      width=width + g.textWidth(token.getText());
+      width = width + g.textWidth(token.getText());
     }
   }
 }

@@ -27,6 +27,8 @@ import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 public class PwMacroRun {
   static AutoFormat formatter;
   static ASTParser parser = ASTParser.newParser(AST.JLS8);
@@ -36,116 +38,121 @@ public class PwMacroRun {
   public static void run(Class<? extends PwMacro> extendClass, String macroName, String source,//generation
                          Object param, PrintStream out,//runtime
                          String buildPath, String[] classPaths,
-                         boolean debug) throws Exception {//for now, log and err is same.
-    if (debug) out.println("\n\npreparing run...");
-    //
-    // 0. preprocess it.
-    //
-    //extract imports
-    ArrayList<ImportStatement> imports = new ArrayList<>();
-    source = new TextTransform(source).addAll(SourceUtils.parseProgramImports(source, imports)).apply();
-    //
-    PdePreprocessor.Mode sketchMode = PdePreprocessor.parseMode(SourceUtils.scrubCommentsAndStrings(source));
-    source = PwMacroPreproc.addHeaderToSource(extendClass, macroName, source, sketchMode);
-    //
-    source = new TextTransform(source).addAll(SourceUtils.insertImports(imports)).apply();
-    //
-    // get classpaths from code folder
-    //
-    //ArrayList<String> classPathArray_=new ArrayList<>();
-    //classPathArray_.add(joinPath(buildPath, "bin"));
-    //classPathArray_.add(new File("C:\\Users\\user\\Documents\\[Projects]\\PositionWriter\\PW2_0\\code").getAbsolutePath());//pass positionwriter classpath.
-    //String[] classPathArray=classPathArray_.toArray(new String[]{});
-    String[] classPathArray = classPaths;
-    //
-    // build ast
-    //
-    // Transform code to parsable state
-    // Create intermediate AST for advanced preprocessing
-    CompilationUnit parsableCU = makeAST(parser, source.toCharArray(), COMPILER_OPTIONS);
-    //
-    // do advanced transforms which operate on AST and get compilable source
-    String compilableStage = new TextTransform(source).addAll(SourceUtils.preprocessAST(parsableCU)).apply();
-    char[] compilableStageChars = compilableStage.toCharArray();
-    System.out.println("ast processing applied.");
-    //
-    // Create compilable AST to get syntax problems
-    CompilationUnit compilableCU = makeAST(parser, compilableStageChars, COMPILER_OPTIONS);
-    //
-    // Get syntax problems from compilable AST
-    boolean hasSyntaxErrors = Arrays.stream(compilableCU.getProblems()).anyMatch(IProblem::isError);
-    //
-    // Generate bindings after getting problems - avoids
-    // 'missing type' errors when there are syntax problems
-    //
-    if (hasSyntaxErrors) {//error1
-      Arrays.asList(compilableCU.getProblems()).stream().forEach((IProblem problem) -> {
-        if (debug) out.println("ecj>" + problem.getMessage());
-      });
-      if (debug) out.println("syntax errors exist.");
-      return;
+                         boolean debug, Consumer<Throwable> internalError, BiConsumer<PrintStream, Throwable> externalError) {//for now, log and err is same.
+    try {
+      if (debug) out.println("\n\npreparing run...");
+      //
+      // 0. preprocess it.
+      //
+      //extract imports
+      ArrayList<ImportStatement> imports = new ArrayList<>();
+      source = new TextTransform(source).addAll(SourceUtils.parseProgramImports(source, imports)).apply();
+      //
+      PdePreprocessor.Mode sketchMode = PdePreprocessor.parseMode(SourceUtils.scrubCommentsAndStrings(source));
+      source = PwMacroPreproc.addHeaderToSource(extendClass, macroName, source, sketchMode);
+      //
+      source = new TextTransform(source).addAll(SourceUtils.insertImports(imports)).apply();
+      //
+      // get classpaths from code folder
+      //
+      //ArrayList<String> classPathArray_=new ArrayList<>();
+      //classPathArray_.add(joinPath(buildPath, "bin"));
+      //classPathArray_.add(new File("C:\\Users\\user\\Documents\\[Projects]\\PositionWriter\\PW2_0\\code").getAbsolutePath());//pass positionwriter classpath.
+      //String[] classPathArray=classPathArray_.toArray(new String[]{});
+      String[] classPathArray = classPaths;
+      //
+      // build ast
+      //
+      // Transform code to parsable state
+      // Create intermediate AST for advanced preprocessing
+      CompilationUnit parsableCU = makeAST(parser, source.toCharArray(), COMPILER_OPTIONS);
+      //
+      // do advanced transforms which operate on AST and get compilable source
+      String compilableStage = new TextTransform(source).addAll(SourceUtils.preprocessAST(parsableCU)).apply();
+      char[] compilableStageChars = compilableStage.toCharArray();
+      System.out.println("ast processing applied.");
+      //
+      // Create compilable AST to get syntax problems
+      CompilationUnit compilableCU = makeAST(parser, compilableStageChars, COMPILER_OPTIONS);
+      //
+      // Get syntax problems from compilable AST
+      boolean hasSyntaxErrors = Arrays.stream(compilableCU.getProblems()).anyMatch(IProblem::isError);
+      //
+      // Generate bindings after getting problems - avoids
+      // 'missing type' errors when there are syntax problems
+      //
+      if (hasSyntaxErrors) {//error1
+        Arrays.asList(compilableCU.getProblems()).stream().forEach((IProblem problem) -> {
+          if (debug) out.println("ecj>" + problem.getMessage());
+        });
+        if (debug) out.println("syntax errors exist.");
+        return;
+      }
+      //
+      // infinite loop???
+      //
+      //    System.out.println("search for binding errors...");
+      //    CompilationUnit bindingsCU=makeASTWithBindings(parser, compilableStageChars, COMPILER_OPTIONS, macroName, classPathArray);
+      //
+      //    System.out.println("next??");
+      // Get compilation problems
+      //    boolean hasCompilationErrors=Arrays.asList(bindingsCU.getProblems()).stream().anyMatch(IProblem::isError);
+      //
+      //    if (hasCompilationErrors) {//error2
+      //      Arrays.asList(bindingsCU.getProblems()).stream().forEach((IProblem problem) -> {
+      //        out.println("ecj>" + problem.getMessage());
+      //      });
+      //      out.println("binding errors exist.");
+      //      return;
+      //    }
+      //
+      // Update builder
+      String javaCode = compilableStage;
+      //CompilationUnit compilationUnit=bindingsCU;
+      writeFile(joinPath(buildPath, "src/" + macroName + ".java"), javaCode);
+      if (debug) out.println("created java file");
+      //
+      //1. compile it to one jar (with library references).
+      //
+      String classPath = "";//???
+      for (int a = 0; a < classPathArray.length; a++) {
+        classPath += classPathArray[a] + ";";//space chars???
+      }
+      ArrayList<String> command_ = new ArrayList<>();
+      command_.add("-g");
+      command_.add("-Xemacs");
+      command_.add("-source");
+      command_.add("1.8");
+      command_.add("-target");
+      command_.add("1.8");
+      command_.add("-classpath");
+      command_.add(classPath);
+      command_.add("-nowarn");
+      command_.add("-d");
+      command_.add(joinPath(buildPath, "bin"));
+      String[] sourceFiles = Util.listFiles(new File(joinPath(buildPath, "src")), false, ".java");
+      for (String s : sourceFiles) {
+        command_.add(s);
+      }
+      String[] command = (String[])command_.toArray(new String[]{});
+      //processing.core.PApplet.println(command);
+      //2. load it. and also load dependencies.
+      boolean success = Main.compile(command, new PrintWriter(out), new PrintWriter(out), null);
+      if (!success) {
+        if (debug) out.println("PwMacroRun - compile failed.");
+        return;
+      } else {
+        if (debug) out.println("PwMacroRun - successfully compiled.");
+      }
+      runClassFile(macroName, param, out, buildPath, debug, internalError, externalError);
+    } catch (Exception e) {
+      internalError.accept(e);
     }
-    //
-    // infinite loop???
-    //
-    //    System.out.println("search for binding errors...");
-    //    CompilationUnit bindingsCU=makeASTWithBindings(parser, compilableStageChars, COMPILER_OPTIONS, macroName, classPathArray);
-    //
-    //    System.out.println("next??");
-    // Get compilation problems
-    //    boolean hasCompilationErrors=Arrays.asList(bindingsCU.getProblems()).stream().anyMatch(IProblem::isError);
-    //
-    //    if (hasCompilationErrors) {//error2
-    //      Arrays.asList(bindingsCU.getProblems()).stream().forEach((IProblem problem) -> {
-    //        out.println("ecj>" + problem.getMessage());
-    //      });
-    //      out.println("binding errors exist.");
-    //      return;
-    //    }
-    //
-    // Update builder
-    String javaCode = compilableStage;
-    //CompilationUnit compilationUnit=bindingsCU;
-    writeFile(joinPath(buildPath, "src/" + macroName + ".java"), javaCode);
-    if (debug) out.println("created java file");
-    //
-    //1. compile it to one jar (with library references).
-    //
-    String classPath = "";//???
-    for (int a = 0; a < classPathArray.length; a++) {
-      classPath += classPathArray[a] + ";";//space chars???
-    }
-    ArrayList<String> command_ = new ArrayList<>();
-    command_.add("-g");
-    command_.add("-Xemacs");
-    command_.add("-source");
-    command_.add("1.8");
-    command_.add("-target");
-    command_.add("1.8");
-    command_.add("-classpath");
-    command_.add(classPath);
-    command_.add("-nowarn");
-    command_.add("-d");
-    command_.add(joinPath(buildPath, "bin"));
-    String[] sourceFiles = Util.listFiles(new File(joinPath(buildPath, "src")), false, ".java");
-    for (String s : sourceFiles) {
-      command_.add(s);
-    }
-    String[] command = (String[])command_.toArray(new String[]{});
-    //processing.core.PApplet.println(command);
-    //2. load it. and also load dependencies.
-    boolean success = Main.compile(command, new PrintWriter(out), new PrintWriter(out), null);
-    if (!success) {
-      if (debug) out.println("PwMacroRun - compile failed.");
-      return;
-    } else {
-      if (debug) out.println("PwMacroRun - successfully compiled.");
-    }
-    runClassFile(macroName, param, out, buildPath, debug);
   }
   public static void runClassFile(String macroName,
                                   Object param, PrintStream out,//runtime
-                                  String buildPath, boolean debug) throws Exception {//for now, log and err is same.
+                                  String buildPath, boolean debug,
+                                  Consumer<Throwable> internalError, BiConsumer<PrintStream, Throwable> externalError) throws Exception {//for now, log and err is same.
     File classPathFile = new File(joinPath(buildPath, "bin"));
     if (!classPathFile.isDirectory()) {
       if (debug) out.println("PwMacroRun - failed to locate build path (bin folder)");
@@ -164,10 +171,10 @@ public class PwMacroRun {
       try {
         macro.setup();
       } catch (Throwable e) {
-        e.printStackTrace();
+        externalError.accept(out, e);
       }
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
+      internalError.accept(e);
       System.err.println("generated macro class not found.");
     }
     loader.close();
@@ -175,7 +182,7 @@ public class PwMacroRun {
       try {
         macro.exit();
       } catch (Throwable e) {
-        e.printStackTrace();
+        internalError.accept(e);
       }
     }
     if (debug) out.println("macro finished.");

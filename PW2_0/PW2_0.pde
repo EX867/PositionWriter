@@ -68,7 +68,7 @@ void draw() {
     }
     catch(Exception e) {
       displayError(e);
-      exit();
+      //exit();
     }
   } else {
     main_draw();
@@ -171,9 +171,10 @@ void main_setup() {
   LayoutLoader.loadXML(frame_info=KyUI.getNewLayer().setAlpha(100), loadXML("info.xml"));
   LayoutLoader.loadXML(frame_tips=KyUI.getNewLayer().setAlpha(100), loadXML("tips.xml"));
   LayoutLoader.loadXML(frame_mp3=KyUI.getNewLayer().setAlpha(100), loadXML("ffmpeg.xml"));
-  LayoutLoader.loadXML(frame_log=KyUI.getNewLayer().setAlpha(100), loadXML("logger.xml"));
   LayoutLoader.loadXML(frame_update=KyUI.getNewLayer().setAlpha(100), loadXML("update.xml"));
   LayoutLoader.loadXML(frame_dialog=KyUI.getNewLayer().setAlpha(100), loadXML("dialog.xml"));
+  LayoutLoader.loadXML(frame_error=KyUI.getNewLayer().setAlpha(100), loadXML("error.xml"));
+  LayoutLoader.loadXML(frame_log=KyUI.getNewLayer().setAlpha(100), loadXML("logger.xml"));
   frame_skinedit=KyUI.getNewLayer().setAlpha(180);
   frame_skinedit.addChild(new SkinEditView("skin_edit", new Rect(0, 0, 1460, 960)));
   KyUI.taskManager.executeAll();//add all element
@@ -227,6 +228,7 @@ void main_setup() {
   ((LinearList)KyUI.get("ks_led")).enableReordering();
   ((LinearList)KyUI.get("ks_sound")).enableReordering();
   KyUI.changeLayout();//layout all!
+  frame_error.onLayout();
   frame_log.onLayout();
   final Element mainFrame=KyUI.get("main_layout");
   if (platform==WINDOWS) {
@@ -277,6 +279,7 @@ void main_setup() {
   au_setup();
   loadPaths();
   ((Button)KyUI.get("set_globalpath")).text=path_global;
+  ((TextBox)KyUI.get("mp3_output")).setText(path_global);
   if (((ToggleButton)KyUI.get("set_reload")).value) {//reload
     load_reload();
   } else {

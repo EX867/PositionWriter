@@ -223,7 +223,7 @@ String getFileName(String path) {
 String changeFormat(String filename, String format) {
   return getExtensionElse(filename)+"."+format;
 }
-static String getFileExtension(String filename) {
+String getFileExtension(String filename) {
   if (filename.equals(""))return "";
   String[] words;
   words=filename.split("\\.");
@@ -257,13 +257,14 @@ String getFormat(String path) {
   }
   return "unknown";
 }
-void copyFile(String source, String target) {//http://www.yunsobi.com/blog/406
+boolean copyFile(String source, String target) {//http://www.yunsobi.com/blog/406
   setTitleProcessing("copying "+source+" to "+target+"...");
   new File(target).getParentFile().mkdirs();
   FileInputStream inputStream=null;
   FileOutputStream outputStream=null;
   FileChannel fcin=null;
   FileChannel fcout=null;
+  boolean ret=true;
   try {
     inputStream = new FileInputStream(source); 
     outputStream = new FileOutputStream(target);
@@ -274,12 +275,14 @@ void copyFile(String source, String target) {//http://www.yunsobi.com/blog/406
   } 
   catch (Exception e) {
     displayError(e);
+    ret=false;
   } 
   if (inputStream!=null) {
     try {
       inputStream.close();
     }
     catch(Exception e) {
+      ret=false;
     }
   } 
   if (outputStream!=null) {
@@ -287,6 +290,7 @@ void copyFile(String source, String target) {//http://www.yunsobi.com/blog/406
       outputStream.close();
     }
     catch(Exception e) {
+      ret=false;
     }
   } 
   if (fcin!=null) {
@@ -294,6 +298,7 @@ void copyFile(String source, String target) {//http://www.yunsobi.com/blog/406
       fcin.close();
     }
     catch(Exception e) {
+      ret=false;
     }
   } 
   if (fcout!=null) {
@@ -301,9 +306,11 @@ void copyFile(String source, String target) {//http://www.yunsobi.com/blog/406
       fcout.close();
     }
     catch(Exception e) {
+      ret=false;
     }
   }
   setTitleProcessing();
+  return ret;
 }
 boolean isSoundFile(File file) {
   String format=getFormat(file.getAbsolutePath());
@@ -317,13 +324,13 @@ boolean isImageFile(File file) {//.gif, .jpg, .tga, .png
   if (ext.equals("gif")||ext.equals("jpg")||ext.equals("tga")||ext.equals("png"))return true;
   return false;
 }
-boolean isLedFile(File file) {//.led
+boolean isLedFile(File file) {//.led (do not use this)
   String ext=getFileExtension(file.getName());
   if (ext.equals("led")||ext.equals("mid"))return true;
   if (isImageFile(file))return true;
   return false;
 }
-boolean isMacroFile(File file) {//.led
+boolean isMacroFile(File file) {//.pwm
   String ext=getFileExtension(file.getName());
   if (ext.equals("pwm"))return true;
   return false;
@@ -373,7 +380,7 @@ String writeFile(String path, String text) {
   setTitleProcessing();
   return text;
 }
-String getNotDuplicatedFilename(String path) {
+String getNotDuplicatedFileName(String path) {
   if (!new File(path).exists()) {
     return path;
   } else {
@@ -386,7 +393,7 @@ String getNotDuplicatedFilename(String path) {
     return file.getAbsolutePath();
   }
 }
-void deleteFile(String file) {
+public void deleteFile(String file) {
   deleteFile(new File(file));
 }
 boolean deleteFile(File f) {

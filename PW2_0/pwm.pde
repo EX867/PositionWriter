@@ -156,16 +156,10 @@ void macro_setup() {
           }
           catch(Exception e) {
           }
-          try {
-            //default run with no paramters
-            PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, ""), stream, macro.getBuildPath(), paths, true);//so build path is parent/src and bin.        
-            stream.close();
-            macro.onMacroEnd();
-          }
-          catch(Exception ee) {
-            ee.printStackTrace();//here comes script errors.
-            //ADD redirect to coe.
-          }
+          //default run with no paramters
+          PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, ""), stream, macro.getBuildPath(), paths, true, internalError, externalError);//so build path is parent/src and bin.
+          stream.close();
+          macro.onMacroEnd();
         }
       }
       ).start();
@@ -262,31 +256,7 @@ public class MacroTab {
     console=console_;
   }
   PrintStream newPrintStream(final ConsoleInputStream input) {
-    textFont(console.textFont);
-    textSize(console.textSize);
-    final int max_=(int)((console.pos.right-console.pos.left-console.lineNumSize-console.padding*2)/textWidth("A"))-console.header.length()-2;
-    return new PrintStream(new OutputStream() {
-      int count=0;
-      int max=max_;
-      public void write(int b) throws IOException {
-        if (b=='\n') {
-          console.addLine("");
-          count=0;
-        } else {
-          console.insert(((Object)((char)b)).toString());
-          count++;
-          if (count>=max) {
-            console.addLine("");
-            count=0;
-          }
-        }
-        //if (input!=null) {
-        //  input.clear();
-        //}
-        console.invalidate();
-      }
-    }
-    );
+    return PW2_0.this.newPrintStream(console);
   }
   ConsoleInputStream newInputStream() {
     if (originalCommandProcessor==null) {
@@ -347,6 +317,34 @@ public class MacroTab {
     return joinPath(file.getParentFile().getAbsolutePath(), "bin");
   }
 }
+PrintStream newPrintStream(final ConsoleEdit console) {
+  textFont(console.textFont);
+  textSize(console.textSize);
+  final int max_=(int)((console.pos.right-console.pos.left-console.lineNumSize-console.padding*2)/textWidth("A"))-console.header.length()-2;
+  return new PrintStream(new OutputStream() {
+    int count=0;
+    int max=max_;
+    public void write(int b) {//throws IOException {
+      if (b=='\n') {
+        console.addLine("");
+        count=0;
+      } else {
+        console.insert(""+(char)b);
+        count++;
+        if (count>=max) {
+          console.addLine("");
+          count=0;
+        }
+      }
+      //print((char)b);
+      //if (input!=null) {
+      //  input.clear();
+      //}
+      console.invalidate();
+    }
+  }
+  );
+}
 MacroTab addMacroTab(final String filename) {//no null filename!
   TabLayout tabs=((TabLayout)KyUI.get("m_filetabs"));
   Element e=tabs.addTabFromXmlPath(getFileName(filename), layout_m_frame_xml, "layout_m_frame.xml", null);
@@ -378,25 +376,23 @@ MacroTab addMacroTab(final String filename) {//no null filename!
       CommandEdit edit=(CommandEdit)edit_;
       if (edit.script.line-1>=0&&edit.script.line-1<edit.script.lines()) {
         if (e.getKey()=='\n') {
+          String line=edit.getLine(edit.script.line-1);
+          int count=0;
+          for (count=0; count<line.length(); count++) {
+            if (line.charAt(count)!=' ') {
+              break;
+            }
+          }
           if (edit.getLine(edit.script.line-1).endsWith("{")) {
-            edit.script.insert("  ");
-            edit.script.point+=2;
-          } else {
-            String line=edit.getLine(edit.script.line-1);
-            int count=0;
-            for (count=0; count<line.length(); count++) {
-              if (line.charAt(count)!=' ') {
-                break;
-              }
+            count+=2;
+          }
+          if (count>0) {
+            String insert="";
+            for (int a=0; a<count; a++) {
+              insert=insert+" ";
             }
-            if (count>0) {
-              String insert="";
-              for (int a=0; a<count; a++) {
-                insert=insert+" ";
-              }
-              edit.script.insert(insert);
-              edit.script.point+=insert.length();
-            }
+            edit.script.insert(insert);
+            edit.script.point+=insert.length();
           }
         } else if (e.getKey()=='}') {//dedent 2
           String line=edit.getLine(edit.script.line);
@@ -458,8 +454,8 @@ void saveMacro(final MacroTab macro) {
 //- api : led utils
 public static class PwMacroApi extends PwMacro {
   protected PW2_0 __parent;//you can['t] use it...
-  protected PrintStream out;
-  protected InputStream in;
+  protected PrintStream __out;
+  protected InputStream __in;
   public String name;//this is originlly "__this".
   public String param;
   //private vars are not part of api.
@@ -473,31 +469,92 @@ public static class PwMacroApi extends PwMacro {
   @Override
     public final void initialize(Object param) {
     __parent=((PW2_0Param)param).sketch;
-    out=((PW2_0Param)param).console;
-    in=((PW2_0Param)param).input;
+    __out=((PW2_0Param)param).console;
+    __in=((PW2_0Param)param).input;
     name=((PW2_0Param)param).tab;
     this.param=((PW2_0Param)param).param;
   }
   @Override
     public void exit() {
     try {
-      in.close();
+      __in.close();
     }
     catch(IOException e) {
     }
   }
+  //I/O & PApplet
   public void println(Object o) {
-    out.println(o);
+    __out.println(o);
   }
   public void print(Object o) {
-    out.print(o);
+    __out.print(o);
   }
+  public String[] split(String in, String delimit) {
+    return PApplet.split(in, delimit);
+  }
+  public PImage loadImage(String path) {
+    return __parent.loadImage(path);
+  }
+  public PFont loadFont(String path) {
+    return __parent.createFont(path, 20);
+  }
+  //
+  //file utils
   public void writeFile(String path, String text) {
     __parent.writeFile(path, text);
   }
   public String readFile(String path) {
     return __parent.readFile(path);
   }
+  public BufferedReader createReader(String path) {
+    return __parent.createReader(path);
+  }
+  public PrintWriter createWriter(String path) {
+    return __parent.createWriter(path);
+  }
+  public boolean copyFile(String from, String to) {
+    return __parent.copyFile(from, to);
+  }
+  public File[] listFiles(String path) {
+    return __parent.listFiles(path);
+  }
+  public String[] listFileNames(String path) {
+    return __parent.listFileNames(path);
+  }
+  public String joinPath(String a, String b) {
+    return __parent.joinPath(a, b);
+  }
+  public String getFileName(String path) {
+    return __parent.getFileName(path);
+  }
+  public String getFileExtension(String path) {
+    return __parent.getFileExtension(path);
+  }
+  public String getExtensionElse(String path) {
+    return __parent.getExtensionElse(path);
+  }
+  public String getFormat(String path) {
+    return __parent.getFormat(path);
+  }
+  public boolean isImageFile(File file) {
+    return __parent.isImageFile(file);
+  }
+  //public boolean isLedFile(File file) {
+  //  return __parent.isLedFile(file);
+  //}
+  public boolean isMacroFile(File file) {
+    return __parent.isMacroFile(file);
+  }
+  public String getNotDuplicatedFileName(String path) {
+    return __parent.getNotDuplicatedFileName(path);
+  }
+  public void deleteFile(String path) {
+    __parent.deleteFile(path);
+  }
+  public void openFileExplorer(String path) {
+    __parent.openFileExplorer(path);
+  }
+  //unipack utils
   public Led led(String text) {
     return new Led(__parent.loadLedScript(__parent.createNewLed(), text));
   }

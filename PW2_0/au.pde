@@ -11,12 +11,18 @@ class SamplePlayer2 extends SamplePlayer {
     mp3_slider=(Slider)KyUI.get("mp3_slider");
     mp3_time=(Button)KyUI.get("mp3_time");
   }
+  void updateTime() {
+    mp3_time.text=timeFormat(getPosition())+"/"+timeFormat(sample.getLength());
+    mp3_time.invalidate();
+  }
+  void setPositionBySlider() {
+    setPosition(sample.getLength()*mp3_slider.value/mp3_slider.max);
+  }
   public void calculateBuffer() {
-    if (KyUI.getRoot()==frame_mp3) {//externalFrame==MP3_CONVERTER
+    if (!isPaused()&&KyUI.getRoot()==frame_mp3) {//externalFrame==MP3_CONVERTER
       mp3_slider.set(0, (float)sample.getLength(), (float)getPosition());
-      mp3_time.text=timeFormat(getPosition())+"/"+timeFormat(sample.getLength());
       mp3_slider.invalidate();
-      mp3_time.invalidate();
+      updateTime();
     }
     if (position>sample.getLength()&&loopType==LoopType.NO_LOOP_FORWARDS) {
       position=sample.getLength();

@@ -17,11 +17,12 @@ class NormalFindReplace {
     findAll(text);
   }
   void compileReplace(String replaceText, boolean isRegex) {
-    if (isRegex) {
-      patternReplace=replaceText;
-    } else {
-      patternReplace=Pattern.quote(replaceText);
-    }
+    patternReplace=replaceText;
+    //if (isRegex) {
+    //  patternReplace=replaceText;
+    //} else {
+    //  patternReplace=Pattern.quote(replaceText);
+    //}
   }
   void changeText(String text) {//use this in change text.
     findAll(text);
@@ -79,6 +80,9 @@ class LedFindReplace {
   }
   private void findAll(String text) {
     findData.clear();
+    if (patternFind==null) {
+      return;
+    }
     calculator.vars.clear();
     if (patternFind.isEmpty()) {
       return;
@@ -112,6 +116,9 @@ class LedFindReplace {
     textChanged=true;
   }
   String replaceAll(String text) {
+    if (patternFind==null||patternReplace==null) {
+      return text;
+    }
     //compileReplace(replaceText, isRegex);
     if (patternFind.error||patternReplace.error) {
       return text;

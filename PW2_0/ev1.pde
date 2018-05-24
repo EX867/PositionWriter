@@ -63,6 +63,13 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
+  ((ImageButton)KyUI.get("log_exit")).setPressListener(new MouseEventListener() {
+    public boolean onEvent(MouseEvent e, int index) {
+      KyUI.removeLayer();
+      return false;
+    }
+  }
+  );
   ((ImageButton)KyUI.get("mp3_exit")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       externalFrame=NONE;
@@ -71,7 +78,7 @@ void setup_ev1() {//setup small listeners
     }
   }
   );
-  ((ImageButton)KyUI.get("log_exit")).setPressListener(new MouseEventListener() {
+  ((ImageButton)KyUI.get("err_exit")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       KyUI.removeLayer();
       return false;
@@ -390,62 +397,69 @@ void setup_ev1() {//setup small listeners
   );
   ((ImageButton)KyUI.get("m_next")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      NormalFindReplace f=macroFindReplace;
-      if (f.textChanged) {
-        f.findAll(currentMacro.getText());
-      }
-      if (f.findData.size()!=0) {
-        f.findIndex=f.findIndex+1;
-        if (f.findIndex>=f.findData.size())f.findIndex=0;
-        if (f.findData.size()>0) {
-          currentMacro.editor.script.setCursorByIndex(f.findData.get(f.findIndex).start);
-          currentMacro.editor.script.selectFromCursor(f.findData.get(f.findIndex).text.length());
-          currentMacro.editor.moveToCursor();
-          currentMacro.editor.invalidate();
+      if (currentMacro!=null) {
+        NormalFindReplace f=macroFindReplace;
+        if (f.textChanged) {
+          f.findAll(currentMacro.getText());
         }
+        if (f.findData.size()!=0) {
+          f.findIndex=f.findIndex+1;
+          if (f.findIndex>=f.findData.size())f.findIndex=0;
+          if (f.findData.size()>0) {
+            currentMacro.editor.script.setCursorByIndex(f.findData.get(f.findIndex).start);
+            currentMacro.editor.script.selectFromCursor(f.findData.get(f.findIndex).text.length());
+            currentMacro.editor.moveToCursor();
+            currentMacro.editor.invalidate();
+          }
+        }
+        ((TextBox)KyUI.get("m_findtext")).rightText="("+(macroFindReplace.findIndex+1)+"/"+macroFindReplace.findData.size()+")";
+        KyUI.get("m_findtext").invalidate();
       }
-      ((TextBox)KyUI.get("m_findtext")).rightText="("+(macroFindReplace.findIndex+1)+"/"+macroFindReplace.findData.size()+")";
-      KyUI.get("m_findtext").invalidate();
       return false;
     }
   }
   );
   ((ImageButton)KyUI.get("m_previous")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      NormalFindReplace f=macroFindReplace;
-      if (f.textChanged) {
-        f.findAll(currentMacro.getText());
-      }
-      if (f.findData.size()!=0) {
-        f.findIndex=f.findIndex-1;
-        if (f.findIndex<0)f.findIndex=f.findData.size()-1;
-        if (f.findData.size()>0) {
-          currentMacro.editor.script.setCursorByIndex(f.findData.get(f.findIndex).start);
-          currentMacro.editor.script.selectFromCursor(f.findData.get(f.findIndex).text.length());
-          currentMacro.editor.moveToCursor();
-          currentMacro.editor.invalidate();
+      if (currentMacro!=null) {
+        NormalFindReplace f=macroFindReplace;
+        if (f.textChanged) {
+          f.findAll(currentMacro.getText());
         }
+        if (f.findData.size()!=0) {
+          f.findIndex=f.findIndex-1;
+          if (f.findIndex<0)f.findIndex=f.findData.size()-1;
+          if (f.findData.size()>0) {
+            currentMacro.editor.script.setCursorByIndex(f.findData.get(f.findIndex).start);
+            currentMacro.editor.script.selectFromCursor(f.findData.get(f.findIndex).text.length());
+            currentMacro.editor.moveToCursor();
+            currentMacro.editor.invalidate();
+          }
+        }
+        ((TextBox)KyUI.get("m_findtext")).rightText="("+(macroFindReplace.findIndex+1)+"/"+macroFindReplace.findData.size()+")";
+        KyUI.get("m_findtext").invalidate();
       }
-      ((TextBox)KyUI.get("m_findtext")).rightText="("+(macroFindReplace.findIndex+1)+"/"+macroFindReplace.findData.size()+")";
-      KyUI.get("m_findtext").invalidate();
       return false;
     }
   }
   );
   ((ImageButton)KyUI.get("m_replaceall")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
-      if (macroFindReplace.textChanged) {
-        macroFindReplace.findAll(currentMacro.getText());
+      if (currentMacro!=null) {
+        if (macroFindReplace.textChanged) {
+          macroFindReplace.findAll(currentMacro.getText());
+        }
+        currentMacro.editor.recordHistory();
+        currentMacro.editor.setText(macroFindReplace.replaceAll(currentMacro.getText()));
+        currentMacro.editor.recordHistory();
       }
-      currentMacro.editor.recordHistory();
-      currentMacro.editor.setText(ledFindReplace.replaceAll(currentMacro.getText()));
-      currentMacro.editor.recordHistory();
       return false;
     }
   }
   );
   ((ImageToggleButton)KyUI.get("m_regex")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
+      println("asdf");
       ((TextBox)KyUI.get("m_findtext")).onTextChangeListener.onEvent(KyUI.get("m_findtext"));
       ((TextBox)KyUI.get("m_replacetext")).onTextChangeListener.onEvent(KyUI.get("m_replacetext"));
       return false;
@@ -513,6 +527,13 @@ void setup_ev1() {//setup small listeners
   //  public void onEvent(Element e) {
   //  }
   //});
+  ((Slider)KyUI.get("mp3_slider")).setAdjustListener(new EventListener() {
+    public void onEvent(Element e) {
+      globalSamplePlayer.setPositionBySlider();
+      globalSamplePlayer.updateTime();
+    }
+  }
+  );
   ((ToggleButton)KyUI.get("set_reload")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
       export_settings();
@@ -543,6 +564,26 @@ void setup_ev1() {//setup small listeners
       ledFindReplace.compileReplace(((TextBox)e).getText(), ((ImageToggleButton)KyUI.get("led_calcmode")).value);
       ((TextBox)e).error=ledFindReplace.patternReplace.error;
       e.invalidate();
+    }
+  }
+  );
+  ((TextBox)KyUI.get("m_findtext")).setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      if (currentMacro!=null) {
+        macroFindReplace.compileFind(((TextBox)e).getText(), ((ImageToggleButton)KyUI.get("m_regex")).value, currentMacro.getText());
+        ((TextBox)KyUI.get("m_findtext")).rightText="("+(macroFindReplace.findIndex+1)+"/"+macroFindReplace.findData.size()+")";
+        KyUI.get("m_findtext").invalidate();
+        e.invalidate();
+      }
+    }
+  }
+  );
+  ((TextBox)KyUI.get("m_replacetext")).setTextChangeListener(new EventListener() {
+    public void onEvent(Element e) {
+      if (currentMacro!=null) {
+        macroFindReplace.compileReplace(((TextBox)e).getText(), ((ImageToggleButton)KyUI.get("m_regex")).value);
+        e.invalidate();
+      }
     }
   }
   );
