@@ -142,10 +142,10 @@ public class LedScript extends CommandScript {
     return delayValue.get(frame);
   }
   void setFrameByTime() {
-    displayFrame=getFrameByTime(displayTime);
+    setDisplayFrame(getFrameByTime(displayTime));
   }
   void setFrameByTime(long time) {
-    displayFrame=getFrameByTime(time);
+    setDisplayFrame(getFrameByTime(time));
   }
   int getFrameByTime(long time) {
     if (delayValueInvalidated) {
@@ -164,6 +164,18 @@ public class LedScript extends CommandScript {
     //return frame;
     return delayValue.getBeforeIndex(time)-1;
   }
+  void setDisplayFrame(int frame) {
+    displayFrame=frame;
+    if (frameSliderRange!=null) {
+      frameSliderRange.startLine=DelayPoint.get(frame)+1;
+      if (frame+1<DelayPoint.size()) {
+        frameSliderRange.endLine=DelayPoint.get(frame+1)+1;
+      } else {
+        frameSliderRange.endLine=editor.script.lines();
+      }
+      editor.invalidate();
+    }
+  }
   void updateSlider() {
     if (currentLedEditor==this) {
       fs.set(0, getTimeByFrame(DelayPoint.size()-1));
@@ -171,6 +183,30 @@ public class LedScript extends CommandScript {
       fs.set(displayTime);
       fsTime.text=displayTime+"/"+fs.maxI;
       fsTime.invalidate();
+    }
+  }
+  void updateLoopRange() {
+    if (tab==null||editor==null)return;
+    if (tab.led.loopStart>=tab.led.loopEnd) {//no loop range
+      loopStartRange.startLine=0;
+      loopStartRange.endLine=0;
+      loopEndRange.startLine=0;
+      loopEndRange.endLine=0;
+    } else {
+      int startFrame=getFrameByTime(fs.valueS);
+      int endFrame=getFrameByTime(fs.valueE);
+      loopStartRange.startLine=DelayPoint.get(startFrame)+1;
+      if (startFrame+1<currentLedEditor.DelayPoint.size()) {
+        loopStartRange.endLine=DelayPoint.get(startFrame+1)+1;
+      } else {
+        loopStartRange.endLine=editor.script.lines();
+      }
+      loopEndRange.startLine=DelayPoint.get(endFrame)+1;
+      if (endFrame+1<DelayPoint.size()) {
+        loopEndRange.endLine=DelayPoint.get(endFrame+1)+1;
+      } else {
+        loopEndRange.endLine=editor.script.lines();
+      }
     }
   }
   void displayControl() {
@@ -310,13 +346,15 @@ public class LedScript extends CommandScript {
         }
       }
       if (displayFrame>= DelayPoint.size()) {
-        displayFrame=DelayPoint.size()-1;
+        setDisplayFrame(DelayPoint.size()-1);
         setTimeByFrame(displayFrame);
       }
       if (after instanceof DelayCommand || before instanceof DelayCommand ||after instanceof BpmCommand ||before instanceof BpmCommand) {
         delayValueInvalidated=true;
         updateSlider();
       }
+      setDisplayFrame(displayFrame);
+      updateLoopRange();
       displayControl();
     }
     void readAll() {
@@ -350,7 +388,7 @@ public class LedScript extends CommandScript {
         line++;
       }
       delayValueInvalidated=true;
-      displayFrame=min(displayFrame, DelayPoint.size()-1); 
+      setDisplayFrame(min(displayFrame, DelayPoint.size()-1));
       setTimeByFrame(displayFrame);
       //delayValue=calculateDelayValue(LedScript.this, delayValue);
       updateSlider();

@@ -52,7 +52,7 @@ class LightThread implements Runnable {
         led.active=true;
         led.paused=false;
         led.loopIndex=1;
-        led.script.displayFrame=led.script.getFrameByTime(displayTime);
+        led.script.setDisplayFrame(led.script.getFrameByTime(displayTime));
         led.script.setTimeByFrame();
       }
       checkDisplay(led.script.displayPad);
@@ -182,8 +182,8 @@ class LightThread implements Runnable {
                 led.script.displayTime=Math.min(led.script.displayTime, led.loopEnd);
               }
               int frame=led.script.getFrameByTime(led.script.displayTime);
-              led.script.displayFrame=frame;
-              //led.script.displayFrame=min(led.script.displayFrame+1, frame);
+              led.script.setDisplayFrame(frame);
+              //led.script.setDisplayFrame(min(led.script.displayFrame+1, frame));
               //println(" -> continue");
               queue.remove(led);
               queue.add(led);
@@ -195,7 +195,7 @@ class LightThread implements Runnable {
                     led.script.displayTime=led.loopStart;
                   }
                   led.offset=System.currentTimeMillis()-led.script.displayTime;
-                  led.script.displayFrame=led.script.getFrameByTime(led.script.displayTime)+1;
+                  led.script.setDisplayFrame(led.script.getFrameByTime(led.script.displayTime)+1);
                   led.script.setTimeByFrame();
                   queue.remove(led);
                   queue.add(led);

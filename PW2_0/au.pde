@@ -3,10 +3,46 @@ import java.util.Arrays;
 import java.util.List;
 import pw2.beads.SampleLoader;
 AudioContext globalAc;
-SamplePlayer globalSamplePlayer;
+class SamplePlayer2 extends SamplePlayer {
+  Slider mp3_slider;
+  Button mp3_time;
+  public SamplePlayer2(AudioContext ac, int channels) {
+    super(ac, channels);
+    mp3_slider=(Slider)KyUI.get("mp3_slider");
+    mp3_time=(Button)KyUI.get("mp3_time");
+  }
+  public void calculateBuffer() {
+    if (KyUI.getRoot()==frame_mp3) {//externalFrame==MP3_CONVERTER
+      mp3_slider.set(0, (float)sample.getLength(), (float)getPosition());
+      mp3_time.text=timeFormat(getPosition())+"/"+timeFormat(sample.getLength());
+      mp3_slider.invalidate();
+      mp3_time.invalidate();
+    }
+    if (position>sample.getLength()&&loopType==LoopType.NO_LOOP_FORWARDS) {
+      position=sample.getLength();
+      pause(true);
+      return;
+    }
+    super.calculateBuffer();
+  }
+  String timeFormat(double d) {//d is milliseconds
+    int floored=(int)d;
+    int sec=(floored)/1000;
+    //return intFormat(sec)+":"+intFormat(floored-sec);
+    return sec+":"+(floored-sec);
+  }
+  //String intFormat(int i) {
+  //  if (i<10) {
+  //    return "0"+i;
+  //  } else {
+  //    return ""+i;
+  //  }
+  //}
+}
+SamplePlayer2 globalSamplePlayer;
 void au_setup() {
   globalAc=new AudioContext();
-  globalSamplePlayer=new SamplePlayer(globalAc, 2);
+  globalSamplePlayer=new SamplePlayer2(globalAc, 2);
   globalSamplePlayer.setKillOnEnd(false);
   globalAc.out.addInput(globalSamplePlayer);
   //globalSamplePlayer.setEndListener(new Bead() {

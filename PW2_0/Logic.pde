@@ -20,6 +20,7 @@ static final int LED_CHANGETITLE=1;
 static final int KS_INFO=2;
 static final int MACRO_CHANGETITLE=3;
 static final int DIALOG=4;
+static final int MP3_CONVERTER=5;
 //===Tabs===//
 int mainTabs_selected=LED_EDITOR;
 int externalFrame=NONE;
@@ -40,6 +41,7 @@ String userMacro2="\ndelay 30";
 PImage[] tips;
 int tipsIndex=0;
 LedFindReplace ledFindReplace=new LedFindReplace();
+NormalFindReplace macroFindReplace=new NormalFindReplace();
 //===Current editors===//
 public LedScript currentLedEditor;//equivalent to currentLed.led.script
 public LedTab currentLed;

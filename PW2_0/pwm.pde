@@ -434,6 +434,7 @@ void selectMacroTab(int index) {
     ratio.set(1-((DivisionLayout)currentMacro.editor.parents.get(0).parents.get(0)).value);
   }
   KyUI.get("m_dv4").localLayout();
+  macroFindReplace.textChanged=true;
 }
 void saveMacro(final MacroTab macro) { 
   if (macro==null) {

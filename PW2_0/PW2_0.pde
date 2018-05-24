@@ -17,6 +17,7 @@ import java.util.TreeMap;
 // : add html+vel color autoinput mode
 // : remove #platform_specific
 // : KeySoundPlayer and midi->autoPlay
+//skinedit optimization
 //
 //===FIX list - you should not do that!!===//
 //remove KsButton link in SampleState and LedCounter.

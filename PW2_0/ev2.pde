@@ -149,7 +149,7 @@ void setup_ev2() {
       if (!(e instanceof TextEdit)) {
         if (mainTabs_selected==LED_EDITOR) {
           if (currentLedEditor.DelayPoint.size()>1) {
-            currentLedEditor.displayFrame=max(0, currentLedEditor.displayFrame-1);
+            currentLedEditor.setDisplayFrame(max(0, currentLedEditor.displayFrame-1));
             currentLedEditor.setTimeByFrame();
             currentLedEditor.updateSlider();
             currentLedEditor.displayControl();
@@ -165,7 +165,7 @@ void setup_ev2() {
       if (!(e instanceof TextEdit)) {
         if (mainTabs_selected==LED_EDITOR) {
           if (currentLedEditor.displayFrame<currentLedEditor.DelayPoint.size()-1) {
-            currentLedEditor.displayFrame=min(currentLedEditor.DelayPoint.size()-1, currentLedEditor.displayFrame+1);
+            currentLedEditor.setDisplayFrame(min(currentLedEditor.DelayPoint.size()-1, currentLedEditor.displayFrame+1));
             currentLedEditor.setTimeByFrame();
             currentLedEditor.updateSlider();
             currentLedEditor.displayControl();
@@ -234,7 +234,7 @@ void setup_ev2() {
           currentLedEditor.displayTime=currentLed.led.loopStart;
           currentLedEditor.setFrameByTime();
         } else {
-          currentLedEditor.displayFrame=0;
+          currentLedEditor.setDisplayFrame(0);
           currentLedEditor.setTimeByFrame();
         }
         ledTabs.get(0).light.start(ledTabs.get(0).led, currentLedEditor.displayTime);

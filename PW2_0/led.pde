@@ -235,27 +235,7 @@ void led_setup() {
       //synchronized(currentLedEditor) {
       currentLed.led.loopStart=fs.valueS;
       currentLed.led.loopEnd=fs.valueE;
-      if (currentLed.led.loopStart>=currentLed.led.loopEnd) {//no loop range
-        currentLedEditor.loopStartRange.startLine=0;
-        currentLedEditor.loopStartRange.endLine=0;
-        currentLedEditor.loopEndRange.startLine=0;
-        currentLedEditor.loopEndRange.endLine=0;
-      } else {
-        int startFrame=currentLedEditor.getFrameByTime(fs.valueS);
-        int endFrame=currentLedEditor.getFrameByTime(fs.valueE);
-        currentLedEditor.loopStartRange.startLine=currentLedEditor.DelayPoint.get(startFrame)+1;
-        if (startFrame+1<currentLedEditor.DelayPoint.size()) {
-          currentLedEditor.loopStartRange.endLine=currentLedEditor.DelayPoint.get(startFrame+1)+1;
-        } else {
-          currentLedEditor.loopStartRange.endLine=currentLedEditor.editor.script.lines();
-        }
-        currentLedEditor.loopEndRange.startLine=currentLedEditor.DelayPoint.get(endFrame)+1;
-        if (endFrame+1<currentLedEditor.DelayPoint.size()) {
-          currentLedEditor.loopEndRange.endLine=currentLedEditor.DelayPoint.get(endFrame+1)+1;
-        } else {
-          currentLedEditor.loopEndRange.endLine=currentLedEditor.editor.script.lines();
-        }
-      }
+      currentLedEditor.updateLoopRange();
       //}
       currentLedEditor.editor.getSlider().invalidate();
     }

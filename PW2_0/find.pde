@@ -1,3 +1,53 @@
+class NormalFindReplace {
+  ArrayList<FindData> findData=new ArrayList<FindData>();
+  int findIndex=-1;//index iterator for next/prev
+  Pattern patternFind;
+  String patternReplace;
+  boolean textChanged=false;//if true, do findall in next/previous.
+  void compileFind(String findText, boolean isRegex, String text) {//use this in change find text.
+    if (findText.isEmpty()) {
+      patternFind=null;
+    } else {
+      if (isRegex) {
+        patternFind=Pattern.compile(findText);
+      } else {
+        patternFind=Pattern.compile(Pattern.quote(findText));
+      }
+    }
+    findAll(text);
+  }
+  void compileReplace(String replaceText, boolean isRegex) {
+    if (isRegex) {
+      patternReplace=replaceText;
+    } else {
+      patternReplace=Pattern.quote(replaceText);
+    }
+  }
+  void changeText(String text) {//use this in change text.
+    findAll(text);
+  }
+  private void findAll(String text) {
+    findData.clear();
+    if (patternFind==null) {
+      return;
+    }
+    Matcher matcher = patternFind.matcher(text);
+    while (matcher.find()) {
+      FindData result=new FindData(matcher.start(), matcher.group(), 0);//one more space for frame and index.
+      findData.add(result);
+    }
+    findIndex=min(findData.size()-1, findIndex);
+    //println("matches : "+findData.size());
+    textChanged=true;
+  }
+  String replaceAll(String text) {
+    //compileReplace(replaceText, isRegex);
+    if (patternFind==null||patternReplace==null) {
+      return text;
+    }
+    return patternFind.matcher(text).replaceAll(patternReplace);
+  }
+}
 //find replace for only led editor.
 static final String REGEX_NUMBER="(-?\\d+)";
 class LedFindReplace {
@@ -13,8 +63,7 @@ class LedFindReplace {
     if (isRegex) {
       patternFind=FindReplacePattern.compile(findText);
     } else {
-      patternFind=new FindReplacePattern();
-      patternFind.data.add(findText);
+      patternFind=FindReplacePattern.compile(FindReplacePattern.quote(findText));
     }
     findAll(text);
   }
@@ -22,8 +71,7 @@ class LedFindReplace {
     if (isRegex) {
       patternReplace=FindReplacePattern.compile(replaceText);
     } else {
-      patternReplace=new FindReplacePattern();
-      patternReplace.data.add(replaceText);
+      patternReplace=FindReplacePattern.compile(FindReplacePattern.quote(replaceText));
     }
   }
   void changeText(String text) {//use this in change text.
@@ -111,6 +159,8 @@ class FindData {
   }
 }
 static class FindReplacePattern {
+  static int TEXT=1;
+  static int EXP=2;
   LinkedList<Object> data=new LinkedList<Object>();// contains String and Expression
   ArrayList<Expression> expression=new ArrayList<Expression>();// only contains Expression in data.
   ArrayList<String> varname=new ArrayList<String>();//this is for pattenrFind, it must have one varname per expression.
@@ -123,12 +173,90 @@ static class FindReplacePattern {
       return new FindReplacePattern();
     }
     FindReplacePattern pattern=new FindReplacePattern();
-    //ADD
-    //pattern.error=true;
+    String escaped=pattern.escape(text);
+    StringBuilder token=new StringBuilder();
+    int tokenType=TEXT;
+    for (int a=0; a<escaped.length(); a++) {
+      if (escaped.charAt(a)=='\\'&&a+1<escaped.length()) {
+        if (escaped.charAt(a+1)=='[') {
+          if (tokenType==TEXT) {
+            pattern.data.add(token.toString());
+            tokenType=TEXT;
+            token=new StringBuilder();
+            continue;
+          } else {//no maching brace is error.
+            pattern.error=true;
+          }
+        } else if (escaped.charAt(a+1)==']') {
+          if (tokenType==EXP) {
+            Expression exp;
+            pattern.data.add(exp=new Expression(token.toString()));
+            pattern.expression.add(exp);
+            pattern.varname.add(exp.getFirstVarName());
+            tokenType=EXP;
+            token=new StringBuilder();
+            continue;
+          } else {
+            pattern.error=true;
+          }
+        }
+      }
+      token.append(escaped.charAt(a));
+    }
+    if (tokenType==TEXT) {//last must be text.
+      pattern.data.add(token.toString());
+    } else {//no maching brace is error.
+      pattern.error=true;
+    }
     return pattern;
   }
   boolean isEmpty() {
     return data.size()==0;
+  }
+  static String quote(String in) {//replace [ ] to \[ \]
+    StringBuilder ret=new StringBuilder();
+    for (int a=0; a<in.length(); a++) {
+      if (in.charAt(a)=='['||in.charAt(a)==']') {
+        ret.append('\\');
+      }
+      ret.append(in.charAt(a));
+    }
+    return ret.toString();
+  }
+  String escape(String in) {
+    StringBuilder ret=new StringBuilder();
+    for (int a=0; a<in.length(); a++) {
+      if (in.charAt(a)=='\\') {
+        a++;
+        if (a<in.length()) {
+          if (in.charAt(a)=='[') {
+            ret.append("\\[");
+          } else if (in.charAt(a)==']') {
+            ret.append("\\]");//symbol escaped are processed in compile.
+          } else if (in.charAt(a)=='n') {
+            ret.append('\n');
+          } else if (in.charAt(a)=='r') {
+            ret.append('\r');
+          } else if (in.charAt(a)=='t') {
+            ret.append('\t');
+          } else if (in.charAt(a)=='f') {
+            ret.append('\f');
+          } else if (in.charAt(a)=='b') {
+            ret.append('\b');
+          } else if (in.charAt(a)=='\\') {
+            ret.append('\\');
+          } else {
+            ret.append(in.charAt(a));//else treat there is no escape character instead making error.
+          }
+          //no string escapes here (only space characters and meta symbols escape)
+        } else {
+          error=true;
+        }
+      } else {
+        ret.append(in.charAt(a));
+      }
+    }
+    return ret.toString();
   }
 }
 class Calculator {
@@ -139,6 +267,12 @@ class Calculator {
   }
 }
 
-class Expression {
+static class Expression {
+  public Expression(String text) {
+  }
+  String getFirstVarName() {
+    return "";
+    //ADD
+  }
   //ADD ast.
 }
