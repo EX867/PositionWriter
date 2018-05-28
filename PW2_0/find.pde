@@ -143,7 +143,7 @@ class LedFindReplace {
       for (Object o : p.data) {
         if (o instanceof String) {
           ret.append((String)o);
-        } else if (o instanceof Expression) {
+        } else if (o instanceof SyntaxNode) {
           ret.append(REGEX_NUMBER);
         }
       }
@@ -169,7 +169,7 @@ static class FindReplacePattern {
   static int TEXT=1;
   static int EXP=2;
   LinkedList<Object> data=new LinkedList<Object>();// contains String and Expression
-  ArrayList<Expression> expression=new ArrayList<Expression>();// only contains Expression in data.
+  ArrayList<SyntaxNode> expression=new ArrayList<SyntaxNode>();// only contains Expression in data.
   ArrayList<String> varname=new ArrayList<String>();//this is for pattenrFind, it must have one varname per expression.
   boolean error=false;
   StringBuilder buildResult(HashMap<String, Integer> vars, Object[] values) {//integer is values index.
@@ -196,8 +196,8 @@ static class FindReplacePattern {
           }
         } else if (escaped.charAt(a+1)==']') {
           if (tokenType==EXP) {
-            Expression exp;
-            pattern.data.add(exp=new Expression(token.toString()));
+            SyntaxNode exp;
+            pattern.data.add(exp=SyntaxNode.compile(token.toString()));
             pattern.expression.add(exp);
             pattern.varname.add(exp.getFirstVarName());
             tokenType=EXP;
@@ -268,18 +268,84 @@ static class FindReplacePattern {
 }
 class Calculator {
   HashMap<String, Integer> vars=new HashMap<String, Integer>(101);//real use in calculation
-  Object calculate(Expression exp) {
+  Object calculate(SyntaxNode exp) {
     //ADD
     return false;
   }
 }
-
-static class Expression {
-  public Expression(String text) {
+//
+//1+2 -> (+ 1 2) op val val
+//(1+2)*3 -> (* (+ 1 2) 3)
+//max(1,2+3) -> (max 1 (+ 2 3))
+//
+static class SyntaxNode {
+  static enum Oprator{
+    Plus,Minus,Multi,Divide,Pow,Mod,
+    //+ - * / ^ % 
+    Equal,NotEq,Great,Less,GreatEq,LessEq,
+    //== != > < >= <=
+    //no tenary operator : replacing it to named function if(bool cond,Object val1,Object val2)
+  }
+  static enum CharType {
+    None, Op, LParen, RParen//->end?
+      //ex) +- is operator : equal to unary minus
+  }
+  static enum Type {
+    Error, Exp, Val, Ident, Op
+  }
+  static CharType[] charType=new CharType[128];//else = 
+  static void setup_charType() {
+    //ADD
+  }
+  static CharType getCharType(char in) {
+    if (in<charType.length) {
+      return charType[in];
+    } else {
+      return CharType.None;
+    }
+  }
+  Type type=Type.Exp;//default
+  ArrayList<SyntaxNode> nodes=new ArrayList<SyntaxNode>();
+  String firstVar=null;//fill it in root.
+  public SyntaxNode() {
+  }
+  public SyntaxNode(String text) {//one token input.
+    //ADD determine type.
+  }
+  public SyntaxNode(SyntaxNode... nodes_) {
+    nodes.addAll(Arrays.asList(nodes_));
+  }
+  static SyntaxNode compile(String text) {//this object is root node.
+    SyntaxNode root=new SyntaxNode();
+    if (text.isEmpty()) {
+      root.type=Type.Error;
+    } else {
+      LinkedList<SyntaxNode> tokens=new LinkedList<SyntaxNode>();
+      {//first, lexing.
+        StringBuilder token=new StringBuilder();
+        CharType charType=CharType.None;//hide
+        CharType pCharType;
+        int a=0;
+        token.append(text.charAt(a));
+        charType=getCharType(text.charAt(a));
+        for (a++; a<text.length(); a++) {
+          pCharType=charType;
+          charType=getCharType(text.charAt(a));
+          if (pCharType!=charType) {
+            tokens.add(new SyntaxNode(token.toString()));
+            token=new StringBuilder();
+          }
+          token.append(text.charAt(a));
+        }
+        tokens.add(new SyntaxNode(token.toString()));
+      }
+      {//second, build tree
+      }
+    }
+    return root;
   }
   String getFirstVarName() {
     return "";
     //ADD
   }
-  //ADD ast.
 }
