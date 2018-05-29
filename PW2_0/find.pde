@@ -279,23 +279,48 @@ class Calculator {
 //max(1,2+3) -> (max 1 (+ 2 3))
 //
 static class SyntaxNode {
-  static enum Oprator{
-    Plus,Minus,Multi,Divide,Pow,Mod,
-    //+ - * / ^ % 
-    Equal,NotEq,Great,Less,GreatEq,LessEq,
-    //== != > < >= <=
-    //no tenary operator : replacing it to named function if(bool cond,Object val1,Object val2)
+  static enum Operator {
+    Error, 
+      Plus, Minus, Multi, Divide/*,Pow*/, Mod, 
+      //+ - * / ^ % 
+      Equal, NotEq, Great, Less, GreatEq, LessEq, 
+      //== != > < >= <=
+      //no tenary operator : replacing it to named function if(bool cond,Object val1,Object val2)
+      PlusMinus, //parsing +-
+      MultiMinus, //parsing *-
+      DivideMinus, //parsing /-
+      ModMinus, //parsing %-
+      //when parsing minus, if there is no value ons stack, add 0.
+      EqualMinus, //==-
+      NotEqMinus, //!=-
+      GreatMinus, //>-
+      LessMinus, //<-
+      GreatEqMinus, //>=-
+      LessEqMinus//<=-
+      //no unary plus in here
   }
   static enum CharType {
     None, Op, LParen, RParen//->end?
       //ex) +- is operator : equal to unary minus
   }
   static enum Type {
-    Error, Exp, Val, Ident, Op
+    Error, Exp, IntVal, BoolVal, Ident, Op
   }
+  static final SyntaxNode LParen=new SyntaxNode("(");//used in parsing, not stored in ast.
+  static final SyntaxNode RParen=new SyntaxNode(")");
   static CharType[] charType=new CharType[128];//else = 
   static void setup_charType() {
-    //ADD
+    charType['(']=CharType.LParen;
+    charType[')']=CharType.RParen;
+    charType['+']=CharType.Op;
+    charType['-']=CharType.Op;
+    charType['*']=CharType.Op;
+    charType['/']=CharType.Op;
+    charType['%']=CharType.Op;
+    charType['=']=CharType.Op;
+    charType['!']=CharType.Op;
+    charType['>']=CharType.Op;
+    charType['<']=CharType.Op;
   }
   static CharType getCharType(char in) {
     if (in<charType.length) {
@@ -309,8 +334,16 @@ static class SyntaxNode {
   String firstVar=null;//fill it in root.
   public SyntaxNode() {
   }
-  public SyntaxNode(String text) {//one token input.
-    //ADD determine type.
+  public SyntaxNode(String text) {//one token input. no exp/error
+    if (Analyzer.isInt(text)) {
+      type=Type.IntVal;
+    } else if (Analyzer.isBoolean(text)) {
+      type=Type.BoolVal;
+    } else if (getCharType(text.charAt(0))==CharType.Op) {
+      type=Type.Op;
+    } else {
+      type=Type.Ident;//you can use anything
+    }
   }
   public SyntaxNode(SyntaxNode... nodes_) {
     nodes.addAll(Arrays.asList(nodes_));
@@ -340,12 +373,12 @@ static class SyntaxNode {
         tokens.add(new SyntaxNode(token.toString()));
       }
       {//second, build tree
+        //ADD
       }
     }
     return root;
   }
   String getFirstVarName() {
-    return "";
-    //ADD
+    return firstVar;
   }
 }
