@@ -1,3 +1,28 @@
+static HashMap<String, MultiFunction<?>> functions=new HashMap<String, MultiFunction<?>>(37);//number is random prime number...
+@SuppressWarnings("unused")
+  void findReplace_setup() {
+  new MultiFunction<Integer>("min", Integer.class, Integer.class) {
+    public Integer apply(Object... in) {
+      return Math.min((int)in[0], (int)in[1]);
+    }
+  };
+  new MultiFunction<Integer>("max", Integer.class, Integer.class) {
+    public Integer apply(Object... in) {
+      return Math.max((int)in[0], (int)in[1]);
+    }
+  };
+  new MultiFunction<Object>("if", Boolean.class, Object.class, Object.class) {
+    public Object apply(Object... in) {
+      if ((boolean)in[0]) {
+        return in[1];
+      } else {
+        return in[2];
+      }
+    }
+  };
+  SyntaxNode.setup_charType();
+}
+//
 class NormalFindReplace {
   ArrayList<FindData> findData=new ArrayList<FindData>();
   int findIndex=-1;//index iterator for next/prev
@@ -16,7 +41,8 @@ class NormalFindReplace {
     }
     findAll(text);
   }
-  void compileReplace(String replaceText, boolean isRegex) {
+  @SuppressWarnings("unused")
+    void compileReplace(String replaceText, boolean isRegex) {
     patternReplace=replaceText;
     //if (isRegex) {
     //  patternReplace=replaceText;
@@ -100,7 +126,7 @@ class LedFindReplace {
         calculator.vars.put(patternFind.varname.get(a-1), a-1);//vars equal index number
       }
       for (int a=1; a<=matcher.groupCount(); a++) {// expression result is true?
-        Object value=calculator.calculate(patternFind.expression.get(a));
+        Object value=calculator.calculate(patternFind.expression.get(a-1), result.vars);
         if (value instanceof Boolean&& value.equals(false)) {
           match=false;
         }
@@ -130,7 +156,7 @@ class LedFindReplace {
       //set index and frame.
       data.vars[data.vars.length-2]=a;//index
       data.vars[data.vars.length-1]=currentLedEditor.getFrame(currentLedEditor.getLineByIndex(data.start));
-      StringBuilder buildResult=patternReplace.buildResult(calculator.vars, data.vars);
+      StringBuilder buildResult=patternReplace.buildResult(calculator, data.vars);
       ret.replace(data.start+offset, data.start+offset+data.text.length(), buildResult.toString());
       offset=offset+buildResult.length()-data.text.length();
     }
@@ -172,8 +198,17 @@ static class FindReplacePattern {
   ArrayList<SyntaxNode> expression=new ArrayList<SyntaxNode>();// only contains Expression in data.
   ArrayList<String> varname=new ArrayList<String>();//this is for pattenrFind, it must have one varname per expression.
   boolean error=false;
-  StringBuilder buildResult(HashMap<String, Integer> vars, Object[] values) {//integer is values index.
-    return new StringBuilder();//FIX
+  StringBuilder buildResult(Calculator c, Object[] values) {//integer is values index.
+    //c.vars has set.
+    StringBuilder ret=new StringBuilder();
+    for (Object o : data) {
+      if (o instanceof String) {
+        ret.append((String)o);
+      } else {// if(o instanceof SyntaxNode){
+        ret.append(c.calculate((SyntaxNode)o, values).toString());
+      }
+    }
+    return ret;
   }
   static FindReplacePattern compile(String text) {
     if (text.isEmpty()) {
@@ -185,27 +220,32 @@ static class FindReplacePattern {
     int tokenType=TEXT;
     for (int a=0; a<escaped.length(); a++) {
       if (escaped.charAt(a)=='\\'&&a+1<escaped.length()) {
-        if (escaped.charAt(a+1)=='[') {
-          if (tokenType==TEXT) {
-            pattern.data.add(token.toString());
-            tokenType=TEXT;
-            token=new StringBuilder();
-            continue;
-          } else {//no maching brace is error.
+        if (escaped.charAt(a+1)=='['||escaped.charAt(a+1)==']') {
+          a++;
+        }
+      } else if (escaped.charAt(a)=='[') {
+        if (tokenType==TEXT) {
+          pattern.data.add(token.toString());
+          tokenType=EXP;
+          token=new StringBuilder();
+          continue;
+        } else {//no maching brace is error.
+          pattern.error=true;
+        }
+      } else if (escaped.charAt(a)==']') {
+        if (tokenType==EXP) {
+          SyntaxNode exp;
+          pattern.data.add(exp=SyntaxNode.compile(token.toString()));
+          if (exp.type==SyntaxNode.Type.Error) {
             pattern.error=true;
           }
-        } else if (escaped.charAt(a+1)==']') {
-          if (tokenType==EXP) {
-            SyntaxNode exp;
-            pattern.data.add(exp=SyntaxNode.compile(token.toString()));
-            pattern.expression.add(exp);
-            pattern.varname.add(exp.getFirstVarName());
-            tokenType=EXP;
-            token=new StringBuilder();
-            continue;
-          } else {
-            pattern.error=true;
-          }
+          pattern.expression.add(exp);
+          pattern.varname.add(exp.getFirstVarName());
+          tokenType=TEXT;
+          token=new StringBuilder();
+          continue;
+        } else {
+          pattern.error=true;
         }
       }
       token.append(escaped.charAt(a));
@@ -236,11 +276,7 @@ static class FindReplacePattern {
       if (in.charAt(a)=='\\') {
         a++;
         if (a<in.length()) {
-          if (in.charAt(a)=='[') {
-            ret.append("\\[");
-          } else if (in.charAt(a)==']') {
-            ret.append("\\]");//symbol escaped are processed in compile.
-          } else if (in.charAt(a)=='n') {
+          if (in.charAt(a)=='n') {
             ret.append('\n');
           } else if (in.charAt(a)=='r') {
             ret.append('\r');
@@ -266,50 +302,58 @@ static class FindReplacePattern {
     return ret.toString();
   }
 }
-class Calculator {
-  HashMap<String, Integer> vars=new HashMap<String, Integer>(101);//real use in calculation
-  Object calculate(SyntaxNode exp) {
-    //ADD
-    return false;
-  }
-}
 //
 //1+2 -> (+ 1 2) op val val
 //(1+2)*3 -> (* (+ 1 2) 3)
 //max(1,2+3) -> (max 1 (+ 2 3))
 //
 static class SyntaxNode {
-  static enum Operator {
-    Error, 
+  static enum OpType {
+    Error, None, Function, Seperator, //,
       Plus, Minus, Multi, Divide/*,Pow*/, Mod, 
       //+ - * / ^ % 
       Equal, NotEq, Great, Less, GreatEq, LessEq, 
       //== != > < >= <=
-      //no tenary operator : replacing it to named function if(bool cond,Object val1,Object val2)
-      PlusMinus, //parsing +-
-      MultiMinus, //parsing *-
-      DivideMinus, //parsing /-
-      ModMinus, //parsing %-
-      //when parsing minus, if there is no value ons stack, add 0.
-      EqualMinus, //==-
-      NotEqMinus, //!=-
-      GreatMinus, //>-
-      LessMinus, //<-
-      GreatEqMinus, //>=-
-      LessEqMinus//<=-
-      //no unary plus in here
+      And, Or, 
+      UnaryMinus, UnaryPlus//processed on lexing
+      //&& ||
+      //no tenary operator : replacing it to named function if(bool cond,Object val1,Object val2
+  }
+  static int[] OpPriority=new int[]{0, 0, 0, 1, 
+    5, 5, 6, 6, 6, 
+    4, 4, 4, 4, 4, 4, 
+    3, 3, 
+    2, 2};
+  static int getPriority(OpType op) {
+    return OpPriority[op.ordinal()];
+  }
+  static int getParameterCount(SyntaxNode n) {
+    if (n.operator==OpType.UnaryPlus||n.operator==OpType.UnaryMinus) {
+      return 1;
+    } else if (n.operator==OpType.None||n.operator==OpType.Error) {
+      return 0;
+    } else if (n.operator==OpType.Function) {
+      return functions.get(n.text).parameterCount;
+    } else {
+      return 2;
+    }
   }
   static enum CharType {
-    None, Op, LParen, RParen//->end?
+    None, Op, LParen, RParen, Comma//->end?
       //ex) +- is operator : equal to unary minus
   }
   static enum Type {
-    Error, Exp, IntVal, BoolVal, Ident, Op
+    Error, IntVal, BoolVal, Ident, Op
   }
-  static final SyntaxNode LParen=new SyntaxNode("(");//used in parsing, not stored in ast.
-  static final SyntaxNode RParen=new SyntaxNode(")");
+  static final SyntaxNode LParen=new SyntaxNode("(", OpType.None);//used in parsing, not stored in ast.
+  static final SyntaxNode RParen=new SyntaxNode(")", OpType.None);
+  static final SyntaxNode Comma=new SyntaxNode("*", OpType.Seperator);
   static CharType[] charType=new CharType[128];//else = 
   static void setup_charType() {
+    for (int a=0; a<charType.length; a++) {
+      charType[0]=CharType.None;
+    }
+    charType[',']=CharType.Comma;
     charType['(']=CharType.LParen;
     charType[')']=CharType.RParen;
     charType['+']=CharType.Op;
@@ -321,6 +365,8 @@ static class SyntaxNode {
     charType['!']=CharType.Op;
     charType['>']=CharType.Op;
     charType['<']=CharType.Op;
+    charType['&']=CharType.Op;
+    charType['|']=CharType.Op;
   }
   static CharType getCharType(char in) {
     if (in<charType.length) {
@@ -329,18 +375,64 @@ static class SyntaxNode {
       return CharType.None;
     }
   }
-  Type type=Type.Exp;//default
+  Type type=Type.Error;//default
+  OpType operator=OpType.Function;
   ArrayList<SyntaxNode> nodes=new ArrayList<SyntaxNode>();
   String firstVar=null;//fill it in root.
+  String text;
   public SyntaxNode() {
   }
-  public SyntaxNode(String text) {//one token input. no exp/error
+  public SyntaxNode(String text_, OpType unaryType) {
+    text=text_;
+    type=Type.Op;
+    operator=unaryType;
+  }
+  public SyntaxNode(String text_, LinkedList<SyntaxNode> processUnary) {//one token input. no exp/error
+    text=text_;
     if (Analyzer.isInt(text)) {
       type=Type.IntVal;
     } else if (Analyzer.isBoolean(text)) {
       type=Type.BoolVal;
     } else if (getCharType(text.charAt(0))==CharType.Op) {
       type=Type.Op;
+      if (!text.equals("-")&&text.endsWith("-")) {
+        text=text.substring(0, text.length()-1);
+        processUnary.addLast(new SyntaxNode("-", OpType.UnaryMinus));
+      } else if (!text.equals("+")&&text.endsWith("+")) {
+        text=text.substring(0, text.length()-1);
+        processUnary.addLast(new SyntaxNode("-", OpType.UnaryPlus));
+      }
+      if (text.equals("+")) {
+        operator=OpType.Plus;
+      } else if (text.equals("+")) {
+        operator=OpType.Plus;
+      } else if (text.equals("-")) {
+        operator=OpType.Minus;
+      } else if (text.equals("*")) {
+        operator=OpType.Multi;
+      } else if (text.equals("/")) {
+        operator=OpType.Divide;
+      } else if (text.equals("%")) {
+        operator=OpType.Mod;
+      } else if (text.equals("==")) {
+        operator=OpType.Equal;
+      } else if (text.equals("!=")) {
+        operator=OpType.NotEq;
+      } else if (text.equals(">")) {
+        operator=OpType.Great;
+      } else if (text.equals("<")) {
+        operator=OpType.Less;
+      } else if (text.equals(">=")) {
+        operator=OpType.GreatEq;
+      } else if (text.equals("<=")) {
+        operator=OpType.LessEq;
+      } else if (text.equals("&&")) {
+        operator=OpType.And;
+      } else if (text.equals("||")) {
+        operator=OpType.Or;
+      } else {
+        operator=OpType.Error;
+      }
     } else {
       type=Type.Ident;//you can use anything
     }
@@ -350,10 +442,12 @@ static class SyntaxNode {
   }
   static SyntaxNode compile(String text) {//this object is root node.
     SyntaxNode root=new SyntaxNode();
+    root.type=Type.Op;
+    root.operator=OpType.None;
     if (text.isEmpty()) {
       root.type=Type.Error;
     } else {
-      LinkedList<SyntaxNode> tokens=new LinkedList<SyntaxNode>();
+      LinkedList<SyntaxNode> tokens_infix=new LinkedList<SyntaxNode>();
       {//first, lexing.
         StringBuilder token=new StringBuilder();
         CharType charType=CharType.None;//hide
@@ -365,20 +459,172 @@ static class SyntaxNode {
           pCharType=charType;
           charType=getCharType(text.charAt(a));
           if (pCharType!=charType) {
-            tokens.add(new SyntaxNode(token.toString()));
+            if (token.toString().equals("(")) {
+              if (!tokens_infix.isEmpty()&&tokens_infix.getLast().type==Type.Ident) {
+                tokens_infix.getLast().type=Type.Op;
+                tokens_infix.getLast().operator=OpType.Function;
+              }
+              tokens_infix.add(LParen);
+            } else if (token.toString().equals(")")) {
+              tokens_infix.add(RParen);
+            } else if (token.toString().equals(",")) {
+              tokens_infix.add(Comma);
+            } else {
+              SyntaxNode added;
+              tokens_infix.add(added=new SyntaxNode(token.toString(), tokens_infix));
+              if (added.type==Type.Op&&added.operator==OpType.Error) {
+                root.type=Type.Error;
+              }
+            }
             token=new StringBuilder();
           }
           token.append(text.charAt(a));
         }
-        tokens.add(new SyntaxNode(token.toString()));
+        tokens_infix.add(new SyntaxNode(token.toString(), tokens_infix));
       }
-      {//second, build tree
-        //ADD
+      LinkedList<SyntaxNode> tokens_postfix=new LinkedList<SyntaxNode>();
+      {//second, change to postfix.
+      //FIX : rparen is added to opstack and tokens_postfix. 
+        LinkedList<SyntaxNode> parenStack=new LinkedList<SyntaxNode>();
+        LinkedList<SyntaxNode> opStack=new LinkedList<SyntaxNode>();
+        while (!tokens_infix.isEmpty()) {
+          SyntaxNode process=tokens_infix.pollFirst();
+          if (process==LParen) {
+            opStack.addLast(process);
+            parenStack.addLast(process);
+          } else if (process==RParen) {
+            if (parenStack.isEmpty()) {
+              root.type=Type.Error;
+            }
+            flushOpStack(tokens_postfix, opStack, getPriority(process.operator));
+            parenStack.removeLast();
+          } else if (process.type==Type.Op) {
+            if (process.operator==OpType.Function) {
+              opStack.addLast(process);
+              if (!tokens_infix.isEmpty()&&tokens_infix.getFirst()==LParen) {
+                tokens_infix.removeFirst();//ignore one LParen, function will closed with RParen.
+                parenStack.addLast(process);
+              } else {
+                root.type=Type.Error;
+              }
+            } else {//ADD unary minus  and plus
+              println("operator");
+              flushOpStack(tokens_postfix, opStack, getPriority(process.operator));
+              if (process!=Comma) {
+                opStack.addLast(process);
+              }
+            }
+          } else {//val or ident
+            tokens_postfix.addLast(process);
+          }
+        }
+        flushOpStack(tokens_postfix, opStack, -1);
+        if (!opStack.isEmpty()) {
+          root.type=Type.Error;
+        }
+      }
+      println("========");
+      for (SyntaxNode n : tokens_postfix) {
+        println(n.text);
+      }
+      println("//");
+      //if expression have error, we cant build tree.
+      if (root.type==Type.Error) {
+        return root;
+      }
+      {//third, get first var name.
+        for (SyntaxNode n : tokens_postfix) {
+          if (n.type==Type.Ident) {
+            root.firstVar=n.text;
+            break;
+          }
+        }
+      }
+    build_tree:
+      {//last, build tree.
+        LinkedList<SyntaxNode> stack=new LinkedList<SyntaxNode>();
+        while (!tokens_postfix.isEmpty()) {//last 1 will be added to root, start point.
+          SyntaxNode process=tokens_postfix.pollFirst();
+          if (process.type==Type.Op) {
+            int parameterCount=getParameterCount(process);
+            for (int a=0; a<parameterCount; a++) {
+              if (stack.isEmpty()) {
+                break build_tree;
+              }
+              process.nodes.add(stack.pollLast());
+            }
+          }
+          stack.addLast(process);
+        }
+        if (stack.size()==1) {
+          root.nodes.add(stack.getLast());
+        } else {
+          root.type=Type.Error;
+        }
       }
     }
     return root;
   }
+  static void flushOpStack(LinkedList<SyntaxNode> tokens_postfix, LinkedList<SyntaxNode> opStack, int priority) {//move until opStack.priority is smaller than priority.
+    while (!opStack.isEmpty()&&getPriority(opStack.getLast().operator)>=priority) {
+      SyntaxNode process=opStack.pollLast();
+      if (process!=LParen) {
+        tokens_postfix.addLast(process);
+        println("added :"+process.text);
+      }
+      if (getPriority(process.operator)==0) {//only pop one 0 priority ops.
+        break;
+      }
+    }
+  }
   String getFirstVarName() {
     return firstVar;
+  }
+}
+static String toString(Class[] in) {
+  StringBuilder ret=new StringBuilder("(");
+  if (in.length!=0) {
+    ret.append(in[0].toString());
+    for (int a=1; a<in.length; a++) {
+      ret.append(",");
+      ret.append(in[a].toString());
+    }
+  }
+  return ret.append(")").toString();
+}
+static String toClassString(Object[] in) {
+  StringBuilder ret=new StringBuilder("(");
+  if (in.length!=0) {
+    ret.append(in[0].getClass().getSimpleName());
+    for (int a=1; a<in.length; a++) {
+      ret.append(",");
+      ret.append(in[a].getClass().getSimpleName());
+    }
+  }
+  return ret.append(")").toString();
+}
+static abstract class MultiFunction<ReturnType> {
+  int parameterCount;
+  Class[] paramClass;
+  MultiFunction(String name, Class... paramClass_) {
+    functions.put(name, this);
+    paramClass=paramClass_;
+    parameterCount=paramClass.length;
+  }
+  public abstract ReturnType apply(Object... params);//match with java.util.function.Function
+  public ReturnType execute(Object... in) {
+    for (int a=0; a<parameterCount; a++) {
+      if (!paramClass[a].isAssignableFrom(in[a].getClass())) {
+        throw new RuntimeException("type mismatch : required "+PW2_0.toString(paramClass)+" received "+toClassString(in));
+      }
+    }
+    return apply(in);
+  }
+}
+class Calculator {
+  HashMap<String, Integer> vars=new HashMap<String, Integer>(101);//real use in calculation
+  Object calculate(SyntaxNode exp, Object[] values) {
+    //ADD
+    return 0;
   }
 }

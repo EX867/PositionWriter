@@ -320,10 +320,9 @@ public class MacroTab {
 PrintStream newPrintStream(final ConsoleEdit console) {
   textFont(console.textFont);
   textSize(console.textSize);
-  final int max_=(int)((console.pos.right-console.pos.left-console.lineNumSize-console.padding*2)/textWidth("A"))-console.header.length()-2;
   return new PrintStream(new OutputStream() {
     int count=0;
-    int max=max_;
+    int max=(int)((console.pos.right-console.pos.left-console.lineNumSize-console.padding*2)/textWidth("a"))-console.header.length()-2;
     public void write(int b) {//throws IOException {
       if (b=='\n') {
         console.addLine("");

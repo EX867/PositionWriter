@@ -274,6 +274,7 @@ void main_setup() {
   ks_setup();
   wav_setup();
   macro_setup();
+  findReplace_setup();
   midi_setup();
   MidiCommand.setState("8x8");//#TEST
   au_setup();
