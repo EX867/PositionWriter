@@ -168,7 +168,7 @@ class LedFindReplace {
       FindReplacePattern p=FindReplacePattern.compile(findText);
       for (Object o : p.data) {
         if (o instanceof String) {
-          ret.append((String)o);
+          ret.append(Pattern.quote((String)o));
         } else if (o instanceof SyntaxNode) {
           ret.append(REGEX_NUMBER);
         }
@@ -315,9 +315,9 @@ static class SyntaxNode {
       Equal, NotEq, Great, Less, GreatEq, LessEq, 
       //== != > < >= <=
       And, Or, 
-      UnaryMinus, UnaryPlus//processed on lexing
+      UnaryMinus, UnaryPlus //processed on parsing
       //&& ||
-      //no tenary operator : replacing it to named function if(bool cond,Object val1,Object val2
+      //no tenary operator
   }
   static int[] OpPriority=new int[]{0, 0, 0, 1, 
     5, 5, 6, 6, 6, 
@@ -333,7 +333,12 @@ static class SyntaxNode {
     } else if (n.operator==OpType.None||n.operator==OpType.Error) {
       return 0;
     } else if (n.operator==OpType.Function) {
-      return functions.get(n.text).parameterCount;
+      if (functions.containsKey(n.text)) {
+        return functions.get(n.text).parameterCount;
+      } else {
+        n.type=Type.Error;
+        return 0;
+      }
     } else {
       return 2;
     }
@@ -466,6 +471,7 @@ static class SyntaxNode {
               }
               tokens_infix.add(LParen);
             } else if (token.toString().equals(")")) {
+              println("added rparen");
               tokens_infix.add(RParen);
             } else if (token.toString().equals(",")) {
               tokens_infix.add(Comma);
@@ -480,11 +486,28 @@ static class SyntaxNode {
           }
           token.append(text.charAt(a));
         }
-        tokens_infix.add(new SyntaxNode(token.toString(), tokens_infix));
+        if (token.toString().equals("(")) {
+          if (!tokens_infix.isEmpty()&&tokens_infix.getLast().type==Type.Ident) {
+            tokens_infix.getLast().type=Type.Op;
+            tokens_infix.getLast().operator=OpType.Function;
+          }
+          tokens_infix.add(LParen);
+        } else if (token.toString().equals(")")) {
+          println("added rparen");
+          tokens_infix.add(RParen);
+        } else if (token.toString().equals(",")) {
+          tokens_infix.add(Comma);
+        } else {
+          SyntaxNode added;
+          tokens_infix.add(added=new SyntaxNode(token.toString(), tokens_infix));
+          if (added.type==Type.Op&&added.operator==OpType.Error) {
+            root.type=Type.Error;
+          }
+        }
       }
       LinkedList<SyntaxNode> tokens_postfix=new LinkedList<SyntaxNode>();
       {//second, change to postfix.
-      //FIX : rparen is added to opstack and tokens_postfix. 
+        //FIX : rparen is added to opstack and tokens_postfix. 
         LinkedList<SyntaxNode> parenStack=new LinkedList<SyntaxNode>();
         LinkedList<SyntaxNode> opStack=new LinkedList<SyntaxNode>();
         while (!tokens_infix.isEmpty()) {
@@ -495,9 +518,10 @@ static class SyntaxNode {
           } else if (process==RParen) {
             if (parenStack.isEmpty()) {
               root.type=Type.Error;
+            } else {
+              parenStack.removeLast();
             }
             flushOpStack(tokens_postfix, opStack, getPriority(process.operator));
-            parenStack.removeLast();
           } else if (process.type==Type.Op) {
             if (process.operator==OpType.Function) {
               opStack.addLast(process);
@@ -507,8 +531,7 @@ static class SyntaxNode {
               } else {
                 root.type=Type.Error;
               }
-            } else {//ADD unary minus  and plus
-              println("operator");
+            } else {//unary minus  and plus -> auto?
               flushOpStack(tokens_postfix, opStack, getPriority(process.operator));
               if (process!=Comma) {
                 opStack.addLast(process);
@@ -523,11 +546,10 @@ static class SyntaxNode {
           root.type=Type.Error;
         }
       }
-      println("========");
       for (SyntaxNode n : tokens_postfix) {
         println(n.text);
       }
-      println("//");
+      println("========");
       //if expression have error, we cant build tree.
       if (root.type==Type.Error) {
         return root;
@@ -547,8 +569,13 @@ static class SyntaxNode {
           SyntaxNode process=tokens_postfix.pollFirst();
           if (process.type==Type.Op) {
             int parameterCount=getParameterCount(process);
+            if (process.type==Type.Error) {
+              root.type=Type.Error;
+              break build_tree;
+            }
             for (int a=0; a<parameterCount; a++) {
               if (stack.isEmpty()) {
+                root.type=Type.Error;
                 break build_tree;
               }
               process.nodes.add(stack.pollLast());
@@ -570,7 +597,6 @@ static class SyntaxNode {
       SyntaxNode process=opStack.pollLast();
       if (process!=LParen) {
         tokens_postfix.addLast(process);
-        println("added :"+process.text);
       }
       if (getPriority(process.operator)==0) {//only pop one 0 priority ops.
         break;
@@ -586,7 +612,7 @@ static String toString(Class[] in) {
   if (in.length!=0) {
     ret.append(in[0].toString());
     for (int a=1; a<in.length; a++) {
-      ret.append(",");
+      ret.append(", ");
       ret.append(in[a].toString());
     }
   }
@@ -597,7 +623,7 @@ static String toClassString(Object[] in) {
   if (in.length!=0) {
     ret.append(in[0].getClass().getSimpleName());
     for (int a=1; a<in.length; a++) {
-      ret.append(",");
+      ret.append(", ");
       ret.append(in[a].getClass().getSimpleName());
     }
   }
@@ -624,7 +650,21 @@ static abstract class MultiFunction<ReturnType> {
 class Calculator {
   HashMap<String, Integer> vars=new HashMap<String, Integer>(101);//real use in calculation
   Object calculate(SyntaxNode exp, Object[] values) {
-    //ADD
-    return 0;
+    return calculate(exp, values, new LinkedList<Object>());
+  }
+  Object calculate(SyntaxNode exp, Object[] values, LinkedList<Object> stack) {
+    if (exp.type==SyntaxNode.Type.IntVal) {
+      return Integer.parseInt(exp.text);
+    } else if (exp.type==SyntaxNode.Type.BoolVal) {
+      return exp.text.startsWith("t");//true
+    } else if (exp.type==SyntaxNode.Type.Ident) {
+      return values[vars.get(exp.text)];//ADD existence check
+    } else {//only op.
+      for (SyntaxNode n : exp.nodes) {
+        stack.addLast(calculate(n, values, stack));
+      }
+      //ADD operate
+      return 0;
+    }
   }
 }
