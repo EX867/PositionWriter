@@ -1,5 +1,6 @@
 package pw2.element;
 import beads.AudioContext;
+import beads.UGenWInterface;
 import kyui.core.Element;
 import kyui.core.KyUI;
 import kyui.event.EventListener;
@@ -73,7 +74,7 @@ public class Knob extends Element {
     initialValue=value;
     return this;
   }
-  public Knob attach(AudioContext ac, UGenW ugen, UGenW.Parameter param, Function<Double, Double> get_, Function<Double, Double> getInv_, double min_, double max_, double center_, double value_) {
+  public Knob attach(AudioContext ac, UGenWInterface ugen, UGenW.Parameter param, Function<Double, Double> get_, Function<Double, Double> getInv_, double min_, double max_, double center_, double value_) {
     get=get_;
     getInv=getInv_;
     set(min_, max_, center_, value_);
@@ -84,7 +85,7 @@ public class Knob extends Element {
     ugen.changeParameter(param, get.apply(value).doubleValue());
     return this;
   }
-  public Knob attach(AudioContext ac, UGenW ugen, UGenW.Parameter param, double min_, double max_, double center_, double value_, boolean logScale_) {
+  public Knob attach(AudioContext ac, UGenWInterface ugen, UGenW.Parameter param, double min_, double max_, double center_, double value_, boolean logScale_) {
     logScale=logScale_;
     if (logScale) {
       if (min_ <= 0) {

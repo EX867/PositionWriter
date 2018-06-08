@@ -12,9 +12,11 @@ BiConsumer<PrintStream, Throwable> externalError=new BiConsumer<PrintStream, Thr
 };
 void displayError(PrintStream writer, Throwable e) {
   writer.println("");
-  for (java.lang.StackTraceElement ee : e.getStackTrace()) {
-    String str=ee.toString();
-    writer.println(str);
+  if (!(e instanceof UserException)) {
+    for (java.lang.StackTraceElement ee : e.getStackTrace()) {
+      String str=ee.toString();
+      writer.println(str);
+    }
   }
   writer.println("Error occurred!");
   writer.println(e.toString());
@@ -27,13 +29,15 @@ void displayError(Throwable e) {
   KyUI.addLayer(frame_error); 
   PrintStream write=newPrintStream((ConsoleEdit)KyUI.get("err_text"));
   displayError(write, e);
-  if (!DEVELOPER_BUILD) {
-    PrintWriter writer=createWriter("err.txt");
-    for (java.lang.StackTraceElement ee : e.getStackTrace()) {
-      writer.println(ee.toString());
+  if (!(e instanceof UserException)) {
+    if (!DEVELOPER_BUILD) {
+      PrintWriter writer=createWriter("err.txt");
+      for (java.lang.StackTraceElement ee : e.getStackTrace()) {
+        writer.println(ee.toString());
+      }
+      write.flush();
+      write.close();
     }
-    write.flush();
-    write.close();
   }
 }
 void log(String tag, String content) {

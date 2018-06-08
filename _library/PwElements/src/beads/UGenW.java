@@ -11,18 +11,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
-public abstract class UGenW extends UGen {//solve synchronization error with task system.
-  public class Parameter {
+public abstract class UGenW extends UGen implements UGenWInterface {//solve synchronization error with task system.
+  public static class Parameter {
     public Task setter;
     public Consumer<Knob> attacher;
     public Parameter(Task setter_, Consumer<Knob> attacher_) {
-      setter=setter_;
-      attacher=attacher_;
+      setter = setter_;
+      attacher = attacher_;
     }
   }
-  TaskManager tm=new TaskManager();
-  ArrayList<UGenListener> listener=new ArrayList<>();
-  boolean bypass=false;
+  TaskManager tm = new TaskManager();
+  ArrayList<UGenListener> listener = new ArrayList<>();
+  boolean bypass = false;
   //Task setFrequency...
   public UGenW(AudioContext ac, int in, int out) {
     super(ac, in, out);
@@ -39,34 +39,34 @@ public abstract class UGenW extends UGen {//solve synchronization error with tas
     ugen.calculateBuffer();
   }
   protected final void setStartPoint(UGen ugen) {
-    ugen.outputInitializationRegime=OutputInitializationRegime.RETAIN;
+    ugen.outputInitializationRegime = OutputInitializationRegime.RETAIN;
   }
   protected final void giveInputTo(UGen ugen, int inputIndex, int ugenInputIndex) {
-    ugen.bufIn[ugenInputIndex]=bufIn[inputIndex];
+    ugen.bufIn[ugenInputIndex] = bufIn[inputIndex];
   }
   protected final void giveInputTo(UGen ugen) {//if ugen.getIns() and is different ,it fails.
-    ugen.bufIn=bufIn;
+    ugen.bufIn = bufIn;
   }
   @Override
   public void calculateBuffer() {
     tm.executeAll();
     if (bypass) {
-      for (int c=0; c < outs; c++) {
+      for (int c = 0; c < outs; c++) {
         //for (int a=0; a < bufferSize; a++) {
-        bufOut[c]=bufIn[c % ins];
+        bufOut[c] = bufIn[c % ins];
         //}
       }
     } else {
-      UGen out=updateUGens();
-      bufOut=out.bufOut;
-//      for (int c=0; c < out.outs; c++) {//this is error code. why????
-//        //for (int a=0; a < bufferSize; a++) {
-//        bufOut[c]=out.bufOut[c];
-//        //}
-//      }
+      UGen out = updateUGens();
+      bufOut = out.bufOut;
+      //      for (int c=0; c < out.outs; c++) {//this is error code. why????
+      //        //for (int a=0; a < bufferSize; a++) {
+      //        bufOut[c]=out.bufOut[c];
+      //        //}
+      //      }
     }
-    for (int a=0; a < listener.size(); a++) {
-      UGenListener l=listener.get(a);
+    for (int a = 0; a < listener.size(); a++) {
+      UGenListener l = listener.get(a);
       if (l != null) {
         if (l.isDeleted()) {
           listener.remove(a);
@@ -82,8 +82,11 @@ public abstract class UGenW extends UGen {//solve synchronization error with tas
   }
   public void bypass(boolean v) {
     tm.addTask((o) -> {
-      bypass=(boolean)o;
+      bypass = (boolean)o;
     }, v);
+  }
+  public boolean isBypassed() {
+    return bypass;
   }
   public abstract List<KnobAutomation> getAutomations();
   public void removeAutomationsFrom(List<KnobAutomation> list) {

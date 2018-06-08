@@ -113,14 +113,15 @@ public class KnobAutomation extends Glide {
     return -1;
   }
   public int indexOf(double position, double value) {
+    //System.out.println("input : "+position);
     cachePoint.position=(float)position + 1;//1 milliseconds is acceptable...?(because of float precision)//PApplet.EPSILON;
     index=Math.min(points.size() - 1, points.getBeforeIndex(cachePoint));
     for (; index >= 0; index--) {
-      if (Math.abs(points.get(index).value - value) <= PApplet.EPSILON) {
+      if (Math.abs(points.get(index).value - value) <= PApplet.EPSILON&&Math.abs(points.get(index).position- position) <= 0.1) {//it works?
         return index;
       }
       //System.out.println(Math.abs(points.get(index).value - value) + " " + Math.abs(points.get(index).position - position));
-      if (position - points.get(index).position >= 2) break;
+      if (position - points.get(index).position >= 1) break;
     }
     System.out.println("[KnobAutomation] negative index input.");
     return -1;

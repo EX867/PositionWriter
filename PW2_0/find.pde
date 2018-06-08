@@ -1,14 +1,95 @@
 static HashMap<String, MultiFunction<?>> functions=new HashMap<String, MultiFunction<?>>(37);//number is random prime number...
 @SuppressWarnings("unused")
   void findReplace_setup() {
+  new MultiFunction<Integer>("OpType.Plus", Integer.class, Integer.class) {
+    public Integer apply(Object... in) {
+      return ((Integer)in[0]).intValue()+((Integer)in[1]).intValue();
+    }
+  };
+  new MultiFunction<Integer>("OpType.Minus", Integer.class, Integer.class) {
+    public Integer apply(Object... in) {
+      return ((Integer)in[0]).intValue()-((Integer)in[1]).intValue();
+    }
+  };
+  new MultiFunction<Integer>("OpType.Multi", Integer.class, Integer.class) {
+    public Integer apply(Object... in) {
+      return ((Integer)in[0]).intValue()*((Integer)in[1]).intValue();
+    }
+  };
+  new MultiFunction<Integer>("OpType.Divide", Integer.class, Integer.class) {
+    public Integer apply(Object... in) {
+      return ((Integer)in[0]).intValue()/((Integer)in[1]).intValue();
+    }
+  };
+  new MultiFunction<Integer>("OpType.Mod", Integer.class, Integer.class) {
+    public Integer apply(Object... in) {
+      return ((Integer)in[0]).intValue()%((Integer)in[1]).intValue();
+    }
+  };
+  new MultiFunction<Boolean>("OpType.Equal", Object.class, Object.class) {
+    public Boolean apply(Object... in) {
+      return in[0].equals(in[1]);
+    }
+  };
+  new MultiFunction<Boolean>("OpType.NotEqual", Object.class, Object.class) {
+    public Boolean apply(Object... in) {
+      return !in[0].equals(in[1]);
+    }
+  };
+  new MultiFunction<Boolean>("OpType.Great", Integer.class, Integer.class) {
+    public Boolean apply(Object... in) {
+      return ((Integer)in[0]).intValue()>((Integer)in[1]).intValue();
+    }
+  };
+  new MultiFunction<Boolean>("OpType.Less", Integer.class, Integer.class) {
+    public Boolean apply(Object... in) {
+      return ((Integer)in[0]).intValue()<((Integer)in[1]).intValue();
+    }
+  };
+  new MultiFunction<Boolean>("OpType.GreatEq", Integer.class, Integer.class) {
+    public Boolean apply(Object... in) {
+      return ((Integer)in[0]).intValue()>=((Integer)in[1]).intValue();
+    }
+  };
+  new MultiFunction<Boolean>("OpType.LessEq", Integer.class, Integer.class) {
+    public Boolean apply(Object... in) {
+      return ((Integer)in[0]).intValue()<=((Integer)in[1]).intValue();
+    }
+  };
+  new MultiFunction<Boolean>("OpType.And", Boolean.class, Boolean.class) {
+    public Boolean apply(Object... in) {
+      return ((Boolean)in[0]).booleanValue()&&((Boolean)in[1]).booleanValue();
+    }
+  };
+  new MultiFunction<Boolean>("OpType.Or", Boolean.class, Boolean.class) {
+    public Boolean apply(Object... in) {
+      return ((Boolean)in[0]).booleanValue()||((Boolean)in[1]).booleanValue();
+    }
+  };
+  new MultiFunction<Boolean>("OpType.Not", Boolean.class) {
+    public Boolean apply(Object... in) {
+      return !((Boolean)in[0]).booleanValue();
+    }
+  };
+  new MultiFunction<Integer>("OpType.UnaryMinus", Integer.class) {
+    public Integer apply(Object... in) {
+      return -((Integer)in[0]).intValue();
+    }
+  };
+  new MultiFunction<Integer>("OpType.UnaryPlus", Integer.class) {
+    public Integer apply(Object... in) {
+      return +((Integer)in[0]).intValue();
+    }
+  };
+  //operator end
   new MultiFunction<Integer>("min", Integer.class, Integer.class) {
     public Integer apply(Object... in) {
-      return Math.min((int)in[0], (int)in[1]);
+      return Math.min(((Integer)in[0]).intValue(), ((Integer)in[1]).intValue());
     }
   };
   new MultiFunction<Integer>("max", Integer.class, Integer.class) {
     public Integer apply(Object... in) {
-      return Math.max((int)in[0], (int)in[1]);
+      return Math.max(((Integer)in[0]).intValue(), ((Integer)in[1]).intValue());
     }
   };
   new MultiFunction<Object>("if", Boolean.class, Object.class, Object.class) {
@@ -127,7 +208,7 @@ class LedFindReplace {
       }
       for (int a=1; a<=matcher.groupCount(); a++) {// expression result is true?
         Object value=calculator.calculate(patternFind.expression.get(a-1), result.vars);
-        if (value instanceof Boolean&& value.equals(false)) {
+        if (value instanceof Boolean&& value.equals(false)) {//only false can set match to false. so, value like 0 etc... are all true.
           match=false;
         }
       }
@@ -314,7 +395,7 @@ static class SyntaxNode {
       //+ - * / ^ % 
       Equal, NotEq, Great, Less, GreatEq, LessEq, 
       //== != > < >= <=
-      And, Or, 
+      And, Or, Not, 
       UnaryMinus, UnaryPlus //processed on parsing
       //&& ||
       //no tenary operator
@@ -322,13 +403,13 @@ static class SyntaxNode {
   static int[] OpPriority=new int[]{0, 0, 0, 1, 
     5, 5, 6, 6, 6, 
     4, 4, 4, 4, 4, 4, 
-    3, 3, 
+    3, 3, 2, 
     2, 2};
   static int getPriority(OpType op) {
     return OpPriority[op.ordinal()];
   }
   static int getParameterCount(SyntaxNode n) {
-    if (n.operator==OpType.UnaryPlus||n.operator==OpType.UnaryMinus) {
+    if (n.operator==OpType.UnaryPlus||n.operator==OpType.UnaryMinus||n.operator==OpType.Not) {
       return 1;
     } else if (n.operator==OpType.None||n.operator==OpType.Error) {
       return 0;
@@ -435,6 +516,8 @@ static class SyntaxNode {
         operator=OpType.And;
       } else if (text.equals("||")) {
         operator=OpType.Or;
+      } else if (text.equals("!")) {
+        operator=OpType.Not;
       } else {
         operator=OpType.Error;
       }
@@ -446,10 +529,12 @@ static class SyntaxNode {
     nodes.addAll(Arrays.asList(nodes_));
   }
   static SyntaxNode compile(String text) {//this object is root node.
+    println("LedFindReplace : ===== SyntaxNode compile start. =====");
     SyntaxNode root=new SyntaxNode();
     root.type=Type.Op;
     root.operator=OpType.None;
     if (text.isEmpty()) {
+      println("LedFindReplace : empty string input. ignore.");
       root.type=Type.Error;
     } else {
       LinkedList<SyntaxNode> tokens_infix=new LinkedList<SyntaxNode>();
@@ -471,7 +556,6 @@ static class SyntaxNode {
               }
               tokens_infix.add(LParen);
             } else if (token.toString().equals(")")) {
-              println("added rparen");
               tokens_infix.add(RParen);
             } else if (token.toString().equals(",")) {
               tokens_infix.add(Comma);
@@ -479,6 +563,7 @@ static class SyntaxNode {
               SyntaxNode added;
               tokens_infix.add(added=new SyntaxNode(token.toString(), tokens_infix));
               if (added.type==Type.Op&&added.operator==OpType.Error) {
+                println("LedFindReplace : undefined operator");
                 root.type=Type.Error;
               }
             }
@@ -493,7 +578,6 @@ static class SyntaxNode {
           }
           tokens_infix.add(LParen);
         } else if (token.toString().equals(")")) {
-          println("added rparen");
           tokens_infix.add(RParen);
         } else if (token.toString().equals(",")) {
           tokens_infix.add(Comma);
@@ -501,13 +585,13 @@ static class SyntaxNode {
           SyntaxNode added;
           tokens_infix.add(added=new SyntaxNode(token.toString(), tokens_infix));
           if (added.type==Type.Op&&added.operator==OpType.Error) {
+            println("LedFindReplace : undefined operator");
             root.type=Type.Error;
           }
         }
       }
       LinkedList<SyntaxNode> tokens_postfix=new LinkedList<SyntaxNode>();
       {//second, change to postfix.
-        //FIX : rparen is added to opstack and tokens_postfix. 
         LinkedList<SyntaxNode> parenStack=new LinkedList<SyntaxNode>();
         LinkedList<SyntaxNode> opStack=new LinkedList<SyntaxNode>();
         while (!tokens_infix.isEmpty()) {
@@ -517,6 +601,7 @@ static class SyntaxNode {
             parenStack.addLast(process);
           } else if (process==RParen) {
             if (parenStack.isEmpty()) {
+              println("LedFindReplace : parens not match");
               root.type=Type.Error;
             } else {
               parenStack.removeLast();
@@ -529,6 +614,7 @@ static class SyntaxNode {
                 tokens_infix.removeFirst();//ignore one LParen, function will closed with RParen.
                 parenStack.addLast(process);
               } else {
+                println("LedFindReplace : parens not match");
                 root.type=Type.Error;
               }
             } else {//unary minus  and plus -> auto?
@@ -543,13 +629,10 @@ static class SyntaxNode {
         }
         flushOpStack(tokens_postfix, opStack, -1);
         if (!opStack.isEmpty()) {
+          println("LedFindReplace : opStack not flushed properly");
           root.type=Type.Error;
         }
       }
-      for (SyntaxNode n : tokens_postfix) {
-        println(n.text);
-      }
-      println("========");
       //if expression have error, we cant build tree.
       if (root.type==Type.Error) {
         return root;
@@ -562,6 +645,15 @@ static class SyntaxNode {
           }
         }
       }
+      print("LedFindReplace : ");
+      for (SyntaxNode n : tokens_postfix) {
+        if (n.operator==OpType.UnaryPlus||n.operator==OpType.UnaryMinus) {
+          println("u");
+        }
+        print("["+n.text+"] ");
+      }
+      println();
+      //tokens_postfix.remove(Comma);
     build_tree:
       {//last, build tree.
         LinkedList<SyntaxNode> stack=new LinkedList<SyntaxNode>();
@@ -571,13 +663,23 @@ static class SyntaxNode {
             int parameterCount=getParameterCount(process);
             if (process.type==Type.Error) {
               root.type=Type.Error;
+              println("LedFindReplace : no function");
+              break build_tree;
+            }
+            if (stack.size()==1&&process.operator==OpType.Plus) {
+              process.operator=OpType.UnaryPlus;
+              parameterCount=1;
+            }
+            if (stack.size()==1&&process.operator==OpType.Minus) {
+              process.operator=OpType.UnaryMinus;
+              parameterCount=1;
+            }
+            if (stack.size()<parameterCount) {
+              println("LedFindReplace : parameter count mismatch, required : "+parameterCount+" received stack size : "+stack.size());
+              root.type=Type.Error;
               break build_tree;
             }
             for (int a=0; a<parameterCount; a++) {
-              if (stack.isEmpty()) {
-                root.type=Type.Error;
-                break build_tree;
-              }
               process.nodes.add(stack.pollLast());
             }
           }
@@ -638,10 +740,13 @@ static abstract class MultiFunction<ReturnType> {
     parameterCount=paramClass.length;
   }
   public abstract ReturnType apply(Object... params);//match with java.util.function.Function
-  public ReturnType execute(Object... in) {
+  public ReturnType calculate(Object... in) {
+    if (in.length!=parameterCount) {
+      throw new UserException("parameter count mismatch : required "+parameterCount+" received "+in.length);
+    }
     for (int a=0; a<parameterCount; a++) {
       if (!paramClass[a].isAssignableFrom(in[a].getClass())) {
-        throw new RuntimeException("type mismatch : required "+PW2_0.toString(paramClass)+" received "+toClassString(in));
+        throw new UserException("type mismatch : required "+PW2_0.toString(paramClass)+" received "+toClassString(in));
       }
     }
     return apply(in);
@@ -649,22 +754,58 @@ static abstract class MultiFunction<ReturnType> {
 }
 class Calculator {
   HashMap<String, Integer> vars=new HashMap<String, Integer>(101);//real use in calculation
+  Object[] pollFromStack(LinkedList<Object> stack, int parameterCount) {
+    Object[] ret=new Object[parameterCount];
+    if (stack.size()<parameterCount) {
+      throw new UserException("missing arguments in stack : required "+parameterCount+" received "+stack.size());
+    }
+    for (int a=0; a<parameterCount; a++) {
+      ret[a]=stack.pollLast();
+    }
+    return ret;
+  }
   Object calculate(SyntaxNode exp, Object[] values) {
     return calculate(exp, values, new LinkedList<Object>());
   }
   Object calculate(SyntaxNode exp, Object[] values, LinkedList<Object> stack) {
+    //println("LedFindReplace : process "+exp.text);
     if (exp.type==SyntaxNode.Type.IntVal) {
       return Integer.parseInt(exp.text);
     } else if (exp.type==SyntaxNode.Type.BoolVal) {
       return exp.text.startsWith("t");//true
     } else if (exp.type==SyntaxNode.Type.Ident) {
-      return values[vars.get(exp.text)];//ADD existence check
+      if (!vars.containsKey(exp.text)) {
+        throw new UserException("var not exists.");
+      } else {
+        int index=vars.get(exp.text);
+        if (index<0||index>=values.length) {
+          throw new UserException("var exists, but value not found.");
+        } else {
+          return values[index];
+        }
+      }
     } else {//only op.
       for (SyntaxNode n : exp.nodes) {
         stack.addLast(calculate(n, values, stack));
+        println("stack result "+stack.getLast());
       }
-      //ADD operate
-      return 0;
+      if (stack.isEmpty()) {
+        throw new RuntimeException("[Internal error] : no arguments in stack.");
+      }
+      if (exp.operator==SyntaxNode.OpType.Error||exp.operator==SyntaxNode.OpType.None) {
+        return stack.pollLast();
+      } else if (exp.operator==SyntaxNode.OpType.Function) {
+        MultiFunction<?> f=functions.get(exp.text);
+        return f.calculate(pollFromStack(stack, f.parameterCount));
+      } else {
+        MultiFunction<?> f=functions.get("OpType."+exp.operator.toString());
+        return f.calculate(pollFromStack(stack, f.parameterCount));
+      }
     }
+  }
+}
+public static class UserException extends RuntimeException {//same
+  public UserException(String text) {
+    super(text);
   }
 }

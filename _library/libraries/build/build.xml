@@ -29,7 +29,6 @@
 		<!-- With included source files -->
 		<jar destfile="../build/Libraries.jar" filesetmanifest="mergewithoutmain" duplicate="preserve">
 			<manifest>
-				<attribute name="Main-Class" value="justafolder.JustAFile"/>
 				<attribute name="Implementation-Version" value="${version}-${DSTAMP}"/>
 				<attribute name="Built-By" value="${built_by}"/>
 				<attribute name="Created-By" value="${built_by}"/>

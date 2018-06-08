@@ -321,18 +321,19 @@ PrintStream newPrintStream(final ConsoleEdit console) {
   textFont(console.textFont);
   textSize(console.textSize);
   return new PrintStream(new OutputStream() {
-    int count=0;
-    int max=(int)((console.pos.right-console.pos.left-console.lineNumSize-console.padding*2)/textWidth("a"))-console.header.length()-2;
+    float max=console.pos.right-console.pos.left-console.lineNumSize-console.padding*2;
+    float start=textWidth(console.header);
+    float acc=start;
     public void write(int b) {//throws IOException {
       if (b=='\n') {
         console.addLine("");
-        count=0;
+        acc=start;
       } else {
         console.insert(""+(char)b);
-        count++;
-        if (count>=max) {
+        acc+=textWidth((char)b);
+        if (acc>=max) {
           console.addLine("");
-          count=0;
+          acc=start;
         }
       }
       //print((char)b);
@@ -554,6 +555,15 @@ public static class PwMacroApi extends PwMacro {
     __parent.openFileExplorer(path);
   }
   //unipack utils
+  public void replaceAllLed(String find, String replace) {
+    if (__parent.mainTabs_selected==LED_EDITOR) {
+      ((TextBox)KyUI.get("led_findText")).setText(find);
+      ((TextBox)KyUI.get("led_replaceText")).setText(replace);
+      ((TextBox)KyUI.get("led_findtext")).onTextChangeListener.onEvent((TextBox)KyUI.get("led_findText"));
+      ((TextBox)KyUI.get("led_replaceText")).onTextChangeListener.onEvent((TextBox)KyUI.get("led_replaceText"));
+      ((ImageButton)KyUI.get("led_replaceall")).getPressListener().onEvent(null, 0);
+    }
+  }
   public Led led(String text) {
     return new Led(__parent.loadLedScript(__parent.createNewLed(), text));
   }

@@ -1,17 +1,31 @@
 package pw2.beads;
 import beads.*;
+import kyui.util.TaskManager;
+import pw2.element.Knob;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-public class AutoControlSamplePlayer extends SamplePlayer {
-  public ArrayList<UGen> ugensBefore=new ArrayList<UGen>();
-  public ArrayList<UGen> outputs=new ArrayList<>();//I need reflection to get outputs, but I can also manually add it.
-  public ArrayList<KnobAutomation> autos=new ArrayList<>();
+public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterface {
+  TaskManager tm = new TaskManager();
+  public ArrayList<UGen> ugensBefore = new ArrayList<UGen>();
+  public ArrayList<UGen> outputs = new ArrayList<>();//I need reflection to get outputs, but I can also manually add it.
+  public ArrayList<KnobAutomation> autos = new ArrayList<>();
+  public KnobAutomation speed;
+  public UGenW.Parameter setSpeed = new UGenW.Parameter((Object d) -> {
+    setRate(new Static(context, ((Number)d).floatValue()));
+  }, (Knob target) -> {
+    speed.attach(target);
+  });
   public AutoControlSamplePlayer(AudioContext ac, int i) {
     super(ac, i);
+    speed = new KnobAutomation(ac, 1);
+    autos.add(speed);
   }
   public AutoControlSamplePlayer(AudioContext ac, Sample s) {
     super(ac, s);
+    speed = new KnobAutomation(ac, 1);
+    autos.add(speed);
   }
   public void addAuto(KnobAutomation a) {
     synchronized (this) {
@@ -54,9 +68,10 @@ public class AutoControlSamplePlayer extends SamplePlayer {
   }
   @Override
   public void calculateBuffer() {
+    tm.executeAll();
     super.calculateBuffer();
     synchronized (this) {
-      for (int a=0; a < autos.size(); a++) {//disable KnobAutomation's position control ability! (synchronize with me)
+      for (int a = 0; a < autos.size(); a++) {//disable KnobAutomation's position control ability! (synchronize with me)
         //or you later optimize this to only do this at setPosition.
         if (autos.get(a).isDeleted()) {
           autos.remove(a);
@@ -75,10 +90,10 @@ public class AutoControlSamplePlayer extends SamplePlayer {
   protected void calculateNextPosition(int i) {//this is pasted from sampleplayer
     super.calculateNextPosition(i);
     if (loopType == LoopType.NO_LOOP_FORWARDS) {
-      loopStart=loopStartEnvelope.getValue(0, i);
-      loopEnd=loopEndEnvelope.getValue(0, i);
+      loopStart = loopStartEnvelope.getValue(0, i);
+      loopEnd = loopEndEnvelope.getValue(0, i);
       if (position > Math.max(loopStart, loopEnd)) {
-        position=Math.max(loopStart, loopEnd);
+        position = Math.max(loopStart, loopEnd);
         pause(true);
       }
     }
@@ -123,12 +138,12 @@ public class AutoControlSamplePlayer extends SamplePlayer {
   }
   public UGen removeUGenAndAutos(int index, List<KnobAutomation> list) {
     if (autos.size() == 0) return null;
-    UGen remove=ugensBefore.get(index);
-    UGen after=null;
+    UGen remove = ugensBefore.get(index);
+    UGen after = null;
     if (index == ugensBefore.size() - 1) {
-      after=this;
+      after = this;
     } else {
-      after=ugensBefore.get(index + 1);
+      after = ugensBefore.get(index + 1);
     }
     if (index == 0) {
       for (UGen output : outputs) {
@@ -152,13 +167,19 @@ public class AutoControlSamplePlayer extends SamplePlayer {
       return;
     }
     if (b < a) {
-      int temp=a;
-      a=b;
-      b=temp;
+      int temp = a;
+      a = b;
+      b = temp;
     }
-    UGen bb=removeUGenAndAutos(b, null);
-    UGen aa=removeUGenAndAutos(a, null);
+    UGen bb = removeUGenAndAutos(b, null);
+    UGen aa = removeUGenAndAutos(a, null);
     addUGenAndGetAutos(a, bb);
     addUGenAndGetAutos(b, aa);
+  }
+  @Override public void changeParameter(UGenW.Parameter task, Double value) {
+    tm.addTask(task.setter, value);
+  }
+  public List<KnobAutomation> getAutomations() {
+    return Arrays.asList(new KnobAutomation[]{speed});
   }
 }

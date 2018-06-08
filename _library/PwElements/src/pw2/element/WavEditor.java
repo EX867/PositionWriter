@@ -71,13 +71,13 @@ public class WavEditor extends Element {
     @Override
     public void undo() {
       if (before == null) {//add action
-        //System.out.println("undo add action "+after.c);
+        //System.out.println("undo add action " + after.position);
         automation.removePoint(after.position, after.value);
       } else if (after == null) {//remove action
-        //System.out.println("undo remove action "+before.c);
+        //System.out.println("undo remove action " + before.position);
         selectedPoints.add(automation.addPoint(before.position, before.value));
       } else {
-        //System.out.println("undo change action "+before.c+" to "+after.c);
+        //System.out.println("undo change action " + before.position + " to " + after.position);
         selectedPoints.add(automation.changePoint(automation.indexOf(after.position, after.value), before.position, before.value));
       }
       automationInvalid = true;
@@ -85,13 +85,13 @@ public class WavEditor extends Element {
     @Override
     public void redo() {
       if (before == null) {//add action
-        //System.out.println("redo add action "+after.c);
+        //System.out.println("redo add action " + after.position);
         selectedPoints.add(automation.addPoint(after.position, after.value));
       } else if (after == null) {//remove action
-        //System.out.println("redo remove action "+before.c);
+        //System.out.println("redo remove action " + before.position);
         automation.removePoint(before.position, before.value);
       } else {
-        //System.out.println("redo change action "+before.c+" to "+after.c);
+        //System.out.println("redo change action " + before.position + " to " + after.position);
         selectedPoints.add(automation.changePoint(automation.indexOf(before.position, before.value), after.position, after.value));
       }
       automationInvalid = true;
@@ -617,7 +617,7 @@ public class WavEditor extends Element {
   public double snap(double in) {
     if (!snap) return in;
     float posInterval = (pos.right - pos.left) * (float)((snapInterval * 240000 / Math.max(1, snapBpm)/*duration*/) * scale / length);
-    if (posInterval != 0) {\
+    if (posInterval != 0) {
       float posLeft = (float)timeToPos(snapOffset);
       return posLeft + posInterval * Math.round((in - posLeft) / posInterval);
     }
@@ -725,10 +725,13 @@ public class WavEditor extends Element {
               ChangeData before = new ChangeData(clickPoint);
               double origialPos = clickPoint.position;
               double origialValue = clickPoint.value;
+              double max = automation.unmap(1 - snapAutomationGrid((pos.bottom - pos.top)) / (pos.bottom - pos.top));
+              double min = automation.unmap(1 - snapAutomationGrid(0) / (pos.bottom - pos.top));
               if (snap) {
                 apos = posToTime((float)snap(timeToPos(apos)));
                 avalue = automation.unmap(1 - snapAutomationGrid((pos.bottom - pos.top) * (1 - automation.map(avalue))) / (pos.bottom - pos.top));
               }
+              avalue = Math.max(min, Math.min(max, avalue));
               if (apos < 0) {
                 clickPoint = automation.changePoint(clickPoint, 0, avalue);
               } else if (apos > length) {
@@ -743,11 +746,11 @@ public class WavEditor extends Element {
                     before = new ChangeData(p);
                     double apos2 = p.position + apos - origialPos;
                     if (apos2 < 0) {
-                      p = automation.changePoint(p, 0, p.value + avalue - origialValue);
+                      p = automation.changePoint(p, 0, Math.max(min, Math.min(max, p.value + avalue - origialValue)));
                     } else if (apos2 > length) {
-                      p = automation.changePoint(p, length, p.value + avalue - origialValue);
+                      p = automation.changePoint(p, length, Math.max(min, Math.min(max, p.value + avalue - origialValue)));
                     } else {
-                      p = automation.changePoint(p, apos2, p.value + avalue - origialValue);
+                      p = automation.changePoint(p, apos2, Math.max(min, Math.min(max, p.value + avalue - origialValue)));
                     }
                     recorder.add(new Change(before, new ChangeData(p)));
                   }
