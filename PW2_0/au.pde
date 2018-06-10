@@ -3,6 +3,12 @@ import java.util.Arrays;
 import java.util.List;
 import pw2.beads.SampleLoader;
 AudioContext globalAc;
+String sampleTimeFormat(double d) {//d is milliseconds
+  int floored=(int)d;
+  int sec=(floored)/1000;
+  //return intFormat(sec)+":"+intFormat(floored-sec);
+  return sec+":"+(floored-sec);
+}
 class SamplePlayer2 extends SamplePlayer {
   Slider mp3_slider;
   Button mp3_time;
@@ -12,10 +18,16 @@ class SamplePlayer2 extends SamplePlayer {
     mp3_time=(Button)KyUI.get("mp3_time");
   }
   void updateTime() {
-    mp3_time.text=timeFormat(getPosition())+"/"+timeFormat(sample.getLength());
+    if (sample==null) {
+      return;
+    }
+    mp3_time.text=sampleTimeFormat(getPosition())+"/"+sampleTimeFormat(sample.getLength());
     mp3_time.invalidate();
   }
   void setPositionBySlider() {
+    if (sample==null) {
+      return;
+    }
     setPosition(sample.getLength()*mp3_slider.value/mp3_slider.max);
   }
   public void calculateBuffer() {
@@ -30,12 +42,6 @@ class SamplePlayer2 extends SamplePlayer {
       return;
     }
     super.calculateBuffer();
-  }
-  String timeFormat(double d) {//d is milliseconds
-    int floored=(int)d;
-    int sec=(floored)/1000;
-    //return intFormat(sec)+":"+intFormat(floored-sec);
-    return sec+":"+(floored-sec);
   }
   //String intFormat(int i) {
   //  if (i<10) {
@@ -188,6 +194,27 @@ public class FFmpegConverter {//play with globalSamplePlayer
     }
   }
 }
+public class AutomationButton extends LinearList.SelectableButton {
+  public Runnable onPress;
+  public AutomationButton(String name) {
+    super("AutomationButton_"+name);
+    text=name;
+    final MouseEventListener l=getPressListener();jgjcfgj
+    setPressListener(new MouseEventListener() {
+      public boolean onEvent(MouseEvent e, int index) {
+        if (e.getAction()==MouseEvent.PRESS) {
+          onPress.run();
+        }
+        //if (l==null) {
+        //  return true;
+        //} else {
+        return l.onEvent(e, index);
+        //}
+      }
+    }
+    );
+  }
+}
 void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (with crazy children.get uses)
   LinearLayout wv_lin1=(LinearLayout)wv_dv2.children.get(0).children.get(0).children.get(0);
   LinearLayout wv_lin2=(LinearLayout)wv_dv2.children.get(0).children.get(0).children.get(1).children.get(0);
@@ -257,8 +284,27 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
       control.view.invalidate();
     }
   };
-  AutoControlSamplePlayer sp=tab.editor.player;
+  final Slider slider=(Slider)wv_lin1.children.get(3);
+  final Button time=(Button)wv_lin1.children.get(4);
+  final AutoControlSamplePlayer sp=tab.editor.player;
   sp.addInputTo(ac.out);
+  sp.onUpdate=new Runnable() {
+    public void run() {
+      if (/*!sp.isPaused()&&*/mainTabs_selected==WAV_EDITOR&&currentWav==tab) {
+        slider.set(0, (float)sp.getSample().getLength(), (float)sp.getPosition());
+        time.text=sampleTimeFormat(sp.getPosition())+"/"+sampleTimeFormat(sp.getSample().getLength());
+        slider.invalidate();
+        time.invalidate();
+      }
+    }
+  };
+  slider.setAdjustListener(new EventListener() {
+    public void onEvent(Element e) {
+      sp.setPosition(sp.getSample().getLength()*slider.value/slider.max);
+      tab.editor.invalidate();
+    }
+  }
+  );
   List<KnobAutomation> autos;
   autos=sp.addUGenAndGetAutos(fader);
   for (KnobAutomation auto : autos) {
@@ -271,6 +317,18 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
   KyUI.taskManager.executeAll();
   wv_fxtabs.selectTab(1);
   tab.editor.automation=fader.cuePoint;
+  LinearList autoList=(LinearList)KyUI.get("wav_points");
+  for (final KnobAutomation auto : sp.autos) {
+    AutomationButton b=new AutomationButton(auto.getName());
+    b.onPress=new Runnable() {
+      public void run() {
+        tab.editor.automation=auto;
+        tab.editor.automationInvalid=true;
+        tab.editor.invalidate();
+      }
+    };
+    autoList.addItem(b);
+  }
 }
 void wav_setup() {
   ((TabLayout)KyUI.get("wv_filetabs")).tabSelectListener=new ItemSelectListener() {

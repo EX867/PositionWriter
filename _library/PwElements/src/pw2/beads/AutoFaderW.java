@@ -32,9 +32,9 @@ public class AutoFaderW extends UGenW {//break the rule!!! I miss designed preCo
   public AutoFaderW(AudioContext ac, int channels) {
     super(ac, channels, channels);
     ugen = new AutoFader(ac, channels);
-    cuePoint = new KnobAutomation(ac, 1);//setFader???
-    preCount = new KnobAutomation(ac, 10);
-    postCount = new KnobAutomation(ac, 10);
+    cuePoint = new KnobAutomation(ac, "cuePoint", 1);//setFader???
+    preCount = new KnobAutomation(ac, "preCount", 10);
+    postCount = new KnobAutomation(ac, "postCount", 10);
     setStartPoint(ugen);
     cuePoint.preCounter = (KnobAutomation.Point p) -> {
       if (cuePoint.preCount != 0) {

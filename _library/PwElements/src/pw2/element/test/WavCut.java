@@ -240,7 +240,7 @@ public class WavCut extends PApplet {
     dv_rud.addChild(speedKnob);
     dv2.addChild(dv_rud);
     DivisionLayout dv4 = new DivisionLayout("dv4");
-    dv4.padding = 10;//제홍님이요청하신 베젤이왔어요
+    dv4.padding = 10;
     dv4.rotation = Attributes.Rotation.DOWN;
     dv4.value = 70;//60;
     AlterLinearLayout lin_bottomMenu = new AlterLinearLayout("lin_bottomMenu");

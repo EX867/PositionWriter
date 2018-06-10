@@ -18,57 +18,57 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   public KnobAutomation outputGain;
   public KnobAutomation sideChain;
   protected static Sample emptySample;
-  public Parameter setAttack=new Parameter((Object d) -> {
+  public Parameter setAttack = new Parameter((Object d) -> {
     ugen.setAttack(((Number)d).doubleValue());
   }, (Knob target) -> {
-    attack.target=target;
+    attack.target = target;
   });
-  public Parameter setRelease=new Parameter((Object d) -> {
+  public Parameter setRelease = new Parameter((Object d) -> {
     ugen.setRelease(((Number)d).doubleValue());
   }, (Knob target) -> {
     release.attach(target);
   });
-  public Parameter setKnee=new Parameter((Object d) -> {
+  public Parameter setKnee = new Parameter((Object d) -> {
     ugen.setKnee(((Number)d).doubleValue());
   }, (Knob target) -> {
     knee.attach(target);
   });
-  public Parameter setRatio=new Parameter((Object d) -> {
+  public Parameter setRatio = new Parameter((Object d) -> {
     ugen.setRatio(((Number)d).doubleValue());
   }, (Knob target) -> {
     ratio.attach(target);
   });
-  public Parameter setThreshold=new Parameter((Object d) -> {
+  public Parameter setThreshold = new Parameter((Object d) -> {
     ugen.setThreshold(((Number)d).doubleValue());
   }, (Knob target) -> {
     threshold.attach(target);
   });
-  public Parameter setOutputGain=new Parameter((Object d) -> {
+  public Parameter setOutputGain = new Parameter((Object d) -> {
     ugen.setOutputGain(((Number)d).floatValue());
   }, (Knob target) -> {
     outputGain.attach(target);
   });
   public SamplePlayer sideChainPlayer;
-  public ArrayList<Sample> samples=new ArrayList<>();
+  public ArrayList<Sample> samples = new ArrayList<>();
   public TDCompW(AudioContext ac, int in) {
     super(ac, in, in);
     if (emptySample == null) {
-      emptySample=new Sample(ac.samplesToMs(ac.getBufferSize()), in);
+      emptySample = new Sample(ac.samplesToMs(ac.getBufferSize()), in);
     }
-    ugen=new TDComp(ac, in);
-    attack=new KnobAutomation(ac, 1);
-    release=new KnobAutomation(ac, 0.5F);
-    knee=new KnobAutomation(ac, 0.1F);
-    ratio=new KnobAutomation(ac, 2);
-    threshold=new KnobAutomation(ac, -3);
-    outputGain=new KnobAutomation(ac, 1);
-    sideChain=new KnobAutomation(ac, 0);
-    sideChain.gridOffset=1;
-    sideChain.gridInterval=0;
+    ugen = new TDComp(ac, in);
+    attack = new KnobAutomation(ac, "attack", 1);
+    release = new KnobAutomation(ac, "release", 0.5F);
+    knee = new KnobAutomation(ac, "knee", 0.1F);
+    ratio = new KnobAutomation(ac, "ratio", 2);
+    threshold = new KnobAutomation(ac, "threshold", -3);
+    outputGain = new KnobAutomation(ac, "outputGain", 1);
+    sideChain = new KnobAutomation(ac, "sideChain", 0);
+    sideChain.gridOffset = 1;
+    sideChain.gridInterval = 0;
     sideChain.setRange(0, 0);//usually,sideChain has no knob mapping.
-    sideChainPlayer=new SamplePlayer(ugen.getContext(), 2);
+    sideChainPlayer = new SamplePlayer(ugen.getContext(), 2);
     sideChainPlayer.setKillOnEnd(false);
-    sideChain.postCounter=(KnobAutomation.Point p) -> {
+    sideChain.postCounter = (KnobAutomation.Point p) -> {
       startSample(p.value);
     };
     sideChainPlayer.setEndListener(new Bead() {
@@ -118,7 +118,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     return ugen;
   }
   public void startSample(double v) {
-    int index=(int)Math.round(v) - 1;//starts from 1.
+    int index = (int)Math.round(v) - 1;//starts from 1.
     if (index >= 0 && index < samples.size()) {
       sideChainPlayer.setSample(samples.get(index));
       sideChainPlayer.reTrigger();
@@ -143,9 +143,9 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   }
   public void removeSample(int index) {
     samples.remove(index);
-    for (int a=0; a < sideChain.points.size(); a++) {
-      KnobAutomation.Point point=sideChain.points.get(a);
-      int i=(int)Math.round(point.value) - 1;
+    for (int a = 0; a < sideChain.points.size(); a++) {
+      KnobAutomation.Point point = sideChain.points.get(a);
+      int i = (int)Math.round(point.value) - 1;
       if (i > index) {
         sideChain.changePoint(a, point.position, i - 1);
       } else if (i == index) {
@@ -156,9 +156,9 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   }
   public void reorderSample(int a, int b) {
     Collections.swap(samples, a, b);
-    for (int c=0; c < sideChain.points.size(); c++) {
-      KnobAutomation.Point point=sideChain.points.get(c);
-      int i=(int)Math.round(point.value) - 1;
+    for (int c = 0; c < sideChain.points.size(); c++) {
+      KnobAutomation.Point point = sideChain.points.get(c);
+      int i = (int)Math.round(point.value) - 1;
       if (i == a) {
         sideChain.changePoint(c, point.position, b);
       } else if (i == b) {

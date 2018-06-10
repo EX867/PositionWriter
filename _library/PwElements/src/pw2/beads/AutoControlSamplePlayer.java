@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterface {
-  TaskManager tm = new TaskManager();
+  TaskManager tm = new TaskManager();//for parameter adjustment
   public ArrayList<UGen> ugensBefore = new ArrayList<UGen>();
   public ArrayList<UGen> outputs = new ArrayList<>();//I need reflection to get outputs, but I can also manually add it.
   public ArrayList<KnobAutomation> autos = new ArrayList<>();
+  public Runnable onUpdate=()->{//need it...
+  };
   public KnobAutomation speed;
   public UGenW.Parameter setSpeed = new UGenW.Parameter((Object d) -> {
     setRate(new Static(context, ((Number)d).floatValue()));
@@ -19,12 +21,12 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
   });
   public AutoControlSamplePlayer(AudioContext ac, int i) {
     super(ac, i);
-    speed = new KnobAutomation(ac, 1);
+    speed = new KnobAutomation(ac, "speed",1);
     autos.add(speed);
   }
   public AutoControlSamplePlayer(AudioContext ac, Sample s) {
     super(ac, s);
-    speed = new KnobAutomation(ac, 1);
+    speed = new KnobAutomation(ac, "speed",1);
     autos.add(speed);
   }
   public void addAuto(KnobAutomation a) {
@@ -82,6 +84,7 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
         }
       }
     }
+    onUpdate.run();
   }
   public void addInputTo(UGen out) {//sampleplayer cannot add input.
     out.addInput(this);

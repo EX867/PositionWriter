@@ -11,21 +11,21 @@ public class RubberBandStretcherW extends UGenW {
   public RubberBandProcessor ugen;
   public KnobAutomation pitch;
   public KnobAutomation speed;
-  public Parameter setPitch=new Parameter((Object d) -> {//assert d instanceof Double
+  public Parameter setPitch = new Parameter((Object d) -> {//assert d instanceof Double
     ugen.setPitch(((Number)d).floatValue());
   }, (Knob target) -> {
     pitch.attach(target);
   });
-  public Parameter setSpeed=new Parameter((Object d) -> {//assert d instanceof Double
+  public Parameter setSpeed = new Parameter((Object d) -> {//assert d instanceof Double
     ugen.setSpeed(((Number)d).floatValue());
   }, (Knob target) -> {
     speed.attach(target);
   });
   public RubberBandStretcherW(AudioContext ac, int in, int out) {
     super(ac, in, out);
-    ugen=new RubberBandProcessor(ac, (int)ac.getSampleRate(), 1, 1);
-    pitch=new KnobAutomation(ac, 0.5F);
-    speed=new KnobAutomation(ac, 0.5F);
+    ugen = new RubberBandProcessor(ac, (int)ac.getSampleRate(), 1, 1);
+    pitch = new KnobAutomation(ac, "pitch", 0.5F);
+    speed = new KnobAutomation(ac, "speed", 0.5F);
     setStartPoint(ugen);
   }
   @Override
