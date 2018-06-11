@@ -11,23 +11,25 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
   public ArrayList<UGen> ugensBefore = new ArrayList<UGen>();
   public ArrayList<UGen> outputs = new ArrayList<>();//I need reflection to get outputs, but I can also manually add it.
   public ArrayList<KnobAutomation> autos = new ArrayList<>();
-  public Runnable onUpdate=()->{//need it...
+  public Runnable onUpdate = () -> {//need it...
   };
   public KnobAutomation speed;
   public UGenW.Parameter setSpeed = new UGenW.Parameter((Object d) -> {
-    setRate(new Static(context, ((Number)d).floatValue()));
+    speed.setValue(((Number)d).floatValue());
   }, (Knob target) -> {
     speed.attach(target);
   });
   public AutoControlSamplePlayer(AudioContext ac, int i) {
     super(ac, i);
-    speed = new KnobAutomation(ac, "speed",1);
+    speed = new KnobAutomation(ac, "speed", 1);
     autos.add(speed);
+    setRate(speed);
   }
   public AutoControlSamplePlayer(AudioContext ac, Sample s) {
     super(ac, s);
-    speed = new KnobAutomation(ac, "speed",1);
+    speed = new KnobAutomation(ac, "speed", 1);
     autos.add(speed);
+    setRate(speed);
   }
   public void addAuto(KnobAutomation a) {
     synchronized (this) {
@@ -134,8 +136,8 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
       u.addInput(ugensBefore.get(index));
     }
     ugensBefore.add(index, u);
-    if (u instanceof UGenW) {
-      return ((UGenW)u).getAutomations();
+    if (u instanceof UGenWInterface) {
+      return ((UGenWInterface)u).getAutomations();
     }
     return new ArrayList<>();
   }

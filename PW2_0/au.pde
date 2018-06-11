@@ -7,7 +7,7 @@ String sampleTimeFormat(double d) {//d is milliseconds
   int floored=(int)d;
   int sec=(floored)/1000;
   //return intFormat(sec)+":"+intFormat(floored-sec);
-  return sec+":"+(floored-sec);
+  return sec+":"+(floored-sec*1000);
 }
 class SamplePlayer2 extends SamplePlayer {
   Slider mp3_slider;
@@ -197,19 +197,16 @@ public class FFmpegConverter {//play with globalSamplePlayer
 public class AutomationButton extends LinearList.SelectableButton {
   public Runnable onPress;
   public AutomationButton(String name) {
-    super("AutomationButton_"+name);
+    super("AutomationButton_"+((name==null)?"":name));
+    if (name==null) {
+      name="";
+    }
     text=name;
-    final MouseEventListener l=getPressListener();jgjcfgj
+    final MouseEventListener l=getPressListener();
     setPressListener(new MouseEventListener() {
       public boolean onEvent(MouseEvent e, int index) {
-        if (e.getAction()==MouseEvent.PRESS) {
-          onPress.run();
-        }
-        //if (l==null) {
-        //  return true;
-        //} else {
+        onPress.run();
         return l.onEvent(e, index);
-        //}
       }
     }
     );
@@ -266,22 +263,32 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
   AudioContext ac=tab.wvac;
   TDCompW comp=new TDCompW(ac, tab.editor.sample.getNumChannels());
   AutoFaderW fader=new AutoFaderW(ac, tab.editor.sample.getNumChannels());
-  wv_fxtabs.addTab("TDComp", new TDCompControl("wv_tdcomp").initialize(comp));
-  final AutoFaderControl control;
-  wv_fxtabs.addTab("Wavcut", control=new AutoFaderControl("wv_autofader").initialize(fader));
+  wv_fxtabs.addTab("TDComp", tab.compControl=new TDCompControl("wv_tdcomp").initialize(comp));
+  wv_fxtabs.addTab("Wavcut", tab.faderControl=new AutoFaderControl("wv_autofader").initialize(fader));
   wv_fxtabs.localLayout();
-  control.setAsMirror(tab.editor);
-  control.view.onAutomationChanged=new Runnable() {//why two times??
+  tab.faderControl.setAsMirror(tab.editor);
+  tab.faderControl.view.onAutomationChanged=new Runnable() {//why two times??
     public void run() {
       tab.editor.automationInvalid=true;
       tab.editor.invalidate();
     }
   };
-  control.view.snap=false;
+  tab.faderControl.view.snap=false;
   tab.editor.onAutomationChanged=new Runnable() {
     public void run() {
-      control.view.automationInvalid=true;
-      control.view.invalidate();
+      tab.faderControl.view.automationInvalid=true;
+      tab.faderControl.view.invalidate();
+    }
+  };
+  tab.faderControl.progressListener=new BiConsumer<Integer, Integer>() {
+    public void accept(Integer count, Integer totalCount) {
+      setTitleProcessing("saved... (" + count + "/" + totalCount + ")");
+    }
+  };
+  tab.faderControl.endListener=new Consumer<String>() {
+    public void accept(String path) {
+      setTitleProcessing();
+      openFileExplorer(path);
     }
   };
   final Slider slider=(Slider)wv_lin1.children.get(3);
@@ -301,6 +308,7 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
   slider.setAdjustListener(new EventListener() {
     public void onEvent(Element e) {
       sp.setPosition(sp.getSample().getLength()*slider.value/slider.max);
+      sp.onUpdate.run();
       tab.editor.invalidate();
     }
   }
@@ -314,21 +322,63 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
   for (KnobAutomation auto : autos) {
     sp.addAuto(auto);
   }
+  //
+  final TextBox offset = new TextBox("", "grid offset (milliseconds)", "1386.0545");
+  offset.setNumberOnly(TextBox.NumberType.FLOAT);
+  offset.onTextChangeListener = new EventListener() {
+    public void onEvent(Element e) {
+      tab.editor.snapOffset = offset.valueF;
+      tab.editor.invalidate();
+    }
+  };
+  offset.setText("0");
+  final TextBox bpm = new TextBox("", "bpm", "140");
+  bpm.setNumberOnly(TextBox.NumberType.FLOAT);
+  bpm.onTextChangeListener = new EventListener() {
+    public void onEvent(Element e) {
+      tab.editor.snapBpm = bpm.valueF;
+      tab.editor.invalidate();
+    }
+  };
+  bpm.setText("120");
+  Knob speedKnob = new Knob("");
+  speedKnob.label = "speed";
+  speedKnob.attach(ac, sp, sp.setSpeed, 0.4, 2, 1, 1, false);
+  AlterLinearLayout layout=new AlterLinearLayout("");
+  DivisionLayout ud=new DivisionLayout("");
+  ud.mode=DivisionLayout.Behavior.PROPORTIONAL;
+  ud.value=0.5;
+  ud.rotation=Attributes.Rotation.UP;
+  ud.addChild(bpm);
+  ud.addChild(offset);
+  layout.addChild(ud);
+  layout.addChild(speedKnob);
+  //
   KyUI.taskManager.executeAll();
+  //
+  layout.set(ud, AlterLinearLayout.LayoutType.STATIC, 1);
+  layout.set(speedKnob, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1);
+  wv_fxtabs.addTab("Other", layout);
+  wv_fxtabs.localLayout();
+  //
   wv_fxtabs.selectTab(1);
   tab.editor.automation=fader.cuePoint;
-  LinearList autoList=(LinearList)KyUI.get("wav_points");
-  for (final KnobAutomation auto : sp.autos) {
-    AutomationButton b=new AutomationButton(auto.getName());
-    b.onPress=new Runnable() {
-      public void run() {
-        tab.editor.automation=auto;
-        tab.editor.automationInvalid=true;
-        tab.editor.invalidate();
-      }
-    };
-    autoList.addItem(b);
+  LinearList autoList=(LinearList)KyUI.get("wv_points");
+  if (autoList.size()==0) {
+    for (int a=0; a<sp.autos.size(); a++) {
+      AutomationButton b=new AutomationButton(sp.autos.get(a).getName());
+      final int a_=a;
+      b.onPress=new Runnable() {
+        public void run() {
+          currentWav.editor.automation=currentWav.editor.player.autos.get(a_);
+          currentWav.editor.automationInvalid=true;
+          currentWav.editor.invalidate();
+        }
+      };
+      autoList.addItem(b);
+    }
   }
+  sp.pause(true);
 }
 void wav_setup() {
   ((TabLayout)KyUI.get("wv_filetabs")).tabSelectListener=new ItemSelectListener() {
@@ -377,6 +427,8 @@ void wav_setup() {
 static class WavTab {
   AudioContext wvac=new AudioContext();//so we have 1+kstabs_count+wavtabs_count audiocontexts...is it okay???(or I can optimize it to 2+kstabs_count...)
   WavEditor editor;
+  TDCompControl compControl;
+  AutoFaderControl faderControl;
   public ArrayList<KnobAutomation> autos=new ArrayList<KnobAutomation>();
   WavTab(WavEditor editor_) {
     editor=editor_;
@@ -431,6 +483,10 @@ void selectWavTab(int index) {
     KyUI.get("wv_text").setEnabled(true);
   } else {
     currentWav=wavTabs.get(index);
+  }
+  AutomationButton b=(AutomationButton)((LinearList)KyUI.get("wv_points")).getSelection();
+  if (b!=null) {
+    b.onPress.run();
   }
   KyUI.get("wv_frame").invalidate();
 }

@@ -1,5 +1,33 @@
 import java.util.function.*;
 void setup_ev2() {
+  KyUI.addShortcut(new KyUI.Shortcut("undo", true, false, false, 'Z'-'A'+1, java.awt.event.KeyEvent.VK_Z, new EventListener() {//Ctrl-Z
+    public void onEvent(Element e) {
+      if (e instanceof CommandEdit) {
+        ((CommandEdit)e).script.undo();
+      } else {
+        if (mainTabs_selected==WAV_EDITOR) {
+          if (currentWav!=null) {
+            currentWav.editor.undo();
+          }
+        }
+      }
+    }
+  }
+  ));
+  KyUI.addShortcut(new KyUI.Shortcut("redo", true, false, false, 'Y'-'A'+1, java.awt.event.KeyEvent.VK_Y, new EventListener() {//Ctrl-Y
+    public void onEvent(Element e) {
+      if (e instanceof CommandEdit) {
+        ((CommandEdit)e).script.redo();
+      } else {
+        if (mainTabs_selected==WAV_EDITOR) {
+          if (currentWav!=null) {
+            currentWav.editor.redo();
+          }
+        }
+      }
+    }
+  }
+  ));
   KyUI.addShortcut(new KyUI.Shortcut("selectAll", true, false, false, 1, java.awt.event.KeyEvent.VK_A, new EventListener() {//Ctrl-A
     public void onEvent(Element e) {
       if (e instanceof TextEdit) {
@@ -16,6 +44,12 @@ void setup_ev2() {
       if (e instanceof TextEdit) {
         if (((TextEdit)e).getContent().hasSelection()) {
           textTransfer.setClipboardContents(((TextEdit)e).getContent().getSelection());
+        }
+      } else {
+        if (mainTabs_selected==WAV_EDITOR) {
+          if (currentWav!=null) {
+            currentWav.editor.copy();
+          }
         }
       }
     }
@@ -74,6 +108,12 @@ void setup_ev2() {
         }
         ((TextEdit)e).recordHistory();
         e.invalidate();
+      } else {
+        if (mainTabs_selected==WAV_EDITOR) {
+          if (currentWav!=null) {
+            currentWav.editor.paste();
+          }
+        }
       }
     }
   }
@@ -155,6 +195,10 @@ void setup_ev2() {
             currentLedEditor.displayControl();
             currentLed.light.copyFrame(currentLedEditor.LED.get(currentLedEditor.displayFrame), currentLedEditor.velLED.get(currentLedEditor.displayFrame));
           }
+        } else if (mainTabs_selected==WAV_EDITOR) {
+          if (currentWav!=null) {
+            currentWav.editor.left(2);
+          }
         }
       }
     }
@@ -171,6 +215,10 @@ void setup_ev2() {
             currentLedEditor.displayControl();
             currentLed.light.copyFrame(currentLedEditor.LED.get(currentLedEditor.displayFrame), currentLedEditor.velLED.get(currentLedEditor.displayFrame));
           }
+        } else if (mainTabs_selected==WAV_EDITOR) {
+          if (currentWav!=null) {
+            currentWav.editor.right(2);
+          }
         }
       }
     }
@@ -181,6 +229,9 @@ void setup_ev2() {
       if (!(e instanceof TextEdit)) {
         if (mainTabs_selected==LED_EDITOR) {
           VelocityType.left();
+        } else if (mainTabs_selected==WAV_EDITOR) {
+          currentWav.editor.setAutomationMode(!currentWav.editor.getAutomationMode());
+          //ADD automation button toggle.
         }
       }
     }
@@ -191,6 +242,8 @@ void setup_ev2() {
       if (!(e instanceof TextEdit)) {
         if (mainTabs_selected==LED_EDITOR) {
           VelocityType.right();
+        } else if (mainTabs_selected==WAV_EDITOR) {
+          currentWav.editor.deletePoint();
         }
       }
     }
@@ -216,13 +269,32 @@ void setup_ev2() {
     }
   }
   ));
+  KyUI.addShortcut(new KyUI.Shortcut("snap", false, false, false, 'p', 'P', new EventListener() {//p
+    public void onEvent(Element e) {
+      if (!(e instanceof TextEdit)) {
+        if (mainTabs_selected==WAV_EDITOR) {
+          if (currentWav!=null) {
+            currentWav.editor.setSnap(currentWav.editor.snap);
+          }
+        }
+      }
+    }
+  }
+  ));
   KyUI.addShortcut(new KyUI.Shortcut("loop", false, false, false, 'l', 'L', new EventListener() {//l
     public void onEvent(Element e) {
       if (!(e instanceof TextEdit)) {
-        ImageToggleButton btn=((ImageToggleButton)KyUI.get("led_loop"));
-        btn.onPress();
-        btn.getPressListener().onEvent(null, 0);
-        btn.invalidate();
+        if (mainTabs_selected==LED_EDITOR) {
+          ImageToggleButton btn=((ImageToggleButton)KyUI.get("led_loop"));
+          btn.onPress();
+          btn.getPressListener().onEvent(null, 0);
+          btn.invalidate();
+        } else if (mainTabs_selected==WAV_EDITOR) {
+          if (currentWav!=null) {
+            currentWav.editor.setLoop(!currentWav.editor.getLoop());
+            //ADD toggle loop button
+          }
+        }
       }
     }
   }
@@ -230,14 +302,19 @@ void setup_ev2() {
   KyUI.addShortcut(new KyUI.Shortcut("rewind", false, false, false, 'r', 'R', new EventListener() {//r
     public void onEvent(Element e) {
       if (!(e instanceof TextEdit)) {
-        if (currentLed.led.loopStart<currentLed.led.loopEnd) {
-          currentLedEditor.displayTime=currentLed.led.loopStart;
-          currentLedEditor.setFrameByTime();
-        } else {
-          currentLedEditor.setDisplayFrame(0);
-          currentLedEditor.setTimeByFrame();
+        if (mainTabs_selected==LED_EDITOR) {
+          if (currentLed.led.loopStart<currentLed.led.loopEnd) {
+            currentLedEditor.displayTime=currentLed.led.loopStart;
+            currentLedEditor.setFrameByTime();
+          } else {
+            currentLedEditor.setDisplayFrame(0);
+            currentLedEditor.setTimeByFrame();
+          }
+          ledTabs.get(0).light.start(ledTabs.get(0).led, currentLedEditor.displayTime);
         }
-        ledTabs.get(0).light.start(ledTabs.get(0).led, currentLedEditor.displayTime);
+      } else if (mainTabs_selected==WAV_EDITOR) {
+        currentWav.editor.player.setPosition(currentWav.editor.player.getLoopStartUGen().getValue());
+        currentWav.editor.player.pause(false);
       }
     }
   }
@@ -245,8 +322,18 @@ void setup_ev2() {
   KyUI.addShortcut(new KyUI.Shortcut("play", false, false, false, ' ', ' ', new EventListener() {//" "
     public void onEvent(Element e) {
       if (!(e instanceof TextEdit)) {
-        ImageButton btn=((ImageButton)KyUI.get("led_playstop"));
-        btn.getPressListener().onEvent(null, 0);
+        if (mainTabs_selected==LED_EDITOR) {
+          ImageButton btn=((ImageButton)KyUI.get("led_playstop"));
+          btn.getPressListener().onEvent(null, 0);
+        } else if (mainTabs_selected==WAV_EDITOR) {
+          WavEditor w=currentWav.editor;
+          if (w.player.getPosition() == w.player.getLoopEndUGen().getValue()) {
+            w.player.setPosition(w.player.getLoopStartUGen().getValue());
+            w.player.pause(false);
+          } else {
+            w.player.pause(!w.player.isPaused());
+          }
+        }
       }
     }
   }
@@ -500,10 +587,47 @@ void setup_ev2() {
 //    if (UI[getUIid("I_CLEARKEYSOUND")].disabled==false) {
 //      ((Button)UI[getUIid("I_CLEARKEYSOUND")]).onRelease();
 //    }
-//  } else if (functionId==S_UNDO) {
-//    UndoLog();
-//    setStatusR("undo");
-//  } else if (functionId==S_REDO) {
-//    RedoLog();
-//    setStatusR("redo");
-//export 
+//export
+
+/*
+ if (key == 'o') {
+ Button b = KyUI.<Button>get2("autoscroll");
+ b.onPress();
+ b.invalidate();
+ b.getPressListener().onEvent(null, 0);
+ }
+ if (key == '=') {
+ Button b = KyUI.<Button>get2("grid+");
+ b.getPressListener().onEvent(null, 0);
+ }
+ if (key == '-') {
+ Button b = KyUI.<Button>get2("grid-");
+ b.getPressListener().onEvent(null, 0);
+ }
+ if (key == '[') {
+ Button b = KyUI.<Button>get2("zoomout");
+ b.getPressListener().onEvent(null, 0);
+ }
+ if (key == ']') {
+ Button b = KyUI.<Button>get2("zoomin");
+ b.getPressListener().onEvent(null, 0);
+ }
+ if (key == 't') {
+ Button b = KyUI.<Button>get2("cut");
+ b.getPressListener().onEvent(null, 0);
+ }
+ if (key == 's') {
+ Button b = KyUI.<Button>get2("save");
+ b.getPressListener().onEvent(null, 0);
+ }
+ if (key == '0') {
+ Button b = KyUI.<Button>get2("resetloop");
+ b.getPressListener().onEvent(null, 0);
+ }
+ if (key == 'q' || key == 17) {//processing's limit
+ w.addPoint(w.snapTime(
+ Math.max(Math.min(w.player.getPosition() + (double)(((java.awt.event.KeyEvent)e.getNative()).getWhen() - System.currentTimeMillis()), w.sample.getLength()), 0)
+ ), 1);
+ w.automationInvalid = true;
+ KyUI.get("wav").invalidate();
+ }*/

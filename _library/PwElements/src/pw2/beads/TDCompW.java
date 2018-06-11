@@ -21,7 +21,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   public Parameter setAttack = new Parameter((Object d) -> {
     ugen.setAttack(((Number)d).doubleValue());
   }, (Knob target) -> {
-    attack.target = target;
+    attack.attach(target);
   });
   public Parameter setRelease = new Parameter((Object d) -> {
     ugen.setRelease(((Number)d).doubleValue());

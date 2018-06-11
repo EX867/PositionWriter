@@ -32,8 +32,8 @@ public class KnobAutomation extends Glide {
     }
   }
   Knob target;
-  protected double max = 1;
-  protected double min = 0;//used when no target specified
+  public double max = 1;
+  public double min = 0;//used when no target specified
   public double gridOffset = 0;
   public double gridInterval = 0;//usually 0, and if not 0,then this value will draw and snap horizontal grids on WavEdit, or else. this is set by UGenW class.
   public Multiset<Point> points;//but read only, use changePoint or addPoint when modifying this
@@ -53,10 +53,6 @@ public class KnobAutomation extends Glide {
   public double postCount = 0;
   public int bufferIndex = 0;
   public KnobAutomation(AudioContext ac, String name_, float currentValue) {
-    super(ac, currentValue);
-    setName(name_);
-  }
-  public KnobAutomation(AudioContext ac, float currentValue) {
     super(ac, currentValue, GLIDE_TIME);
     points = new Multiset<Point>();
     loopStartEnvelope = new Static(context, 0.0f);
@@ -64,6 +60,10 @@ public class KnobAutomation extends Glide {
     positionIncrement = context.samplesToMs(1);
     preCount = ac.samplesToMs(1);
     postCount = ac.samplesToMs(1);
+    setName(name_);
+  }
+  public KnobAutomation(AudioContext ac, float currentValue) {
+    this(ac, "-", currentValue);
   }
   public KnobAutomation attach(Knob target_) {
     target = target_;
@@ -105,7 +105,7 @@ public class KnobAutomation extends Glide {
     return this;
   }
   public int indexOf(Point point) {
-    cachePoint.position = point.position + 1;
+    cachePoint.position = (float)point.position + 1;
     index = Math.min(points.size() - 1, points.getBeforeIndex(cachePoint));
     for (; index >= 0; index--) {
       if (points.get(index) == point) {

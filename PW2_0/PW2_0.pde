@@ -2,7 +2,7 @@ import pw2.element.*;
 import java.util.TreeMap;
 //PositionWriter 2.0.pde
 //===ADD list===//
-//shortcuts=undo,redo,stop,ksclear,delay value edit,macros,resetloop,undo,redo,rewind zoomin zoomout moveToCursorLed*
+//shortcuts=ksclear,delay value edit,macros moveToCursorLed* ctrl select
 //add ziploader
 //note on highlight
 //add custom velocity selector

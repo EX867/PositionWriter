@@ -21,9 +21,7 @@ import processing.event.MouseEvent;
 import pw2.beads.AutoControlSamplePlayer;
 import pw2.beads.KnobAutomation;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 public class WavEditor extends Element {
   public Sample sample;
   public AutoControlSamplePlayer player;
@@ -220,7 +218,7 @@ public class WavEditor extends Element {
   public void render(PGraphics g) {
     //draw background
     super.render(g);
-    if (autoscroll && sample != null && !slider.isPressedL() && !player.isPaused()) {
+    if (autoscroll && player != null && !slider.isPressedL() && !player.isPaused()) {
       autoscroll();
     }
     if (player != null) {
@@ -295,7 +293,7 @@ public class WavEditor extends Element {
       }
       //draw loop mark - sampleplayer's loop
       float loopHead = (pos.bottom - pos.top) / 12;//8
-      if (true) {//player.getLoopType() == SamplePlayer.LoopType.LOOP_FORWARDS
+      if (player != null) {//player.getLoopType() == SamplePlayer.LoopType.LOOP_FORWARDS
         g.strokeWeight(4);
         g.stroke(255, 0, 0, 150);
         g.fill(g.strokeColor);
@@ -430,44 +428,53 @@ public class WavEditor extends Element {
       return false;
     });
   }
+  public void snapGridPlus() {
+    for (int a = 0; a < Beat.length; a++) {
+      if (snapInterval == Beat[a]) {
+        snapInterval = Beat[Math.min(Beat.length - 1, a + 1)];
+        //System.out.println(snapInterval);
+        invalidate();
+        break;
+      }
+    }
+  }
   public Button setSnapGridPlus(Button button) {
     button.setPressListener((MouseEvent e, int index) -> {
-      for (int a = 0; a < Beat.length; a++) {
-        if (snapInterval == Beat[a]) {
-          snapInterval = Beat[Math.min(Beat.length - 1, a + 1)];
-          //System.out.println(snapInterval);
-          invalidate();
-          return false;
-        }
-      }
+      snapGridPlus();
       return false;
     });
     return button;
   }//no undo
+  public void snapGridMinus() {
+    for (int a = 0; a < Beat.length; a++) {
+      if (snapInterval == Beat[a]) {
+        snapInterval = Beat[Math.max(0, a - 1)];
+        //System.out.println(snapInterval);
+        invalidate();
+        break;
+      }
+    }
+  }
   public Button setSnapGridMinus(Button button) {
     button.setPressListener((MouseEvent e, int index) -> {
-      for (int a = 0; a < Beat.length; a++) {
-        if (snapInterval == Beat[a]) {
-          snapInterval = Beat[Math.max(0, a - 1)];
-          //System.out.println(snapInterval);
-          invalidate();
-          return false;
-        }
-      }
+      snapGridMinus();
       return false;
     });
     return button;
   }//no undo
+  public void setSnap(boolean value) {
+    snap = value;
+  }
   public Button setToggleSnap(ToggleButton button) {
     button.setPressListener((MouseEvent e, int index) -> {
-      snap = button.value;
+      setSnap(button.value);
       return false;
     });
     return button;
   }//no undo
   public Button setToggleSnap(ImageToggleButton button) {
     button.setPressListener((MouseEvent e, int index) -> {
-      snap = button.value;
+      setSnap(button.value);
       return false;
     });
     return button;
@@ -486,55 +493,63 @@ public class WavEditor extends Element {
     });
     return button;
   }//no undo
+  public void setAutoscroll(boolean value) {
+    autoscroll = value;
+  }
   public Button setToggleAutoscroll(ToggleButton button) {
     button.setPressListener((MouseEvent e, int index) -> {
-      autoscroll = button.value;
+      setAutoscroll(button.value);
       return false;
     });
     return button;
   }//no undo
   public Button setToggleAutoscroll(ImageToggleButton button) {
     button.setPressListener((MouseEvent e, int index) -> {
-      autoscroll = button.value;
+      setAutoscroll(button.value);
       return false;
     });
     return button;
   }//no undo
+  public void setLoop(boolean value) {
+    if (value) {
+      player.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
+    } else {
+      player.setLoopType(SamplePlayer.LoopType.NO_LOOP_FORWARDS);
+    }
+  }
+  public boolean getLoop() {
+    return player.getLoopType() == SamplePlayer.LoopType.LOOP_FORWARDS;
+  }
   public Button setToggleLoop(ToggleButton button) {
     button.setPressListener((MouseEvent e, int index) -> {
-      if (button.value) {
-        player.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
-      } else {
-        player.setLoopType(SamplePlayer.LoopType.NO_LOOP_FORWARDS);
-      }
+      setLoop(button.value);
       return false;
     });
     return button;
   }//no undo
   public Button setToggleLoop(ImageToggleButton button) {
     button.setPressListener((MouseEvent e, int index) -> {
-      if (button.value) {
-        player.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
-      } else {
-        player.setLoopType(SamplePlayer.LoopType.NO_LOOP_FORWARDS);
-      }
+      setLoop(button.value);
       return false;
     });
     return button;
   }//no undo
+  public void deletePoint() {
+    if (selectedPoints.isEmpty()) return;
+    for (KnobAutomation.Point p : selectedPoints) {
+      ChangeData before = new ChangeData(p);
+      automation.removePoint(p);
+      recorder.add(new Change(before, null));
+    }
+    recorder.recordLog();
+    onAutomationChanged.run();
+    selectedPoints.clear();
+    automationInvalid = true;
+    invalidate();
+  }
   public Button setDeletePoint(Button button) {
     button.setPressListener((MouseEvent e, int index) -> {
-      if (selectedPoints.isEmpty()) return false;
-      for (KnobAutomation.Point p : selectedPoints) {
-        ChangeData before = new ChangeData(p);
-        automation.removePoint(p);
-        recorder.add(new Change(before, null));
-      }
-      recorder.recordLog();
-      onAutomationChanged.run();
-      selectedPoints.clear();
-      automationInvalid = true;
-      invalidate();
+      deletePoint();
       return false;
     });
     return button;
@@ -630,9 +645,6 @@ public class WavEditor extends Element {
     if (automation == null || !snap || automation.gridInterval == 0) return in;
     float firstPoint = pos.top + (pos.bottom - pos.top) * automation.map(automation.gridOffset);
     float posInterval = (float)((pos.bottom - pos.top) * (1 - automation.map(automation.gridInterval)));
-    while (posInterval < minGridSize) {
-      posInterval *= 2;
-    }
     return firstPoint - posInterval * Math.round((firstPoint - in) / posInterval);
   }
   @Override
@@ -720,24 +732,23 @@ public class WavEditor extends Element {
             if (clickPoint != null) {
               selected = true;
               double apos = clickTime + posToTime(x - cx - offsetX);
-              double avalue = clickValue - automation.unmap(1 - (y - cy) / (pos.bottom - pos.top));
+              double avalue = clickValue - automation.unmap(1 - (y - cy) / (pos.bottom - pos.top)) + automation.min;
               //
               ChangeData before = new ChangeData(clickPoint);
               double origialPos = clickPoint.position;
               double origialValue = clickPoint.value;
-              double max = automation.unmap(1 - snapAutomationGrid((pos.bottom - pos.top)) / (pos.bottom - pos.top));
-              double min = automation.unmap(1 - snapAutomationGrid(0) / (pos.bottom - pos.top));
+              double max = automation.max;
+              double min = automation.min;
               if (snap) {
                 apos = posToTime((float)snap(timeToPos(apos)));
                 avalue = automation.unmap(1 - snapAutomationGrid((pos.bottom - pos.top) * (1 - automation.map(avalue))) / (pos.bottom - pos.top));
               }
-              avalue = Math.max(min, Math.min(max, avalue));
               if (apos < 0) {
-                clickPoint = automation.changePoint(clickPoint, 0, avalue);
+                clickPoint = automation.changePoint(clickPoint, 0, Math.max(min, Math.min(max, avalue)));
               } else if (apos > length) {
-                clickPoint = automation.changePoint(clickPoint, length, avalue);
+                clickPoint = automation.changePoint(clickPoint, length, Math.max(min, Math.min(max, avalue)));
               } else {
-                clickPoint = automation.changePoint(clickPoint, apos, avalue);
+                clickPoint = automation.changePoint(clickPoint, apos, Math.max(min, Math.min(max, avalue)));
               }
               if (clickPoint != null) {
                 recorder.add(new Change(before, new ChangeData(clickPoint)));
@@ -886,7 +897,7 @@ public class WavEditor extends Element {
       }
     }
   }
-  void copy() {
+  public void copy() {
     if (automation == null || selectedPoints.isEmpty()) return;
     copyPoints.clear();
     double startTime = Double.MAX_VALUE;
@@ -909,7 +920,7 @@ public class WavEditor extends Element {
     player.setPosition(endTime);
     invalidate();
   }
-  void paste() {
+  public void paste() {
     if (automation == null || copyPoints.isEmpty()) return;
     recorder.recordLog();
     double startTime = player.getPosition();
