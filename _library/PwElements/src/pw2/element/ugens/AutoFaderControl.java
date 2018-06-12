@@ -2,10 +2,7 @@ package pw2.element.ugens;
 import beads.AudioContext;
 import beads.Sample;
 import beads.SamplePlayer;
-import kyui.core.Attributes;
-import kyui.core.Element;
-import kyui.core.KyUI;
-import kyui.core.MirrorView;
+import kyui.core.*;
 import kyui.element.*;
 import kyui.util.Rect;
 import processing.core.PGraphics;
@@ -42,10 +39,14 @@ public class AutoFaderControl extends UGenViewer {
   protected DivisionLayout sliderLayout;
   //
   public AutoFaderW fader;
-  public BiConsumer<Integer, Integer> progressListener = (Integer current, Integer total) -> {
+  public BiConsumer<Long, Long> progressListener = (Long current, Long total) -> {
   };
   public Consumer<String> endListener = (String path) -> {
   };
+  //
+  CachingFrame progressLayer;
+  CenterFrameLayout progressLayerCenter;
+  Slider progressSlider;
   KnobAutomation.Point cachePoint = new KnobAutomation.Point(0, 0);
   public AutoFaderControl(String name) {
     super(name);
@@ -126,15 +127,33 @@ public class AutoFaderControl extends UGenViewer {
       view.invalidate();
       return false;
     });
+    progressLayer = KyUI.getNewLayer();
+    progressLayer.addChild(progressLayerCenter = new CenterFrameLayout(""));
+    progressLayerCenter.addChild(progressSlider = new Slider(""));
     export.setPressListener((MouseEvent e, int index) -> {
-      if (view == null) {
+      if (view == null || view.sample == null) {
+        return false;
+      }
+      if (path.getText().isEmpty()) {
         return false;
       }
       TreeSet<Integer> times = new TreeSet<Integer>();
       for (KnobAutomation.Point p : fader.cuePoint.points) {
         times.add((int)Math.floor(view.sample.msToSamples(p.position)));
       }
-      fader.audioCut(view.sample, times, path.getText(), progressListener, endListener, exportMode.value);
+      if (KyUI.Ref.width != progressLayer.display.width || KyUI.Ref.height != progressLayer.display.height) {
+        progressLayer.resize(KyUI.Ref.width, KyUI.Ref.height);
+        progressLayerCenter.setPosition(new Rect(0, 0, KyUI.Ref.width, KyUI.Ref.height));
+        progressLayer.onLayout();
+      }
+      //KyUI.addLayer(progressLayer);
+      new Thread(() -> {
+        fader.audioCut(view.player.makeProcessedSample(progressListener), times, path.getText(), (Long current, Long total) -> {
+          //progressSlider.set((float)current, (float)0, (float)total);
+          progressListener.accept(current, total);
+        }, endListener, exportMode.value);
+        //KyUI.removeLayer();
+      }).start();
       return false;
     });
   }
@@ -194,5 +213,11 @@ public class AutoFaderControl extends UGenViewer {
   @Override
   public void render(PGraphics g) {
     super.render(g);
+  }
+  public void setPath(String text) {
+    path.setText(text);
+  }
+  public void export() {
+    export.getPressListener().onEvent(null, 0);
   }
 }

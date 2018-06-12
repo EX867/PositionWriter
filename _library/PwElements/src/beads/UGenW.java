@@ -21,6 +21,7 @@ public abstract class UGenW extends UGen implements UGenWInterface {//solve sync
     }
   }
   TaskManager tm = new TaskManager();
+  public boolean gui = true;
   ArrayList<UGenListener> listener = new ArrayList<>();
   boolean bypass = false;
   //Task setFrequency...
@@ -91,5 +92,16 @@ public abstract class UGenW extends UGen implements UGenWInterface {//solve sync
   public abstract List<KnobAutomation> getAutomations();
   public void removeAutomationsFrom(List<KnobAutomation> list) {
     list.removeAll(getAutomations());
+  }
+  @Override public void setGui(boolean value) {
+    gui = value;
+    for (UGen u : getConnectedInputs()) {
+      if (u instanceof UGenWInterface && ((UGenWInterface)u).getGui() != gui) {//prevent feedback loop
+        ((UGenWInterface)u).setGui(gui);
+      }
+    }
+  }
+  @Override public boolean getGui() {
+    return gui;
   }
 }

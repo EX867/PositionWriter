@@ -8,41 +8,46 @@ import processing.core.PImage;
 import pw2.beads.TDComp;
 import pw2.beads.TDCompW;
 public class TDCompWave extends Element {
-  int strokeWeight=4;
+  int strokeWeight = 4;
   TDComp attachedUGen;
   int fgColor;
   //temp
-  PGraphics wave=null;
+  PGraphics wave = null;
   @Override
   public void setPosition(Rect rect) {
     if (attachedUGen != null) {
-      attachedUGen.canDraw=false;//sync error warning
+      attachedUGen.canDraw = false;//sync error warning
       synchronized (attachedUGen) {
-        PGraphics waveOld=wave;
-        wave=KyUI.Ref.createGraphics(Math.max(1, (int)(rect.right - rect.left)), Math.max(1, (int)(rect.bottom - rect.top)));
-        attachedUGen.wave=wave;
+        PGraphics waveOld = wave;
+        wave = KyUI.Ref.createGraphics(Math.max(1, (int)(rect.right - rect.left)), Math.max(1, (int)(rect.bottom - rect.top)));
+        if (waveOld != null) {
+          wave.beginDraw();
+          wave.image(waveOld, wave.width - waveOld.width, 0);
+          wave.endDraw();
+        }
+        attachedUGen.wave = wave;
       }
-      attachedUGen.canDraw=true;
+      attachedUGen.canDraw = true;
     }
     super.setPosition(rect);
   }
   public TDCompWave attach(TDComp ugen) {
-    attachedUGen=ugen;
+    attachedUGen = ugen;
     setPosition(pos);
     return this;
   }
   public TDCompWave attach(TDCompW ugen) {
-    attachedUGen=ugen.ugen;
+    attachedUGen = ugen.ugen;
     setPosition(pos);
     return this;
   }
   public void deattach() {
-    attachedUGen=null;
+    attachedUGen = null;
   }
   public TDCompWave(String s) {
     super(s);
-    bgColor=KyUI.Ref.color(127);
-    fgColor=KyUI.Ref.color(50);
+    bgColor = KyUI.Ref.color(127);
+    fgColor = KyUI.Ref.color(50);
   }
   @Override
   public void render(PGraphics g) {
@@ -57,9 +62,9 @@ public class TDCompWave extends Element {
     g.imageMode(PApplet.CORNER);
     //System.out.println("c");
     if (attachedUGen.canDraw) {
-      attachedUGen.canDraw=false;
+      attachedUGen.canDraw = false;
       g.image(wave, pos.left, pos.top);
-      attachedUGen.canDraw=true;
+      attachedUGen.canDraw = true;
     }
     //System.out.println("d");
     g.strokeWeight(strokeWeight);

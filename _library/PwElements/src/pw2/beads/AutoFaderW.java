@@ -102,7 +102,7 @@ public class AutoFaderW extends UGenW {//break the rule!!! I miss designed preCo
     return Arrays.asList(new KnobAutomation[]{preCount, postCount, cuePoint});
   }
   static DecimalFormat xxxx = new DecimalFormat("0000");
-  public void audioCut(Sample sample, TreeSet<Integer> times, String path_, BiConsumer<Integer, Integer> progressListener, Consumer<String> endListener, boolean postfade) {//save to documents/wavcut/<wav_title.wav>/<count>.wav
+  public void audioCut(Sample sample, TreeSet<Integer> times, String path_, BiConsumer<Long, Long> progressListener, Consumer<String> endListener, boolean postfade) {//save to documents/wavcut/<wav_title.wav>/<count>.wav
     //assert sample!=null
     //times= sorted samples list
     //prefade uses other algorithm
@@ -117,78 +117,76 @@ public class AutoFaderW extends UGenW {//break the rule!!! I miss designed preCo
     } else {
       path = path_;
     }
-    new Thread(() -> {
-      String filename = sample.getFileName().replace("\\", "/");
-      filename = filename.substring(filename.lastIndexOf("/") + 1, filename.length());
-      int totalCount = times.size() + 1;
-      int start = 0;
-      int count = 1;
-      while (!times.isEmpty()) {
-        int time = times.pollFirst();
-        int length = time - start;
-        if (postfade) {
-          length += getPostCount();
-        }
-        float[][] buffer = new float[sample.getNumChannels()][length];
-        sample.getFrames(start, buffer);
-        {//process post fade.
-          int original = time - start;
-          for (int a = original; a < length; a++) {
-            for (int c = 0; c < buffer.length; c++) {
-              buffer[c][a] *= ((float)(a - original) / (length - original));
-            }
-          }
-        }
-        Sample split = new Sample(sample.samplesToMs(length), sample.getNumChannels(), sample.getSampleRate());
-        split.putFrames(0, buffer);
-        try {
-          File file = new File(path + "/" + filename + "/" + xxxx.format(count) + ".wav");
-          if (split.getLength() == 0) {
-            start = time;
-            continue;
-          } else {
-            System.out.println("save audio : " + file.getAbsolutePath() + " length : " + split.getLength() / 1000 + " start : " + start + " end : " + time + " (" + count + "/" + totalCount + ")");
-            progressListener.accept(count, totalCount);
-            if (!file.isFile()) {
-              file.getParentFile().mkdirs();
-              file.createNewFile();
-            }
-            split.write(file.getAbsolutePath());
-          }
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        count++;
-        start = time;
+    //new Thread(() -> {
+    int totalCount = times.size() + 1;
+    int start = 0;
+    int count = 1;
+    while (!times.isEmpty()) {
+      int time = times.pollFirst();
+      int length = time - start;
+      if (postfade) {
+        length += getPostCount();
       }
-      //
-      last_block:
-      {
-        int time = (int)Math.floor(sample.msToSamples(sample.getLength()));
-        float[][] buffer = new float[sample.getNumChannels()][time - start];
-        sample.getFrames(start, buffer);
-        Sample split = new Sample(sample.samplesToMs(time - start), sample.getNumChannels(), sample.getSampleRate());
-        split.putFrames(0, buffer);
-        try {
-          File file = new File(path + "/" + filename + "/" + xxxx.format(count) + ".wav");
-          if (split.getLength() == 0) {
-            break last_block;
-          } else {
-            System.out.println("save audio : " + file.getAbsolutePath() + " length : " + split.getLength() / 1000 + " start : " + start + " end : " + time + " (" + count + "/" + totalCount + ")");
-            progressListener.accept(count, totalCount);
-            if (!file.isFile()) {
-              file.getParentFile().mkdirs();
-              file.createNewFile();
-            }
-            split.write(file.getAbsolutePath());
+      float[][] buffer = new float[sample.getNumChannels()][length];
+      sample.getFrames(start, buffer);
+      {//process post fade.
+        int original = time - start;
+        for (int a = original; a < length; a++) {
+          for (int c = 0; c < buffer.length; c++) {
+            buffer[c][a] *= ((float)(a - original) / (length - original));
           }
-        } catch (IOException e) {
-          e.printStackTrace();
         }
       }
-      //
-      endListener.accept(path + "/" + filename + "/");
-      bypass(pbypass);
-    }).start();
+      Sample split = new Sample(sample.samplesToMs(length), sample.getNumChannels(), sample.getSampleRate());
+      split.putFrames(0, buffer);
+      try {
+        File file = new File(path + "/" + xxxx.format(count) + ".wav");
+        if (split.getLength() == 0) {
+          start = time;
+          continue;
+        } else {
+          System.out.println("save audio : " + file.getAbsolutePath() + " length : " + split.getLength() / 1000 + " start : " + start + " end : " + time + " (" + count + "/" + totalCount + ")");
+          progressListener.accept((long)count, (long)totalCount);
+          if (!file.isFile()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+          }
+          split.write(file.getAbsolutePath());
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      count++;
+      start = time;
+    }
+    //
+    last_block:
+    {
+      int time = (int)Math.floor(sample.msToSamples(sample.getLength()));
+      float[][] buffer = new float[sample.getNumChannels()][time - start];
+      sample.getFrames(start, buffer);
+      Sample split = new Sample(sample.samplesToMs(time - start), sample.getNumChannels(), sample.getSampleRate());
+      split.putFrames(0, buffer);
+      try {
+        File file = new File(path + "/" + xxxx.format(count) + ".wav");
+        if (split.getLength() == 0) {
+          break last_block;
+        } else {
+          System.out.println("save audio : " + file.getAbsolutePath() + " length : " + split.getLength() / 1000 + " start : " + start + " end : " + time + " (" + count + "/" + totalCount + ")");
+          progressListener.accept((long)count, (long)totalCount);
+          if (!file.isFile()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+          }
+          split.write(file.getAbsolutePath());
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    //
+    endListener.accept(path + "/");
+    bypass(pbypass);
+    //}).start();
   }
 }

@@ -2,14 +2,14 @@ import pw2.element.*;
 import java.util.TreeMap;
 //PositionWriter 2.0.pde
 //===ADD list===//
-//shortcuts=ksclear,delay value edit,macros moveToCursorLed* ctrl select
+//shortcuts=ksclear,delay value edit,macros ,moveToCursorLed ,ctrl select*
+//default reduced mode (no wavcur,macro)
 //add ziploader
 //note on highlight
 //add custom velocity selector
 //script updater and file downloader(and midi preset) frame*
 //add rnd view
 //colors drag and drop in settings
-//PUT COMPRESSOR LABEL TEXT BELOW KNOB*******
 //macro real time error checking
 //
 //===ADD list - not now===//

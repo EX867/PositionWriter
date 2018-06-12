@@ -7,34 +7,35 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
   enum Method {
     RMS, PEAK
   }
-  double threshold=Math.log10(0.5);
-  double ratio=2;//larger than 0. (but control starts with 1<<)
-  double knee=0.1;//equal or larger than 0
-  double attack=100;//in milliseconds. linear attack
-  double release=300;
-  float outputGain=1;
-  UGen sideChain=null;
-  Method method=Method.PEAK;
-  public float graphSize=60;
+  public boolean gui = true;
+  double threshold = Math.log10(0.5);
+  double ratio = 2;//larger than 0. (but control starts with 1<<)
+  double knee = 0.1;//equal or larger than 0
+  double attack = 100;//in milliseconds. linear attack
+  double release = 300;
+  float outputGain = 1;
+  UGen sideChain = null;
+  Method method = Method.PEAK;
+  public float graphSize = 60;
   //
   protected int attackInSamples;
   protected int releaseInSamples;
-  float thresholdPow=0.5F;
+  float thresholdPow = 0.5F;
   //
   UGen input;
   public PGraphics graph;//draws graph
   public PGraphics wave;//draws wave
-  public boolean canDraw=true;
+  public boolean canDraw = true;
   //
   boolean triggered;
-  int attackCount=0;
-  int releaseCount=0;
-  double currentValue=1;
-  double maxValue=1;
+  int attackCount = 0;
+  int releaseCount = 0;
+  double currentValue = 1;
+  double maxValue = 1;
   public TDComp(AudioContext ac, int channels) {
     super(ac, channels, channels);
-    attackInSamples=Math.round((float)context.msToSamples(attack));
-    releaseInSamples=Math.round((float)context.msToSamples(release));
+    attackInSamples = Math.round((float)context.msToSamples(attack));
+    releaseInSamples = Math.round((float)context.msToSamples(release));
   }
   @Override
   public void calculateBuffer() {
@@ -44,7 +45,7 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     if (ins == 0) {
       return;
     }
-    double input=getRMS(bufIn);
+    double input = getRMS(bufIn);
     double inputDvalPeak;
     double inputdval;
     double dvallog;
@@ -52,84 +53,84 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     double dvalPeak;
     if (sideChain == null) {//set dval to representative value of input and set inputdval to sidechain input
       if (method == Method.PEAK) {
-        dval=getDVal(bufIn);
-        dvalPeak=dval;
+        dval = getDVal(bufIn);
+        dvalPeak = dval;
       } else {//RMS
-        dval=input;
-        dvalPeak=getPeak(bufIn);
+        dval = input;
+        dvalPeak = getPeak(bufIn);
       }
-      inputdval=dval;
-      inputDvalPeak=dvalPeak;
+      inputdval = dval;
+      inputDvalPeak = dvalPeak;
     } else {
-      dval=getDVal(sideChain);
-      dvalPeak=getPeak(sideChain);
+      dval = getDVal(sideChain);
+      dvalPeak = getPeak(sideChain);
       if (method == Method.PEAK) {
-        inputdval=getDVal(bufIn);
-        inputDvalPeak=inputdval;
+        inputdval = getDVal(bufIn);
+        inputDvalPeak = inputdval;
       } else {//RMS
-        inputdval=input;
-        inputDvalPeak=getPeak(bufIn);
+        inputdval = input;
+        inputDvalPeak = getPeak(bufIn);
       }
     }
-    dvallog=Math.log10(dval);
+    dvallog = Math.log10(dval);
     if (dvallog > threshold - knee / 2) {//compression start
       if (!triggered) {
-        triggered=true;
+        triggered = true;
         if (attackCount >= attackInSamples) {
-          maxValue=0;
-          attackCount=0;//attack start
+          maxValue = 0;
+          attackCount = 0;//attack start
         }
       }
     } else if (triggered) {//compression end
-      triggered=false;
-      releaseCount=0;//release start
+      triggered = false;
+      releaseCount = 0;//release start
     }
-    for (int a=0; a < bufferSize; a++) {
-      double val=1;
+    for (int a = 0; a < bufferSize; a++) {
+      double val = 1;
       if (triggered) {
-        double sum=0;
-        for (int c=0; c < bufOut.length; c++) {
-          double data=-987654321;//-this is Infinity
+        double sum = 0;
+        for (int c = 0; c < bufOut.length; c++) {
+          double data = -987654321;//-this is Infinity
           if (bufIn[c][a] != 0) {
-            data=Math.log10(Math.abs(bufIn[c][a]));
+            data = Math.log10(Math.abs(bufIn[c][a]));
           }
-          sum+=getOutput(dvallog, data) - data;
+          sum += getOutput(dvallog, data) - data;
         }
-        val=Math.pow(10, sum / bufOut.length);
+        val = Math.pow(10, sum / bufOut.length);
       }
       if (maxValue < val) {
-        maxValue=val;
+        maxValue = val;
       }
       if (triggered && attackCount <= attackInSamples) {
-        double c=currentValue + (maxValue - currentValue) / Math.max(1, (attackInSamples - attackCount));
+        double c = currentValue + (maxValue - currentValue) / Math.max(1, (attackInSamples - attackCount));
         if (c < currentValue) {
-          currentValue=c;
+          currentValue = c;
         }
-        releaseCount=0;
+        releaseCount = 0;
       } else {
         if (triggered) {
-          releaseCount=0;
+          releaseCount = 0;
         }
         if (releaseInSamples == 0 && triggered) {
-          currentValue=val;
+          currentValue = val;
         } else {
           if (releaseInSamples > 0 && releaseCount < releaseInSamples - 1) {
-            currentValue=Math.min(currentValue + (val - currentValue) / (releaseInSamples - releaseCount), 1);
+            currentValue = Math.min(currentValue + (val - currentValue) / (releaseInSamples - releaseCount), 1);
           } else {
-            currentValue=val;
+            currentValue = val;
           }
         }
       }
       attackCount++;
       releaseCount++;
-      for (int c=0; c < bufOut.length; c++) {
-        bufOut[c][a]=outputGain * (float)(Math.signum(bufIn[c][a]) * Math.max(0, Math.abs(bufIn[c][a]) * currentValue));
+      for (int c = 0; c < bufOut.length; c++) {
+        bufOut[c][a] = outputGain * (float)(Math.signum(bufIn[c][a]) * Math.max(0, Math.abs(bufIn[c][a]) * currentValue));
       }
     }
-    if (canDraw && graph != null) {
+    if (gui && canDraw && graph != null) {
       visualizeGraph(input, dvallog);
     }
-    if (canDraw && wave != null) {
+    if (gui && canDraw && wave != null) {
       visualizeWave(inputDvalPeak, dvalPeak);
     }
   }
@@ -137,10 +138,10 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     return attack;
   }
   public TDComp setAttack(double v) {
-    attack=v;
-    attackInSamples=Math.round((float)context.msToSamples(attack));
+    attack = v;
+    attackInSamples = Math.round((float)context.msToSamples(attack));
     if (attackInSamples < 0) {
-      attackInSamples=0;
+      attackInSamples = 0;
     }
     return this;
   }
@@ -148,10 +149,10 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     return release;
   }
   public TDComp setRelease(double v) {
-    release=v;
-    releaseInSamples=Math.round((float)context.msToSamples(release));
+    release = v;
+    releaseInSamples = Math.round((float)context.msToSamples(release));
     if (releaseInSamples < 0) {
-      releaseInSamples=0;
+      releaseInSamples = 0;
     }
     return this;
   }
@@ -159,36 +160,36 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     return threshold * 20;
   }
   public TDComp setThreshold(double v) {
-    threshold=v * 0.05;
-    thresholdPow=(float)Math.pow(10, threshold);
+    threshold = v * 0.05;
+    thresholdPow = (float)Math.pow(10, threshold);
     return this;
   }
   public double getRatio() {
     return ratio;
   }
   public TDComp setRatio(double v) {
-    ratio=v;
+    ratio = v;
     return this;
   }
   public double getKnee() {
     return knee;
   }
   public TDComp setKnee(double v) {
-    knee=v;
+    knee = v;
     return this;
   }
   public float getOutputGain() {
     return outputGain;
   }
   public TDComp setOutputGain(float v) {
-    outputGain=v;
+    outputGain = v;
     return this;
   }
   public UGen getSideChain() {
     return sideChain;
   }
   public TDComp setSideChain(UGen v) {
-    sideChain=v;
+    sideChain = v;
     return this;
   }
   void visualizeGraph(double input, double dvallog) {//size=object.height
@@ -198,12 +199,12 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
       graph.stroke(50);
       graph.strokeWeight(2);
       graph.clear();
-      float py=graph.height;
-      for (int a=1; a < graph.width; a++) {
-        double db=graphSize * ((double)a / graph.width - 1) / 20;
-        float cy=-graph.height * 20 * (float)getOutput(db, db) / graphSize;
+      float py = graph.height;
+      for (int a = 1; a < graph.width; a++) {
+        double db = graphSize * ((double)a / graph.width - 1) / 20;
+        float cy = -graph.height * 20 * (float)getOutput(db, db) / graphSize;
         graph.line(a - 1, py, a, cy);
-        py=cy;
+        py = cy;
       }
       graph.noFill();
       //if (sideChain != null) {
@@ -212,18 +213,18 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
       graph.endDraw();
     }
   }
-  float pt=1;
+  float pt = 1;
   void visualizeWave(double input, double dval) {
     synchronized (this) {
-      float head=wave.height / 10;
-      float height=wave.height - head;
+      float head = wave.height / 10;
+      float height = wave.height - head;
       wave.beginDraw();
       wave.imageMode(PApplet.CORNER);
       wave.strokeWeight(1);
       wave.stroke(127, 127, 127);
       wave.image(wave, -1, 0);
       wave.line(wave.width - 1, 0, wave.width - 1, wave.height);
-      double output=getPeak(bufOut);// getRMS(bufOut);
+      double output = getPeak(bufOut);// getRMS(bufOut);
       wave.stroke(0x7F7F4040);
       wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * input));//input
       wave.stroke(0x7F40407F);
@@ -233,14 +234,14 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
         wave.line(wave.width - 1, wave.height, wave.width - 1, wave.height - (int)(height * dval));//sideChain
       }
       wave.stroke(0xFF000000);
-      float ct=wave.height - (float)(height * thresholdPow);
+      float ct = wave.height - (float)(height * thresholdPow);
       wave.line(wave.width - 1, pt, wave.width - 1, ct);//threshold
       wave.stroke(0x3F007F00);
       if (outputGain != 0) {
-        output=output / outputGain;
+        output = output / outputGain;
         wave.line(wave.width - 1, head, wave.width - 1, (int)(height * (input - output)) + head);//difference
       }
-      pt=ct;
+      pt = ct;
       wave.endDraw();
     }
   }
@@ -250,7 +251,7 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     } else if (2 * (sideChain - threshold) > knee) {//right
       return Math.min(0, input - (sideChain - (threshold + (sideChain - threshold) / Math.max(1, ratio))));
     } else if (knee != 0) {//center
-      double a=(sideChain - threshold + knee / 2);
+      double a = (sideChain - threshold + knee / 2);
       return Math.min(0, input + (1 / Math.max(1, ratio) - 1) * a * a / (2 * knee));
     } else {
       return input;
@@ -258,10 +259,10 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
   }
   double getDVal(UGen in) {
     if (method == Method.RMS) {//https://dsp.stackexchange.com/questions/27221/calculating-rms-crest-factor-for-a-stereo-signal
-      float result=0;
-      for (int c=0; c < in.getOuts(); c++) {
-        for (int i=0; i < bufferSize; i++) {
-          result+=(in.getOutBuffer(c)[i] * in.getOutBuffer(c)[i]);
+      float result = 0;
+      for (int c = 0; c < in.getOuts(); c++) {
+        for (int i = 0; i < bufferSize; i++) {
+          result += (in.getOutBuffer(c)[i] * in.getOutBuffer(c)[i]);
         }
       }
       return Math.sqrt(result / (in.getOuts() * bufferSize));
@@ -274,16 +275,16 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     if (method == Method.RMS) {
       return getRMS(buf);
     } else if (method == Method.PEAK) {
-      float max=0;
-      float sum=0;
-      for (int i=0; i < bufferSize; i++) {
-        sum=0;
-        for (int c=0; c < buf.length; c++) {
-          sum+=Math.abs(buf[c][i]);
+      float max = 0;
+      float sum = 0;
+      for (int i = 0; i < bufferSize; i++) {
+        sum = 0;
+        for (int c = 0; c < buf.length; c++) {
+          sum += Math.abs(buf[c][i]);
         }
-        sum=sum / buf.length;
+        sum = sum / buf.length;
         if (max < sum) {
-          max=sum;
+          max = sum;
         }
       }
       return max;
@@ -291,48 +292,48 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     return 0;//no!
   }
   double getRMS(float[][] buf) {
-    float result=0;
-    for (int c=0; c < buf.length; c++) {
-      for (int i=0; i < bufferSize; i++) {
-        result+=buf[c][i] * buf[c][i];
+    float result = 0;
+    for (int c = 0; c < buf.length; c++) {
+      for (int i = 0; i < bufferSize; i++) {
+        result += buf[c][i] * buf[c][i];
       }
     }
     return Math.sqrt(result / (buf.length * bufferSize));
   }
   double getPeak(float[][] buf) {
-    float max=0;
-    float sum=0;
-    for (int i=0; i < bufferSize; i++) {
-      sum=0;
-      for (int c=0; c < buf.length; c++) {
-        sum+=Math.abs(buf[c][i]);
+    float max = 0;
+    float sum = 0;
+    for (int i = 0; i < bufferSize; i++) {
+      sum = 0;
+      for (int c = 0; c < buf.length; c++) {
+        sum += Math.abs(buf[c][i]);
       }
-      sum=sum / buf.length;
+      sum = sum / buf.length;
       if (max < sum) {
-        max=sum;
+        max = sum;
       }
     }
     return max;
   }
   double getPeak(UGen in) {
-    float max=0;
-    float sum=0;
-    for (int i=0; i < bufferSize; i++) {
-      sum=0;
-      for (int c=0; c < in.getOuts(); c++) {
-        sum+=Math.abs(in.getOutBuffer(c)[i]);
+    float max = 0;
+    float sum = 0;
+    for (int i = 0; i < bufferSize; i++) {
+      sum = 0;
+      for (int c = 0; c < in.getOuts(); c++) {
+        sum += Math.abs(in.getOutBuffer(c)[i]);
       }
-      sum=sum / in.getOuts();
+      sum = sum / in.getOuts();
       if (max < sum) {
-        max=sum;
+        max = sum;
       }
     }
     return max;
   }
   float getChannelAverage(float[][] buf, int index) {
-    float sum=0;
-    for (int c=0; c < buf.length; c++) {
-      sum+=buf[c][index];
+    float sum = 0;
+    for (int c = 0; c < buf.length; c++) {
+      sum += buf[c][index];
     }
     return sum / buf.length;
   }

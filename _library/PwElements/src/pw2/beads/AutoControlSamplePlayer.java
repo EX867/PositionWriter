@@ -6,8 +6,11 @@ import pw2.element.Knob;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
 public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterface {
   TaskManager tm = new TaskManager();//for parameter adjustment
+  boolean gui = true;
   public ArrayList<UGen> ugensBefore = new ArrayList<UGen>();
   public ArrayList<UGen> outputs = new ArrayList<>();//I need reflection to get outputs, but I can also manually add it.
   public ArrayList<KnobAutomation> autos = new ArrayList<>();
@@ -86,7 +89,9 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
         }
       }
     }
-    onUpdate.run();
+    if (gui) {
+      onUpdate.run();
+    }
   }
   public void addInputTo(UGen out) {//sampleplayer cannot add input.
     out.addInput(this);
@@ -186,5 +191,70 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
   }
   public List<KnobAutomation> getAutomations() {
     return Arrays.asList(new KnobAutomation[]{speed});
+  }
+  @Override public void setGui(boolean value) {
+    gui = value;
+    for (UGen u : context.out.getConnectedInputs()) {
+      if (u instanceof UGenWInterface && ((UGenWInterface)u).getGui() != gui) {//prevent feedback loop
+        ((UGenWInterface)u).setGui(gui);
+      }
+    }
+  }
+  @Override public boolean getGui() {
+    return gui;
+  }
+  public Sample makeProcessedSample(BiConsumer<Long, Long> progressListener) {
+    UGen rateUGen = getRateUGen();
+    setRate(new Static(context, 1));
+    setGui(false);
+    for (KnobAutomation auto : autos) {
+      auto.setGui(false);
+    }
+    //
+    Sample s = new Sample(sample.getLength(), 2, context.getSampleRate());//stereo fixed, same length.(fix needed. effect can extend sample length. maybe this need heavy modification)
+    //force change sample file name!
+    java.lang.reflect.Field filename = null;
+    try {
+      filename = Sample.class.getDeclaredField("filename");
+      filename.set(s, sample.getFileName());
+    } catch (Exception e) {
+    }
+    RecordToSample r = new RecordToSample(context, s) {
+      int count = 0;
+      @Override public void calculateBuffer() {
+        super.calculateBuffer();
+        count++;
+        if (count % 16 == 0) {//call every 16 buffers recorded.
+          kyui.core.KyUI.taskManager.addTask((o) -> {//give this to ui thread
+            progressListener.accept(getNumFramesRecorded(), s.getNumFrames());
+          }, null);
+        }
+      }
+    };
+    context.stop();//stop before run nonrealtime
+    //setup chain
+    r.addInput(context.out);
+    context.out.addDependent(r);
+    r.setKillListener(new Bead() {
+      @Override protected void messageReceived(Bead bead) {
+        System.out.println("[makeProcessedSample] context.stop");
+        context.stop();
+      }
+    });
+    reset();
+    start();
+    r.reset();
+    r.start();
+    context.runNonRealTime();
+    progressListener.accept(s.getNumFrames(), s.getNumFrames());
+    setRate(rateUGen);
+    setGui(true);
+    for (KnobAutomation auto : autos) {
+      auto.setGui(true);
+    }
+    context.reset();
+    context.start();
+    System.out.println("[makeProcessedSample] sample out");
+    return s;
   }
 }

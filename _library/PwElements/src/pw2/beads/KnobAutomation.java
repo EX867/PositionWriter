@@ -12,6 +12,7 @@ import pw2.element.Knob;
 import java.util.function.Consumer;
 public class KnobAutomation extends Glide {
   TaskManager tm = new TaskManager();
+  boolean gui = true;
   public static final double EPSILON = Double.longBitsToDouble(971l << 52);//https://stackoverflow.com/questions/25180950/java-double-epsilon
   public static float GLIDE_TIME = 1;
   public static class Point implements Comparable<Point> {
@@ -220,7 +221,7 @@ public class KnobAutomation extends Glide {
           bufOut[0][i] = (float)getValueIn();//get position's frame
           calculateNextPosition(i);//check loop
         }
-        if (target != null) {
+        if (gui && target != null) {
           target.adjust(target.getInv.apply((double)bufOut[0][bufferSize - 1]));
         }
       }
@@ -284,5 +285,8 @@ public class KnobAutomation extends Glide {
       position += positionIncrement;
       //if (position > sample.getLength() || position < 0)atEnd();
     }
+  }
+  public void setGui(boolean value) {
+    gui = value;
   }
 }

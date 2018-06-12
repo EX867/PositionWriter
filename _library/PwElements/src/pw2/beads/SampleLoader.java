@@ -18,6 +18,7 @@ public class SampleLoader {
         return;
       } catch (Exception e) {
         System.err.println("SampleLoader - beads failed to load " + filename + " (cause : " + e + ")");
+        e.printStackTrace();
       }
       if (sample == null) {//retry
         System.out.println("SampleLoader - retrying...");

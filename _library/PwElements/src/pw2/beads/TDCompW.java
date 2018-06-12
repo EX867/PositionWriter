@@ -170,4 +170,8 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   public List<KnobAutomation> getAutomations() {
     return Arrays.asList(new KnobAutomation[]{attack, release, knee, threshold, ratio, outputGain, sideChain});
   }
+  public void setGui(boolean value) {
+    ugen.gui = value;
+    super.setGui(value);
+  }
 }

@@ -263,9 +263,13 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
   AudioContext ac=tab.wvac;
   TDCompW comp=new TDCompW(ac, tab.editor.sample.getNumChannels());
   AutoFaderW fader=new AutoFaderW(ac, tab.editor.sample.getNumChannels());
+  final Slider slider=(Slider)wv_lin1.children.get(3);
+  final Button time=(Button)wv_lin1.children.get(4);
+  final AutoControlSamplePlayer sp=tab.editor.player;
   wv_fxtabs.addTab("TDComp", tab.compControl=new TDCompControl("wv_tdcomp").initialize(comp));
   wv_fxtabs.addTab("Wavcut", tab.faderControl=new AutoFaderControl("wv_autofader").initialize(fader));
   wv_fxtabs.localLayout();
+  tab.faderControl.setPath(joinPath(path_global, path_sources+"/"+getExtensionElse(getFileName(sp.getSample().getFileName()))));
   tab.faderControl.setAsMirror(tab.editor);
   tab.faderControl.view.onAutomationChanged=new Runnable() {//why two times??
     public void run() {
@@ -280,8 +284,8 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
       tab.faderControl.view.invalidate();
     }
   };
-  tab.faderControl.progressListener=new BiConsumer<Integer, Integer>() {
-    public void accept(Integer count, Integer totalCount) {
+  tab.faderControl.progressListener=new BiConsumer<Long, Long>() {
+    public void accept(Long count, Long totalCount) {
       setTitleProcessing("saved... (" + count + "/" + totalCount + ")");
     }
   };
@@ -291,9 +295,6 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
       openFileExplorer(path);
     }
   };
-  final Slider slider=(Slider)wv_lin1.children.get(3);
-  final Button time=(Button)wv_lin1.children.get(4);
-  final AutoControlSamplePlayer sp=tab.editor.player;
   sp.addInputTo(ac.out);
   sp.onUpdate=new Runnable() {
     public void run() {

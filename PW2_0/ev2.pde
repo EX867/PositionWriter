@@ -311,10 +311,12 @@ void setup_ev2() {
             currentLedEditor.setTimeByFrame();
           }
           ledTabs.get(0).light.start(ledTabs.get(0).led, currentLedEditor.displayTime);
+        } else if (mainTabs_selected==WAV_EDITOR) {
+          if (currentWav!=null) {
+            currentWav.editor.player.setPosition(currentWav.editor.player.getLoopStartUGen().getValue());
+            currentWav.editor.player.pause(false);
+          }
         }
-      } else if (mainTabs_selected==WAV_EDITOR) {
-        currentWav.editor.player.setPosition(currentWav.editor.player.getLoopStartUGen().getValue());
-        currentWav.editor.player.pause(false);
       }
     }
   }
@@ -326,12 +328,14 @@ void setup_ev2() {
           ImageButton btn=((ImageButton)KyUI.get("led_playstop"));
           btn.getPressListener().onEvent(null, 0);
         } else if (mainTabs_selected==WAV_EDITOR) {
-          WavEditor w=currentWav.editor;
-          if (w.player.getPosition() == w.player.getLoopEndUGen().getValue()) {
-            w.player.setPosition(w.player.getLoopStartUGen().getValue());
-            w.player.pause(false);
-          } else {
-            w.player.pause(!w.player.isPaused());
+          if (currentWav!=null) {
+            WavEditor w=currentWav.editor;
+            if (w.player.getPosition() == w.player.getLoopEndUGen().getValue()) {
+              w.player.setPosition(w.player.getLoopStartUGen().getValue());
+              w.player.pause(false);
+            } else {
+              w.player.pause(!w.player.isPaused());
+            }
           }
         }
       }
@@ -630,4 +634,7 @@ void setup_ev2() {
  ), 1);
  w.automationInvalid = true;
  KyUI.get("wav").invalidate();
+ if(key=='Ctrl+F'){
+   wv_points.setEnabled(!wv_points.isEnabled);
+ }
  }*/
