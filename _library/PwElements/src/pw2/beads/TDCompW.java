@@ -174,4 +174,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     ugen.gui = value;
     super.setGui(value);
   }
+  @Override public void reset(){
+    ugen.reset();
+  }
 }

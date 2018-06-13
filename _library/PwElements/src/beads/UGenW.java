@@ -101,6 +101,19 @@ public abstract class UGenW extends UGen implements UGenWInterface {//solve sync
       }
     }
   }
+  boolean resetCheck = false;
+  public void reset() {
+    if (resetCheck) {
+      return;
+    }
+    resetCheck = true;
+    for (UGen u : context.out.getConnectedInputs()) {
+      if (u instanceof UGenWInterface) {//prevent feedback loop
+        ((UGenWInterface)u).reset();
+      }
+    }
+    resetCheck = false;
+  }
   @Override public boolean getGui() {
     return gui;
   }

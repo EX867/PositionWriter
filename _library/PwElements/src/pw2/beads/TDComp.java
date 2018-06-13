@@ -192,6 +192,13 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     sideChain = v;
     return this;
   }
+  public void reset() {
+    triggered = false;
+    attackCount = 0;
+    releaseCount = 0;
+    currentValue = 1;
+    maxValue = 1;
+  }
   void visualizeGraph(double input, double dvallog) {//size=object.height
     //linear view. (graphSize to 0db)
     synchronized (this) {

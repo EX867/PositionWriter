@@ -3,10 +3,10 @@ import beads.*;
 import kyui.util.TaskManager;
 import pw2.element.Knob;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.function.BiConsumer;
 public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterface {
   TaskManager tm = new TaskManager();//for parameter adjustment
@@ -99,10 +99,10 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
   }
   protected void calculateNextPosition(int i) {//this is pasted from sampleplayer
     super.calculateNextPosition(i);
-    if (loopType == LoopType.NO_LOOP_FORWARDS) {
+    if (loopType == LoopType.NO_LOOP_FORWARDS) {//FIX not working properly due to floating point operation error
       loopStart = loopStartEnvelope.getValue(0, i);
       loopEnd = loopEndEnvelope.getValue(0, i);
-      if (position > Math.max(loopStart, loopEnd)) {
+      if ((float)position > Math.max(loopStart, loopEnd)) {
         position = Math.max(loopStart, loopEnd);
         pause(true);
       }
@@ -200,6 +200,19 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
       }
     }
   }
+  boolean resetCheck = false;
+  public void reset() {
+    if (resetCheck) {
+      return;
+    }
+    resetCheck = true;
+    for (UGen u : context.out.getConnectedInputs()) {
+      if (u instanceof UGenWInterface) {//prevent feedback loop
+        ((UGenWInterface)u).reset();
+      }
+    }
+    resetCheck = false;
+  }
   @Override public boolean getGui() {
     return gui;
   }
@@ -211,14 +224,7 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
       auto.setGui(false);
     }
     //
-    Sample s = new Sample(sample.getLength(), 2, context.getSampleRate());//stereo fixed, same length.(fix needed. effect can extend sample length. maybe this need heavy modification)
-    //force change sample file name!
-    java.lang.reflect.Field filename = null;
-    try {
-      filename = Sample.class.getDeclaredField("filename");
-      filename.set(s, sample.getFileName());
-    } catch (Exception e) {
-    }
+    Sample s = new Sample(sample.getLength() + context.samplesToMs(bufferSize), 2, context.getSampleRate());//stereo fixed, same length.(fix needed. effect can extend sample length. maybe this need heavy modification)
     RecordToSample r = new RecordToSample(context, s) {
       int count = 0;
       @Override public void calculateBuffer() {
@@ -233,28 +239,82 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
     };
     context.stop();//stop before run nonrealtime
     //setup chain
+    //    Gain g = new Gain(context, 2, 0.5F);
+    //    r.addInput(g);
+    //    context.out.addDependent(r);
+    //    Set<UGen> ugens = context.out.getConnectedInputs();
+    //    context.out.clearInputConnections();
+    //    for (UGen ugen : ugens) {
+    //      g.addInput(ugen);
+    //    }
     r.addInput(context.out);
     context.out.addDependent(r);
+    //
     r.setKillListener(new Bead() {
       @Override protected void messageReceived(Bead bead) {
         System.out.println("[makeProcessedSample] context.stop");
         context.stop();
       }
     });
-    reset();
-    start();
+    UGen loopEnd_ = getLoopEndUGen();
+    setLoopStart(new Static(context, 0));
+    setLoopEnd(new Static(context, Float.MAX_VALUE));
     r.reset();
     r.start();
+    reset();
+    start();
+    //    context.reset();
+    //    context.start();
+    //    try {
+    //      Thread.sleep(2000);
+    //    } catch (Exception e) {
+    //    }
+    Thread audioThread = null;
+    try {
+      audioThread = (Thread)audioThreadField.get(context.getAudioIO());
+    } catch (IllegalAccessException e) {//not happen
+    }
+    try {
+      audioThread.join();
+    } catch (InterruptedException e) {
+    }
     context.runNonRealTime();
     progressListener.accept(s.getNumFrames(), s.getNumFrames());
+    setLoopEnd(loopEnd_);
     setRate(rateUGen);
     setGui(true);
     for (KnobAutomation auto : autos) {
       auto.setGui(true);
     }
+    //reset chain
+    //    g.clearInputConnections();
+    //    context.out.clearInputConnections();
+    //    for (UGen ugen : ugens) {
+    //      context.out.addInput(ugen);
+    //    }
+    //
+    System.out.println("[makeProcessedSample] sample out");
+    Sample s_ = new Sample(sample.getLength());
+    float[][] buffer = new float[s.getNumChannels()][(int)sample.getNumFrames()];
+    s.getFrames(bufferSize, buffer);//????????????//FIX bufferSize delay problem
+    s_.putFrames(0, buffer);
     context.reset();
     context.start();
-    System.out.println("[makeProcessedSample] sample out");
-    return s;
+    //force change sample file name!
+    java.lang.reflect.Field filename = null;
+    try {
+      filename = Sample.class.getDeclaredField("filename");
+      filename.set(s_, sample.getFileName());
+    } catch (Exception e) {
+    }
+    return s_;
+  }
+  static Field audioThreadField;
+  static {
+    try {
+      audioThreadField = JavaSoundAudioIO.class.getDeclaredField("audioThread");
+      audioThreadField.setAccessible(true);
+    } catch (Exception e) {//not happen
+    }
   }
 }

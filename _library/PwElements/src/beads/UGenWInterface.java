@@ -8,4 +8,5 @@ public interface UGenWInterface {
   public List<KnobAutomation> getAutomations();
   public void setGui(boolean value);
   public boolean getGui();
+  public void reset();
 }

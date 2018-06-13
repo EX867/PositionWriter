@@ -391,7 +391,7 @@ void wav_setup() {
     public void onEvent(final int index) {
       final Runnable run=new Runnable() {
         public void run() {
-          wavTabs.get(index).close();
+          //wavTabs.get(index).close();
           wavTabs.remove(index);
           if (wavTabs.size()==0) {
             //instead of adding new tab, just set current to null. it can be done becauase waveditor has no extra sharing state.
@@ -426,7 +426,7 @@ void wav_setup() {
   };
 }
 static class WavTab {
-  AudioContext wvac=new AudioContext();//so we have 1+kstabs_count+wavtabs_count audiocontexts...is it okay???(or I can optimize it to 2+kstabs_count...)
+  AudioContext wvac=new AudioContext(new pw2.beads.JavaSoundAudioIO());//so we have 1+kstabs_count+wavtabs_count audiocontexts...is it okay???(or I can optimize it to 2+kstabs_count...)
   WavEditor editor;
   TDCompControl compControl;
   AutoFaderControl faderControl;
@@ -438,6 +438,7 @@ static class WavTab {
     wvac.start();
   }
   void close() {
+    editor.setEnabled(false);
     editor.player.kill();
     wvac.stop();
   }
