@@ -16,6 +16,7 @@ import kyui.event.ExtendedRenderer;
 import kyui.util.Rect;
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.core.PImage;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 import pw2.beads.AutoControlSamplePlayer;
@@ -25,8 +26,8 @@ import java.util.LinkedList;
 public class WavEditor extends Element {
   public Sample sample;
   public AutoControlSamplePlayer player;
-  double scale = 1;
-  float offsetX = 0;
+  public double scale = 1;
+  public float offsetX = 0;
   RangeSlider slider;//add it manually...
   public int fgColor;
   public int highlightColor;
@@ -101,7 +102,7 @@ public class WavEditor extends Element {
   KnobAutomation.Point cachePoint = new KnobAutomation.Point(0, 0);
   boolean doubleClickReady = false;
   long lastClicked = 0;
-  PGraphics waveformG;
+  PImage waveformG;
   PGraphics automationG;
   public boolean waveformInvalid = true;
   public boolean automationInvalid = true;
@@ -157,8 +158,8 @@ public class WavEditor extends Element {
   @Override
   public void setPosition(Rect rect) {
     super.setPosition(rect);
-    waveformG = KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)));
-    automationG = KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)));
+    waveformG = KyUI.Ref.createImage(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)),KyUI.Ref.ARGB);
+    automationG = KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)),KyUI.Ref.sketchRenderer());
     waveformInvalid = true;
     automationInvalid = true;
     setSlider();
@@ -166,8 +167,9 @@ public class WavEditor extends Element {
   @Override
   public void setPositionWithoutInvalidate(Rect rect) {
     super.setPositionWithoutInvalidate(rect);
-    waveformG = KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)));
-    automationG = KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)));
+    //waveformG = KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)),KyUI.Ref.sketchRenderer());
+    waveformG = KyUI.Ref.createImage(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)),KyUI.Ref.ARGB);
+    automationG = KyUI.Ref.createGraphics(Math.max(1, (int)(pos.right - pos.left)), Math.max(1, (int)(pos.bottom - pos.top)),KyUI.Ref.sketchRenderer());
     waveformInvalid = true;
     automationInvalid = true;
     setSlider();
@@ -263,14 +265,14 @@ public class WavEditor extends Element {
       //draw waveform (complete)
       if (sample != null) {
         if (waveformInvalid) {
-          waveformG.beginDraw();
-          waveformG.clear();
+          waveformG.loadPixels();
+          java.util.Arrays.fill(waveformG.pixels,0);
           float interval = (pos.bottom - pos.top) / sample.getNumChannels();
           for (int a = 0; a < sample.getNumChannels(); a++) {
             cacheRect.set(0, a * interval + 1, pos.right - pos.left, (a + 1) * interval - 1);
             waveformDraw.render(waveformG, player.getContext(), cacheRect, sample, fgColor, offsetX, scale, a);
           }
-          waveformG.endDraw();
+          waveformG.updatePixels();
           waveformInvalid = false;
         }
       }

@@ -11,8 +11,8 @@ import java.util.function.BiConsumer;
 public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterface {
   TaskManager tm = new TaskManager();//for parameter adjustment
   boolean gui = true;
-  public ArrayList<UGen> ugensBefore = new ArrayList<UGen>();
-  public ArrayList<UGen> outputs = new ArrayList<>();//I need reflection to get outputs, but I can also manually add it.
+  //public ArrayList<UGen> ugensBefore = new ArrayList<UGen>();
+  //public ArrayList<UGen> outputs = new ArrayList<>();//I need reflection to get outputs, but I can also manually add it.
   public ArrayList<KnobAutomation> autos = new ArrayList<>();
   public Runnable onUpdate = () -> {//need it...
   };
@@ -95,7 +95,7 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
   }
   public void addInputTo(UGen out) {//sampleplayer cannot add input.
     out.addInput(this);
-    outputs.add(out);
+    //outputs.add(out);
   }
   protected void calculateNextPosition(int i) {//this is pasted from sampleplayer
     super.calculateNextPosition(i);
@@ -108,84 +108,92 @@ public class AutoControlSamplePlayer extends SamplePlayer implements UGenWInterf
       }
     }
   }
+  //this->ugens[0]->ugens[1]->...->contxet.out
+  public void construct(UGen[] ugens) {
+    if (ugens.length == 0) {
+      return;
+    }
+    UGen after = this;
+    for (UGen ugen : ugens) {
+      ugen.addInput(after);
+      after = ugen;
+    }
+    context.out.addInput(ugens[ugens.length - 1]);
+  }
   /*
   input -> ugenBefore[0] -> ugenBefore[1] -> ... -> this
   */
-  public List<KnobAutomation> addUGenAndGetAutos(UGen u) {
-    return addUGenAndGetAutos(ugensBefore.size(), u);
-  }
-  public List<KnobAutomation> addUGenAndGetAutos(int index, UGen u) {//add ugen to before ugen list.
-    if (index == 0) {
-      for (UGen output : outputs) {
-        if (ugensBefore.size() == 0) {
-          output.removeAllConnections(this);
-        } else {
-          output.removeAllConnections(ugensBefore.get(0));
-        }
-      }
-      for (UGen output : outputs) {
-        output.addInput(u);
-      }
-      if (ugensBefore.size() == 0) {
-        u.addInput(this);
-      } else {
-        u.addInput(ugensBefore.get(0));
-      }
-    } else if (index == ugensBefore.size()) {
-      removeAllConnections(ugensBefore.get(ugensBefore.size() - 1));
-      ugensBefore.get(ugensBefore.size() - 1).addInput(u);
-      u.addInput(this);
-    } else {
-      ugensBefore.get(index).removeAllConnections(ugensBefore.get(index - 1));
-      ugensBefore.get(index - 1).addInput(u);
-      u.addInput(ugensBefore.get(index));
-    }
-    ugensBefore.add(index, u);
-    if (u instanceof UGenWInterface) {
-      return ((UGenWInterface)u).getAutomations();
-    }
-    return new ArrayList<>();
-  }
-  public UGen removeUGenAndAutos(int index, List<KnobAutomation> list) {
-    if (autos.size() == 0) return null;
-    UGen remove = ugensBefore.get(index);
-    UGen after = null;
-    if (index == ugensBefore.size() - 1) {
-      after = this;
-    } else {
-      after = ugensBefore.get(index + 1);
-    }
-    if (index == 0) {
-      for (UGen output : outputs) {
-        output.removeAllConnections(remove);
-      }
-      for (UGen output : outputs) {
-        output.addInput(after);
-      }
-    } else {
-      ugensBefore.get(index - 1).removeAllConnections(remove);
-      ugensBefore.get(index - 1).addInput(after);
-    }
-    remove.removeAllConnections(after);
-    if (list != null && remove instanceof UGenW) {
-      ((UGenW)remove).removeAutomationsFrom(list);
-    }
-    return ugensBefore.remove(index);
-  }
-  public void reorderUGens(int a, int b) {
-    if (a == b) {
-      return;
-    }
-    if (b < a) {
-      int temp = a;
-      a = b;
-      b = temp;
-    }
-    UGen bb = removeUGenAndAutos(b, null);
-    UGen aa = removeUGenAndAutos(a, null);
-    addUGenAndGetAutos(a, bb);
-    addUGenAndGetAutos(b, aa);
-  }
+  //  public List<KnobAutomation> addUGenAndGetAutos(UGen u) {
+  //    return addUGenAndGetAutos(0, u);
+  //    return addUGenAndGetAutos(ugensBefore.size(), u);
+  //  }
+  //  public List<KnobAutomation> addUGenAndGetAutos(int index, UGen u) {//add ugen to before ugen list.
+  //    if (index == 0) {
+  //      for (UGen output : outputs) {
+  //        if (ugensBefore.size() == 0) {
+  //          output.removeAllConnections(this);
+  //        } else {
+  //          output.removeAllConnections(ugensBefore.get(0));
+  //        }
+  //      }
+  //      for (UGen output : outputs) {
+  //        output.addInput(u);
+  //      }
+  //      if (ugensBefore.size() == 0) {
+  //        u.addInput(this);
+  //      } else {
+  //        u.addInput(ugensBefore.get(0));
+  //      }
+  //    } else if (index == ugensBefore.size()) {
+  //      removeAllConnections(ugensBefore.get(ugensBefore.size() - 1));
+  //      ugensBefore.get(ugensBefore.size() - 1).addInput(u);
+  //      u.addInput(this);
+  //    } else {
+  //      ugensBefore.get(index).removeAllConnections(ugensBefore.get(index - 1));
+  //      ugensBefore.get(index - 1).addInput(u);
+  //      u.addInput(ugensBefore.get(index));
+  //    }
+  //    ugensBefore.add(index, u);
+  //    if (u instanceof UGenWInterface) {
+  //      return ((UGenWInterface)u).getAutomations();
+  //    }
+  //    return new ArrayList<>();
+  //  }
+  //    } else {
+  //      after = ugensBefore.get(index + 1);
+  //    }
+  //    if (index == 0) {
+  //      for (UGen output : outputs) {
+  //        output.removeAllConnections(remove);
+  //      }
+  //      for (UGen output : outputs) {
+  //        output.addInput(after);
+  //      }
+  //    } else {
+  //      ugensBefore.get(index - 1).removeAllConnections(remove);
+  //      ugensBefore.get(index - 1).addInput(after);
+  //    }
+  //    remove.removeAllConnections(after);
+  //    if (list != null && remove instanceof UGenW) {
+  //      ((UGenW)remove).removeAutomationsFrom(list);
+  //    }
+  //    return ugensBefore.remove(index);
+  //    return null;
+  //  }
+  //  public void reorderUGens(int a, int b) {
+  //    if (a == b) {
+  //      return;
+  //    }
+  //    if (b < a) {
+  //      int temp = a;
+  //      a = b;
+  //      b = temp;
+  //    }
+  //    UGen bb = removeUGenAndAutos(b, null);
+  //    UGen aa = removeUGenAndAutos(a, null);
+  //    addUGenAndGetAutos(a, bb);
+  //    addUGenAndGetAutos(b, aa);
+  //  }
   @Override public void changeParameter(UGenW.Parameter task, Double value) {
     tm.addTask(task.setter, value);
   }

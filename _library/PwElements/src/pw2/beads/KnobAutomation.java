@@ -7,6 +7,7 @@ import com.karnos.commandscript.Multiset;
 import kyui.util.Task;
 import kyui.util.TaskManager;
 import processing.core.PApplet;
+import processing.data.XML;
 import pw2.element.Knob;
 
 import java.util.function.Consumer;
@@ -32,7 +33,7 @@ public class KnobAutomation extends Glide {
       return 0;
     }
   }
-  Knob target;
+  public Knob target;
   public double max = 1;
   public double min = 0;//used when no target specified
   public double gridOffset = 0;
@@ -288,5 +289,11 @@ public class KnobAutomation extends Glide {
   }
   public void setGui(boolean value) {
     gui = value;
+  }
+  public void insertToXML(XML out) {
+    //add all <point value="xxx"/>s.
+    //ADD
+  }
+  public void readFromXML(XML in) {
   }
 }

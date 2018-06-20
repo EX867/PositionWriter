@@ -19,7 +19,7 @@ public class TDCompWave extends Element {
       attachedUGen.canDraw = false;//sync error warning
       synchronized (attachedUGen) {
         PGraphics waveOld = wave;
-        wave = KyUI.Ref.createGraphics(Math.max(1, (int)(rect.right - rect.left)), Math.max(1, (int)(rect.bottom - rect.top)));
+        wave = KyUI.Ref.createGraphics(Math.max(1, (int)(rect.right - rect.left)), Math.max(1, (int)(rect.bottom - rect.top)),KyUI.Ref.sketchRenderer());
         if (waveOld != null) {
           wave.beginDraw();
           wave.image(waveOld, wave.width - waveOld.width, 0);

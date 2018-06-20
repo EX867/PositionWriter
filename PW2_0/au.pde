@@ -295,7 +295,7 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
       openFileExplorer(path);
     }
   };
-  sp.addInputTo(ac.out);
+  //sp.addInputTo(ac.out);
   sp.onUpdate=new Runnable() {
     public void run() {
       if (/*!sp.isPaused()&&*/mainTabs_selected==WAV_EDITOR&&currentWav==tab) {
@@ -315,14 +315,15 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
   }
   );
   List<KnobAutomation> autos;
-  autos=sp.addUGenAndGetAutos(fader);
+  autos=comp.getAutomations();
   for (KnobAutomation auto : autos) {
     sp.addAuto(auto);
   }
-  autos=sp.addUGenAndGetAutos(comp);
+  autos=fader.getAutomations();
   for (KnobAutomation auto : autos) {
     sp.addAuto(auto);
   }
+  sp.construct(new UGen[]{comp, fader});
   //
   final TextBox offset = new TextBox("", "grid offset (milliseconds)", "1386.0545");
   offset.setNumberOnly(TextBox.NumberType.FLOAT);

@@ -401,6 +401,9 @@ public class WavCut extends PApplet {
       saveCuePoints();
       lastSavedTime = System.currentTimeMillis();
     }
+    stroke(255);
+    fill(255);
+    text(frameRate, mouseX, mouseY);
   }
   @Override
   public void exit() {

@@ -19,7 +19,7 @@ public class TDCompGraph extends Element {
       synchronized(attachedUGen) {
         int size=Math.max(1, (int)Math.min(rect.right - rect.left, rect.bottom - rect.top));
         PGraphics graphOld=graph;
-        graph=KyUI.Ref.createGraphics(size, size);
+        graph=KyUI.Ref.createGraphics(size, size,KyUI.Ref.sketchRenderer());
         attachedUGen.graph=graph;
       }
       attachedUGen.canDraw=true;
