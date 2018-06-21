@@ -30,44 +30,44 @@ public class TDCompControl extends UGenViewer {
   public TDCompW comp;//do not add samples directly using this member!!
   public TDCompControl(String name) {
     super(name);
-    knob=new Knob[6];
-    layout=new DivisionLayout(name + ":layout");
-    layout.addChild(lin=new AlterLinearLayout(name + ":lin"));
-    layout.addChild(samplesDv=new DivisionLayout(name + ":samplesDv"));
-    samplesDv.rotation=Attributes.Rotation.UP;
-    samplesDv.value=40;
-    samplesDv.addChild(delete=new Button(name + ":delete"));
-    delete.text="DELETE";
-    samplesDv.addChild(samples=new LinearList(name + ":samples"));
-    layout.rotation=Attributes.Rotation.RIGHT;
-    buttons=new LinearLayout(name + ":buttons");
+    knob = new Knob[6];
+    layout = new DivisionLayout(name + ":layout");
+    layout.addChild(lin = new AlterLinearLayout(name + ":lin"));
+    layout.addChild(samplesDv = new DivisionLayout(name + ":samplesDv"));
+    samplesDv.rotation = Attributes.Rotation.UP;
+    samplesDv.value = 40;
+    samplesDv.addChild(delete = new Button(name + ":delete"));
+    delete.text = "DELETE";
+    samplesDv.addChild(samples = new LinearList(name + ":samples"));
+    layout.rotation = Attributes.Rotation.RIGHT;
+    buttons = new LinearLayout(name + ":buttons");
     buttons.setMode(LinearLayout.Behavior.STATIC);
     buttons.setDirection(Attributes.Direction.VERTICAL);
-    buttons.addChild(bypass=new ToggleButton(name + ":bypass"));
-    bypass.rotation=Attributes.Rotation.RIGHT;
-    bypass.text="BYPASS";
-    buttons.addChild(sideChain=new ToggleButton(name + ":sideChain"));
-    sideChain.rotation=Attributes.Rotation.RIGHT;
-    sideChain.text="  SIDECHAIN   ";
-    buttons.addChild(showList=new ToggleButton(name + ":showList"));
-    showList.rotation=Attributes.Rotation.RIGHT;
-    showList.text="SAMPLES";
+    buttons.addChild(bypass = new ToggleButton(name + ":bypass"));
+    bypass.rotation = Attributes.Rotation.RIGHT;
+    bypass.text = "BYPASS";
+    buttons.addChild(sideChain = new ToggleButton(name + ":sideChain"));
+    sideChain.rotation = Attributes.Rotation.RIGHT;
+    sideChain.text = "  SIDECHAIN   ";
+    buttons.addChild(showList = new ToggleButton(name + ":showList"));
+    showList.rotation = Attributes.Rotation.RIGHT;
+    showList.text = "SAMPLES";
     samples.setFixedSize(50);
-    lin.addChild(meter=new VUMeter(getName() + ":meter"));
-    lin.addChild(knob1=new LinearLayout(getName() + ":knob1"));
-    lin.addChild(knob2=new LinearLayout(getName() + ":knob2"));
+    lin.addChild(meter = new VUMeter(getName() + ":meter"));
+    lin.addChild(knob1 = new LinearLayout(getName() + ":knob1"));
+    lin.addChild(knob2 = new LinearLayout(getName() + ":knob2"));
     knob1.setDirection(Attributes.Direction.VERTICAL);
     knob1.setMode(LinearLayout.Behavior.STATIC);
     knob2.setDirection(Attributes.Direction.VERTICAL);
     knob2.setMode(LinearLayout.Behavior.STATIC);
-    knob1.addChild(knob[0]=new Knob(getName() + ":threshold", "Threshold"));
-    knob2.addChild(knob[1]=new Knob(getName() + ":ratio", "Ratio"));
-    knob1.addChild(knob[2]=new Knob(getName() + ":attack", "Attack"));
-    knob2.addChild(knob[3]=new Knob(getName() + ":release", "Release"));
-    knob1.addChild(knob[4]=new Knob(getName() + ":knee", "Knee"));
-    knob2.addChild(knob[5]=new Knob(getName() + ":gain", "Gain"));//fix
-    lin.addChild(wave=new TDCompWave(getName() + ":wave"));
-    lin.addChild(graph=new TDCompGraph(getName() + ":graph"));
+    knob1.addChild(knob[0] = new Knob(getName() + ":threshold", "Threshold"));
+    knob2.addChild(knob[1] = new Knob(getName() + ":ratio", "Ratio"));
+    knob1.addChild(knob[2] = new Knob(getName() + ":attack", "Attack"));
+    knob2.addChild(knob[3] = new Knob(getName() + ":release", "Release"));
+    knob1.addChild(knob[4] = new Knob(getName() + ":knee", "Knee"));
+    knob2.addChild(knob[5] = new Knob(getName() + ":gain", "Gain"));//fix
+    lin.addChild(wave = new TDCompWave(getName() + ":wave"));
+    lin.addChild(graph = new TDCompGraph(getName() + ":graph"));
     lin.addChild(buttons);
     KyUI.taskManager.executeAll();
     lin.set(meter, AlterLinearLayout.LayoutType.FIXED, 40);
@@ -76,7 +76,7 @@ public class TDCompControl extends UGenViewer {
     lin.set(wave, AlterLinearLayout.LayoutType.STATIC, 1);//value do not affect layout
     lin.set(graph, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1);
     lin.set(buttons, AlterLinearLayout.LayoutType.OPPOSITE_RATIO, 1 / 6F);
-    samples.reorderListener=(Integer a, Integer b) -> {
+    samples.reorderListener = (Integer a, Integer b) -> {
       comp.reorderSample(a, b);
       return true;
     };
@@ -103,7 +103,7 @@ public class TDCompControl extends UGenViewer {
       }
       return false;
     });
-    showList.value=true;
+    showList.value = true;
     //samplesDv.setEnabled(false);
     addChild(layout);
     //add drag and drop
@@ -112,11 +112,21 @@ public class TDCompControl extends UGenViewer {
     });
   }
   public TDCompControl initialize(TDCompW comp_) {
-    comp=comp_;
-    sideChain.value=false;
-    AudioContext ac=comp.getContext();
+    comp = comp_;
+    sideChain.value = false;
+    AudioContext ac = comp.getContext();
     knob[0].attach(ac, comp, comp.setThreshold, -60, 0, -6, 0, false);
-    knob[1].attach(ac, comp, comp.setRatio, 1, 12, 2, 2, false);
+    knob[1].attach(ac, comp, comp.setRatio, (Double in) -> {
+      if (in.doubleValue() == 0) {
+        return Double.MAX_VALUE;
+      }
+      return 1 / in;
+    }, (Double in) -> {
+      if (in.doubleValue() == 0) {
+        return Double.MAX_VALUE;
+      }
+      return 1 / in;
+    }, 1, 100, 2, 2);
     knob[2].attach(ac, comp, comp.setAttack, 0, 1000, 100, 100, false);
     knob[3].attach(ac, comp, comp.setRelease, 0, 1000, 300, 300, false);
     knob[4].attach(ac, comp, comp.setKnee, 0, 1, 0.1, 0.1, false);
@@ -130,7 +140,7 @@ public class TDCompControl extends UGenViewer {
   @Override
   public void onLayout() {
     layout.setPosition(pos.clone());
-    layout.value=(pos.bottom - pos.top) / 2;
+    layout.value = (pos.bottom - pos.top) / 2;
     samples.setPosition(new Rect(pos.right - layout.value, pos.top, pos.right, pos.bottom));
     layout.onLayout();
   }

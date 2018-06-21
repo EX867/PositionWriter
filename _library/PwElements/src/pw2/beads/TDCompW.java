@@ -61,7 +61,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     knee = new KnobAutomation(ac, "knee", 0.1F);
     ratio = new KnobAutomation(ac, "ratio", 2);
     threshold = new KnobAutomation(ac, "threshold", -3);
-    outputGain = new KnobAutomation(ac, "outputGain", 1);
+    ugen.setOutputGain(outputGain = new KnobAutomation(ac, "outputGain", 1));
     sideChain = new KnobAutomation(ac, "sideChain", 0);
     sideChain.gridOffset = 1;
     sideChain.gridInterval = 0;
@@ -104,15 +104,14 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
   }
   @Override
   protected UGen updateUGens() {
-    //update envelopes, like first part of calculate in other ugens
     attack.update();
     release.update();
     threshold.update();
     ratio.update();
     knee.update();
-    outputGain.update();
     //
-    sideChain.update();
+    sideChain.update();//this is not same one in TDComp
+    //update envelopes, like first part of calculate in other ugens
     giveInputTo(ugen);
     updateUGen(ugen);
     return ugen;
@@ -174,7 +173,7 @@ public class TDCompW extends UGenW {//this is a class for positionwriter only...
     ugen.gui = value;
     super.setGui(value);
   }
-  @Override public void reset(){
+  @Override public void reset() {
     ugen.reset();
   }
 }

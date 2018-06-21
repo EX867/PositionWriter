@@ -47,7 +47,7 @@ public class PwWaveditLoader {
     in.setString(name, value);
     return in;
   }
-  public static void save(TDCompControl comp, AutoFaderControl fader, WavEditor edit, String path) {
+  public static XML save(TDCompControl comp, AutoFaderControl fader, WavEditor edit, String path) {
     //temp parameters for now, but for forward compatibility, save in specific order(comp->fader, global(sp))
     //save automations,bpm,offset,automations current value with <sample name>.xml inside path.
     /*
@@ -79,9 +79,11 @@ public class PwWaveditLoader {
     for (KnobAutomation auto : fader.fader.getAutomations()) {
       auto.insertToXML(addValue(faderinfo.addChild(auto.getName()), "value", "" + auto.target.value));
     }
+    return ret;
   }
-  public static void load(TDCompControl comp, AutoFaderControl fader, WavEditor editor) {
+  public static void load(XML xml,TDCompControl comp, AutoFaderControl fader, WavEditor editor) {
     //load data with editor's sample.
     //this will called after editor.initPlayer and setSample, only once per load.
+    //xml.
   }
 }

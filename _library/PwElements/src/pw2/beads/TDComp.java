@@ -13,7 +13,7 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
   double knee = 0.1;//equal or larger than 0
   double attack = 100;//in milliseconds. linear attack
   double release = 300;
-  float outputGain = 1;
+  UGen outputGain;
   UGen sideChain = null;
   Method method = Method.PEAK;
   public float graphSize = 60;
@@ -34,11 +34,15 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
   double maxValue = 1;
   public TDComp(AudioContext ac, int channels) {
     super(ac, channels, channels);
+    outputGain = new Static(context, 1);
+    sideChain = null;
     attackInSamples = Math.round((float)context.msToSamples(attack));
     releaseInSamples = Math.round((float)context.msToSamples(release));
   }
   @Override
   public void calculateBuffer() {
+    outputGain.update();
+    //
     if (sideChain != null) {
       sideChain.update();
     }
@@ -124,7 +128,7 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
       attackCount++;
       releaseCount++;
       for (int c = 0; c < bufOut.length; c++) {
-        bufOut[c][a] = outputGain * (float)(Math.signum(bufIn[c][a]) * Math.max(0, Math.abs(bufIn[c][a]) * currentValue));
+        bufOut[c][a] = outputGain.getValue(0, a) * (float)(Math.signum(bufIn[c][a]) * Math.max(0, Math.abs(bufIn[c][a]) * currentValue));
       }
     }
     if (gui && canDraw && graph != null) {
@@ -179,10 +183,14 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
     return this;
   }
   public float getOutputGain() {
-    return outputGain;
+    return outputGain.getValue();
   }
   public TDComp setOutputGain(float v) {
-    outputGain = v;
+    outputGain.setValue(v);
+    return this;
+  }
+  public TDComp setOutputGain(UGen ugen) {
+    outputGain = ugen;
     return this;
   }
   public UGen getSideChain() {
@@ -244,8 +252,8 @@ public class TDComp extends UGen {//Time Domain Compressor, formula is from http
       float ct = wave.height - (float)(height * thresholdPow);
       wave.line(wave.width - 1, pt, wave.width - 1, ct);//threshold
       wave.stroke(0x3F007F00);
-      if (outputGain != 0) {
-        output = output / outputGain;
+      if (outputGain.getValue() != 0) {//may be incorrect.
+        output = output / outputGain.getValue();
         wave.line(wave.width - 1, head, wave.width - 1, (int)(height * (input - output)) + head);//difference
       }
       pt = ct;

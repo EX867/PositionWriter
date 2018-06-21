@@ -14,35 +14,35 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.function.Function;
 public class Knob extends Element {
-  public int strokeWeight=6;
-  public int indicatorWidth=12;
-  final float minAngle=PApplet.TWO_PI / 3;
-  final float totalAngle=PApplet.TWO_PI * 5 / 6;
-  public double min=0;
-  public double max=1;
-  public double center=0;
-  public double initialValue=0;
-  public double value=0.0F;
+  public int strokeWeight = 6;
+  public int indicatorWidth = 12;
+  final float minAngle = PApplet.TWO_PI / 3;
+  final float totalAngle = PApplet.TWO_PI * 5 / 6;
+  public double min = 0;
+  public double max = 1;
+  public double center = 0;
+  public double initialValue = 0;
+  public double value = 0.0F;
   public int fgColor;//knob color
   public int highlightColor;
-  public float sensitivity=1;
-  public String label="";
+  public float sensitivity = 1;
+  public String label = "";
   //
-  static DecimalFormat cut2=new DecimalFormat("0.00");
-  double clickValue=0;
-  long lastClicked=0;
-  boolean doubleClickReady=false;
-  public boolean selected=false;
-  public Function<Double, Double> get=(Double d) -> {
+  static DecimalFormat cut2 = new DecimalFormat("0.00");
+  double clickValue = 0;
+  long lastClicked = 0;
+  boolean doubleClickReady = false;
+  public boolean selected = false;
+  public Function<Double, Double> get = (Double d) -> {
     return d;
   };
-  public Function<Double, Double> getInv=(Double d) -> {
+  public Function<Double, Double> getInv = (Double d) -> {
     return d;
   };
   public Runnable doubleClickListener;
-  public ArrayList<EventListener> adjustListener=new ArrayList<>();
+  public ArrayList<EventListener> adjustListener = new ArrayList<>();
   public EventListener selectListener;
-  boolean logScale=false;
+  boolean logScale = false;
   boolean adjusted;
   public Knob(String s) {
     super(s);
@@ -50,33 +50,31 @@ public class Knob extends Element {
   }
   public Knob(String s, String label_) {
     super(s);
-    label=label_;
+    label = label_;
     init();
   }
   private void init() {
-    bgColor=KyUI.Ref.color(127);
-    fgColor=KyUI.Ref.color(50);
-    highlightColor=KyUI.Ref.color(0, 0, 255);
-    padding=12;
+    bgColor = KyUI.Ref.color(127);
+    fgColor = KyUI.Ref.color(50);
+    highlightColor = KyUI.Ref.color(0, 0, 255);
+    padding = 12;
   }
   public Knob set(double min_, double max_, double center_, double value_) {
-    if (logScale) {
-      min=Math.log10(min_);
-      max=Math.log10(max_);
-      center=Math.log10(Math.min(max_, Math.max(min_, center_)));
-      value=Math.log10(Math.min(max_, Math.max(min_, value_)));
-    } else {
-      min=min_;
-      max=max_;
-      center=Math.min(max, Math.max(min, center_));
-      value=Math.min(max, Math.max(min, value_));
+    min = getInv.apply(min_);
+    max = getInv.apply(max_);
+    if (min > max) {
+      double temp = min;
+      min = max;
+      max = temp;
     }
-    initialValue=value;
+    center = getInv.apply(Math.min(max_, Math.max(min_, center_)));
+    value = getInv.apply(Math.min(max_, Math.max(min_, value_)));
+    initialValue = value;
     return this;
   }
   public Knob attach(AudioContext ac, UGenWInterface ugen, UGenW.Parameter param, Function<Double, Double> get_, Function<Double, Double> getInv_, double min_, double max_, double center_, double value_) {
-    get=get_;
-    getInv=getInv_;
+    get = get_;
+    getInv = getInv_;
     set(min_, max_, center_, value_);
     param.attacher.accept(this);
     adjustListener.add((e) -> {
@@ -86,19 +84,19 @@ public class Knob extends Element {
     return this;
   }
   public Knob attach(AudioContext ac, UGenWInterface ugen, UGenW.Parameter param, double min_, double max_, double center_, double value_, boolean logScale_) {
-    logScale=logScale_;
+    logScale = logScale_;
     if (logScale) {
       if (min_ <= 0) {
-        min_=PApplet.EPSILON;
+        min_ = PApplet.EPSILON;
       }
       if (max_ <= 0) {
-        max_=PApplet.EPSILON;
+        max_ = PApplet.EPSILON;
       }
       if (center_ <= 0) {
-        center_=PApplet.EPSILON;
+        center_ = PApplet.EPSILON;
       }
       if (value_ <= 0) {
-        value_=PApplet.EPSILON;
+        value_ = PApplet.EPSILON;
       }
       return attach(ac, ugen, param, (Double in) -> {
         return Math.pow(10, in);
@@ -117,30 +115,30 @@ public class Knob extends Element {
   public void render(PGraphics g) {
     g.fill(bgColor);
     pos.render(g);
-    indicatorWidth=12;
-    strokeWeight=6;
+    indicatorWidth = 12;
+    strokeWeight = 6;
     float radius;
-    float offsetX=pos.left + padding;
-    float offsetY=pos.top + padding;
+    float offsetX = pos.left + padding;
+    float offsetY = pos.top + padding;
     if (pos.right - pos.left > pos.bottom - pos.top) {//width is longer than height
-      radius=(pos.bottom - pos.top) / 2 - padding;
-      offsetX=(pos.left + pos.right - pos.bottom + pos.top) / 2 + padding;
+      radius = (pos.bottom - pos.top) / 2 - padding;
+      offsetX = (pos.left + pos.right - pos.bottom + pos.top) / 2 + padding;
     } else {
-      radius=(pos.right - pos.left) / 2 - padding;
-      offsetY=(pos.top + pos.bottom - pos.right + pos.left) / 2 + padding;
+      radius = (pos.right - pos.left) / 2 - padding;
+      offsetY = (pos.top + pos.bottom - pos.right + pos.left) / 2 + padding;
     }
     if (radius < 120) {
-      indicatorWidth=Math.max(1, (int)(radius / 10));
-      strokeWeight=Math.max(1, (int)(radius / 20));
+      indicatorWidth = Math.max(1, (int)(radius / 10));
+      strokeWeight = Math.max(1, (int)(radius / 20));
     }
-    float innerRadius=radius * 2 / 3;
-    float pointRadius=radius / 6;
-    float paddingAngle=indicatorWidth / (radius + strokeWeight + indicatorWidth / 2);
-    int color=fgColor;
+    float innerRadius = radius * 2 / 3;
+    float pointRadius = radius / 6;
+    float paddingAngle = indicatorWidth / (radius + strokeWeight + indicatorWidth / 2);
+    int color = fgColor;
     if (pressedL || pressedR) {
-      color=ColorExt.brighter(color, 20);
+      color = ColorExt.brighter(color, 20);
     } else if (entered) {
-      color=ColorExt.brighter(color, 10);
+      color = ColorExt.brighter(color, 10);
     }
     g.ellipseMode(PApplet.RADIUS);
     g.fill(color);
@@ -175,29 +173,29 @@ public class Knob extends Element {
   @Override
   public boolean mouseEvent(MouseEvent e, int index) {
     if (e.getAction() == MouseEvent.PRESS) {
-      clickValue=value;
+      clickValue = value;
       if (selectListener != null) {
         selectListener.onEvent(this);
       }
-      long time=System.currentTimeMillis();
+      long time = System.currentTimeMillis();
       if (e.getButton() == PApplet.LEFT && doubleClickReady && time - lastClicked < KyUI.DOUBLE_CLICK_INTERVAL) {
         adjust(initialValue);
-        doubleClickReady=false;
+        doubleClickReady = false;
       } else {
-        doubleClickReady=true;
+        doubleClickReady = true;
       }
-      lastClicked=time;
+      lastClicked = time;
       return false;
     } else if (e.getAction() == MouseEvent.DRAG) {
-      float centerX=(pos.left + pos.right) / 2;
+      float centerX = (pos.left + pos.right) / 2;
       if (pressedL || pressedR) {
-        value=clickValue;
+        value = clickValue;
       }
       if (pressedL) {
-        value=value + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 2 / (pos.right - pos.left);
+        value = value + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 2 / (pos.right - pos.left);
       }
       if (pressedR) {
-        value=value + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 20 / (pos.bottom - pos.top);
+        value = value + (max - min) * (KyUI.mouseGlobal.getLast().x - KyUI.mouseClick.getLast().x - KyUI.mouseGlobal.getLast().y + KyUI.mouseClick.getLast().y) * sensitivity / 20 / (pos.bottom - pos.top);
       }
       if (pressedL || pressedR) {
         adjust(value);
@@ -210,8 +208,8 @@ public class Knob extends Element {
     g.arc(x, y, rx, ry, (float)Math.min(s, e), (float)Math.max(s, e), mode);
   }
   public void adjust(double value_) {
-    value=Math.min(max, Math.max(min, value_));
-    adjusted=true;
+    value = Math.min(max, Math.max(min, value_));
+    adjusted = true;
     if (adjustListener != null) {
       for (EventListener e : adjustListener) {
         e.onEvent(this);
@@ -225,7 +223,7 @@ public class Knob extends Element {
   public void update() {
     //adjust(PApplet.sin((float)(System.currentTimeMillis() % 100000) / 300));
     if (adjusted) {
-      adjusted=false;
+      adjusted = false;
       invalidate();
     }
   }
