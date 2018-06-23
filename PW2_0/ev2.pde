@@ -443,8 +443,19 @@ void setup_ev2() {
   KyUI.addDragAndDrop(KyUI.get("wv_layout"), new FileDropEventListener() {
     public void onEvent(DropEvent de) {
       String filename=de.file().getAbsolutePath().replace("\\", "/");
-      if (de.file().isFile()) {
-        addWavFileTab(filename);
+      if (filename.endsWith(".cue")) {
+        if (currentWav!=null&&currentWav.editor.automation!=null&&currentWav.editor.automation.getName().equals("cuePoint")) {
+          PwWaveditLoader.loadGoldwaveCue(filename, currentWav.editor.automation);
+        }
+      } else {
+        if (de.file().isFile()&&isSoundFile(de.file())) {
+          try {
+            addWavFileTab(filename);//catch numberformatexception.
+          }
+          catch(NumberFormatException e) {
+            displayError(e);
+          }
+        }
       }
     }
   }
@@ -635,6 +646,6 @@ void setup_ev2() {
  w.automationInvalid = true;
  KyUI.get("wav").invalidate();
  if(key=='Ctrl+F'){
-   wv_points.setEnabled(!wv_points.isEnabled);
+ wv_points.setEnabled(!wv_points.isEnabled);
  }
  }*/

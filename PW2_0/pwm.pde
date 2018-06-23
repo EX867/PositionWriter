@@ -147,7 +147,7 @@ void macro_setup() {
       final MacroTab macro=currentMacro;
       final String[] paths=getClassPaths();
       final ConsoleInputStream input=macro.newInputStream();
-      final PrintStream stream=macro.newPrintStream(input);
+      final PrintStream stream=macro.newPrintStream();
       new Thread(new Runnable() {
         public void run() {
           //println((Object[])paths);
@@ -159,6 +159,7 @@ void macro_setup() {
           //default run with no paramters
           PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, ""), stream, macro.getBuildPath(), paths, true, internalError, externalError);//so build path is parent/src and bin.
           stream.close();
+          input.close();
           macro.onMacroEnd();
         }
       }
@@ -255,7 +256,7 @@ public class MacroTab {
     file=new File(name);
     console=console_;
   }
-  PrintStream newPrintStream(final ConsoleInputStream input) {
+  PrintStream newPrintStream() {//final ConsoleInputStream input) {
     return PW2_0.this.newPrintStream(console);
   }
   ConsoleInputStream newInputStream() {
@@ -311,10 +312,11 @@ public class MacroTab {
     }
   }
   String getBuildPath() {
-    return  file.getParentFile().getAbsolutePath();
+    return joinPath(joinPath(path_global, path_tempMacros), getExtensionElse(getFileName(file.getAbsolutePath())));
+    //return  file.getParentFile().getAbsolutePath();
   }
   String getClassPath() {
-    return joinPath(file.getParentFile().getAbsolutePath(), "bin");
+    return joinPath(getBuildPath(), "bin");
   }
 }
 PrintStream newPrintStream(final ConsoleEdit console) {

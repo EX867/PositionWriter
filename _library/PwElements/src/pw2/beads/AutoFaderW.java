@@ -59,6 +59,7 @@ public class AutoFaderW extends UGenW {//break the rule!!! I miss designed preCo
       }
       ugen.calculate(cuePoint.bufferIndex);
     };
+    cuePoint.setRange(-1, 1);
   }
   public double getPreCount() {
     return cuePoint.preCount;

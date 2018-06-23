@@ -431,6 +431,7 @@ static class WavTab {
   WavEditor editor;
   TDCompControl compControl;
   AutoFaderControl faderControl;
+  File file=null;
   public ArrayList<KnobAutomation> autos=new ArrayList<KnobAutomation>();
   WavTab(WavEditor editor_) {
     editor=editor_;
@@ -456,6 +457,7 @@ void addWavTab(final String filename) {//no null filename!
       dv11.addChild(editor=new WavEditor("wv_editor"));
       dv11.addChild(editor.getSlider());
       WavTab tab=new WavTab(editor);
+      tab.file=new File(filename);
       editor.setSample(sample);
       tab.wvac.out.setGain((float)1/sample.getNumChannels());
       editor.globalKeyFocus=false;
@@ -465,6 +467,12 @@ void addWavTab(final String filename) {//no null filename!
       KyUI.get("wv_frame").onLayout();
       tabs.selectTab(wavTabs.size());
       wav_setup(tab, (DivisionLayout)e.children.get(0));
+      //
+      File xml=new File(joinPath(new File(filename).getParentFile().getAbsolutePath(), getFileName(getExtensionElse(filename))+".xml"));
+      if (xml.isFile()) {
+        PwWaveditLoader.load(loadXML(xml.getAbsolutePath()), tab.compControl, tab.faderControl, editor);
+      }
+      //
     }
   }
   , null, null);//ADD tell user why this audio is not loaded
@@ -475,10 +483,9 @@ void addWavFileTab(String filename) {
     WavTab t=wavTabs.get(a);
     if (t.editor.sample!=null&&new File(t.editor.sample.getFileName()).equals(new File(filename))) {//same sample
       led_filetabs.selectTab(a+1);
-      return;
     }
   }
-  /*WavTab tab=*/  addWavTab(filename);
+  addWavTab(filename);
 }
 void selectWavTab(int index) {
   if (index<0||index>=wavTabs.size()) {
@@ -497,5 +504,8 @@ void saveWav(WavTab wav) {
   if (wav==null) {
     return;
   }
-  //ADD
+  //save it to "wav path/wav name.xml"
+  String name=wav.file.getAbsolutePath();
+  XML save=PwWaveditLoader.save(wav.compControl, wav.faderControl, wav.editor);
+  save.save(new File(joinPath(wav.file.getParentFile().getAbsolutePath(), getFileName(getExtensionElse(name))+".xml")));
 }

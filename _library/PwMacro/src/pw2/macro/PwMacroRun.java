@@ -185,7 +185,8 @@ public class PwMacroRun {
         internalError.accept(e);
       }
     }
-    if (debug) out.println("macro finished.");
+    //if (debug) out.println("macro finished.");
+    out.println("...\nMacro Finished.");
   }
   static private final Map<String, String> COMPILER_OPTIONS;
   static {//copied from processing.mode.java.pdex.PreProcessingService

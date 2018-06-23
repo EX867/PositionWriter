@@ -291,9 +291,21 @@ public class KnobAutomation extends Glide {
     gui = value;
   }
   public void insertToXML(XML out) {
-    //add all <point value="xxx"/>s.
-    //ADD
+    //add all <Event value="xxx"/>s.
+    for (Point d : points) {
+      XML event = out.addChild("Event");
+      event.setString("time", "" + d.position);
+      event.setString("value", "" + d.value);
+    }
   }
   public void readFromXML(XML in) {
+    if (target != null) {
+      target.value = in.getDouble("value", target.value);
+    }
+    //get all Events.
+    XML[] event = in.getChildren("Event");
+    for (XML x : event) {
+      addPoint(Double.parseDouble(x.getString("time", "0")), Double.parseDouble(x.getString("value", "1")));
+    }
   }
 }

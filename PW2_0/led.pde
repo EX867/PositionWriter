@@ -325,11 +325,11 @@ void led_setup() {
         } else {
           parameter="";
         }
-        String path=joinPath(path_global, path_macro)+"/"+commandName+"/"+commandName+".pwm";
+        String path=joinPath(path_global, path_macro)+"/"+commandName+".pwm";
+        final MacroTab macro=new MacroTab(path, led_console);
+        final PrintStream stream=macro.newPrintStream();
         if (new File(path).exists()) {
-          final MacroTab macro=new MacroTab(path, led_console);
           final ConsoleInputStream input=macro.newInputStream();
-          final PrintStream stream=macro.newPrintStream(input);
           if (new File(joinPath(macro.getClassPath(), commandName+".class")).isFile()) {
             new Thread(new Runnable() {
               public void run() {
@@ -342,6 +342,7 @@ void led_setup() {
                 }
                 macro.onMacroEnd();
                 stream.close();
+                input.close();
               }
             }
             ).start();
@@ -353,10 +354,14 @@ void led_setup() {
                 PwMacroRun.run(PwMacroApi.class, macro.getTitle(), macro.getText(), new PW2_0Param(PW2_0.this, macro.file.getAbsolutePath(), stream, input, ""), stream, macro.getBuildPath(), paths, true, internalError, externalError);//so build path is parent/src and bin.
                 macro.onMacroEnd();
                 stream.close();
+                input.close();
               }
             }
             ).start();
           }
+        } else {
+          stream.println("\nMacro file not exists.");
+          stream.close();
         }
       }
     }

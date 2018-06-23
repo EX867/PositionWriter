@@ -443,7 +443,7 @@ void build_windows(final String packageName, final String appName, final String 
       }
       try {
         String datapath=getDataPath();
-        String buildPath=joinPath(joinPath(path_global, "temp"), appName);
+        String buildPath=joinPath(joinPath(path_global, "temp/skins"), appName);
         logs.addLine("deleting old files...").invalidate();
         if (new File(buildPath).exists())deleteFile(buildPath);
         logs.addLine("creating files for build...").invalidate();
