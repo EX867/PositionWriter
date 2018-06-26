@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Data>
-  <index_0>
     <state value="default">
       <input code="NOTE_ON" data="81">press:0:0</input>
       <input code="NOTE_ON" data="82">press:1:0</input>
@@ -324,5 +323,4 @@
       <output code="NOTE_ON" channel="0" data="18">led:8:8</output>
       <output code="NOTE_ON" channel="0" data="19">led:9:8</output>
     </state>
-  </index_0>
 </Data>

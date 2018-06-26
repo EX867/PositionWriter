@@ -37,7 +37,7 @@ public class MidiCommand {
       behavior.execute(msg, timeStamp, params);
     }
   }
-  public static void execute(String commandName, int data2, int... params_) {//fix this later to implement sysex. data1 should changed to other data.
+  public static void execute(MidiMapDevice device,String commandName, int data2, int... params_) {//fix this later to implement sysex. data1 should changed to other data.
     //get state of midimapdevice directly...(because it's static)
     StringBuilder builder=new StringBuilder(commandName);
     for (int a=0; a<params_.length; a++) {
