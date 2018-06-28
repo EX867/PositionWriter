@@ -1,29 +1,28 @@
-import com.karnos.midimap.MidiCommand;
+import pw2.midimap.*;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
-import com.karnos.midimap.InputBehavior;
+import pw2.midimap.Device;
 
 void midi_setup() {
-  MidiCommand.setBase(this);
-  MidiCommand.addInput("press", new PadPressCommand());
-  MidiCommand.addInput("chain", new PadChainCommand());
+  Device.setBase(this);
+  Device.addInput("press", new PadPressCommand());
+  Device.addInput("chain", new PadChainCommand());
   ((ImageButton)KyUI.get("set_midi")).getPressListener().onEvent(null, 0);
 }
-void midiOffAll(MidiMapDevice linkDevice) {
+void midiOffAll(Device device) {
+  for (int a=0; a<8; a++) {
+    for (int b=0; b<8; b++) {
+      device.output("led", 0, a, b);
+    }
+  }
 }
 void midiOffAll() {//only for lp...
-  int a=0;
-  while (a<8) {
-    int b=0;
-    while (b<8) {
-      MidiCommand.execute("led", 0, a, b);
-      b=b+1;
-    }
-    a=a+1;
+  for (Device device : Device.devices) {
+    midiOffAll(device);
   }
 }
 public class PadPressCommand implements InputBehavior {
-  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {//params[0]=x, params[1]=y
+  @Override public void execute(MidiMessage msg, long timeStamp, Device device, int... params) {//params[0]=x, params[1]=y
     if (msg instanceof ShortMessage) {
       ShortMessage info=(ShortMessage)msg;
       if (info.getData2()!=0) {
@@ -52,7 +51,7 @@ public class PadPressCommand implements InputBehavior {
   }
 }
 public class PadChainCommand implements InputBehavior {
-  @Override public void execute(MidiMessage msg, long timeStamp, int[] params) {
+  @Override public void execute(MidiMessage msg, long timeStamp, Device device, int... params) {
     if (mainTabs_selected==KS_EDITOR) {
       if (0<=params[0]&&params[0]<currentKs.info.chain) {
         currentKs.chain=params[0];

@@ -30,7 +30,7 @@ class LightThread implements Runnable {
   Thread thread;//must set!!
   boolean active=true;//set inactive to exit.
   TreeSet<LedCounter> queue=new TreeSet<LedCounter>();//new LinkedList<LedCounter>()
-  MidiMapDevice deviceLink;
+  Device device;
   int[][] display=new int[0][0];//used to not change LED array values...
   int[][] velDisplay=new int[0][0];
   boolean sleeping=false;
@@ -335,13 +335,16 @@ class LightThread implements Runnable {
     script.displayPad.invalidate();
   }
   void midiControl(int[][] velDisplay) {
+    if (device==null) {
+      return;
+    }
     if (velDisplay==null) {
       return;
     }
     for (int b=0; b<velDisplay[0].length; b++) {//assert display.length>0
       for (int a=0; a<velDisplay.length; a++) {
         //println(a+" "+b+" : "+velDisplay[a][b]);
-        MidiCommand.execute("led", velDisplay[a][b], a, b);//linkDevice...
+        device.output("led", velDisplay[a][b], a, b);//linkDevice...
       }
     }
   }

@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="core-reduced" level="project" />
     <orderEntry type="library" name="core-reduced" level="project" />
+    <orderEntry type="library" name="KyUI" level="project" />
   </component>
 </module>

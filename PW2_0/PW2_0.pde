@@ -276,7 +276,7 @@ void main_setup() {
   macro_setup();
   findReplace_setup();
   midi_setup();
-  MidiCommand.setState("8x8");//#TEST
+  Device.setState("8x8");//#TEST
   au_setup();
   loadPaths();
   ((Button)KyUI.get("set_globalpath")).text=path_global;

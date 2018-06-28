@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="KyUI">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../PW2_0/code/KyUI.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../PW2_0/code/KyUI.jar!/" />
+    </SOURCES>
+  </library>
+</component>

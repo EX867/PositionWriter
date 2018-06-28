@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+    <index_0>
+        <state value="default">
+            <input code="NOTE_ON" data="80">NOTE_ON:80</input>
+            <input code="NOTE_ON" data="81">NOTE_ON:81</input>
+            <input code="NOTE_ON" data="82">NOTE_ON:82</input>
+            <input code="NOTE_ON" data="83">NOTE_ON:83</input>
+            <input code="NOTE_ON" data="84">NOTE_ON:84</input>
+            <input code="NOTE_ON" data="85">NOTE_ON:85</input>
+            <input code="NOTE_ON" data="86">NOTE_ON:86</input>
+            <input code="NOTE_ON" data="87">NOTE_ON:87</input>
+            <input code="NOTE_ON" data="88">NOTE_ON:88</input>
+            <input code="NOTE_ON" data="89">NOTE_ON:89</input>
+            <!---->
+            <input code="NOTE_ON" data="70">NOTE_ON:70</input>
+            <input code="NOTE_ON" data="71">NOTE_ON:71</input>
+            <input code="NOTE_ON" data="72">NOTE_ON:72</input>
+            <input code="NOTE_ON" data="73">NOTE_ON:73</input>
+            <input code="NOTE_ON" data="74">NOTE_ON:74</input>
+            <input code="NOTE_ON" data="75">NOTE_ON:75</input>
+            <input code="NOTE_ON" data="76">NOTE_ON:76</input>
+            <input code="NOTE_ON" data="77">NOTE_ON:77</input>
+            <input code="NOTE_ON" data="78">NOTE_ON:78</input>
+            <input code="NOTE_ON" data="79">NOTE_ON:79</input>
+            <!---->
+            <input code="NOTE_ON" data="60">NOTE_ON:60</input>
+            <input code="NOTE_ON" data="61">NOTE_ON:61</input>
+            <input code="NOTE_ON" data="62">NOTE_ON:62</input>
+            <input code="NOTE_ON" data="63">NOTE_ON:63</input>
+            <input code="NOTE_ON" data="64">NOTE_ON:64</input>
+            <input code="NOTE_ON" data="65">NOTE_ON:65</input>
+            <input code="NOTE_ON" data="66">NOTE_ON:66</input>
+            <input code="NOTE_ON" data="67">NOTE_ON:67</input>
+            <input code="NOTE_ON" data="68">NOTE_ON:68</input>
+            <input code="NOTE_ON" data="69">NOTE_ON:69</input>
+            <!---->
+            <input code="NOTE_ON" data="50">NOTE_ON:50</input>
+            <input code="NOTE_ON" data="51">NOTE_ON:51</input>
+            <input code="NOTE_ON" data="52">NOTE_ON:52</input>
+            <input code="NOTE_ON" data="53">NOTE_ON:53</input>
+            <input code="NOTE_ON" data="54">NOTE_ON:54</input>
+            <input code="NOTE_ON" data="55">NOTE_ON:55</input>
+            <input code="NOTE_ON" data="56">NOTE_ON:56</input>
+            <input code="NOTE_ON" data="57">NOTE_ON:57</input>
+            <input code="NOTE_ON" data="58">NOTE_ON:58</input>
+            <input code="NOTE_ON" data="59">NOTE_ON:59</input>
+            <!---->
+            <input code="NOTE_ON" data="40">NOTE_ON:40</input>
+            <input code="NOTE_ON" data="41">NOTE_ON:41</input>
+            <input code="NOTE_ON" data="42">NOTE_ON:42</input>
+            <input code="NOTE_ON" data="43">NOTE_ON:43</input>
+            <input code="NOTE_ON" data="44">NOTE_ON:44</input>
+            <input code="NOTE_ON" data="45">NOTE_ON:45</input>
+            <input code="NOTE_ON" data="46">NOTE_ON:46</input>
+            <input code="NOTE_ON" data="47">NOTE_ON:47</input>
+            <input code="NOTE_ON" data="48">NOTE_ON:48</input>
+            <input code="NOTE_ON" data="49">NOTE_ON:49</input>
+            <!---->
+            <input code="NOTE_ON" data="30">NOTE_ON:30</input>
+            <input code="NOTE_ON" data="31">NOTE_ON:31</input>
+            <input code="NOTE_ON" data="32">NOTE_ON:32</input>
+            <input code="NOTE_ON" data="33">NOTE_ON:33</input>
+            <input code="NOTE_ON" data="34">NOTE_ON:34</input>
+            <input code="NOTE_ON" data="35">NOTE_ON:35</input>
+            <input code="NOTE_ON" data="36">NOTE_ON:36</input>
+            <input code="NOTE_ON" data="37">NOTE_ON:37</input>
+            <input code="NOTE_ON" data="38">NOTE_ON:38</input>
+            <input code="NOTE_ON" data="39">NOTE_ON:39</input>
+            <!---->
+            <input code="NOTE_ON" data="20">NOTE_ON:20</input>
+            <input code="NOTE_ON" data="21">NOTE_ON:21</input>
+            <input code="NOTE_ON" data="22">NOTE_ON:22</input>
+            <input code="NOTE_ON" data="23">NOTE_ON:23</input>
+            <input code="NOTE_ON" data="24">NOTE_ON:24</input>
+            <input code="NOTE_ON" data="25">NOTE_ON:25</input>
+            <input code="NOTE_ON" data="26">NOTE_ON:26</input>
+            <input code="NOTE_ON" data="27">NOTE_ON:27</input>
+            <input code="NOTE_ON" data="28">NOTE_ON:28</input>
+            <input code="NOTE_ON" data="29">NOTE_ON:29</input>
+            <!---->
+            <input code="NOTE_ON" data="10">NOTE_ON:10</input>
+            <input code="NOTE_ON" data="11">NOTE_ON:11</input>
+            <input code="NOTE_ON" data="12">NOTE_ON:12</input>
+            <input code="NOTE_ON" data="13">NOTE_ON:13</input>
+            <input code="NOTE_ON" data="14">NOTE_ON:14</input>
+            <input code="NOTE_ON" data="15">NOTE_ON:15</input>
+            <input code="NOTE_ON" data="16">NOTE_ON:16</input>
+            <input code="NOTE_ON" data="17">NOTE_ON:17</input>
+            <input code="NOTE_ON" data="18">NOTE_ON:18</input>
+            <input code="NOTE_ON" data="19">NOTE_ON:19</input>
+            <!---->
+            <input code="NOTE_ON" data="0">NOTE_ON:0</input>
+            <input code="NOTE_ON" data="1">NOTE_ON:1</input>
+            <input code="NOTE_ON" data="2">NOTE_ON:2</input>
+            <input code="NOTE_ON" data="3">NOTE_ON:3</input>
+            <input code="NOTE_ON" data="4">NOTE_ON:4</input>
+            <input code="NOTE_ON" data="5">NOTE_ON:5</input>
+            <input code="NOTE_ON" data="6">NOTE_ON:6</input>
+            <input code="NOTE_ON" data="7">NOTE_ON:7</input>
+            <input code="NOTE_ON" data="8">NOTE_ON:8</input>
+            <input code="NOTE_ON" data="9">NOTE_ON:9</input>
+            <!---->
+            <!--data2 varies.-->
+            <output code="NOTE_ON" channel="0" data="80">NOTE_ON:80</output>
+            <output code="NOTE_ON" channel="0" data="81">NOTE_ON:81</output>
+            <output code="NOTE_ON" channel="0" data="82">NOTE_ON:82</output>
+            <output code="NOTE_ON" channel="0" data="83">NOTE_ON:83</output>
+            <output code="NOTE_ON" channel="0" data="84">NOTE_ON:84</output>
+            <output code="NOTE_ON" channel="0" data="85">NOTE_ON:85</output>
+            <output code="NOTE_ON" channel="0" data="86">NOTE_ON:86</output>
+            <output code="NOTE_ON" channel="0" data="87">NOTE_ON:87</output>
+            <output code="NOTE_ON" channel="0" data="88">NOTE_ON:88</output>
+            <output code="NOTE_ON" channel="0" data="89">NOTE_ON:89</output>
+            <!---->
+            <output code="NOTE_ON" channel="0" data="70">NOTE_ON:70</output>
+            <output code="NOTE_ON" channel="0" data="71">NOTE_ON:71</output>
+            <output code="NOTE_ON" channel="0" data="72">NOTE_ON:72</output>
+            <output code="NOTE_ON" channel="0" data="73">NOTE_ON:73</output>
+            <output code="NOTE_ON" channel="0" data="74">NOTE_ON:74</output>
+            <output code="NOTE_ON" channel="0" data="75">NOTE_ON:75</output>
+            <output code="NOTE_ON" channel="0" data="76">NOTE_ON:76</output>
+            <output code="NOTE_ON" channel="0" data="77">NOTE_ON:77</output>
+            <output code="NOTE_ON" channel="0" data="78">NOTE_ON:78</output>
+            <output code="NOTE_ON" channel="0" data="79">NOTE_ON:79</output>
+            <!---->
+            <output code="NOTE_ON" channel="0" data="60">NOTE_ON:60</output>
+            <output code="NOTE_ON" channel="0" data="61">NOTE_ON:61</output>
+            <output code="NOTE_ON" channel="0" data="62">NOTE_ON:62</output>
+            <output code="NOTE_ON" channel="0" data="63">NOTE_ON:63</output>
+            <output code="NOTE_ON" channel="0" data="64">NOTE_ON:64</output>
+            <output code="NOTE_ON" channel="0" data="65">NOTE_ON:65</output>
+            <output code="NOTE_ON" channel="0" data="66">NOTE_ON:66</output>
+            <output code="NOTE_ON" channel="0" data="67">NOTE_ON:67</output>
+            <output code="NOTE_ON" channel="0" data="68">NOTE_ON:68</output>
+            <output code="NOTE_ON" channel="0" data="69">NOTE_ON:69</output>
+            <!---->
+            <output code="NOTE_ON" channel="0" data="50">NOTE_ON:50</output>
+            <output code="NOTE_ON" channel="0" data="51">NOTE_ON:51</output>
+            <output code="NOTE_ON" channel="0" data="52">NOTE_ON:52</output>
+            <output code="NOTE_ON" channel="0" data="53">NOTE_ON:53</output>
+            <output code="NOTE_ON" channel="0" data="54">NOTE_ON:54</output>
+            <output code="NOTE_ON" channel="0" data="55">NOTE_ON:55</output>
+            <output code="NOTE_ON" channel="0" data="56">NOTE_ON:56</output>
+            <output code="NOTE_ON" channel="0" data="57">NOTE_ON:57</output>
+            <output code="NOTE_ON" channel="0" data="58">NOTE_ON:58</output>
+            <output code="NOTE_ON" channel="0" data="59">NOTE_ON:59</output>
+            <!---->
+            <output code="NOTE_ON" channel="0" data="40">NOTE_ON:40</output>
+            <output code="NOTE_ON" channel="0" data="41">NOTE_ON:41</output>
+            <output code="NOTE_ON" channel="0" data="42">NOTE_ON:42</output>
+            <output code="NOTE_ON" channel="0" data="43">NOTE_ON:43</output>
+            <output code="NOTE_ON" channel="0" data="44">NOTE_ON:44</output>
+            <output code="NOTE_ON" channel="0" data="45">NOTE_ON:45</output>
+            <output code="NOTE_ON" channel="0" data="46">NOTE_ON:46</output>
+            <output code="NOTE_ON" channel="0" data="47">NOTE_ON:47</output>
+            <output code="NOTE_ON" channel="0" data="48">NOTE_ON:48</output>
+            <output code="NOTE_ON" channel="0" data="49">NOTE_ON:49</output>
+            <!---->
+            <output code="NOTE_ON" channel="0" data="30">NOTE_ON:30</output>
+            <output code="NOTE_ON" channel="0" data="31">NOTE_ON:31</output>
+            <output code="NOTE_ON" channel="0" data="32">NOTE_ON:32</output>
+            <output code="NOTE_ON" channel="0" data="33">NOTE_ON:33</output>
+            <output code="NOTE_ON" channel="0" data="34">NOTE_ON:34</output>
+            <output code="NOTE_ON" channel="0" data="35">NOTE_ON:35</output>
+            <output code="NOTE_ON" channel="0" data="36">NOTE_ON:36</output>
+            <output code="NOTE_ON" channel="0" data="37">NOTE_ON:37</output>
+            <output code="NOTE_ON" channel="0" data="38">NOTE_ON:38</output>
+            <output code="NOTE_ON" channel="0" data="39">NOTE_ON:39</output>
+            <!---->
+            <output code="NOTE_ON" channel="0" data="20">NOTE_ON:20</output>
+            <output code="NOTE_ON" channel="0" data="21">NOTE_ON:21</output>
+            <output code="NOTE_ON" channel="0" data="22">NOTE_ON:22</output>
+            <output code="NOTE_ON" channel="0" data="23">NOTE_ON:23</output>
+            <output code="NOTE_ON" channel="0" data="24">NOTE_ON:24</output>
+            <output code="NOTE_ON" channel="0" data="25">NOTE_ON:25</output>
+            <output code="NOTE_ON" channel="0" data="26">NOTE_ON:26</output>
+            <output code="NOTE_ON" channel="0" data="27">NOTE_ON:27</output>
+            <output code="NOTE_ON" channel="0" data="28">NOTE_ON:28</output>
+            <output code="NOTE_ON" channel="0" data="29">NOTE_ON:29</output>
+            <!---->
+            <output code="NOTE_ON" channel="0" data="10">NOTE_ON:10</output>
+            <output code="NOTE_ON" channel="0" data="11">NOTE_ON:11</output>
+            <output code="NOTE_ON" channel="0" data="12">NOTE_ON:12</output>
+            <output code="NOTE_ON" channel="0" data="13">NOTE_ON:13</output>
+            <output code="NOTE_ON" channel="0" data="14">NOTE_ON:14</output>
+            <output code="NOTE_ON" channel="0" data="15">NOTE_ON:15</output>
+            <output code="NOTE_ON" channel="0" data="16">NOTE_ON:16</output>
+            <output code="NOTE_ON" channel="0" data="17">NOTE_ON:17</output>
+            <output code="NOTE_ON" channel="0" data="18">NOTE_ON:18</output>
+            <output code="NOTE_ON" channel="0" data="19">NOTE_ON:19</output>
+            <!---->
+            <output code="NOTE_ON" channel="0" data="0">NOTE_ON:0</output>
+            <output code="NOTE_ON" channel="0" data="1">NOTE_ON:1</output>
+            <output code="NOTE_ON" channel="0" data="2">NOTE_ON:2</output>
+            <output code="NOTE_ON" channel="0" data="3">NOTE_ON:3</output>
+            <output code="NOTE_ON" channel="0" data="4">NOTE_ON:4</output>
+            <output code="NOTE_ON" channel="0" data="5">NOTE_ON:5</output>
+            <output code="NOTE_ON" channel="0" data="6">NOTE_ON:6</output>
+            <output code="NOTE_ON" channel="0" data="7">NOTE_ON:7</output>
+            <output code="NOTE_ON" channel="0" data="8">NOTE_ON:8</output>
+            <output code="NOTE_ON" channel="0" data="9">NOTE_ON:9</output>
+            <!---->
+        </state>
+    </index_0>
+</Data>
