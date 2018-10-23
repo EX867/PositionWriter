@@ -319,6 +319,21 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
   for (KnobAutomation auto : autos) {
     sp.addAuto(auto);
   }
+  LinearList autoList=(LinearList)KyUI.get("wv_points");
+  if (autoList.size()==0) {
+    for (int a=0; a<sp.autos.size(); a++) {
+      AutomationButton b=new AutomationButton(sp.autos.get(a).getName());
+      final int a_=a;
+      b.onPress=new Runnable() {
+        public void run() {
+          currentWav.editor.automation=currentWav.editor.player.autos.get(a_);
+          currentWav.editor.automationInvalid=true;
+          currentWav.editor.invalidate();
+        }
+      };
+      autoList.addItem(b);
+    }
+  }
   autos=fader.getAutomations();
   for (KnobAutomation auto : autos) {
     sp.addAuto(auto);
@@ -365,21 +380,6 @@ void wav_setup(final WavTab tab, final DivisionLayout wv_dv2) {//add listeners (
   //
   wv_fxtabs.selectTab(1);
   tab.editor.automation=fader.cuePoint;
-  LinearList autoList=(LinearList)KyUI.get("wv_points");
-  if (autoList.size()==0) {
-    for (int a=0; a<sp.autos.size(); a++) {
-      AutomationButton b=new AutomationButton(sp.autos.get(a).getName());
-      final int a_=a;
-      b.onPress=new Runnable() {
-        public void run() {
-          currentWav.editor.automation=currentWav.editor.player.autos.get(a_);
-          currentWav.editor.automationInvalid=true;
-          currentWav.editor.invalidate();
-        }
-      };
-      autoList.addItem(b);
-    }
-  }
   sp.pause(true);
 }
 void wav_setup() {

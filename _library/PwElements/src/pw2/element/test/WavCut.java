@@ -497,6 +497,9 @@ public class WavCut extends PApplet {
       int count = 1;
       while (!times.isEmpty()) {
         int time = times.pollFirst();
+        if(time-start<=0){//remove duplication
+          continue;
+        }
         float[][] buffer = new float[sample.getNumChannels()][time - start];
         sample.getFrames(start, buffer);
         Sample split = new Sample(sample.samplesToMs(time - start), sample.getNumChannels(), sample.getSampleRate());

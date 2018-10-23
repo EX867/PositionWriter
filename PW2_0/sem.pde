@@ -191,6 +191,9 @@ static class MultiSamplePlayer {
     public SampleState(Sample sample_) {
       sample = sample_;
     }
+    public String toString() {
+      return sample.getFileName();
+    }
   }
 
   class PlayerState {

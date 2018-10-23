@@ -26,7 +26,7 @@
     <target name="build_jar" depends="compile" description="Build the JAR">
 
         <!-- With included source files -->
-        <jar destfile="../../../../PW2_0/code/MidiMap.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="../../../../PW2_0/code/MidiMap.jar">
             <manifest>
                 <attribute name="Main-Class" value="com.karnos.midimap.MidiCommand"/>
                 <attribute name="Implementation-Version" value="${version}-${DSTAMP}"/>
@@ -39,9 +39,9 @@
             <fileset dir="../../bin"/>
 
             <!-- include source files -->
-            <!--<fileset dir="../src">
+            <fileset dir="../../src">
                 <include name="**/*.java"/>
-            </fileset>-->
+            </fileset>
         </jar>
     </target>
 

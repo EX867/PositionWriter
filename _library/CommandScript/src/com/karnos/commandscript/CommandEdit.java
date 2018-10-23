@@ -220,7 +220,7 @@ public class CommandEdit extends TextEdit {
     }
     protected void markLine(PGraphics g, int c, int line) {
       g.stroke((c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF, 255);
-      g.strokeWeight(1);
+      g.strokeWeight(2);
       float total=Math.max(getTotalSize(), CommandEdit.this.pos.bottom - CommandEdit.this.pos.top);
       int offset=CommandEdit.this.padding + CommandEdit.this.textSize * line;
       float p=0;

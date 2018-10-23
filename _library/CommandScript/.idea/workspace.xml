@@ -2,22 +2,40 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8e9be9d5-d74c-49b3-8b4f-ea4822ab3658" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../../AlsExtractor/AlsExtractor.pde" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../../AlsExtractor/audiocut.pde" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../../AlsExtractor/audiofileLength.pde" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../../AlsExtractor/midicut.pde" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar" afterPath="$PROJECT_DIR$/../../PW2_0/code/CommandScript.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/code/KyUI.jar" afterPath="$PROJECT_DIR$/../../PW2_0/code/KyUI.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/code/PwMacro.jar" afterPath="$PROJECT_DIR$/../../PW2_0/code/PwMacro.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/code/Libraries.jar" afterPath="$PROJECT_DIR$/../../PW2_0/code/Libraries.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/code/MidiMap.jar" afterPath="$PROJECT_DIR$/../../PW2_0/code/MidiMap.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/Logic.pde" afterPath="$PROJECT_DIR$/../../PW2_0/Logic.pde" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/PW2_0.pde" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/PW2_0_old.pde" afterPath="$PROJECT_DIR$/../../PW2_0/PW2_0_old/PW2_0_old.pde" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/au.pde" afterPath="$PROJECT_DIR$/../../PW2_0/au.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/data/layout.xml" afterPath="$PROJECT_DIR$/../../PW2_0/data/layout.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/cmdp.pde" afterPath="$PROJECT_DIR$/../../PW2_0/cmdp.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/data/midi/default.xml" afterPath="$PROJECT_DIR$/../../PW2_0/data/midi/default.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/ev1.pde" afterPath="$PROJECT_DIR$/../../PW2_0/ev1.pde" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/find.pde" afterPath="$PROJECT_DIR$/../../PW2_0/find.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/ks.pde" afterPath="$PROJECT_DIR$/../../PW2_0/ks.pde" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/led.pde" afterPath="$PROJECT_DIR$/../../PW2_0/led.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/pwm.pde" afterPath="$PROJECT_DIR$/../../PW2_0/pwm.pde" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/util.pde" afterPath="$PROJECT_DIR$/../../PW2_0/util.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/midi.pde" afterPath="$PROJECT_DIR$/../../PW2_0/midi.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/sem.pde" afterPath="$PROJECT_DIR$/../../PW2_0/sem.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/seq.pde" afterPath="$PROJECT_DIR$/../../PW2_0/seq.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../PW2_0/vs.pde" afterPath="$PROJECT_DIR$/../../PW2_0/vs.pde" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../README.md" afterPath="$PROJECT_DIR$/../../README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwMacro/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../PwMacro/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwHighlighter.java" afterPath="$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwHighlighter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" afterPath="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MidiMap/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../MidiMap/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MidiMap/build/build.xml" afterPath="$PROJECT_DIR$/../MidiMap/build/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MidiMap/build/build_pw/build.xml" afterPath="$PROJECT_DIR$/../MidiMap/build/build_pw/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MidiMap/src/pw2/midimap/Device.java" afterPath="$PROJECT_DIR$/../MidiMap/src/pw2/midimap/Device.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MidiMap/src/pw2/midimap/MidiInputCommand.java" afterPath="$PROJECT_DIR$/../MidiMap/src/pw2/midimap/MidiInputCommand.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MidiMap/src/pw2/midimap/OutputBehavior.java" afterPath="$PROJECT_DIR$/../MidiMap/src/pw2/midimap/OutputBehavior.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwElements/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../PwElements/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwElements/src/pw2/beads/AutoFaderW.java" afterPath="$PROJECT_DIR$/../PwElements/src/pw2/beads/AutoFaderW.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwElements/src/pw2/element/WaveformDraw.java" afterPath="$PROJECT_DIR$/../PwElements/src/pw2/element/WaveformDraw.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PwElements/src/pw2/element/test/WavCut.java" afterPath="$PROJECT_DIR$/../PwElements/src/pw2/element/test/WavCut.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,11 +47,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="CommandEdit.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CommandEdit.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1044">
-              <caret line="74" column="17" lean-forward="false" selection-start-line="74" selection-start-column="17" selection-end-line="74" selection-end-column="17" />
+            <state relative-caret-position="370">
+              <caret line="222" column="22" lean-forward="false" selection-start-line="222" selection-start-column="22" selection-end-line="222" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/build.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="54">
+              <caret line="3" column="26" lean-forward="false" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -64,11 +92,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CommandScript.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="CommandScript.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2907">
-              <caret line="436" column="38" lean-forward="true" selection-start-line="436" selection-start-column="38" selection-end-line="436" selection-end-column="38" />
+            <state relative-caret-position="784">
+              <caret line="436" column="38" lean-forward="false" selection-start-line="436" selection-start-column="38" selection-end-line="436" selection-end-column="38" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DelimiterParser.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2772">
+              <caret line="157" column="16" lean-forward="false" selection-start-line="157" selection-start-column="16" selection-end-line="157" selection-end-column="16" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Test2.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test2.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="38" lean-forward="false" selection-start-line="0" selection-start-column="38" selection-end-line="0" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -190,11 +238,11 @@
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CStyleParser.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/Difference.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/EditRecorder.java" />
-        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java" />
         <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java" />
         <option value="$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwHighlighter.java" />
+        <option value="$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java" />
       </list>
     </option>
   </component>
@@ -205,10 +253,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-6" />
-    <option name="y" value="-23" />
-    <option name="width" value="1400" />
-    <option name="height" value="1055" />
+    <option name="x" value="737" />
+    <option name="y" value="1" />
+    <option name="width" value="1162" />
+    <option name="height" value="1036" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -302,8 +350,6 @@
     </navigator>
     <panes>
       <pane id="Scratches" />
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -350,6 +396,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -610,31 +658,35 @@
       <workItem from="1527174748911" duration="236000" />
       <workItem from="1527175077339" duration="58000" />
       <workItem from="1527176593050" duration="31000" />
+      <workItem from="1536828470251" duration="71000" />
+      <workItem from="1540287817741" duration="636000" />
+      <workItem from="1540288975478" duration="221000" />
+      <workItem from="1540289632369" duration="18000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="159644000" />
+    <option name="totallyTimeSpent" value="160590000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23730685" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26269317" sideWeight="0.21510416" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2593819" sideWeight="0.78489584" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32915717" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2593819" sideWeight="0.78489584" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32915717" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19978517" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21106337" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24973147" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39955848" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24973147" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39955848" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23730685" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -667,35 +719,6 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2718">
-          <caret line="169" column="29" lean-forward="false" selection-start-line="169" selection-start-column="29" selection-end-line="169" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4878">
-          <caret line="271" column="1" lean-forward="false" selection-start-line="271" selection-start-column="1" selection-end-line="271" selection-end-column="1" />
-          <folding>
-            <element signature="e#12344#12345#0" expanded="true" />
-            <element signature="e#12391#12392#0" expanded="true" />
-            <element signature="e#13251#13252#0" expanded="true" />
-            <element signature="e#13286#13287#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
@@ -989,13 +1012,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test2.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="25" column="10" lean-forward="false" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/../../PW2_0/code/KyUI.jar!/kyui/util/EditorString.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="276">
@@ -1016,14 +1032,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1044">
-          <caret line="74" column="17" lean-forward="false" selection-start-line="74" selection-start-column="17" selection-end-line="74" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/Analyzer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="990">
@@ -1034,6 +1042,44 @@
     </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Temp/PW2_08458035901176288456temp/PW2_0.class" />
     <entry file="file://$USER_HOME$/AppData/Local/Temp/PW2_08458035901176288456temp/PW2_0$67.class" />
+    <entry file="file://$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwHighlighter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="279">
+          <caret line="135" column="40" lean-forward="false" selection-start-line="135" selection-start-column="40" selection-end-line="135" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/test/Test2.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="38" lean-forward="false" selection-start-line="0" selection-start-column="38" selection-end-line="0" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../PwElements/src/WavCut.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/DelimiterParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2772">
+          <caret line="157" column="16" lean-forward="false" selection-start-line="157" selection-start-column="16" selection-end-line="157" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="26" lean-forward="false" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/ConsoleEdit.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1296">
@@ -1042,17 +1088,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../PwMacro/src/pw2/macro/PwHighlighter.java">
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="279">
-          <caret line="135" column="40" lean-forward="false" selection-start-line="135" selection-start-column="40" selection-end-line="135" selection-end-column="40" />
+        <state relative-caret-position="784">
+          <caret line="436" column="38" lean-forward="false" selection-start-line="436" selection-start-column="38" selection-end-line="436" selection-end-column="38" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandScript.java">
+    <entry file="file://$PROJECT_DIR$/src/com/karnos/commandscript/CommandEdit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2907">
-          <caret line="436" column="38" lean-forward="true" selection-start-line="436" selection-start-column="38" selection-end-line="436" selection-end-column="38" />
+        <state relative-caret-position="370">
+          <caret line="222" column="22" lean-forward="false" selection-start-line="222" selection-start-column="22" selection-end-line="222" selection-end-column="22" />
           <folding />
         </state>
       </provider>

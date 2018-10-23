@@ -328,7 +328,16 @@ void led_setup() {
         String path=joinPath(path_global, path_macro)+"/"+commandName+".pwm";
         final MacroTab macro=new MacroTab(path, led_console);
         final PrintStream stream=macro.newPrintStream();
+        if (!new File(path).exists()) {
+          path=joinPath(getDataPath(), "macro")+"/"+commandName+"/"+commandName+".pwm";
+        }
         if (new File(path).exists()) {
+          if (!new File(macro.getClassPath()).isDirectory()) {
+            File[] list=new File(joinPath(getDataPath(), "macro")+"/"+commandName+"/bin").listFiles();
+            for (File file : list) {
+              copyFile(file.getAbsolutePath(), joinPath(macro.getClassPath(),getFileName(file.getName())));
+            }
+          }
           final ConsoleInputStream input=macro.newInputStream();
           if (new File(joinPath(macro.getClassPath(), commandName+".class")).isFile()) {
             new Thread(new Runnable() {
@@ -395,7 +404,10 @@ void saveLed(final LedScript led) {
         } else if (ext.equals("mid")) {
           LedToMidi(filename, led);//TEST
         } else {
-          writeFile(filename, led.toString());
+          String str=led.toString();
+          if (!str.isEmpty()) {
+            writeFile(filename, str);
+          }
         }
       }
     }
@@ -479,8 +491,10 @@ void addLedFileTab(String filename) {
   //
   LedTab tab=addLedTab(filename);
   tab.led.script.insert(0, 0, readLed(filename));
+  tab.led.script.editor.recordHistory();
   tab.led.script.tab=tab;
   tab.led.script.setChanged(false, false);
+  tab.led.script.editor.recordHistory();
 }
 void addLedFileTab(LedScript script) {
   addLedFileTab(script.file.getAbsolutePath());

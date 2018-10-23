@@ -1,4 +1,6 @@
 package pw2.midimap;
+import processing.core.PApplet;
+
 import javax.sound.midi.MidiMessage;
 import java.util.HashMap;
 public class MidiInputCommand {
@@ -7,16 +9,16 @@ public class MidiInputCommand {
   int[] params;
   InputBehavior command;
   public MidiInputCommand(String command_) {
-    String[] tokens = command_.split(":");
+    String[] tokens = PApplet.split(command_,":");
     if (tokens.length == 0) throw new RuntimeException("[MidiMap] command is not correct!!");
     name = tokens[0];
     params = new int[tokens.length - 1];
     for (int a = 0; a < params.length; a++) {
       if (isInt(tokens[a + 1])) params[a] = Integer.parseInt(tokens[a + 1]);
     }
-    command = Device.inputMap.get(command_);
+    command = Device.inputMap.get(name);
     if (command == null) {
-      throw new RuntimeException("command not exists!");
+      throw new RuntimeException("command not exists! "+name);
     }
   }
   public void execute(MidiMessage msg, long timeStamp, Device device) {

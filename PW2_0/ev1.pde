@@ -315,18 +315,32 @@ void setup_ev1() {//setup small listeners
   );
   ((Button)KyUI.get("led_printq")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
+      int pframe=currentLedEditor.displayFrame+1;
+      int pframeTotal=currentLedEditor.DelayPoint.size();
       action_print.accept(userMacro1.replace("\\r", "\r").replace("\\t", "\t").replace("\\n", "\n").replace("\\\\", "\\"));
       currentLedEditor.editor.onTextChangeListener.onEvent(currentLedEditor.editor);
       currentLedEditor.editor.invalidate();
+      if (currentLedEditor.DelayPoint.size()>pframeTotal&&pframe==pframeTotal) {
+        currentLedEditor.setDisplayFrame(currentLedEditor.DelayPoint.size()-1);
+        currentLedEditor.setTimeByFrame();
+        currentLedEditor.updateFs(currentLedEditor.displayTime);//led.script.displayTime
+      }
       return false;
     }
   }
   );
   ((Button)KyUI.get("led_printe")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
+      int pframe=currentLedEditor.displayFrame+1;
+      int pframeTotal=currentLedEditor.DelayPoint.size();
       action_print.accept(userMacro2);
       currentLedEditor.editor.onTextChangeListener.onEvent(currentLedEditor.editor);
       currentLedEditor.editor.invalidate();
+      if (currentLedEditor.DelayPoint.size()>pframeTotal&&pframe==pframeTotal) {
+        currentLedEditor.setDisplayFrame(currentLedEditor.DelayPoint.size()-1);
+        currentLedEditor.setTimeByFrame();
+        currentLedEditor.updateFs(currentLedEditor.displayTime);//led.script.displayTime
+      }
       return false;
     }
   }

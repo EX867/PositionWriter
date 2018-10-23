@@ -187,6 +187,7 @@ class LedFindReplace {
   }
   private void findAll(String text) {
     findData.clear();
+    findIndex=min(findData.size()-1, findIndex);
     if (patternFind==null) {
       return;
     }
@@ -367,6 +368,9 @@ static class FindReplacePattern {
             ret.append('\f');
           } else if (in.charAt(a)=='b') {
             ret.append('\b');
+          } else if (in.charAt(a)=='['||in.charAt(a)==']') {
+            ret.append('\\');
+            ret.append(in.charAt(a));
           } else if (in.charAt(a)=='\\') {
             ret.append('\\');
           } else {

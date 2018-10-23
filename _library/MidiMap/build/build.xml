@@ -26,7 +26,7 @@
 	<target name="build_jar" depends="compile" description="Build the JAR">
 
 		<!-- With included source files -->
-		<jar destfile="../build/MidiMap.jar" filesetmanifest="mergewithoutmain">
+		<jar destfile="../build/MidiMap.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.karnos.midimap.MidiCommand"/>
 				<attribute name="Implementation-Version" value="${version}-${DSTAMP}"/>

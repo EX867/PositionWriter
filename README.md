@@ -1,12 +1,9 @@
-﻿# PositionWriter - Unipack led editor
+﻿# [PositionWriter](https://github.com/EX867/PositionWriter) - Unipack led editor
 ![PositionWriter](https://github.com/EX867/PositionWriter/blob/master/_image/icon2_0.png)
 
 유니팩 led 편집기 입니다.<br>
-
-[recursive link](https://github.com/EX867/PositionWriter)
-
-한국사람들을 위한 다운로드 링크!!
-[<h1>다운로드 하기</h1>](https://github.com/EX867/PositionWriter/releases)
+<h2>`Development stopped. I moved to another project.`</h2>
+<h2>`개발 중단. 유패 업뎃되고나서 돌아올게요`</h2>
 
 ---------
 ## Made with processing
@@ -15,27 +12,11 @@
 
 > *Yes!! Yes!!*
 
-<h1>Warning!!! this is not working now! I am matching processing codes into new class structure!</h1>
-
 ---------
 ## Installations (설치)
 ### Over Windows 7
 * install [Java8](https://java.com/ko/download/)
 * just execute setup.exe and set install folder, and run.
-
-### How to install Java8 in Windows XP (윈도우 xp인데 어떻게하나요?)
-* [read these](https://www.google.co.kr/search?q=how+to+install+java8+in+windows+xp&oq=how+to+install+java8+in+windows+xp)
-* [영포자를 위한 한글 링크](https://okky.kr/article/252401)
-
----------
-## How to use (이프로그램 어떻게 쓰나요?)
-[PW1.4](https://github.com/EX867/PositionWriter/wiki/How-to-use-(v1))<br>
-[PW2.0](https://github.com/EX867/PositionWriter/wiki/How-to-use-v2-(english))<br>
-[PW2.0 (한글)](https://github.com/EX867/PositionWriter/wiki/How-to-use-(v2)-korean)
-
---------
-## You find a bug but you are not github user! (버그가 있는 것 같아요!)
-report that bug and what you did to <u>karnosex867@gmail.com</u>
 
 ---------
 ## Build
@@ -48,7 +29,7 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 * [Beads](http://beadsproject.net) : you can install this inside processing.
 
 #### pwrelease.bat
-* before using this, you must change path information. read **release/readme.md**
+* changing path information needed. read **release/readme.md**
 * [NSIS](http://nsis.sourceforge.net/Main_Page) - C:\Program Files (x86)\NSIS : used to build setup.
 * [Resource Hacker](http://www.angusj.com/resourcehacker/) - C:\Program Files (x86)\Resource Hacker : used to change icon.
 

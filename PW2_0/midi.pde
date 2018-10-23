@@ -18,7 +18,9 @@ void midiOffAll(Device device) {
 }
 void midiOffAll() {//only for lp...
   for (Device device : Device.devices) {
-    midiOffAll(device);
+    if(device.name.contains("pad")){
+      midiOffAll(device);
+    }
   }
 }
 public class PadPressCommand implements InputBehavior {

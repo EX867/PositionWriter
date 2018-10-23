@@ -59,6 +59,7 @@ void displayUpdatedScreen() {
 }
 void registerFileType() {//associates .led and .pwm
   //#platform_specific
+    if(true)return;
   if (DEVELOPER_BUILD) {
     return;
   }

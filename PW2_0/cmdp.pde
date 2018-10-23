@@ -174,6 +174,7 @@ public class LedScript extends CommandScript {
         frameSliderRange.endLine=editor.script.lines();
       }
       editor.invalidate();
+      editor.getSlider().invalidate();
     }
   }
   void updateSlider() {
@@ -208,6 +209,12 @@ public class LedScript extends CommandScript {
         loopEndRange.endLine=editor.script.lines();
       }
     }
+  }
+  void updateFs(long time) {
+    fs.set(time);
+    fs.invalidate();
+    fsTime.text=time+"/"+fs.maxI;
+    fsTime.invalidate();
   }
   void displayControl() {
     if (currentLedEditor==this) {

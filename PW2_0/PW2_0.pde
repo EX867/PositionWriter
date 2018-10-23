@@ -1,22 +1,22 @@
 import pw2.element.*;
 import java.util.TreeMap;
-//PositionWriter 2.0.pde
+//PositionWriter 2.0.pde. current, reduced mode(no wavcut,no macro) - fix //#reduced
 //===ADD list===//
-//shortcuts=ksclear,delay value edit,macros ,moveToCursorLed ,ctrl select*
-//default reduced mode (no wavcur,macro)
+//shortcuts=ksclear,delay value edit,macros ,moveToCursorLed ,ctrl select*\
 //add ziploader
 //note on highlight
 //add custom velocity selector
 //script updater and file downloader(and midi preset) frame*
 //add rnd view
 //colors drag and drop in settings
-//macro real time error checking
+//set resizable
 //
 //===ADD list - not now===//
 //
-// : add html+vel color autoinput mode
-// : remove #platform_specific
-// : KeySoundPlayer and midi->autoPlay
+//macro real time error checking
+//add html+vel color autoinput mode
+//remove #platform_specific
+//KeySoundPlayer and midi->autoPlay
 //skinedit optimization
 //
 //===FIX list - you should not do that!!===//
@@ -138,7 +138,7 @@ void main_draw() {
   autoSave();
 }
 void main_setup() {
-  surface.setResizable(true);
+  //surface.setResizable(true);
   //debug switches
   //Analyzer.debug=true;
   KyUI.log=false;
@@ -205,6 +205,8 @@ void main_setup() {
   ((TabLayout)KyUI.get("wv_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("wv_frame"));
   ((TabLayout)KyUI.get("m_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("m_frame"));
   ((TabLayout)KyUI.get("wv_list")).selectTab(1);
+  ((TabLayout)KyUI.get("main_tabs")).removeTab(4);//#reduced
+  ((TabLayout)KyUI.get("main_tabs")).removeTab(3);//#reduced
   KyUI.get("wv_text").setEnabled(true);
   KyUI.get("led_consolelayout").setEnabled(false);
   KyUI.get("led_findlr").setEnabled(false);
@@ -234,14 +236,25 @@ void main_setup() {
   if (platform==WINDOWS) {
     KyUI.addResizeListener(new ResizeListener() {
       public void onEvent(final int w, final int h) {
-        if (!((frame.getExtendedState() & java.awt.Frame.ICONIFIED) == java.awt.Frame.ICONIFIED||(frame.getExtendedState() & java.awt.Frame.NORMAL) == java.awt.Frame.NORMAL)) {
-          frame.setExtendedState((frame.getExtendedState() & java.awt.Frame.NORMAL));
-          surface.setSize((int)(mainFrame.pos.right-mainFrame.pos.left), (int)(mainFrame.pos.bottom-mainFrame.pos.top));
-          return;
+        //if (!((frame.getExtendedState() & java.awt.Frame.ICONIFIED) == java.awt.Frame.ICONIFIED||(frame.getExtendedState() & java.awt.Frame.NORMAL) == java.awt.Frame.NORMAL)) {
+        //  frame.setExtendedState((frame.getExtendedState() & java.awt.Frame.NORMAL));
+        //  KyUI.taskManager.addTask(new Task() {
+        //    public void execute(Object o) {
+        //      surface.setSize((int)(mainFrame.pos.right-mainFrame.pos.left), (int)(mainFrame.pos.bottom-mainFrame.pos.top));
+        //    }
+        //  }
+        //  , null);
+        //  return;
+        //}
+        KyUI.taskManager.addTask(new Task() {
+          public void execute(Object o) {
+            //surface.setSize(neww, newh);
+            KyUI.scaleGlobal=Math.min((float)h/initialHeight, (float)w/initialWidth);
+            background(255);
+            mainFrame.invalidate();
+          }
         }
-        KyUI.scaleGlobal=(float)h/initialHeight;
-        mainFrame.invalidate();//??????!?!?!??
-        surface.setSize((int)(h*initialWidth/initialHeight), h);
+        , null);
       }
     }
     );

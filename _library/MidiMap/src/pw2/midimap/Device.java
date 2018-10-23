@@ -27,9 +27,9 @@ public class Device implements Receiver {
     if (applet == null) {
       applet = applet_;
       //initialize defaults
-      Device.addInput("defaultPress", (MidiMessage msg, long timeStamp, Device device, int... params) -> {
+      Device.addInput("NOTE_ON", (MidiMessage msg, long timeStamp, Device device, int... params) -> {
         if (params.length == 1) {
-          System.out.println("input note : " + params[0]);
+          //System.out.println("input note : " + params[0]);
         }
       });
     }
@@ -64,6 +64,8 @@ public class Device implements Receiver {
             System.out.println(" - deviceMap not exists");
             continue;
           }
+        }else{
+          System.out.print(" - (custom devicemap connected)");
         }
         //
         Device d = null;
@@ -156,21 +158,30 @@ public class Device implements Receiver {
       XML deviceXml = applet.loadXML(path);
       XML indexXml = deviceXml.getChild("index_" + sameDeviceIndex);
       if (indexXml == null) {
-        indexXml = indexXml.getChild("index_0");
+        indexXml = deviceXml.getChild("index_0");
       }
       if (indexXml == null) return;
       //
       XML[] states = indexXml.getChildren("state");
       for (XML xml : states) {
         String stateValue = xml.getString("value");
+        if(stateValue==null){
+          throw new RuntimeException("[MidiMap] state value not found.");
+        }
         XML[] commands = xml.getChildren("output");
         for (XML command : commands) {
           String code = command.getString("code");
+          if(code==null){
+            System.out.println("[MidiMap] code not found");
+            continue;//ignore.
+          }
           int code_ = 0;
           if (code.equals("NOTE_ON")) {//now, there is only note_on for output (because for now, there is only lauchpad to output.
             code_ = ShortMessage.NOTE_ON;
           } else if (code.equals("CONTROL_CHANGE")) {//now, there is only note_on for output (because for now, there is only lauchpad to output.
             code_ = ShortMessage.CONTROL_CHANGE;
+          } else if (code.equals("NOTE_OFF")) {
+            code_ = ShortMessage.NOTE_OFF;
           } else {
             continue;//ignore
           }//I will add sysex message later.
@@ -186,6 +197,14 @@ public class Device implements Receiver {
         }
       }
     }
+  }
+  public static Device getDeviceByName(String name){
+    for(Device d : devices){
+      if(d.name.equals(name)){
+        return d;
+      }
+    }
+    return null;
   }
   public static void setState(String state_) {//change state, also activate midimap.
     for (Device device : devices) {

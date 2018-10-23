@@ -25,15 +25,16 @@ public class WaveformDraw {
     pos = pos_;
     int end = (int)(pos.right - pos.left);
     float hh = (pos.bottom - pos.top) / 2;
-    int offsetToSamples = Math.round((float)ac.msToSamples(posToTime(pos.right - pos.left)));
+    int offsetToSamples = (int)Math.round(ac.msToSamples(posToTime(pos.right - pos.left)));
     float[] data = new float[sample.getNumChannels()];
-    int pframe = Math.round((float)ac.msToSamples(posToTime(0)));
+    int pframe = (int)Math.round(Math.floor(ac.msToSamples(posToTime(0))));
+    int interval = (int)Math.max(1, Math.round(ac.msToSamples(posToTime(1) - posToTime(0))) / 256);//optimization purpose 200 is fine...
     for (int a = 0; a < end; a++) {
-      int frame = Math.round((float)ac.msToSamples(posToTime(a)));
-      int interval = Math.max(1, interval = (frame - pframe) / 100);//optimization purpose 200 is fine...
+      int frame = (int)Math.round(Math.floor(ac.msToSamples(posToTime(a))));
       float max = 0;
       float min = 0;
-      frame = frame - frame % interval;
+      frame = (frame / interval) * interval;
+      //frame = frame - frame % interval;
       for (int b = pframe - pframe % interval; b <= frame; b += interval) {
         sample.getFrame(b, data);
         if (data[channel] > 0) {

@@ -29,7 +29,7 @@ class KsSession {//
   int loopStart=0;
   int loopEnd=0;
   //
-  AudioContext ksac=new AudioContext();
+  AudioContext ksac;
   MultiSamplePlayer player;
   ArrayList<KsButton[][]> KS;
   ArrayList<String[][]> countText;
@@ -40,6 +40,7 @@ class KsSession {//
   KsSession(String name_) {
     name=getFileName(name_);
     file=new File(name_);
+    this.ksac=new AudioContext();
     Thread thread=new Thread(light=new LightThread());
     light.thread=thread;
     player = new MultiSamplePlayer(ksac, 10);
@@ -204,13 +205,13 @@ class KsButton {
       }
     }
     );
-    ins.setDoubleClickListener(new EventListener() {
-      public void onEvent(Element e) {
-        addWavFileTab(sample.sample.getFileName());
-        ((TabLayout)KyUI.get("main_tabs")).selectTab(WAV_EDITOR);
-      }
-    }
-    );
+    //ins.setDoubleClickListener(new EventListener() {//#reduced
+    //  public void onEvent(Element e) {
+    //    addWavFileTab(sample.sample.getFileName());
+    //    ((TabLayout)KyUI.get("main_tabs")).selectTab(WAV_EDITOR);
+    //  }
+    //}
+    //);
     ins.set(loop);
     ins.text=getFileName(path);
     if (this==currentKs.getSelected()) {

@@ -125,6 +125,9 @@ public class AutoFaderW extends UGenW {//break the rule!!! I miss designed preCo
     while (!times.isEmpty()) {
       int time = times.pollFirst();
       int length = time - start;
+      if(length<=0){//remove duplication
+        continue;
+      }
       if (postfade) {
         length += getPostCount();
       }
