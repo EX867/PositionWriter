@@ -1,6 +1,7 @@
 function setup() {
   createCanvas(windowWidth, windowHeight);
   textAlign(LEFT, CENTER);
+  textsize(0);
   display();
 }
 
@@ -18,8 +19,7 @@ function display() {
   fill(255, 150);
   rect(0, 0, windowWidth, windowHeight / 12);
   fill(0);
-  textsize(0);
-  text("PositionWriter site - under cunstruction", windowHeight / 24,
+  text("go to asdf, links, versioninfo", windowHeight / 24,
     widowHeight / 24);
 
 }
