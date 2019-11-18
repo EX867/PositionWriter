@@ -1,7 +1,7 @@
 function setup() {
   createCanvas(windowWidth, windowHeight);
   textAlign(LEFT, CENTER);
-  textsize(0);
+  textSize(0);
   display();
 }
 
@@ -20,6 +20,6 @@ function display() {
   rect(0, 0, windowWidth, windowHeight / 12);
   fill(0);
   text("go to asdf, links, versioninfo", windowHeight / 24,
-    widowHeight / 24);
+    windowHeight / 24);
 
 }
