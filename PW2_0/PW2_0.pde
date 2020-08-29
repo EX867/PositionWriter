@@ -1,4 +1,5 @@
 import pw2.element.*;
+//multiple device support
 import java.util.TreeMap;
 //PositionWriter 2.0.pde. current, reduced mode(no wavcut,no macro) - fix //#reduced
 //===ADD list===//
@@ -10,6 +11,7 @@ import java.util.TreeMap;
 //add rnd view
 //colors drag and drop in settings
 //set resizable
+// ** midi frame remove duplication optimization **
 //
 //===ADD list - not now===//
 //
@@ -87,6 +89,8 @@ void exit() {
 }
 void handleKeyEvent(KeyEvent e) {
   super.handleKeyEvent(e);
+  //print(e.getKey()+" "+e.getKeyCode());
+  if(e.getKey()>500&&e.getKeyCode()==0)return;//hangeul input block
   KyUI.handleEvent(e);
   if (e.getAction()==MouseEvent.PRESS) {
     //println((int)key+" "+keyCode);
@@ -205,8 +209,8 @@ void main_setup() {
   ((TabLayout)KyUI.get("wv_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("wv_frame"));
   ((TabLayout)KyUI.get("m_filetabs")).attachExternalFrame((FrameLayout)KyUI.get("m_frame"));
   ((TabLayout)KyUI.get("wv_list")).selectTab(1);
-  ((TabLayout)KyUI.get("main_tabs")).removeTab(4);//#reduced
-  ((TabLayout)KyUI.get("main_tabs")).removeTab(3);//#reduced
+  //((TabLayout)KyUI.get("main_tabs")).removeTab(4);//#reduced
+  //((TabLayout)KyUI.get("main_tabs")).removeTab(3);//#reduced
   KyUI.get("wv_text").setEnabled(true);
   KyUI.get("led_consolelayout").setEnabled(false);
   KyUI.get("led_findlr").setEnabled(false);
@@ -289,7 +293,6 @@ void main_setup() {
   macro_setup();
   findReplace_setup();
   midi_setup();
-  Device.setState("8x8");//#TEST
   au_setup();
   loadPaths();
   ((Button)KyUI.get("set_globalpath")).text=path_global;
@@ -336,7 +339,7 @@ void main_setup() {
     }
   }
   );
-  if (!DEVELOPER_BUILD&&new File(joinPath(dataPath, "Initial")).isFile()) {//detect first time use.
+    if (!DEVELOPER_BUILD&&new File(joinPath(dataPath, "Initial")).isFile()) {//detect first time use.
     println("initial open");
     KyUI.addLayer(frame_tips);
     registerFileType();

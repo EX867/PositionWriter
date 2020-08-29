@@ -462,9 +462,9 @@ public static class PwMacroApi extends PwMacro {
   public String param;
   //private vars are not part of api.
   public class Led {
-    LedScript led;
-    public Led(LedScript led_) {
-      led=led_;
+    public LedScript _script;
+    public Led(LedScript _script_) {
+      _script=_script_;
     }
   }
   //you can do no constructor

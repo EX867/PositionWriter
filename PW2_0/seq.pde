@@ -341,15 +341,15 @@ class LightThread implements Runnable {
     if (velDisplay==null) {
       return;
     }
-    println("send data to "+device.name);
+    println("send frame data to "+device.name);
     for (int b=0; b<velDisplay[0].length; b++) {//assert display.length>0 //it is okay to send all?
       for (int a=0; a<velDisplay.length; a++) {
         //println(a+" "+b+" : "+velDisplay[a][b]);
 
         device.output("led", velDisplay[a][b], a, b);//linkDevice...
-        if (velDisplay[a][b]==NONE) {
-          device.output("off", velDisplay[a][b], a, b);//linkDevice...
-        }
+        //if (velDisplay[a][b]==NONE) {
+        //  device.output("off", velDisplay[a][b], a, b);//linkDevice...
+        //}
       }
     }
   }

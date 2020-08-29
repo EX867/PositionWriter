@@ -442,6 +442,7 @@ void setup_ev2() {
   );
   KyUI.addDragAndDrop(KyUI.get("wv_layout"), new FileDropEventListener() {
     public void onEvent(DropEvent de) {
+      if(true)return;//TEST
       String filename=de.file().getAbsolutePath().replace("\\", "/");
       if (filename.endsWith(".cue")) {
         if (currentWav!=null&&currentWav.editor.automation!=null&&currentWav.editor.automation.getName().equals("cuePoint")) {

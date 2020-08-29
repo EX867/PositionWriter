@@ -13,7 +13,7 @@ public class OutputBehavior {
     }
     ShortMessage message_ = (ShortMessage)message;
     try {
-      System.out.println("send "+message_.getData1()+" "+message_.getData2());//debug
+      //System.out.println("[MidiMap] debug send "+message_.getData1()+" "+message_.getData2()+" to "+device.name);//debug
       message_.setMessage(message_.getCommand(), message_.getChannel(), message_.getData1(), velocity);
       device.outputReceiver.send(message_, timeStamp);
     } catch (InvalidMidiDataException e) {

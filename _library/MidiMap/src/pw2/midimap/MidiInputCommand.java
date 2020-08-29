@@ -18,7 +18,7 @@ public class MidiInputCommand {
     }
     command = Device.inputMap.get(name);
     if (command == null) {
-      throw new RuntimeException("command not exists! "+name);
+      throw new RuntimeException("[MidiMap] command not exists! "+name);
     }
   }
   public void execute(MidiMessage msg, long timeStamp, Device device) {

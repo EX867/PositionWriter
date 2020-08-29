@@ -4,16 +4,21 @@ import kyui.util.EditorString;
 import java.util.ArrayList;
 import java.util.List;
 public class CommandScript extends EditorString {
+
   class LineChange extends Difference<Value> {
+
     //before and after can't be both null.
     int line;
+
     public LineChange(Value before, Value after) {
       super(before, after);
     }
+
     public LineChange(int line_, String before_, int beforeLine, int beforePoint, String after_, int afterLine, int afterPoint) {
       super(new Value(before_, beforeLine, beforePoint), new Value(after_, afterLine, afterPoint));
       line=line_;
     }
+
     @Override
     public void undo() {
       if (before.text == null) {//found index
@@ -25,6 +30,7 @@ public class CommandScript extends EditorString {
       }
       setCursor(before.cursorLine, before.cursorPoint);
     }
+
     @Override
     public void redo() {
       if (before.text == null) {
@@ -38,9 +44,11 @@ public class CommandScript extends EditorString {
     }
   }
   static class Value {
+
     String text;
     int cursorLine;
     int cursorPoint;
+
     public Value(String text_, int line_, int point_) {
       text=text_;
       cursorLine=line_;
@@ -51,20 +59,23 @@ public class CommandScript extends EditorString {
   public EditRecorder recorder;
   public Analyzer analyzer;
   public String name;
+
   public CommandScript(String name_) {
     super();
     name=name_;
     recorder=new EditRecorder();
     setAnalyzer(null);
-    addLine(0, "");
+    addLineWithoutRecord(0, "");
   }
+
   public CommandScript(String name_, Analyzer analyzer_) {
     super();
     name=name_;
     recorder=new EditRecorder();
     setAnalyzer(analyzer_);
-    addLine(0, "");
+    addLineWithoutRecord(0, "");
   }
+
   //
   //==Analyzer==//
   public CommandScript setAnalyzer(Analyzer analyzer_) {
@@ -81,46 +92,59 @@ public class CommandScript extends EditorString {
     analyzer.location=name;
     return this;
   }
+
   public ArrayList<Command> getCommands() {
     return analyzer.lines;
   }
+
   public Multiset<LineError> getErrors() {
     return analyzer.errors;
   }
+
   public int getTotal() {
     return analyzer.total;
   }
+
   public int getProgress() {
     return analyzer.progress;
   }
+
   public void readAll() {
     analyzer.readAll(getRaw());
   }
+
   public Analyzer getAnalyzer() {
     return analyzer;
   }
+
   public String toCommandString() {
     return analyzer.toString();
   }
+
   //
   //==Errors==//
   public void addError(LineError error) {
     analyzer.addError(error);
   }
+
   public void removeErrors(int line_) {
     analyzer.removeErrors(line_);
   }
+
   public LineError getFirstError(int line_) {
     return analyzer.getFirstError(line_);
   }
+
   //
   //==Recording==//
   public void undo() {
     recorder.undo();
   }
+
   public void redo() {
     recorder.redo();
   }
+
   //
   //==EditorString==//
   @Override
@@ -139,12 +163,14 @@ public class CommandScript extends EditorString {
       recorder.recordLog();
     }
   }
+
   //
   //===Edit===//
   @Override
   public void addLine(String text) {
     addLine(lines(), text);
   }
+
   @Override
   public void addLine(int line_, String text) {
     addLine_(line_, text);
@@ -152,12 +178,14 @@ public class CommandScript extends EditorString {
       analyzer.read();
     }
   }
+
   public void addLine_(int line_, String text) {
     addLineWithoutAnalyze(line_, text);
     if (analyzer != null) {
       analyzer.add(line_, null, text);
     }
   }
+
   void addLineWithoutRecord(int line_, String text) {
     if (text == null) return;
     l.add(line_, text);
@@ -166,6 +194,7 @@ public class CommandScript extends EditorString {
       analyzer.read();
     }
   }
+
   void addLineWithoutAnalyze(int line_, String text) {
     if (text == null) return;
     l.add(line_, text);
@@ -175,6 +204,7 @@ public class CommandScript extends EditorString {
     }
     recorder.add(new LineChange(line_, null, line, point, text, afterLine, point));
   }
+
   @Override
   public void deleteLine(int line_) {
     deleteLine_(line_);
@@ -182,12 +212,14 @@ public class CommandScript extends EditorString {
       analyzer.read();
     }
   }
+
   public void deleteLine_(int line_) {
     if (analyzer != null) {
       analyzer.add(line_, l.get(line_), null);
     }
     deleteLineWithoutAnalyze(line_);
   }
+
   void deleteLineWithoutRecord(int line_) {
     if (analyzer != null) {
       analyzer.add(line_, l.get(line_), null);
@@ -197,17 +229,18 @@ public class CommandScript extends EditorString {
       analyzer.read();
     }
   }
+
   void deleteLineWithoutAnalyze(int line_) {
-    int afterLine=line_ - 1;
+    int afterLine=0;
     int afterPoint=0;
-    if (line_ == 0) {
-      afterLine=0;
-    } else {
-      afterPoint=l.get(afterLine).length() - 1;
+    if (line_ != 0) {
+      afterLine=line_ - 1;
+      afterPoint=Math.min(0, l.get(afterLine).length() - 1);
     }
     recorder.add(new LineChange(line_, l.get(line_), line, point, null, afterLine, afterPoint));
     l.remove(line_);
   }
+
   @Override
   public void setLine(int line_, String text) {
     setLine_(line_, text);
@@ -215,6 +248,7 @@ public class CommandScript extends EditorString {
       analyzer.read();
     }
   }
+
   public void setLine_(int line_, String text) {
     String before=l.get(line_);
     setLineWithoutAnalyze(line_, text);
@@ -222,6 +256,7 @@ public class CommandScript extends EditorString {
       analyzer.add(line_, before, text);
     }
   }
+
   void setLineWithoutRecord(int line_, String text) {
     if (text == null) return;
     String before=l.get(line_);
@@ -231,17 +266,20 @@ public class CommandScript extends EditorString {
       analyzer.read();
     }
   }
+
   void setLineWithoutAnalyze(int line_, String text) {
     if (text == null) return;
     int afterPoint=Math.min(point, l.get(line_).length());
     recorder.add(new LineChange(line_, l.get(line_), line, point, text, line, afterPoint));
     l.set(line_, text);
   }
+
   //===Edit complicated===// - override needed in commandScript.
   @Override
   public void insert(String text) {
     insert(line, point, text);
   }
+
   @Override
   public void insert(int line_, int point_, String text) {
     if (text.isEmpty()) return;
@@ -278,6 +316,7 @@ public class CommandScript extends EditorString {
       }
     }
   }
+
   @Override
   public void delete(int startLine, int startPoint, int endLine, int endPoint) {
     if ((startLine < endLine || (startLine == endLine && startPoint < endPoint)) == false) return;
@@ -316,6 +355,7 @@ public class CommandScript extends EditorString {
     }
     maxpoint=point;
   }
+
   @Override
   public String deleteBefore(boolean word) {
     String ret;
@@ -357,6 +397,7 @@ public class CommandScript extends EditorString {
     }
     return ret;
   }
+
   @Override
   public String deleteAfter(boolean word) {
     String ret;
@@ -394,6 +435,7 @@ public class CommandScript extends EditorString {
     }
     return ret;
   }
+
   //
   //===Cursor movements===// - script specific
   @Override
@@ -412,6 +454,7 @@ public class CommandScript extends EditorString {
       }
     }
   }
+
   @Override
   public void cursorDown(boolean word, boolean select) {
     if (word) {
@@ -428,22 +471,25 @@ public class CommandScript extends EditorString {
       }
     }
   }
+
   static public String[] split(String value, String delim) {//processing split
-    List<String> items = new ArrayList<>();
+    List<String> items=new ArrayList<>();
     int index;
-    int offset = 0;
-    while ((index = value.indexOf(delim, offset)) != -1) {
+    int offset=0;
+    while ((index=value.indexOf(delim, offset)) != -1) {
       items.add(value.substring(offset, index));
-      offset = index + delim.length();
+      offset=index + delim.length();
     }
     items.add(value.substring(offset));
-    String[] outgoing = new String[items.size()];
+    String[] outgoing=new String[items.size()];
     items.toArray(outgoing);
     return outgoing;
   }
-  @Override protected boolean isSpaceChar(char c) {
-    return c=='.'||c=='('||c==')'||c=='{'||c=='}'||c=='<'||c=='>'||c==','||c=='+'||c=='-'||c=='*'||c=='&'||c=='|'
-        ||c=='/'||c=='^'||c=='%'||c=='@'||c=='!'||c=='='||c=='\"'||c=='\''||c=='~'||c=='?'||c==':'||c==';'
-        ||super.isSpaceChar(c);
+
+  @Override
+  protected boolean isSpaceChar(char c) {
+    return c == '.' || c == '(' || c == ')' || c == '{' || c == '}' || c == '<' || c == '>' || c == ',' || c == '+' || c == '-' || c == '*' || c == '&' || c == '|'
+        || c == '/' || c == '^' || c == '%' || c == '@' || c == '!' || c == '=' || c == '\"' || c == '\'' || c == '~' || c == '?' || c == ':' || c == ';'
+        || super.isSpaceChar(c);
   }
 }

@@ -10,15 +10,15 @@ void midi_setup() {
   ((ImageButton)KyUI.get("set_midi")).getPressListener().onEvent(null, 0);
 }
 void midiOffAll(Device device) {
-  for (int a=0; a<8; a++) {
-    for (int b=0; b<8; b++) {
+  for (int a=0; a<10; a++) {
+    for (int b=0; b<10; b++) {
       device.output("led", 0, a, b);
     }
   }
 }
 void midiOffAll() {//only for lp...
   for (Device device : Device.devices) {
-    if(device.name.contains("pad")){
+    if (device.name.contains("pad")) {
       midiOffAll(device);
     }
   }
@@ -30,7 +30,9 @@ public class PadPressCommand implements InputBehavior {
       if (info.getData2()!=0) {
         if (params.length!=2)return;
         if (mainTabs_selected==LED_EDITOR) {//change these to devicelink!
-          if (0<=params[0]&&params[0]<currentLedEditor.info.buttonX&&0<=params[0]&&params[1]<currentLedEditor.info.buttonY) {
+            IntVector2 vec=new IntVector2(params[0], params[1]);
+          if (0<=vec.x&&vec.x<currentLedEditor.info.buttonX&&0<=vec.x&&vec.y<currentLedEditor.info.buttonY) {
+            println("midi on : ("+vec.x+", "+vec.y+")");
             action_autoInput.accept(new IntVector2(params[0], params[1]));
           }
         } else if (mainTabs_selected==KS_EDITOR) {

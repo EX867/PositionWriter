@@ -136,12 +136,16 @@ void setup_ev1() {//setup small listeners
   );
   ((ImageButton)KyUI.get("set_apply")).setPressListener(new MouseEventListener() {
     public boolean onEvent(MouseEvent e, int index) {
+      if (currentLed==null)return false;
       currentLedEditor.resize(((TextBox)KyUI.get("set_buttony")).valueI, ((TextBox)KyUI.get("set_buttonx")).valueI);
       setInfoLed(currentLedEditor.info);
       currentLedEditor.displayPad.size.set(info.buttonX, info.buttonY);
       currentLedEditor.displayPad.invalidate();
       ((TextBox)KyUI.get("set_buttony")).onTextChangeListener.onEvent(((TextBox)KyUI.get("set_buttony")));
       ((TextBox)KyUI.get("set_buttonx")).onTextChangeListener.onEvent(((TextBox)KyUI.get("set_buttonx")));
+      if (currentLed.light.device!=null) {
+        currentLed.light.device.setState(currentLedEditor.info.buttonY+"x"+currentLedEditor.info.buttonX);
+      }
       return false;
     }
   }
@@ -463,6 +467,7 @@ void setup_ev1() {//setup small listeners
         if (macroFindReplace.textChanged) {
           macroFindReplace.findAll(currentMacro.getText());
         }
+        currentMacro.editor.recordHistory();
         currentMacro.editor.recordHistory();
         currentMacro.editor.setText(macroFindReplace.replaceAll(currentMacro.getText()));
         currentMacro.editor.recordHistory();

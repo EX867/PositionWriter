@@ -57,14 +57,14 @@ void led_setup() {
       if (line<0) {
         line=0;
         point=0;
-        if (in.length()>0&&in.charAt(0)=='\n') {
-          in=in.substring(1, in.length())+"\n";
-        }
       } else {
         point=currentLedEditor.getLine(line).length();
       }
-      if (line==0&&point==0) {
+      if (line==0&&point==0&&in.charAt(0)=='\n') {
         in=in.substring(1, in.length());
+      }
+      if(line==0&&point==0&&currentLedEditor.getLine(line).length()>0){
+          in=in+"\n";
       }
       currentLedEditor.insert(line, point, in);
       currentLedEditor.editor.recordHistory();
@@ -203,6 +203,7 @@ void led_setup() {
       VelocityType=(VelocityButton)e;
     }
   };
+  VelocityType.right();
   ((VelocityButton)KyUI.get("led_mf")).colorSelectListener=VelocityType.colorSelectListener;
   ((ColorPickerFull)KyUI.get("led_cp")).colorSelectListener=new EventListener() {
     public void onEvent(Element e) {

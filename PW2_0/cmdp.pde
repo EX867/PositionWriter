@@ -53,7 +53,8 @@ public class LedScript extends CommandScript {
     setCmdSet(ledCommands);//???
     loopStartRange=editor.addMarkRange(0x3FFF0000);
     loopEndRange=editor.addMarkRange(0x3F0000FF);
-    frameSliderRange=editor.addMarkRange(0x3F000000);
+    //frameSliderRange=editor.addMarkRange(0x3F000000);
+    frameSliderRange=editor.addMarkRange(0x3F00D4FF);
   }
   void setCmdSet(LineCommandType cmdset_) {
     cmdset=cmdset_;
@@ -271,11 +272,13 @@ public class LedScript extends CommandScript {
       resize(info.buttonX, info.buttonY);
     }
     public void processCommand(Analyzer analyzer, int line, Command before, Command after) {
+      if(before!=null&&after!=null&&before.toString().trim().equals(after.toString().trim()))return;//optimize line breaks
       setChanged(true, false);
       //println("\""+before+"\" to \""+after+"\" line "+line);
       if (getProgress()%100==0) {//for window manager!!
         setTitleProcessing("reading...("+getProgress()+"/"+getTotal()+")");
       }
+      //println("processing "+before+" -> "+after+" "+(before==null?"":before.getClass())+" "+(after==null?"":after.getClass()));
       if (bypass)return;
       int frame=getFrame(line);
       if (after==null) {
@@ -482,6 +485,7 @@ public class LedScript extends CommandScript {
           }
         } else if (cmd instanceof DelayCommand) {
           frame++;
+          if(!(frame<=count))break;//remove error from resetting last frame of readFramesLed
           for (int a=0; a<info.buttonX; a++) {
             for (int b=0; b<info.buttonY; b++) {
               LED.get(frame)[a][b]=LED.get(frame-1)[a][b];

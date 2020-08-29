@@ -92,8 +92,12 @@ class LedTab {
   LightThread light;
   LedTab(LedScript script) {
     light=new LightThread();
-    light.device=Device.getDeviceByName("Springbeats vMIDI1");//TEST
-    println("[TEST] linked to "+light.device.name);
+    if (Device.getDeviceByName("Launchpad MK2")!=null) {
+      light.device=Device.getDeviceByName("Launchpad MK2");//TEST
+      light.device.setState(script.info.buttonY+"x"+script.info.buttonX);
+      println("[TEST] linked to "+light.device.name);
+    }
+    //light.device=Device.getDeviceByName("Springbeats vMIDI1");//TEST
     Thread thread=new Thread(light);
     light.thread=thread;
     led=light.addTrack(script);

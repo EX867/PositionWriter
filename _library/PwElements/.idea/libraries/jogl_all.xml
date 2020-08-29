@@ -1,12 +1,12 @@
 <component name="libraryTable">
   <library name="jogl-all">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.3.5/core/library/jogl-all.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.3.5/core/library/gluegen-rt.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.3.5/core/library/jogl-all-natives-windows-i586.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.3.5/core/library/jogl-all-natives-windows-amd64.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.3.5/core/library/gluegen-rt-natives-windows-i586.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.3.5/core/library/gluegen-rt-natives-windows-amd64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.5.2/core/library/jogl-all-natives-windows-amd64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.5.2/core/library/jogl-all-natives-windows-i586.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.5.2/core/library/jogl-all.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.5.2/core/library/gluegen-rt-natives-windows-i586.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.5.2/core/library/gluegen-rt-natives-windows-amd64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../[Programs]/processing-3.5.2/core/library/gluegen-rt.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

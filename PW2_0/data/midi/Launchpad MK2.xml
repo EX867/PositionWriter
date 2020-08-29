@@ -1,328 +1,326 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Data>
-  <index_0>
     <state value="default">
-      <input code="NOTE_ON" data="81">press:0:0</input>
-      <input code="NOTE_ON" data="82">press:1:0</input>
-      <input code="NOTE_ON" data="83">press:2:0</input>
-      <input code="NOTE_ON" data="84">press:3:0</input>
-      <input code="NOTE_ON" data="85">press:4:0</input>
-      <input code="NOTE_ON" data="86">press:5:0</input>
-      <input code="NOTE_ON" data="87">press:6:0</input>
-      <input code="NOTE_ON" data="88">press:7:0</input>
-      <input code="NOTE_ON" data="89">chain:0</input>
-      <!---->
-      <input code="NOTE_ON" data="71">press:0:1</input>
-      <input code="NOTE_ON" data="72">press:1:1</input>
-      <input code="NOTE_ON" data="73">press:2:1</input>
-      <input code="NOTE_ON" data="74">press:3:1</input>
-      <input code="NOTE_ON" data="75">press:4:1</input>
-      <input code="NOTE_ON" data="76">press:5:1</input>
-      <input code="NOTE_ON" data="77">press:6:1</input>
-      <input code="NOTE_ON" data="78">press:7:1</input>
-      <input code="NOTE_ON" data="79">chain:1</input>
-      <!---->
-      <input code="NOTE_ON" data="61">press:0:2</input>
-      <input code="NOTE_ON" data="62">press:1:2</input>
-      <input code="NOTE_ON" data="63">press:2:2</input>
-      <input code="NOTE_ON" data="64">press:3:2</input>
-      <input code="NOTE_ON" data="65">press:4:2</input>
-      <input code="NOTE_ON" data="66">press:5:2</input>
-      <input code="NOTE_ON" data="67">press:6:2</input>
-      <input code="NOTE_ON" data="68">press:7:2</input>
-      <input code="NOTE_ON" data="69">chain:2</input>
-      <!---->
-      <input code="NOTE_ON" data="51">press:0:3</input>
-      <input code="NOTE_ON" data="52">press:1:3</input>
-      <input code="NOTE_ON" data="53">press:2:3</input>
-      <input code="NOTE_ON" data="54">press:3:3</input>
-      <input code="NOTE_ON" data="55">press:4:3</input>
-      <input code="NOTE_ON" data="56">press:5:3</input>
-      <input code="NOTE_ON" data="57">press:6:3</input>
-      <input code="NOTE_ON" data="58">press:7:3</input>
-      <input code="NOTE_ON" data="59">chain:3</input>
-      <!---->
-      <input code="NOTE_ON" data="41">press:0:4</input>
-      <input code="NOTE_ON" data="42">press:1:4</input>
-      <input code="NOTE_ON" data="43">press:2:4</input>
-      <input code="NOTE_ON" data="44">press:3:4</input>
-      <input code="NOTE_ON" data="45">press:4:4</input>
-      <input code="NOTE_ON" data="46">press:5:4</input>
-      <input code="NOTE_ON" data="47">press:6:4</input>
-      <input code="NOTE_ON" data="48">press:7:4</input>
-      <input code="NOTE_ON" data="49">chain:4</input>
-      <!---->
-      <input code="NOTE_ON" data="31">press:0:5</input>
-      <input code="NOTE_ON" data="32">press:1:5</input>
-      <input code="NOTE_ON" data="33">press:2:5</input>
-      <input code="NOTE_ON" data="34">press:3:5</input>
-      <input code="NOTE_ON" data="35">press:4:5</input>
-      <input code="NOTE_ON" data="36">press:5:5</input>
-      <input code="NOTE_ON" data="37">press:6:5</input>
-      <input code="NOTE_ON" data="38">press:7:5</input>
-      <input code="NOTE_ON" data="39">chain:5</input>
-      <!---->
-      <input code="NOTE_ON" data="21">press:0:6</input>
-      <input code="NOTE_ON" data="22">press:1:6</input>
-      <input code="NOTE_ON" data="23">press:2:6</input>
-      <input code="NOTE_ON" data="24">press:3:6</input>
-      <input code="NOTE_ON" data="25">press:4:6</input>
-      <input code="NOTE_ON" data="26">press:5:6</input>
-      <input code="NOTE_ON" data="27">press:6:6</input>
-      <input code="NOTE_ON" data="28">press:7:6</input>
-      <input code="NOTE_ON" data="29">chain:6</input>
-      <!---->
-      <input code="NOTE_ON" data="11">press:0:7</input>
-      <input code="NOTE_ON" data="12">press:1:7</input>
-      <input code="NOTE_ON" data="13">press:2:7</input>
-      <input code="NOTE_ON" data="14">press:3:7</input>
-      <input code="NOTE_ON" data="15">press:4:7</input>
-      <input code="NOTE_ON" data="16">press:5:7</input>
-      <input code="NOTE_ON" data="17">press:6:7</input>
-      <input code="NOTE_ON" data="18">press:7:7</input>
-      <input code="NOTE_ON" data="19">chain:7</input>
-      <!--data2 varies.-->
-      <output code="NOTE_ON" channel="0" data="81">led:0:0</output>
-      <output code="NOTE_ON" channel="0" data="82">led:1:0</output>
-      <output code="NOTE_ON" channel="0" data="83">led:2:0</output>
-      <output code="NOTE_ON" channel="0" data="84">led:3:0</output>
-      <output code="NOTE_ON" channel="0" data="85">led:4:0</output>
-      <output code="NOTE_ON" channel="0" data="86">led:5:0</output>
-      <output code="NOTE_ON" channel="0" data="87">led:6:0</output>
-      <output code="NOTE_ON" channel="0" data="88">led:7:0</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="71">led:0:1</output>
-      <output code="NOTE_ON" channel="0" data="72">led:1:1</output>
-      <output code="NOTE_ON" channel="0" data="73">led:2:1</output>
-      <output code="NOTE_ON" channel="0" data="74">led:3:1</output>
-      <output code="NOTE_ON" channel="0" data="75">led:4:1</output>
-      <output code="NOTE_ON" channel="0" data="76">led:5:1</output>
-      <output code="NOTE_ON" channel="0" data="77">led:6:1</output>
-      <output code="NOTE_ON" channel="0" data="78">led:7:1</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="61">led:0:2</output>
-      <output code="NOTE_ON" channel="0" data="62">led:1:2</output>
-      <output code="NOTE_ON" channel="0" data="63">led:2:2</output>
-      <output code="NOTE_ON" channel="0" data="64">led:3:2</output>
-      <output code="NOTE_ON" channel="0" data="65">led:4:2</output>
-      <output code="NOTE_ON" channel="0" data="66">led:5:2</output>
-      <output code="NOTE_ON" channel="0" data="67">led:6:2</output>
-      <output code="NOTE_ON" channel="0" data="68">led:7:2</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="51">led:0:3</output>
-      <output code="NOTE_ON" channel="0" data="52">led:1:3</output>
-      <output code="NOTE_ON" channel="0" data="53">led:2:3</output>
-      <output code="NOTE_ON" channel="0" data="54">led:3:3</output>
-      <output code="NOTE_ON" channel="0" data="55">led:4:3</output>
-      <output code="NOTE_ON" channel="0" data="56">led:5:3</output>
-      <output code="NOTE_ON" channel="0" data="57">led:6:3</output>
-      <output code="NOTE_ON" channel="0" data="58">led:7:3</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="41">led:0:4</output>
-      <output code="NOTE_ON" channel="0" data="42">led:1:4</output>
-      <output code="NOTE_ON" channel="0" data="43">led:2:4</output>
-      <output code="NOTE_ON" channel="0" data="44">led:3:4</output>
-      <output code="NOTE_ON" channel="0" data="45">led:4:4</output>
-      <output code="NOTE_ON" channel="0" data="46">led:5:4</output>
-      <output code="NOTE_ON" channel="0" data="47">led:6:4</output>
-      <output code="NOTE_ON" channel="0" data="48">led:7:4</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="31">led:0:5</output>
-      <output code="NOTE_ON" channel="0" data="32">led:1:5</output>
-      <output code="NOTE_ON" channel="0" data="33">led:2:5</output>
-      <output code="NOTE_ON" channel="0" data="34">led:3:5</output>
-      <output code="NOTE_ON" channel="0" data="35">led:4:5</output>
-      <output code="NOTE_ON" channel="0" data="36">led:5:5</output>
-      <output code="NOTE_ON" channel="0" data="37">led:6:5</output>
-      <output code="NOTE_ON" channel="0" data="38">led:7:5</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="21">led:0:6</output>
-      <output code="NOTE_ON" channel="0" data="22">led:1:6</output>
-      <output code="NOTE_ON" channel="0" data="23">led:2:6</output>
-      <output code="NOTE_ON" channel="0" data="24">led:3:6</output>
-      <output code="NOTE_ON" channel="0" data="25">led:4:6</output>
-      <output code="NOTE_ON" channel="0" data="26">led:5:6</output>
-      <output code="NOTE_ON" channel="0" data="27">led:6:6</output>
-      <output code="NOTE_ON" channel="0" data="28">led:7:6</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="11">led:0:7</output>
-      <output code="NOTE_ON" channel="0" data="12">led:1:7</output>
-      <output code="NOTE_ON" channel="0" data="13">led:2:7</output>
-      <output code="NOTE_ON" channel="0" data="14">led:3:7</output>
-      <output code="NOTE_ON" channel="0" data="15">led:4:7</output>
-      <output code="NOTE_ON" channel="0" data="16">led:5:7</output>
-      <output code="NOTE_ON" channel="0" data="17">led:6:7</output>
-      <output code="NOTE_ON" channel="0" data="18">led:7:7</output>
+        <input code="NOTE_ON" data="81">press:0:0</input>
+        <input code="NOTE_ON" data="82">press:1:0</input>
+        <input code="NOTE_ON" data="83">press:2:0</input>
+        <input code="NOTE_ON" data="84">press:3:0</input>
+        <input code="NOTE_ON" data="85">press:4:0</input>
+        <input code="NOTE_ON" data="86">press:5:0</input>
+        <input code="NOTE_ON" data="87">press:6:0</input>
+        <input code="NOTE_ON" data="88">press:7:0</input>
+        <input code="NOTE_ON" data="89">chain:0</input>
+        <!---->
+        <input code="NOTE_ON" data="71">press:0:1</input>
+        <input code="NOTE_ON" data="72">press:1:1</input>
+        <input code="NOTE_ON" data="73">press:2:1</input>
+        <input code="NOTE_ON" data="74">press:3:1</input>
+        <input code="NOTE_ON" data="75">press:4:1</input>
+        <input code="NOTE_ON" data="76">press:5:1</input>
+        <input code="NOTE_ON" data="77">press:6:1</input>
+        <input code="NOTE_ON" data="78">press:7:1</input>
+        <input code="NOTE_ON" data="79">chain:1</input>
+        <!---->
+        <input code="NOTE_ON" data="61">press:0:2</input>
+        <input code="NOTE_ON" data="62">press:1:2</input>
+        <input code="NOTE_ON" data="63">press:2:2</input>
+        <input code="NOTE_ON" data="64">press:3:2</input>
+        <input code="NOTE_ON" data="65">press:4:2</input>
+        <input code="NOTE_ON" data="66">press:5:2</input>
+        <input code="NOTE_ON" data="67">press:6:2</input>
+        <input code="NOTE_ON" data="68">press:7:2</input>
+        <input code="NOTE_ON" data="69">chain:2</input>
+        <!---->
+        <input code="NOTE_ON" data="51">press:0:3</input>
+        <input code="NOTE_ON" data="52">press:1:3</input>
+        <input code="NOTE_ON" data="53">press:2:3</input>
+        <input code="NOTE_ON" data="54">press:3:3</input>
+        <input code="NOTE_ON" data="55">press:4:3</input>
+        <input code="NOTE_ON" data="56">press:5:3</input>
+        <input code="NOTE_ON" data="57">press:6:3</input>
+        <input code="NOTE_ON" data="58">press:7:3</input>
+        <input code="NOTE_ON" data="59">chain:3</input>
+        <!---->
+        <input code="NOTE_ON" data="41">press:0:4</input>
+        <input code="NOTE_ON" data="42">press:1:4</input>
+        <input code="NOTE_ON" data="43">press:2:4</input>
+        <input code="NOTE_ON" data="44">press:3:4</input>
+        <input code="NOTE_ON" data="45">press:4:4</input>
+        <input code="NOTE_ON" data="46">press:5:4</input>
+        <input code="NOTE_ON" data="47">press:6:4</input>
+        <input code="NOTE_ON" data="48">press:7:4</input>
+        <input code="NOTE_ON" data="49">chain:4</input>
+        <!---->
+        <input code="NOTE_ON" data="31">press:0:5</input>
+        <input code="NOTE_ON" data="32">press:1:5</input>
+        <input code="NOTE_ON" data="33">press:2:5</input>
+        <input code="NOTE_ON" data="34">press:3:5</input>
+        <input code="NOTE_ON" data="35">press:4:5</input>
+        <input code="NOTE_ON" data="36">press:5:5</input>
+        <input code="NOTE_ON" data="37">press:6:5</input>
+        <input code="NOTE_ON" data="38">press:7:5</input>
+        <input code="NOTE_ON" data="39">chain:5</input>
+        <!---->
+        <input code="NOTE_ON" data="21">press:0:6</input>
+        <input code="NOTE_ON" data="22">press:1:6</input>
+        <input code="NOTE_ON" data="23">press:2:6</input>
+        <input code="NOTE_ON" data="24">press:3:6</input>
+        <input code="NOTE_ON" data="25">press:4:6</input>
+        <input code="NOTE_ON" data="26">press:5:6</input>
+        <input code="NOTE_ON" data="27">press:6:6</input>
+        <input code="NOTE_ON" data="28">press:7:6</input>
+        <input code="NOTE_ON" data="29">chain:6</input>
+        <!---->
+        <input code="NOTE_ON" data="11">press:0:7</input>
+        <input code="NOTE_ON" data="12">press:1:7</input>
+        <input code="NOTE_ON" data="13">press:2:7</input>
+        <input code="NOTE_ON" data="14">press:3:7</input>
+        <input code="NOTE_ON" data="15">press:4:7</input>
+        <input code="NOTE_ON" data="16">press:5:7</input>
+        <input code="NOTE_ON" data="17">press:6:7</input>
+        <input code="NOTE_ON" data="18">press:7:7</input>
+        <input code="NOTE_ON" data="19">chain:7</input>
+        <!--data2 varies.-->
+        <output code="NOTE_ON" channel="0" data="81">led:0:0</output>
+        <output code="NOTE_ON" channel="0" data="82">led:1:0</output>
+        <output code="NOTE_ON" channel="0" data="83">led:2:0</output>
+        <output code="NOTE_ON" channel="0" data="84">led:3:0</output>
+        <output code="NOTE_ON" channel="0" data="85">led:4:0</output>
+        <output code="NOTE_ON" channel="0" data="86">led:5:0</output>
+        <output code="NOTE_ON" channel="0" data="87">led:6:0</output>
+        <output code="NOTE_ON" channel="0" data="88">led:7:0</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="71">led:0:1</output>
+        <output code="NOTE_ON" channel="0" data="72">led:1:1</output>
+        <output code="NOTE_ON" channel="0" data="73">led:2:1</output>
+        <output code="NOTE_ON" channel="0" data="74">led:3:1</output>
+        <output code="NOTE_ON" channel="0" data="75">led:4:1</output>
+        <output code="NOTE_ON" channel="0" data="76">led:5:1</output>
+        <output code="NOTE_ON" channel="0" data="77">led:6:1</output>
+        <output code="NOTE_ON" channel="0" data="78">led:7:1</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="61">led:0:2</output>
+        <output code="NOTE_ON" channel="0" data="62">led:1:2</output>
+        <output code="NOTE_ON" channel="0" data="63">led:2:2</output>
+        <output code="NOTE_ON" channel="0" data="64">led:3:2</output>
+        <output code="NOTE_ON" channel="0" data="65">led:4:2</output>
+        <output code="NOTE_ON" channel="0" data="66">led:5:2</output>
+        <output code="NOTE_ON" channel="0" data="67">led:6:2</output>
+        <output code="NOTE_ON" channel="0" data="68">led:7:2</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="51">led:0:3</output>
+        <output code="NOTE_ON" channel="0" data="52">led:1:3</output>
+        <output code="NOTE_ON" channel="0" data="53">led:2:3</output>
+        <output code="NOTE_ON" channel="0" data="54">led:3:3</output>
+        <output code="NOTE_ON" channel="0" data="55">led:4:3</output>
+        <output code="NOTE_ON" channel="0" data="56">led:5:3</output>
+        <output code="NOTE_ON" channel="0" data="57">led:6:3</output>
+        <output code="NOTE_ON" channel="0" data="58">led:7:3</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="41">led:0:4</output>
+        <output code="NOTE_ON" channel="0" data="42">led:1:4</output>
+        <output code="NOTE_ON" channel="0" data="43">led:2:4</output>
+        <output code="NOTE_ON" channel="0" data="44">led:3:4</output>
+        <output code="NOTE_ON" channel="0" data="45">led:4:4</output>
+        <output code="NOTE_ON" channel="0" data="46">led:5:4</output>
+        <output code="NOTE_ON" channel="0" data="47">led:6:4</output>
+        <output code="NOTE_ON" channel="0" data="48">led:7:4</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="31">led:0:5</output>
+        <output code="NOTE_ON" channel="0" data="32">led:1:5</output>
+        <output code="NOTE_ON" channel="0" data="33">led:2:5</output>
+        <output code="NOTE_ON" channel="0" data="34">led:3:5</output>
+        <output code="NOTE_ON" channel="0" data="35">led:4:5</output>
+        <output code="NOTE_ON" channel="0" data="36">led:5:5</output>
+        <output code="NOTE_ON" channel="0" data="37">led:6:5</output>
+        <output code="NOTE_ON" channel="0" data="38">led:7:5</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="21">led:0:6</output>
+        <output code="NOTE_ON" channel="0" data="22">led:1:6</output>
+        <output code="NOTE_ON" channel="0" data="23">led:2:6</output>
+        <output code="NOTE_ON" channel="0" data="24">led:3:6</output>
+        <output code="NOTE_ON" channel="0" data="25">led:4:6</output>
+        <output code="NOTE_ON" channel="0" data="26">led:5:6</output>
+        <output code="NOTE_ON" channel="0" data="27">led:6:6</output>
+        <output code="NOTE_ON" channel="0" data="28">led:7:6</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="11">led:0:7</output>
+        <output code="NOTE_ON" channel="0" data="12">led:1:7</output>
+        <output code="NOTE_ON" channel="0" data="13">led:2:7</output>
+        <output code="NOTE_ON" channel="0" data="14">led:3:7</output>
+        <output code="NOTE_ON" channel="0" data="15">led:4:7</output>
+        <output code="NOTE_ON" channel="0" data="16">led:5:7</output>
+        <output code="NOTE_ON" channel="0" data="17">led:6:7</output>
+        <output code="NOTE_ON" channel="0" data="18">led:7:7</output>
     </state>
     <state value="10x10">
-      <input code="NOTE_ON" data="81">press:1:1</input>
-      <input code="NOTE_ON" data="82">press:2:1</input>
-      <input code="NOTE_ON" data="83">press:3:1</input>
-      <input code="NOTE_ON" data="84">press:4:1</input>
-      <input code="NOTE_ON" data="85">press:5:1</input>
-      <input code="NOTE_ON" data="86">press:6:1</input>
-      <input code="NOTE_ON" data="87">press:7:1</input>
-      <input code="NOTE_ON" data="88">press:8:1</input>
-      <input code="NOTE_ON" data="89">chain:0</input>
-      <!---->
-      <input code="NOTE_ON" data="71">press:1:2</input>
-      <input code="NOTE_ON" data="72">press:2:2</input>
-      <input code="NOTE_ON" data="73">press:3:2</input>
-      <input code="NOTE_ON" data="74">press:4:2</input>
-      <input code="NOTE_ON" data="75">press:5:2</input>
-      <input code="NOTE_ON" data="76">press:6:2</input>
-      <input code="NOTE_ON" data="77">press:7:2</input>
-      <input code="NOTE_ON" data="78">press:8:2</input>
-      <input code="NOTE_ON" data="79">chain:1</input>
-      <!---->
-      <input code="NOTE_ON" data="61">press:1:3</input>
-      <input code="NOTE_ON" data="62">press:2:3</input>
-      <input code="NOTE_ON" data="63">press:3:3</input>
-      <input code="NOTE_ON" data="64">press:4:3</input>
-      <input code="NOTE_ON" data="65">press:5:3</input>
-      <input code="NOTE_ON" data="66">press:6:3</input>
-      <input code="NOTE_ON" data="67">press:7:3</input>
-      <input code="NOTE_ON" data="68">press:8:3</input>
-      <input code="NOTE_ON" data="69">chain:2</input>
-      <!---->
-      <input code="NOTE_ON" data="51">press:1:4</input>
-      <input code="NOTE_ON" data="52">press:2:4</input>
-      <input code="NOTE_ON" data="53">press:3:4</input>
-      <input code="NOTE_ON" data="54">press:4:4</input>
-      <input code="NOTE_ON" data="55">press:5:4</input>
-      <input code="NOTE_ON" data="56">press:6:4</input>
-      <input code="NOTE_ON" data="57">press:7:4</input>
-      <input code="NOTE_ON" data="58">press:8:4</input>
-      <input code="NOTE_ON" data="59">chain:3</input>
-      <!---->
-      <input code="NOTE_ON" data="41">press:1:5</input>
-      <input code="NOTE_ON" data="42">press:2:5</input>
-      <input code="NOTE_ON" data="43">press:3:5</input>
-      <input code="NOTE_ON" data="44">press:4:5</input>
-      <input code="NOTE_ON" data="45">press:5:5</input>
-      <input code="NOTE_ON" data="46">press:6:5</input>
-      <input code="NOTE_ON" data="47">press:7:5</input>
-      <input code="NOTE_ON" data="48">press:8:5</input>
-      <input code="NOTE_ON" data="49">chain:4</input>
-      <!---->
-      <input code="NOTE_ON" data="31">press:1:6</input>
-      <input code="NOTE_ON" data="32">press:2:6</input>
-      <input code="NOTE_ON" data="33">press:3:6</input>
-      <input code="NOTE_ON" data="34">press:4:6</input>
-      <input code="NOTE_ON" data="35">press:5:6</input>
-      <input code="NOTE_ON" data="36">press:6:6</input>
-      <input code="NOTE_ON" data="37">press:7:6</input>
-      <input code="NOTE_ON" data="38">press:8:6</input>
-      <input code="NOTE_ON" data="39">chain:5</input>
-      <!---->
-      <input code="NOTE_ON" data="21">press:1:7</input>
-      <input code="NOTE_ON" data="22">press:2:7</input>
-      <input code="NOTE_ON" data="23">press:3:7</input>
-      <input code="NOTE_ON" data="24">press:4:7</input>
-      <input code="NOTE_ON" data="25">press:5:7</input>
-      <input code="NOTE_ON" data="26">press:6:7</input>
-      <input code="NOTE_ON" data="27">press:7:7</input>
-      <input code="NOTE_ON" data="28">press:8:7</input>
-      <input code="NOTE_ON" data="29">chain:6</input>
-      <!---->
-      <input code="NOTE_ON" data="11">press:1:8</input>
-      <input code="NOTE_ON" data="12">press:2:8</input>
-      <input code="NOTE_ON" data="13">press:3:8</input>
-      <input code="NOTE_ON" data="14">press:4:8</input>
-      <input code="NOTE_ON" data="15">press:5:8</input>
-      <input code="NOTE_ON" data="16">press:6:8</input>
-      <input code="NOTE_ON" data="17">press:7:8</input>
-      <input code="NOTE_ON" data="18">press:8:8</input>
-      <input code="NOTE_ON" data="19">chain:7</input>
-      <!--data2 varies.-->
-      <output code="CONTROL_CHANGE" channel="0" data="104">led:1:0</output>
-      <output code="CONTROL_CHANGE" channel="0" data="105">led:2:0</output>
-      <output code="CONTROL_CHANGE" channel="0" data="106">led:3:0</output>
-      <output code="CONTROL_CHANGE" channel="0" data="107">led:4:0</output>
-      <output code="CONTROL_CHANGE" channel="0" data="108">led:5:0</output>
-      <output code="CONTROL_CHANGE" channel="0" data="109">led:6:0</output>
-      <output code="CONTROL_CHANGE" channel="0" data="110">led:7:0</output>
-      <output code="CONTROL_CHANGE" channel="0" data="111">led:8:0</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="81">led:1:1</output>
-      <output code="NOTE_ON" channel="0" data="82">led:2:1</output>
-      <output code="NOTE_ON" channel="0" data="83">led:3:1</output>
-      <output code="NOTE_ON" channel="0" data="84">led:4:1</output>
-      <output code="NOTE_ON" channel="0" data="85">led:5:1</output>
-      <output code="NOTE_ON" channel="0" data="86">led:6:1</output>
-      <output code="NOTE_ON" channel="0" data="87">led:7:1</output>
-      <output code="NOTE_ON" channel="0" data="88">led:8:1</output>
-      <output code="NOTE_ON" channel="0" data="89">led:9:1</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="71">led:1:2</output>
-      <output code="NOTE_ON" channel="0" data="72">led:2:2</output>
-      <output code="NOTE_ON" channel="0" data="73">led:3:2</output>
-      <output code="NOTE_ON" channel="0" data="74">led:4:2</output>
-      <output code="NOTE_ON" channel="0" data="75">led:5:2</output>
-      <output code="NOTE_ON" channel="0" data="76">led:6:2</output>
-      <output code="NOTE_ON" channel="0" data="77">led:7:2</output>
-      <output code="NOTE_ON" channel="0" data="78">led:8:2</output>
-      <output code="NOTE_ON" channel="0" data="79">led:9:2</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="61">led:1:3</output>
-      <output code="NOTE_ON" channel="0" data="62">led:2:3</output>
-      <output code="NOTE_ON" channel="0" data="63">led:3:3</output>
-      <output code="NOTE_ON" channel="0" data="64">led:4:3</output>
-      <output code="NOTE_ON" channel="0" data="65">led:5:3</output>
-      <output code="NOTE_ON" channel="0" data="66">led:6:3</output>
-      <output code="NOTE_ON" channel="0" data="67">led:7:3</output>
-      <output code="NOTE_ON" channel="0" data="68">led:8:3</output>
-      <output code="NOTE_ON" channel="0" data="69">led:9:3</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="51">led:1:4</output>
-      <output code="NOTE_ON" channel="0" data="52">led:2:4</output>
-      <output code="NOTE_ON" channel="0" data="53">led:3:4</output>
-      <output code="NOTE_ON" channel="0" data="54">led:4:4</output>
-      <output code="NOTE_ON" channel="0" data="55">led:5:4</output>
-      <output code="NOTE_ON" channel="0" data="56">led:6:4</output>
-      <output code="NOTE_ON" channel="0" data="57">led:7:4</output>
-      <output code="NOTE_ON" channel="0" data="58">led:8:4</output>
-      <output code="NOTE_ON" channel="0" data="59">led:9:4</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="41">led:1:5</output>
-      <output code="NOTE_ON" channel="0" data="42">led:2:5</output>
-      <output code="NOTE_ON" channel="0" data="43">led:3:5</output>
-      <output code="NOTE_ON" channel="0" data="44">led:4:5</output>
-      <output code="NOTE_ON" channel="0" data="45">led:5:5</output>
-      <output code="NOTE_ON" channel="0" data="46">led:6:5</output>
-      <output code="NOTE_ON" channel="0" data="47">led:7:5</output>
-      <output code="NOTE_ON" channel="0" data="48">led:8:5</output>
-      <output code="NOTE_ON" channel="0" data="49">led:9:5</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="31">led:1:6</output>
-      <output code="NOTE_ON" channel="0" data="32">led:2:6</output>
-      <output code="NOTE_ON" channel="0" data="33">led:3:6</output>
-      <output code="NOTE_ON" channel="0" data="34">led:4:6</output>
-      <output code="NOTE_ON" channel="0" data="35">led:5:6</output>
-      <output code="NOTE_ON" channel="0" data="36">led:6:6</output>
-      <output code="NOTE_ON" channel="0" data="37">led:7:6</output>
-      <output code="NOTE_ON" channel="0" data="38">led:8:6</output>
-      <output code="NOTE_ON" channel="0" data="39">led:9:6</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="21">led:1:7</output>
-      <output code="NOTE_ON" channel="0" data="22">led:2:7</output>
-      <output code="NOTE_ON" channel="0" data="23">led:3:7</output>
-      <output code="NOTE_ON" channel="0" data="24">led:4:7</output>
-      <output code="NOTE_ON" channel="0" data="25">led:5:7</output>
-      <output code="NOTE_ON" channel="0" data="26">led:6:7</output>
-      <output code="NOTE_ON" channel="0" data="27">led:7:7</output>
-      <output code="NOTE_ON" channel="0" data="28">led:8:7</output>
-      <output code="NOTE_ON" channel="0" data="29">led:9:7</output>
-      <!---->
-      <output code="NOTE_ON" channel="0" data="11">led:1:8</output>
-      <output code="NOTE_ON" channel="0" data="12">led:2:8</output>
-      <output code="NOTE_ON" channel="0" data="13">led:3:8</output>
-      <output code="NOTE_ON" channel="0" data="14">led:4:8</output>
-      <output code="NOTE_ON" channel="0" data="15">led:5:8</output>
-      <output code="NOTE_ON" channel="0" data="16">led:6:8</output>
-      <output code="NOTE_ON" channel="0" data="17">led:7:8</output>
-      <output code="NOTE_ON" channel="0" data="18">led:8:8</output>
-      <output code="NOTE_ON" channel="0" data="19">led:9:8</output>
+        <input code="NOTE_ON" data="81">press:1:1</input>
+        <input code="NOTE_ON" data="82">press:2:1</input>
+        <input code="NOTE_ON" data="83">press:3:1</input>
+        <input code="NOTE_ON" data="84">press:4:1</input>
+        <input code="NOTE_ON" data="85">press:5:1</input>
+        <input code="NOTE_ON" data="86">press:6:1</input>
+        <input code="NOTE_ON" data="87">press:7:1</input>
+        <input code="NOTE_ON" data="88">press:8:1</input>
+        <input code="NOTE_ON" data="89">chain:0</input>
+        <!---->
+        <input code="NOTE_ON" data="71">press:1:2</input>
+        <input code="NOTE_ON" data="72">press:2:2</input>
+        <input code="NOTE_ON" data="73">press:3:2</input>
+        <input code="NOTE_ON" data="74">press:4:2</input>
+        <input code="NOTE_ON" data="75">press:5:2</input>
+        <input code="NOTE_ON" data="76">press:6:2</input>
+        <input code="NOTE_ON" data="77">press:7:2</input>
+        <input code="NOTE_ON" data="78">press:8:2</input>
+        <input code="NOTE_ON" data="79">chain:1</input>
+        <!---->
+        <input code="NOTE_ON" data="61">press:1:3</input>
+        <input code="NOTE_ON" data="62">press:2:3</input>
+        <input code="NOTE_ON" data="63">press:3:3</input>
+        <input code="NOTE_ON" data="64">press:4:3</input>
+        <input code="NOTE_ON" data="65">press:5:3</input>
+        <input code="NOTE_ON" data="66">press:6:3</input>
+        <input code="NOTE_ON" data="67">press:7:3</input>
+        <input code="NOTE_ON" data="68">press:8:3</input>
+        <input code="NOTE_ON" data="69">chain:2</input>
+        <!---->
+        <input code="NOTE_ON" data="51">press:1:4</input>
+        <input code="NOTE_ON" data="52">press:2:4</input>
+        <input code="NOTE_ON" data="53">press:3:4</input>
+        <input code="NOTE_ON" data="54">press:4:4</input>
+        <input code="NOTE_ON" data="55">press:5:4</input>
+        <input code="NOTE_ON" data="56">press:6:4</input>
+        <input code="NOTE_ON" data="57">press:7:4</input>
+        <input code="NOTE_ON" data="58">press:8:4</input>
+        <input code="NOTE_ON" data="59">chain:3</input>
+        <!---->
+        <input code="NOTE_ON" data="41">press:1:5</input>
+        <input code="NOTE_ON" data="42">press:2:5</input>
+        <input code="NOTE_ON" data="43">press:3:5</input>
+        <input code="NOTE_ON" data="44">press:4:5</input>
+        <input code="NOTE_ON" data="45">press:5:5</input>
+        <input code="NOTE_ON" data="46">press:6:5</input>
+        <input code="NOTE_ON" data="47">press:7:5</input>
+        <input code="NOTE_ON" data="48">press:8:5</input>
+        <input code="NOTE_ON" data="49">chain:4</input>
+        <!---->
+        <input code="NOTE_ON" data="31">press:1:6</input>
+        <input code="NOTE_ON" data="32">press:2:6</input>
+        <input code="NOTE_ON" data="33">press:3:6</input>
+        <input code="NOTE_ON" data="34">press:4:6</input>
+        <input code="NOTE_ON" data="35">press:5:6</input>
+        <input code="NOTE_ON" data="36">press:6:6</input>
+        <input code="NOTE_ON" data="37">press:7:6</input>
+        <input code="NOTE_ON" data="38">press:8:6</input>
+        <input code="NOTE_ON" data="39">chain:5</input>
+        <!---->
+        <input code="NOTE_ON" data="21">press:1:7</input>
+        <input code="NOTE_ON" data="22">press:2:7</input>
+        <input code="NOTE_ON" data="23">press:3:7</input>
+        <input code="NOTE_ON" data="24">press:4:7</input>
+        <input code="NOTE_ON" data="25">press:5:7</input>
+        <input code="NOTE_ON" data="26">press:6:7</input>
+        <input code="NOTE_ON" data="27">press:7:7</input>
+        <input code="NOTE_ON" data="28">press:8:7</input>
+        <input code="NOTE_ON" data="29">chain:6</input>
+        <!---->
+        <input code="NOTE_ON" data="11">press:1:8</input>
+        <input code="NOTE_ON" data="12">press:2:8</input>
+        <input code="NOTE_ON" data="13">press:3:8</input>
+        <input code="NOTE_ON" data="14">press:4:8</input>
+        <input code="NOTE_ON" data="15">press:5:8</input>
+        <input code="NOTE_ON" data="16">press:6:8</input>
+        <input code="NOTE_ON" data="17">press:7:8</input>
+        <input code="NOTE_ON" data="18">press:8:8</input>
+        <input code="NOTE_ON" data="19">chain:7</input>
+        <!--data2 varies.-->
+        <output code="CONTROL_CHANGE" channel="0" data="104">led:1:0</output>
+        <output code="CONTROL_CHANGE" channel="0" data="105">led:2:0</output>
+        <output code="CONTROL_CHANGE" channel="0" data="106">led:3:0</output>
+        <output code="CONTROL_CHANGE" channel="0" data="107">led:4:0</output>
+        <output code="CONTROL_CHANGE" channel="0" data="108">led:5:0</output>
+        <output code="CONTROL_CHANGE" channel="0" data="109">led:6:0</output>
+        <output code="CONTROL_CHANGE" channel="0" data="110">led:7:0</output>
+        <output code="CONTROL_CHANGE" channel="0" data="111">led:8:0</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="81">led:1:1</output>
+        <output code="NOTE_ON" channel="0" data="82">led:2:1</output>
+        <output code="NOTE_ON" channel="0" data="83">led:3:1</output>
+        <output code="NOTE_ON" channel="0" data="84">led:4:1</output>
+        <output code="NOTE_ON" channel="0" data="85">led:5:1</output>
+        <output code="NOTE_ON" channel="0" data="86">led:6:1</output>
+        <output code="NOTE_ON" channel="0" data="87">led:7:1</output>
+        <output code="NOTE_ON" channel="0" data="88">led:8:1</output>
+        <output code="NOTE_ON" channel="0" data="89">led:9:1</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="71">led:1:2</output>
+        <output code="NOTE_ON" channel="0" data="72">led:2:2</output>
+        <output code="NOTE_ON" channel="0" data="73">led:3:2</output>
+        <output code="NOTE_ON" channel="0" data="74">led:4:2</output>
+        <output code="NOTE_ON" channel="0" data="75">led:5:2</output>
+        <output code="NOTE_ON" channel="0" data="76">led:6:2</output>
+        <output code="NOTE_ON" channel="0" data="77">led:7:2</output>
+        <output code="NOTE_ON" channel="0" data="78">led:8:2</output>
+        <output code="NOTE_ON" channel="0" data="79">led:9:2</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="61">led:1:3</output>
+        <output code="NOTE_ON" channel="0" data="62">led:2:3</output>
+        <output code="NOTE_ON" channel="0" data="63">led:3:3</output>
+        <output code="NOTE_ON" channel="0" data="64">led:4:3</output>
+        <output code="NOTE_ON" channel="0" data="65">led:5:3</output>
+        <output code="NOTE_ON" channel="0" data="66">led:6:3</output>
+        <output code="NOTE_ON" channel="0" data="67">led:7:3</output>
+        <output code="NOTE_ON" channel="0" data="68">led:8:3</output>
+        <output code="NOTE_ON" channel="0" data="69">led:9:3</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="51">led:1:4</output>
+        <output code="NOTE_ON" channel="0" data="52">led:2:4</output>
+        <output code="NOTE_ON" channel="0" data="53">led:3:4</output>
+        <output code="NOTE_ON" channel="0" data="54">led:4:4</output>
+        <output code="NOTE_ON" channel="0" data="55">led:5:4</output>
+        <output code="NOTE_ON" channel="0" data="56">led:6:4</output>
+        <output code="NOTE_ON" channel="0" data="57">led:7:4</output>
+        <output code="NOTE_ON" channel="0" data="58">led:8:4</output>
+        <output code="NOTE_ON" channel="0" data="59">led:9:4</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="41">led:1:5</output>
+        <output code="NOTE_ON" channel="0" data="42">led:2:5</output>
+        <output code="NOTE_ON" channel="0" data="43">led:3:5</output>
+        <output code="NOTE_ON" channel="0" data="44">led:4:5</output>
+        <output code="NOTE_ON" channel="0" data="45">led:5:5</output>
+        <output code="NOTE_ON" channel="0" data="46">led:6:5</output>
+        <output code="NOTE_ON" channel="0" data="47">led:7:5</output>
+        <output code="NOTE_ON" channel="0" data="48">led:8:5</output>
+        <output code="NOTE_ON" channel="0" data="49">led:9:5</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="31">led:1:6</output>
+        <output code="NOTE_ON" channel="0" data="32">led:2:6</output>
+        <output code="NOTE_ON" channel="0" data="33">led:3:6</output>
+        <output code="NOTE_ON" channel="0" data="34">led:4:6</output>
+        <output code="NOTE_ON" channel="0" data="35">led:5:6</output>
+        <output code="NOTE_ON" channel="0" data="36">led:6:6</output>
+        <output code="NOTE_ON" channel="0" data="37">led:7:6</output>
+        <output code="NOTE_ON" channel="0" data="38">led:8:6</output>
+        <output code="NOTE_ON" channel="0" data="39">led:9:6</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="21">led:1:7</output>
+        <output code="NOTE_ON" channel="0" data="22">led:2:7</output>
+        <output code="NOTE_ON" channel="0" data="23">led:3:7</output>
+        <output code="NOTE_ON" channel="0" data="24">led:4:7</output>
+        <output code="NOTE_ON" channel="0" data="25">led:5:7</output>
+        <output code="NOTE_ON" channel="0" data="26">led:6:7</output>
+        <output code="NOTE_ON" channel="0" data="27">led:7:7</output>
+        <output code="NOTE_ON" channel="0" data="28">led:8:7</output>
+        <output code="NOTE_ON" channel="0" data="29">led:9:7</output>
+        <!---->
+        <output code="NOTE_ON" channel="0" data="11">led:1:8</output>
+        <output code="NOTE_ON" channel="0" data="12">led:2:8</output>
+        <output code="NOTE_ON" channel="0" data="13">led:3:8</output>
+        <output code="NOTE_ON" channel="0" data="14">led:4:8</output>
+        <output code="NOTE_ON" channel="0" data="15">led:5:8</output>
+        <output code="NOTE_ON" channel="0" data="16">led:6:8</output>
+        <output code="NOTE_ON" channel="0" data="17">led:7:8</output>
+        <output code="NOTE_ON" channel="0" data="18">led:8:8</output>
+        <output code="NOTE_ON" channel="0" data="19">led:9:8</output>
     </state>
-  </index_0>
 </Data>
