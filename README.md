@@ -31,7 +31,7 @@ but if you want to build setup.exe, it is complicated. see [Dependencies](https:
 #### pwrelease.bat
 * changing path information needed. read **release/readme.md**
 * [NSIS](http://nsis.sourceforge.net/Main_Page) - C:\Program Files (x86)\NSIS : used to build setup.
-* [Resource Hacker](http://www.angusj.com/resourcehacker/) - C:\Program Files (x86)\Resource Hacker : used to change icon.
+* [Resource Hacker](http://www.angusj.com/resourcehacker/) or [Resource Cracker](https://www.pelock.com/products/resource-cracker) - C:\Program Files (x86)\Resource Hacker or [Resource Cracker](https://www.pelock.com/products/resource-cracker) : used to change icon.
 
 --------
 ## Libraries and other things
